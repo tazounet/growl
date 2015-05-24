@@ -109,11 +109,13 @@
 	return result;
 }
 
+#if __MAC_OS_X_VERSION_MAX_ALLOWED < 1090
 - (void) drawInRect:(NSRect)rect
 {
 	NSRect sourceRect = NSZeroRect;
 	sourceRect.size = [self size];
 	[self drawInRect:rect fromRect:sourceRect operation:NSCompositeSourceOver fraction:1.0f];
 }
+#endif
 
 @end

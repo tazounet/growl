@@ -8,7 +8,9 @@
 
 @interface NSImage (GrowlAdditions)
 
+#if __MAC_OS_X_VERSION_MAX_ALLOWED < 1090
 - (void) drawInRect:(NSRect)rect;
+#endif
 
 - (NSImage *) flippedImage;
 - (NSImage *) imageSizedToDimension:(int)dimension;

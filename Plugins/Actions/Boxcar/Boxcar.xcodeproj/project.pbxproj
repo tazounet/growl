@@ -596,7 +596,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC1FE6D615C0F00200E27306 /* Localization.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application: The Growl Project, LLC";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -608,7 +607,6 @@
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Application Support/Growl/Plugins";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = growlView;
 			};
 			name = Localization;
@@ -674,7 +672,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC1FE6D515C0F00200E27306 /* Debug.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application: The Growl Project, LLC";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -686,7 +683,6 @@
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Application Support/Growl/Plugins";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = growlView;
 			};
 			name = Debug;
@@ -695,7 +691,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC1FE6D715C0F00200E27306 /* Release.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application: The Growl Project, LLC";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -707,7 +702,6 @@
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Application Support/Growl/Plugins";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = growlView;
 			};
 			name = Release;

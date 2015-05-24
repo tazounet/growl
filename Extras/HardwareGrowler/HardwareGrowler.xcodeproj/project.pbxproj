@@ -7,6 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		77184767193CF716007F2009 /* ThunderboltMonitor.hwgrowlmonitor in Copy Plugins */ = {isa = PBXBuildFile; fileRef = BC75524E156528AA00CB0542 /* ThunderboltMonitor.hwgrowlmonitor */; };
+		77184769193CF716007F2009 /* PhoneMonitor.hwgrowlmonitor in Copy Plugins */ = {isa = PBXBuildFile; fileRef = BCE83C6515804D2C005570DD /* PhoneMonitor.hwgrowlmonitor */; };
+		7718476A193CF716007F2009 /* GraphicCardMonitor.hwgrowlmonitor in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 777FCFB5193B8BFB004EA8E2 /* GraphicCardMonitor.hwgrowlmonitor */; };
+		77355B4F194340FB00080AA1 /* HWGPrefsDisplays.tif in Resources */ = {isa = PBXBuildFile; fileRef = 77355B4E194340FB00080AA1 /* HWGPrefsDisplays.tif */; };
+		777FCFBD193B8BFB004EA8E2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 777FCFBB193B8BFB004EA8E2 /* InfoPlist.strings */; };
+		777FCFD5193B8D5C004EA8E2 /* HWGrowlGraphicCardMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 777FCFD4193B8D5C004EA8E2 /* HWGrowlGraphicCardMonitor.m */; };
+		77B02ACE193E6580004FC8A9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77B02ACD193E6580004FC8A9 /* Cocoa.framework */; };
+		77F73790193E6B94009D278E /* GSGPU.m in Sources */ = {isa = PBXBuildFile; fileRef = 77F7378F193E6B94009D278E /* GSGPU.m */; };
+		77F737A1193E6CAB009D278E /* GSMux.m in Sources */ = {isa = PBXBuildFile; fileRef = 77F737A0193E6CAB009D278E /* GSMux.m */; };
+		77F737A3193E6E90009D278E /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77F737A2193E6E90009D278E /* IOKit.framework */; };
 		932173D816390DB700D5790F /* KeyboardMonitor.hwgrowlmonitor in Copy Plugins */ = {isa = PBXBuildFile; fileRef = BC5BF7EB15752CEF0088443E /* KeyboardMonitor.hwgrowlmonitor */; };
 		932173D9163A43F200D5790F /* NetworkMonitor.hwgrowlmonitor in Copy Plugins */ = {isa = PBXBuildFile; fileRef = BCB807471551A6E90088C69A /* NetworkMonitor.hwgrowlmonitor */; };
 		932173DA163A43F200D5790F /* VolumeMonitor.hwgrowlmonitor in Copy Plugins */ = {isa = PBXBuildFile; fileRef = BCECA38C155322D200F49280 /* VolumeMonitor.hwgrowlmonitor */; };
@@ -143,6 +153,27 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		7718476B193CF7DA007F2009 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BCB805DE155153330088C69A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BC75524D156528AA00CB0542;
+			remoteInfo = ThunderboltMonitor;
+		};
+		7718476F193CF7DA007F2009 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BCB805DE155153330088C69A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BCE83C6415804D2C005570DD;
+			remoteInfo = PhoneMonitor;
+		};
+		77184771193CF7DA007F2009 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BCB805DE155153330088C69A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 777FCFB4193B8BFB004EA8E2;
+			remoteInfo = GraphicCardMonitor;
+		};
 		BC523C3215556B4500548427 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BCB805DE155153330088C69A /* Project object */;
@@ -349,6 +380,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				77184767193CF716007F2009 /* ThunderboltMonitor.hwgrowlmonitor in Copy Plugins */,
+				77184769193CF716007F2009 /* PhoneMonitor.hwgrowlmonitor in Copy Plugins */,
+				7718476A193CF716007F2009 /* GraphicCardMonitor.hwgrowlmonitor in Copy Plugins */,
 				932173D9163A43F200D5790F /* NetworkMonitor.hwgrowlmonitor in Copy Plugins */,
 				932173DA163A43F200D5790F /* VolumeMonitor.hwgrowlmonitor in Copy Plugins */,
 				932173DB163A43F200D5790F /* USBMonitor.hwgrowlmonitor in Copy Plugins */,
@@ -363,6 +397,21 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		77355B4E194340FB00080AA1 /* HWGPrefsDisplays.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HWGPrefsDisplays.tif; path = ../Resources/MonitorIcons/HWGPrefsDisplays.tif; sourceTree = "<group>"; };
+		777FCFB5193B8BFB004EA8E2 /* GraphicCardMonitor.hwgrowlmonitor */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GraphicCardMonitor.hwgrowlmonitor; sourceTree = BUILT_PRODUCTS_DIR; };
+		777FCFB6193B8BFB004EA8E2 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		777FCFBA193B8BFB004EA8E2 /* GraphicCardMonitor-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GraphicCardMonitor-Info.plist"; sourceTree = "<group>"; };
+		777FCFBC193B8BFB004EA8E2 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		777FCFBE193B8BFB004EA8E2 /* GraphicCardMonitor-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GraphicCardMonitor-Prefix.pch"; sourceTree = "<group>"; };
+		777FCFD3193B8D5C004EA8E2 /* HWGrowlGraphicCardMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HWGrowlGraphicCardMonitor.h; sourceTree = "<group>"; };
+		777FCFD4193B8D5C004EA8E2 /* HWGrowlGraphicCardMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HWGrowlGraphicCardMonitor.m; sourceTree = "<group>"; };
+		77B02ACB193E63F2004FC8A9 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
+		77B02ACD193E6580004FC8A9 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
+		77F7378E193E6B94009D278E /* GSGPU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GSGPU.h; sourceTree = "<group>"; };
+		77F7378F193E6B94009D278E /* GSGPU.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GSGPU.m; sourceTree = "<group>"; };
+		77F7379F193E6CAB009D278E /* GSMux.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GSMux.h; sourceTree = "<group>"; };
+		77F737A0193E6CAB009D278E /* GSMux.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GSMux.m; sourceTree = "<group>"; };
+		77F737A2193E6E90009D278E /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
 		8303BD331770A93200A18593 /* lv_LV */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = lv_LV; path = lv_LV.lproj/Localizable.strings; sourceTree = "<group>"; };
 		8303BD341770A94600A18593 /* zh_TW */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = zh_TW; path = zh_TW.lproj/Localizable.strings; sourceTree = "<group>"; };
 		832B24C815E492AE004FD493 /* nl */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -567,6 +616,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		777FCFB2193B8BFB004EA8E2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				77F737A3193E6E90009D278E /* IOKit.framework in Frameworks */,
+				77B02ACE193E6580004FC8A9 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BC523C1F1555686000548427 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -677,6 +735,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		777FCFB9193B8BFB004EA8E2 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				777FCFBA193B8BFB004EA8E2 /* GraphicCardMonitor-Info.plist */,
+				777FCFBB193B8BFB004EA8E2 /* InfoPlist.strings */,
+				777FCFBE193B8BFB004EA8E2 /* GraphicCardMonitor-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		777FCFD1193B8D13004EA8E2 /* GraphicCardMonitor */ = {
+			isa = PBXGroup;
+			children = (
+				77F7379F193E6CAB009D278E /* GSMux.h */,
+				77F737A0193E6CAB009D278E /* GSMux.m */,
+				77F7378E193E6B94009D278E /* GSGPU.h */,
+				77F7378F193E6B94009D278E /* GSGPU.m */,
+				777FCFD3193B8D5C004EA8E2 /* HWGrowlGraphicCardMonitor.h */,
+				777FCFD4193B8D5C004EA8E2 /* HWGrowlGraphicCardMonitor.m */,
+				777FCFB9193B8BFB004EA8E2 /* Supporting Files */,
+			);
+			name = GraphicCardMonitor;
+			path = ../GraphicCardMonitor;
+			sourceTree = "<group>";
+		};
 		BC006C6B15AB0C8500643FA8 /* Network */ = {
 			isa = PBXGroup;
 			children = (
@@ -846,6 +929,7 @@
 		BC9757A9156C2D2B0080CF24 /* BundleIcons */ = {
 			isa = PBXGroup;
 			children = (
+				77355B4E194340FB00080AA1 /* HWGPrefsDisplays.tif */,
 				BC006C2515AB004900643FA8 /* HWGPrefsBluetooth.tif */,
 				BC006C2615AB004900643FA8 /* HWGPrefsCapster.tif */,
 				BC006C2715AB004900643FA8 /* HWGPrefsDefault.tif */,
@@ -951,6 +1035,7 @@
 				BCF62369156878CC00AB4676 /* TimeMachineMonitor.hwgrowlmonitor */,
 				BC5BF7EB15752CEF0088443E /* KeyboardMonitor.hwgrowlmonitor */,
 				BCE83C6515804D2C005570DD /* PhoneMonitor.hwgrowlmonitor */,
+				777FCFB5193B8BFB004EA8E2 /* GraphicCardMonitor.hwgrowlmonitor */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -958,7 +1043,11 @@
 		BCB805EA155153330088C69A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				77F737A2193E6E90009D278E /* IOKit.framework */,
+				77B02ACD193E6580004FC8A9 /* Cocoa.framework */,
+				77B02ACB193E63F2004FC8A9 /* QuartzCore.framework */,
 				BCB805EB155153330088C69A /* Cocoa.framework */,
+				777FCFB6193B8BFB004EA8E2 /* CoreFoundation.framework */,
 				BCB805ED155153330088C69A /* Other Frameworks */,
 			);
 			name = Frameworks;
@@ -1117,6 +1206,7 @@
 				BCF6236B156878CC00AB4676 /* TimeMachineMonitor */,
 				BC5BF7ED15752CEF0088443E /* KeyboardMonitor */,
 				BCE83C6715804D2C005570DD /* PhoneMonitor */,
+				777FCFD1193B8D13004EA8E2 /* GraphicCardMonitor */,
 			);
 			name = Plugins;
 			path = NetworkMonitor;
@@ -1221,6 +1311,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		777FCFB4193B8BFB004EA8E2 /* GraphicCardMonitor */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 777FCFD0193B8BFB004EA8E2 /* Build configuration list for PBXNativeTarget "GraphicCardMonitor" */;
+			buildPhases = (
+				777FCFB1193B8BFB004EA8E2 /* Sources */,
+				777FCFB2193B8BFB004EA8E2 /* Frameworks */,
+				777FCFB3193B8BFB004EA8E2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = GraphicCardMonitor;
+			productName = GraphicCardMonitor;
+			productReference = 777FCFB5193B8BFB004EA8E2 /* GraphicCardMonitor.hwgrowlmonitor */;
+			productType = "com.apple.product-type.bundle";
+		};
 		BC523C211555686000548427 /* USBMonitor */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = BC523C2B1555686000548427 /* Build configuration list for PBXNativeTarget "USBMonitor" */;
@@ -1340,6 +1447,9 @@
 			buildRules = (
 			);
 			dependencies = (
+				7718476C193CF7DA007F2009 /* PBXTargetDependency */,
+				77184770193CF7DA007F2009 /* PBXTargetDependency */,
+				77184772193CF7DA007F2009 /* PBXTargetDependency */,
 				BCB80690155158F50088C69A /* PBXTargetDependency */,
 				BCB8068E155158EF0088C69A /* PBXTargetDependency */,
 				BCB806CF15515D700088C69A /* PBXTargetDependency */,
@@ -1448,6 +1558,15 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0440;
+				TargetAttributes = {
+					BCB805E6155153330088C69A = {
+						SystemCapabilities = {
+							com.apple.Sandbox = {
+								enabled = 0;
+							};
+						};
+					};
+				};
 			};
 			buildConfigurationList = BCB805E1155153330088C69A /* Build configuration list for PBXProject "HardwareGrowler" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1509,6 +1628,7 @@
 				BCF62368156878CC00AB4676 /* TimeMachineMonitor */,
 				BC5BF7EA15752CEF0088443E /* KeyboardMonitor */,
 				BCE83C6415804D2C005570DD /* PhoneMonitor */,
+				777FCFB4193B8BFB004EA8E2 /* GraphicCardMonitor */,
 			);
 		};
 /* End PBXProject section */
@@ -1622,6 +1742,14 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
+		777FCFB3193B8BFB004EA8E2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				777FCFBD193B8BFB004EA8E2 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BC523C201555686000548427 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1676,6 +1804,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				77355B4F194340FB00080AA1 /* HWGPrefsDisplays.tif in Resources */,
 				BCE06FFC178CCBF500D7839A /* Localizable.strings in Resources */,
 				BCB805F6155153330088C69A /* InfoPlist.strings in Resources */,
 				BCB805FC155153330088C69A /* Credits.rtf in Resources */,
@@ -1839,6 +1968,16 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		777FCFB1193B8BFB004EA8E2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				77F737A1193E6CAB009D278E /* GSMux.m in Sources */,
+				77F73790193E6B94009D278E /* GSGPU.m in Sources */,
+				777FCFD5193B8D5C004EA8E2 /* HWGrowlGraphicCardMonitor.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BC523C1E1555686000548427 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1946,6 +2085,21 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		7718476C193CF7DA007F2009 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BC75524D156528AA00CB0542 /* ThunderboltMonitor */;
+			targetProxy = 7718476B193CF7DA007F2009 /* PBXContainerItemProxy */;
+		};
+		77184770193CF7DA007F2009 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BCE83C6415804D2C005570DD /* PhoneMonitor */;
+			targetProxy = 7718476F193CF7DA007F2009 /* PBXContainerItemProxy */;
+		};
+		77184772193CF7DA007F2009 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 777FCFB4193B8BFB004EA8E2 /* GraphicCardMonitor */;
+			targetProxy = 77184771193CF7DA007F2009 /* PBXContainerItemProxy */;
+		};
 		BC523C3315556B4500548427 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = BC523C211555686000548427 /* USBMonitor */;
@@ -1999,6 +2153,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		777FCFBB193B8BFB004EA8E2 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				777FCFBC193B8BFB004EA8E2 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
 		BC4FC626155C05C700EE65EC /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -2156,6 +2318,75 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		777FCFBF193B8BFB004EA8E2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC3530AF155C1402005D2EA2 /* Debug.xcconfig */;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "GraphicCardMonitor/GraphicCardMonitor-Prefix.pch";
+				INFOPLIST_FILE = "GraphicCardMonitor/GraphicCardMonitor-Info.plist";
+				INFOPLIST_PREFIX_HEADER = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = hwgrowlmonitor;
+			};
+			name = Debug;
+		};
+		777FCFC0193B8BFB004EA8E2 /* Localization */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC3530B0155C1402005D2EA2 /* Localization.xcconfig */;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "GraphicCardMonitor/GraphicCardMonitor-Prefix.pch";
+				INFOPLIST_FILE = "GraphicCardMonitor/GraphicCardMonitor-Info.plist";
+				INFOPLIST_PREFIX_HEADER = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = hwgrowlmonitor;
+			};
+			name = Localization;
+		};
+		777FCFC1193B8BFB004EA8E2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC3530B1155C1402005D2EA2 /* Release.xcconfig */;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "GraphicCardMonitor/GraphicCardMonitor-Prefix.pch";
+				INFOPLIST_FILE = "GraphicCardMonitor/GraphicCardMonitor-Info.plist";
+				INFOPLIST_PREFIX_HEADER = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = hwgrowlmonitor;
+			};
+			name = Release;
+		};
 		BC523C2C1555686000548427 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC3530AF155C1402005D2EA2 /* Debug.xcconfig */;
@@ -2493,7 +2724,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -2512,7 +2744,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
 				RUN_CLANG_STATIC_ANALYZER = YES;
-				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -2520,7 +2751,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -2532,7 +2764,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				RUN_CLANG_STATIC_ANALYZER = YES;
-				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -2542,7 +2773,6 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CODE_SIGN_ENTITLEMENTS = HardwareGrowler/HardwareGrowler.entitlements;
-				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HardwareGrowler/HardwareGrowler-Prefix.pch";
@@ -2561,7 +2791,6 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CODE_SIGN_ENTITLEMENTS = HardwareGrowler/HardwareGrowler.entitlements;
-				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HardwareGrowler/HardwareGrowler-Prefix.pch";
@@ -2578,7 +2807,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -2597,7 +2827,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
 				RUN_CLANG_STATIC_ANALYZER = YES;
-				SDKROOT = macosx;
 			};
 			name = Localization;
 		};
@@ -2607,7 +2836,6 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CODE_SIGN_ENTITLEMENTS = HardwareGrowler/HardwareGrowler.entitlements;
-				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HardwareGrowler/HardwareGrowler-Prefix.pch";
@@ -2887,6 +3115,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		777FCFD0193B8BFB004EA8E2 /* Build configuration list for PBXNativeTarget "GraphicCardMonitor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				777FCFBF193B8BFB004EA8E2 /* Debug */,
+				777FCFC0193B8BFB004EA8E2 /* Localization */,
+				777FCFC1193B8BFB004EA8E2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		BC523C2B1555686000548427 /* Build configuration list for PBXNativeTarget "USBMonitor" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

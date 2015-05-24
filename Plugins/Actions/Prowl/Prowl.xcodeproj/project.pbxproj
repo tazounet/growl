@@ -712,7 +712,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC1FE6BC15C0EFC400E27306 /* Release.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application: The Growl Project, LLC";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Prowl/Prowl-Prefix.pch";
@@ -753,7 +752,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC1FE6BB15C0EFC400E27306 /* Localization.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application: The Growl Project, LLC";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Prowl/Prowl-Prefix.pch";

@@ -614,6 +614,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93EF580A17AB4579006A8B55 /* Localization.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
 				HEADER_SEARCH_PATHS = "";
@@ -641,6 +642,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93EF580917AB4579006A8B55 /* Debug.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -671,6 +673,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93EF580B17AB4579006A8B55 /* Release.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
 				HEADER_SEARCH_PATHS = "";

@@ -4,7 +4,7 @@
 
 #include "Common.xcconfig"
 
-CODE_SIGN_IDENTITY = 3rd Party Mac Developer Application: The Growl Project, LLC
+CODE_SIGN_IDENTITY = 3rd Party Mac Developer Application
 
 //compiler settings
 GCC_OPTIMIZATION_LEVEL = s

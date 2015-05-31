@@ -112,6 +112,7 @@
 		745352B009313ABB0000B26A /* GrowlWebKitPluginHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 743EDE0609273C8A002A9670 /* GrowlWebKitPluginHandler.m */; };
 		745352B109313ABD0000B26A /* GrowlWebKitDisplayPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 743EDE12092740F5002A9670 /* GrowlWebKitDisplayPlugin.m */; };
 		745352D509313B3B0000B26A /* PreferencePanes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83282746073A6C110044A959 /* PreferencePanes.framework */; };
+		772266C31B1B72030024E99E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 772266C21B1B72020024E99E /* Cocoa.framework */; };
 		8321E9AC0C0B7635008C441B /* NotifyOSX.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 8321E9A10C0B760C008C441B /* NotifyOSX.growlStyle */; };
 		8321E9AD0C0B7635008C441B /* NotifyOS9.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 8321E98D0C0B75F3008C441B /* NotifyOS9.growlStyle */; };
 		835A0ACF142A86AA00B89123 /* Raaarr.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 835A0ACD142A85E100B89123 /* Raaarr.growlStyle */; };
@@ -383,7 +384,6 @@
 		BC986FD514D0FE1F00CC5E57 /* FirstLaunchWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = BC986FD414D0FE1F00CC5E57 /* FirstLaunchWindow.xib */; };
 		BC9AE9731255952700759016 /* GrowlImageCache.m in Sources */ = {isa = PBXBuildFile; fileRef = BC9AE9721255952700759016 /* GrowlImageCache.m */; };
 		BC9EFDFE15105F0F00534A7C /* ShortcutRecorder.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = BC9EFDFA15105EDE00534A7C /* ShortcutRecorder.framework */; };
-		BC9EFE0115105F8E00534A7C /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC7E26D815065CF100828D29 /* Carbon.framework */; };
 		BC9EFE0215105FA000534A7C /* ShortcutRecorder.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC9EFDFA15105EDE00534A7C /* ShortcutRecorder.framework */; };
 		BCA08220153EF89000340F16 /* Growl.icns in Resources */ = {isa = PBXBuildFile; fileRef = 93A60E3F13C4159B00514EF8 /* Growl.icns */; };
 		BCA3774C162446BE003ABCD2 /* ScriptAction.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = BC0D530016238FFD0027B326 /* ScriptAction.growlView */; };
@@ -1060,6 +1060,7 @@
 		74BBDE8B094399D30011CFE9 /* GrowlFlippingWindowTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = GrowlFlippingWindowTransition.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		7625018B146DD60600B9F12F /* GrowlWebKitImageProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GrowlWebKitImageProtocol.h; path = Plugins/Displays/WebKit/GrowlWebKitImageProtocol.h; sourceTree = "<group>"; };
 		7625018C146DD60600B9F12F /* GrowlWebKitImageProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GrowlWebKitImageProtocol.m; path = Plugins/Displays/WebKit/GrowlWebKitImageProtocol.m; sourceTree = "<group>"; };
+		772266C21B1B72020024E99E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		8321E98D0C0B75F3008C441B /* NotifyOS9.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = folder; name = NotifyOS9.growlStyle; path = Core/Resources/NotifyOS9.growlStyle; sourceTree = "<group>"; };
 		8321E9A10C0B760C008C441B /* NotifyOSX.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = folder; name = NotifyOSX.growlStyle; path = Core/Resources/NotifyOSX.growlStyle; sourceTree = "<group>"; };
 		83282741073A6BD70044A959 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
@@ -2066,7 +2067,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC9EFE0115105F8E00534A7C /* Carbon.framework in Frameworks */,
+				772266C31B1B72030024E99E /* Cocoa.framework in Frameworks */,
 				BC29B2A614D130CF00C72855 /* ServiceManagement.framework in Frameworks */,
 				BCBCDDAC121BA07A00C07D0D /* CoreData.framework in Frameworks */,
 				BC7E26D715065B6300828D29 /* CoreFoundation.framework in Frameworks */,
@@ -2246,6 +2247,7 @@
 		089C1671FE841209C02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				772266C21B1B72020024E99E /* Cocoa.framework */,
 				1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */,
 				1058C7AEFEA557BF11CA2CBB /* Other Frameworks */,
 			);
@@ -4290,7 +4292,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "LOCATION=\"${BUILT_PRODUCTS_DIR}\"/\"${PLUGINS_FOLDER_PATH}\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/AboveTheNight.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Candybars.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Crystal.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Darkroom.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Garageband.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/LCD.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/NotifyOS9.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/NotifyOSX.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Plain.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Pseudo-Coda.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Raaarr.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Starwl.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Whiteboard.growlStyle\"";
+			shellScript = "if [ \"$CODE_SIGN_IDENTITY\" == \"\" ]; then exit 0; fi\nLOCATION=\"${BUILT_PRODUCTS_DIR}\"/\"${PLUGINS_FOLDER_PATH}\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/AboveTheNight.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Candybars.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Crystal.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Darkroom.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Garageband.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/LCD.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/NotifyOS9.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/NotifyOSX.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Plain.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Pseudo-Coda.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Raaarr.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Starwl.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Whiteboard.growlStyle\"";
 		};
 		932659421411B6070037AA2C /* Generate Localizable.strings */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5622,10 +5624,10 @@
 					"$(inherited)",
 					"\"$(SDKROOT)/usr/lib/system\"",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				"OTHER_CFLAGS[arch=ppc64]" = "-fvisibility=default";
 				"OTHER_CFLAGS[arch=x86_64]" = "-fvisibility=default";
 				PRODUCT_NAME = Growl;
-				SDKROOT = macosx;
 				VALIDATE_PRODUCT = NO;
 			};
 			name = Localization;
@@ -5653,7 +5655,6 @@
 					0xC0000000,
 				);
 				PRODUCT_NAME = Growl;
-				SDKROOT = macosx;
 				WARNING_LDFLAGS = "-Wassign-intercept";
 			};
 			name = Localization;
@@ -6293,10 +6294,10 @@
 					"$(inherited)",
 					"\"$(SDKROOT)/usr/lib/system\"",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				"OTHER_CFLAGS[arch=ppc64]" = "-fvisibility=default";
 				"OTHER_CFLAGS[arch=x86_64]" = "-fvisibility=default";
 				PRODUCT_NAME = Growl;
-				SDKROOT = macosx;
 				VALIDATE_PRODUCT = NO;
 			};
 			name = Debug;
@@ -6323,10 +6324,10 @@
 					"$(inherited)",
 					"\"$(SDKROOT)/usr/lib/system\"",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				"OTHER_CFLAGS[arch=ppc64]" = "-fvisibility=default";
 				"OTHER_CFLAGS[arch=x86_64]" = "-fvisibility=default";
 				PRODUCT_NAME = Growl;
-				SDKROOT = macosx;
 				VALIDATE_PRODUCT = NO;
 			};
 			name = Release;
@@ -6354,7 +6355,6 @@
 					0xC0000000,
 				);
 				PRODUCT_NAME = Growl;
-				SDKROOT = macosx;
 				WARNING_LDFLAGS = "-Wassign-intercept";
 			};
 			name = Debug;
@@ -6382,7 +6382,6 @@
 					0xC0000000,
 				);
 				PRODUCT_NAME = Growl;
-				SDKROOT = macosx;
 				WARNING_LDFLAGS = "-Wassign-intercept";
 			};
 			name = Release;
@@ -6437,6 +6436,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = "GrowlLauncher/GrowlLauncher-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -6461,6 +6461,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = "GrowlLauncher/GrowlLauncher-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -6485,6 +6486,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = "GrowlLauncher/GrowlLauncher-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -6520,7 +6522,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -6549,7 +6550,6 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Localization;
@@ -6578,7 +6578,6 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;

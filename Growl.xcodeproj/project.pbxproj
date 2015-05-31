@@ -3765,6 +3765,7 @@
 				BC83FC2815008A17000504F9 /* Copy Frameworks */,
 				CB61E5160637763C00E0DDC7 /* Frameworks */,
 				3433456D0790E38B00C84B15 /* Copy Growl Styles */,
+				772266881B1AF7F70024E99E /* Sign Growl Styles */,
 				34A96E300C95F6AE00F46006 /* Copy Automator Plugin */,
 				BC29B29D14D12E4800C72855 /* Copy Launcher */,
 				93A042C6138215C400C46F0A /* Copy QuickLook Plugin */,
@@ -4276,6 +4277,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "find \"$TARGET_BUILD_DIR/$FULL_PRODUCT_NAME\" '(' -name '.svn' -or -name '.DS_Store' ')' -prune -print0 | xargs -0 rm -rf\n";
+		};
+		772266881B1AF7F70024E99E /* Sign Growl Styles */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Sign Growl Styles";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "LOCATION=\"${BUILT_PRODUCTS_DIR}\"/\"${PLUGINS_FOLDER_PATH}\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/AboveTheNight.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Candybars.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Crystal.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Darkroom.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Garageband.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/LCD.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/NotifyOS9.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/NotifyOSX.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Plain.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Pseudo-Coda.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Raaarr.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Starwl.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Whiteboard.growlStyle\"";
 		};
 		932659421411B6070037AA2C /* Generate Localizable.strings */ = {
 			isa = PBXShellScriptBuildPhase;

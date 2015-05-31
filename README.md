@@ -9,8 +9,8 @@ $ sudo xcode-select -s /Applications/Xcode5.app/Contents/Developer
 
 $ cd Release  
 
-$ VERSION=2.1.1 rake setup
+$ VERSION=2.1.3 rake setup
 
-$ VERSION=2.1.1 rake build:growl
+$ VERSION=2.1.3 rake build:growl
 
 $ rake build:hardwaregrowler

@@ -15,6 +15,7 @@
 #import "GrowlApplicationBridge_Private.h"
 #import "GrowlNote.h"
 #import "GrowlNote_Private.h"
+#import "GrowlImageAdditions.h"
 
 @implementation GrowlMiniDispatch
 
@@ -224,7 +225,26 @@
       appleNotification.informativeText = [dict objectForKey:GROWL_NOTIFICATION_DESCRIPTION];
       appleNotification.userInfo = notificationDict;
       appleNotification.hasActionButton = NO;
-      
+
+      // Add notification icon
+      if ([dict objectForKey:GROWL_NOTIFICATION_ICON_DATA]) {
+         NSImage *icon;
+         NSData *iconData = [dict objectForKey:GROWL_NOTIFICATION_ICON_DATA];
+
+         if ([iconData isKindOfClass:[NSImage class]]) {
+            icon = (NSImage *)iconData;
+         } else {
+            icon = (iconData ? [[[NSImage alloc] initWithData:iconData] autorelease] : nil);
+         }
+
+         //if ([appleNotification respondsToSelector:@selector(setContentImage:)]) {
+            //appleNotification.contentImage = icon;
+         //}
+
+         // iTunes style: private API (not supported if Mac App Store...)
+         [appleNotification setValue:icon forKey:@"_identityImage"];
+      }
+
       if ([dict objectForKey:GROWL_NOTIFICATION_BUTTONTITLE_ACTION]) {
          appleNotification.hasActionButton = YES;
          appleNotification.actionButtonTitle = [dict objectForKey:GROWL_NOTIFICATION_BUTTONTITLE_ACTION];

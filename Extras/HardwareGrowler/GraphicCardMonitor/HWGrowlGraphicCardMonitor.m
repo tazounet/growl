@@ -9,6 +9,7 @@
 #include <IOKit/IOKitLib.h>
 #include <IOKit/IOCFPlugIn.h>
 #include "GSMux.h"
+#include "GSProcess.h"
 
 @interface HWGrowlGraphicCardMonitor ()
 
@@ -49,17 +50,46 @@
 
 - (void)GPUDidChangeTo:(GSGPUType)gpu
 {
-    // TODO
     NSString *cardName = (gpu == GSGPUTypeIntegrated ? [GSGPU integratedGPUName] : [GSGPU discreteGPUName]);
-    NSString *type = @"GraphicCardChange";
+    NSString *description = [NSString stringWithString:cardName];
+    NSString *type = (gpu == GSGPUTypeIntegrated ? @"OnIntegratedGraphicCard" : @"OnDiscreteGraphicCard");
+    NSString *title = (gpu == GSGPUTypeIntegrated ? NSLocalizedString(@"On integrated graphic card", @"") : NSLocalizedString(@"On discrete graphic card", @""));
+
+    // Get icon
     NSData *iconData = nil;
-    NSString *imageName = @"GraphicCard";
+    NSString *imageName = (gpu == GSGPUTypeIntegrated ? @"GraphicCard" : @"GraphicCard"); // TODO
     NSString *imagePath = [[NSBundle mainBundle] pathForResource:imageName ofType:@"tif"];
     iconData = [NSData dataWithContentsOfFile:imagePath];
-    
+
+    // If we're using a 9400M/9600M GT model, or if we're on the integrated GPU,
+    // no need to display/update the dependencies list.
+    BOOL notUpdateProcessList = (gpu == GSGPUTypeIntegrated) || [GSGPU isLegacyMachine];
+
+    if (! notUpdateProcessList)
+    {
+        NSLog(@"Updating process list...");
+
+        NSArray *processes = [GSProcess getTaskList];
+
+        for (NSDictionary *dict in processes)
+        {
+            NSString *taskName = [dict objectForKey:kTaskItemName];
+            NSString *pid = [dict objectForKey:kTaskItemPID];
+            NSString *taskTitle = [NSString stringWithString:taskName];
+            
+            if (![pid isEqualToString:@""])
+            {
+                taskTitle = [taskTitle stringByAppendingFormat:@", PID: %@", pid];
+            }
+        
+            // Update description
+            description = [description stringByAppendingFormat:@"\n%@", taskTitle];
+        }
+    }
+
     [delegate notifyWithName:type
-                       title:@"Graphic Card Change"
-                 description:cardName
+                       title:title
+                 description:description
                         icon:iconData
             identifierString:cardName
                contextString:nil
@@ -85,7 +115,7 @@
 	static NSImage *_icon = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		_icon = [[NSImage imageNamed:@"HWGPrefsDisplays"] retain];
+		_icon = [[NSImage imageNamed:@"HWGPrefsDefault"] retain];
 	});
 	return _icon;
 }
@@ -97,19 +127,21 @@
 #pragma mark HWGrowlPluginNotifierProtocol
 
 -(NSArray*)noteNames {
-	return [NSArray arrayWithObjects:@"GraphicCardChange", nil];
+	return [NSArray arrayWithObjects:@"OnIntegratedGraphicCard", @"OnDiscreteGraphicCard", nil];
 }
 
 -(NSDictionary*)localizedNames {
-	return [NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"GraphicCard Change", @""), @"GraphicCardChange", nil];
+	return [NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"On integrated graphic card", @""), @"OnIntegratedGraphicCard",
+            NSLocalizedString(@"On discrete graphic card", @""), @"OnDiscreteGraphicCard",nil];
 }
 
 -(NSDictionary*)noteDescriptions {
-	return [NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"Sent when the Graphic Card change", @""), @"GraphicCardChange", nil];
+	return [NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"Sent when the graphic card change to integrated", @""), @"OnIntegratedGraphicCard",
+            NSLocalizedString(@"Sent when the graphic card change to discrete", @""), @"OnDiscreteGraphicCard",nil];
 }
 
 -(NSArray*)defaultNotifications {
-	return [NSArray arrayWithObjects:@"GraphicCardChange", nil];
+	return [NSArray arrayWithObjects:@"OnIntegratedGraphicCard", @"OnDiscreteGraphicCard", nil];
 }
 
 @end

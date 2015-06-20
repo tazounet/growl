@@ -13,7 +13,7 @@
 #import <ServiceManagement/ServiceManagement.h>
 
 #define ShowDevicesTitle     NSLocalizedString(@"Show Connected Devices at Launch", nil)
-#define QuitTitle	           NSLocalizedString(@"Quit HardwareGrowler", nil)
+#define QuitTitle            NSLocalizedString(@"Quit HardwareGrowler", nil)
 #define PreferencesTitle     NSLocalizedString(@"Preferences", nil)
 #define OpenPreferencesTitle NSLocalizedString(@"Open HardwareGrowler Preferences...", nil)
 #define IconTitle            NSLocalizedString(@"Icon:", nil)
@@ -137,9 +137,6 @@
    [moduleColumn setDataCell:imageTextCell];
 }
 
-#ifndef NSFoundationVersionNumber10_7
-#define NSFoundationVersionNumber10_7   833.1
-#endif
 - (IBAction)showPreferences:(id)sender
 {
 	[NSApp activateIgnoringOtherApps:YES];
@@ -148,13 +145,13 @@
       [self.window setFrameAutosaveName:@"HWGrowlerPrefsWindowFrame"];
       [self.window setFrameUsingName:@"HWGrowlerPrefsWindowFrame" force:YES];
    }
+    
 	[self.window makeKeyAndOrderFront:sender];
 	
-	if((BOOL)isgreaterequal(NSFoundationVersionNumber, NSFoundationVersionNumber10_7)) {
-		ProcessSerialNumber psn = { 0, kCurrentProcess };
-		TransformProcessType(&psn, kProcessTransformToForegroundApplication);
-		NSNotificationCenter *nc = [[NSWorkspace sharedWorkspace] notificationCenter];
-		[nc addObserverForName:NSWorkspaceDidActivateApplicationNotification
+    ProcessSerialNumber psn = { 0, kCurrentProcess };
+    TransformProcessType(&psn, kProcessTransformToForegroundApplication);
+    NSNotificationCenter *nc = [[NSWorkspace sharedWorkspace] notificationCenter];
+    [nc addObserverForName:NSWorkspaceDidActivateApplicationNotification
 							 object:nil
 							  queue:[NSOperationQueue mainQueue]
 						usingBlock:^(NSNotification *note) {
@@ -166,8 +163,7 @@
 							if(!result){
 								GetFrontProcess(&previousPSN);
 							}
-						}];
-	}
+                    }];
 }
 
 - (void)windowWillClose:(NSNotification *)notification {
@@ -214,7 +210,7 @@
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
-{
+{    
 	[[self toolbar] setVisible:YES];
 	if([[[self toolbar] items] count] == 0){
 		[[self toolbar] insertItemWithItemIdentifier:@"General" atIndex:0];

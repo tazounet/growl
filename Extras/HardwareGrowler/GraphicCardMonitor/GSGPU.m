@@ -70,16 +70,27 @@ static void _displayReconfigurationCallback(CGDirectDisplayID display, CGDisplay
     }
 }
 
+
 @implementation GSGPU
 
 #pragma mark - GSGPU API
 
+- (void)dealloc
+{
+    [_cachedGPUs release];
+    [super dealloc];
+}
+
+
 + (NSArray *)getGPUNames
 {
     if (_cachedGPUs)
+    {
+        // GPU names already cached
         return _cachedGPUs;
+    }
     
-    _cachedGPUs = [NSMutableArray array];
+    _cachedGPUs = [[NSMutableArray alloc] init];
     
     // The IOPCIDevice class includes display adapters/GPUs.
     CFMutableDictionaryRef devices = IOServiceMatching(kIOPCIDevice);
@@ -107,10 +118,11 @@ static void _displayReconfigurationCallback(CGDirectDisplayID display, CGDisplay
                 if (CFGetTypeID(ioName) == CFStringGetTypeID() && CFStringCompare(ioName, CFSTR(kDisplayKey), kCFCompareCaseInsensitive) == kCFCompareEqualTo) {
                     const void *model = CFDictionaryGetValue(serviceDictionary, @kModelKey);
                     
-                    NSString *gpuName = [[NSString alloc] initWithData:(__bridge NSData *)model 
-                                                              encoding:NSASCIIStringEncoding];
+                    NSString *gpuName = [[NSString alloc] initWithData:(NSData *)model
+                                                          encoding:NSASCIIStringEncoding];
                     
                     [_cachedGPUs addObject:gpuName];
+                    [gpuName release];
                 }
             }
             

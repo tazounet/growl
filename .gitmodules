@@ -6,10 +6,10 @@
 	url = git://github.com/tazounet/ShortcutRecorder.git
 [submodule "external_dependencies/SGHotKeysLib"]
 	path = external_dependencies/SGHotKeysLib
-	url = git://github.com/growl/SGHotKeysLib.git
+	url = git://github.com/tazounet/SGHotKeysLib.git
 [submodule "external_dependencies/tmslidercontrol"]
 	path = external_dependencies/tmslidercontrol
-	url = git://github.com/growl/TMSliderControl.git
+	url = git://github.com/tazounet/TMSliderControl.git
 [submodule "external_dependencies/iso8601parser"]
 	path = external_dependencies/iso8601parser
 	url = git://github.com/tazounet/iso-8601-date-formatter.git

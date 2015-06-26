@@ -1,9 +1,9 @@
 [submodule "external_dependencies/cocoaasyncsocket"]
 	path = external_dependencies/cocoaasyncsocket
-	url = git://github.com/growl/CocoaAsyncSocket.git
+	url = git://github.com/robbiehanson/CocoaAsyncSocket.git
 [submodule "external_dependencies/shortcutrecorder"]
 	path = external_dependencies/shortcutrecorder
-	url = git://github.com/growl/ShortcutRecorder.git
+	url = git://github.com/tazounet/ShortcutRecorder.git
 [submodule "external_dependencies/cocoalumberjack"]
 	path = external_dependencies/cocoalumberjack
 	url = git://github.com/growl/CocoaLumberjack.git
@@ -15,4 +15,4 @@
 	url = git://github.com/growl/TMSliderControl.git
 [submodule "external_dependencies/iso8601parser"]
 	path = external_dependencies/iso8601parser
-	url = git://github.com/growl/iso-8601-date-formatter.git
+	url = git://github.com/tazounet/iso-8601-date-formatter.git

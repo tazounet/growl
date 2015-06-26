@@ -16,7 +16,7 @@
 
 @interface GrowlNotifier ()
 
-@property (nonatomic, assign) dispatch_queue_t attemptArrayQueue;
+@property (nonatomic, strong) dispatch_queue_t attemptArrayQueue;
 
 @end
 
@@ -37,18 +37,12 @@
 	return self;
 }
 
-- (void)dealloc
-{
-	[currentAttempts release];
-	currentAttempts = nil;
-	[super dealloc];
-}
 
 - (void) sendCommunicationAttempt:(GrowlCommunicationAttempt *)attempt
 {
-	__block GrowlNotifier *blockSelf = self;
+	__weak GrowlNotifier *weakSelf = self;
 	dispatch_sync(_attemptArrayQueue, ^{
-		[[blockSelf currentAttempts] addObject:attempt];
+		[[weakSelf currentAttempts] addObject:attempt];
 	});
 	[attempt begin];
 }
@@ -58,7 +52,6 @@
 	if(connection != NULL){
 		xpc_object_t message = [(NSObject*)nsMessage newXPCObject];
 		xpc_connection_send_message(connection, message);
-		xpc_release(message);
 	}
 }
 
@@ -95,7 +88,7 @@
 	[self sendXPCMessage:response connection:[(GrowlGNTPCommunicationAttempt*)attempt connection]];
 }
 - (void) attemptDidFail:(GrowlCommunicationAttempt *)attempt{
-	__block NSMutableDictionary *response = [NSMutableDictionary dictionary];
+    NSMutableDictionary *response = [NSMutableDictionary dictionary];
 	[response setValue:[NSNumber numberWithBool:NO] forKey:@"Success"];
 	[response setObject:[self actionTypeForAttempt:attempt] forKey:@"GrowlActionType"];
 	
@@ -108,18 +101,18 @@
 	
 	[self sendXPCMessage:response connection:[(GrowlGNTPCommunicationAttempt*)attempt connection]];
 	
-	__block GrowlNotifier *blockSelf = self;
+	__weak GrowlNotifier *weakSelf = self;
 	dispatch_async(_attemptArrayQueue, ^{
-		[[blockSelf currentAttempts] removeObject:attempt];
+		[[weakSelf currentAttempts] removeObject:attempt];
 	});
 }
 - (void) finishedWithAttempt:(GrowlCommunicationAttempt *)attempt{
 	NSDictionary *response = [NSDictionary dictionaryWithObject:@"finishedAttempt" forKey:@"GrowlActionType"];
 	
 	[self sendXPCMessage:response connection:[(GrowlGNTPCommunicationAttempt*)attempt connection]];
-	__block GrowlNotifier *blockSelf = self;
+	__weak GrowlNotifier *weakSelf = self;
 	dispatch_async(_attemptArrayQueue, ^{
-		[[blockSelf currentAttempts] removeObject:attempt];
+		[[weakSelf currentAttempts] removeObject:attempt];
 	});
 }
 - (void) queueAndReregister:(GrowlCommunicationAttempt *)attempt{

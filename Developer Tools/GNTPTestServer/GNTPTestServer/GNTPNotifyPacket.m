@@ -20,8 +20,8 @@
 
 @interface GNTPNotifyPacket ()
 
-@property (nonatomic, retain) NSString *callbackString;
-@property (nonatomic, retain) NSString *callbackType;
+@property (nonatomic, strong) NSString *callbackString;
+@property (nonatomic, strong) NSString *callbackType;
 
 @end
 
@@ -133,7 +133,7 @@
                                                                        options:0
                                                                          error:&error];
 			if(plistData){
-				contextString = [[[NSString alloc] initWithData:plistData encoding:NSUTF8StringEncoding] autorelease];
+				contextString = [[NSString alloc] initWithData:plistData encoding:NSUTF8StringEncoding];
 			}else{
 				NSLog(@"There was an error: %@ generating serialized property list from context: %@", error, context);
 			}
@@ -181,7 +181,7 @@
 }
 
 -(NSMutableDictionary*)convertedGrowlDict {
-	NSMutableDictionary *convertedDict = [[super convertedGrowlDict] retain];
+	NSMutableDictionary *convertedDict = [super convertedGrowlDict];
 	if(self.callbackString){
 		id convertedContext = nil;
 		if(self.callbackType){
@@ -209,7 +209,7 @@
          [convertedDict setObject:@"String" forKey:GROWL_NOTIFICATION_CLICK_CONTENT_TYPE];
 	}
    	
-	return [convertedDict autorelease];
+	return convertedDict;
 }
 
 @end

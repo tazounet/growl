@@ -15,6 +15,6 @@
 
 }
 
-@property (nonatomic, retain) NSMutableArray *notificationDicts;
+@property (nonatomic, strong) NSMutableArray *notificationDicts;
 
 @end

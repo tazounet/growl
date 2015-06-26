@@ -109,13 +109,6 @@
 - (void)dealloc {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
     [startAtLoginSwitch removeObserver:self forKeyPath:@"state"];
-    [additionalDownloadsButtonTitle release];
-    [startGrowlAtLoginLabel release];
-    [useAppleNotificationCenterLabel release];
-    [closeAllNotificationsTitle release];
-    [defaultStartingPositionLabel release];
-    [iconMenuOptionsList release];
-    [super dealloc];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {

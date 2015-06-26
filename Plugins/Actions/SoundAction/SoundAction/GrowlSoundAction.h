@@ -12,8 +12,8 @@
 	dispatch_queue_t sound_queue;
 }
 
-@property (nonatomic, retain) NSString *audioDeviceId;
-@property (nonatomic, retain) NSSound *currentSound;
-@property (nonatomic, retain) NSMutableArray *queuedSounds;
+@property (nonatomic, strong) NSString *audioDeviceId;
+@property (nonatomic, strong) NSSound *currentSound;
+@property (nonatomic, strong) NSMutableArray *queuedSounds;
 
 @end

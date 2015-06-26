@@ -47,7 +47,6 @@
    /* In case it gets dropped from the cache before it is finished here.
     * (That probably means the view is gone too, but just in case).
     */
-   [iconData retain];
 	
 	if (!iconData) {
 		
@@ -75,8 +74,6 @@
 	
 	[self.client URLProtocolDidFinishLoading:self];
 	
-	[iconData release];
-	[response release];
 }
 
 // Nothing we are able to cancel, but subclasses need this method.

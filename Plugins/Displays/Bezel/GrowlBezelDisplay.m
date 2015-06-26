@@ -20,15 +20,11 @@
 	return self;
 }
 
-- (void) dealloc {
-	[preferencePane    release];
-	[super dealloc];
-}
 
 - (GrowlPluginPreferencePane *) preferencePane {
-	if (!preferencePane)
-		preferencePane = [[GrowlBezelPrefs alloc] initWithBundle:[NSBundle bundleForClass:[self class]]];
-	return preferencePane;
+	if (!_preferencePane)
+		_preferencePane = [[GrowlBezelPrefs alloc] initWithBundle:[NSBundle bundleForClass:[self class]]];
+	return _preferencePane;
 }
 
 //we implement requiresPositioning entirely because it was added as a requirement for doing 1.1 plugins, however

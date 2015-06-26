@@ -55,7 +55,6 @@ static NSMutableDictionary *existingInstances;
 	if (!classInstances) {
 		classInstances = [[NSMutableDictionary alloc] init];
 		[existingInstances setObject:classInstances forKey:NSStringFromClass(self)];
-		[classInstances release];
 	}
 	[classInstances setValue:instance forKey:ident];
 }
@@ -125,14 +124,7 @@ static NSMutableDictionary *existingInstances;
 	NSFreeMapTable(startTimes);
 	NSFreeMapTable(endTimes);
 
-	[target              release];
-	[clickHandlerEnabled release];
-	[appName             release];
-	[appPid              release];
-	[windowTransitions   release];
-	[notification        release];
 
-	[super dealloc];
 }
 
 #pragma mark -
@@ -261,7 +253,6 @@ static NSMutableDictionary *existingInstances;
 	}
 	self.finished = YES;
 	
-	[self retain];
 	
 	[self cancelDisplayDelayedPerforms];
 	
@@ -271,7 +262,7 @@ static NSMutableDictionary *existingInstances;
 	
 	//Release all window transitions immediately; they may have retained our window.
 	[self stopAllTransitions];
-	[windowTransitions release]; windowTransitions = nil;
+	 windowTransitions = nil;
 	
 	[self didTakeDownNotification];
 	
@@ -281,7 +272,6 @@ static NSMutableDictionary *existingInstances;
 	
 	/* This object should now be deallocated.
 	 */
-	[self release];
 }
 
 - (void) didDisplayNotification {
@@ -318,6 +308,9 @@ static NSMutableDictionary *existingInstances;
 	
 	//Now that we've notified the clickContext and target, it's as if the user just clicked the close button
 	[self clickedClose];
+}
+
+- (void) notificationClosed:(NSNotification*)notification {
 }
 
 #pragma mark -
@@ -509,8 +502,7 @@ static NSMutableDictionary *existingInstances;
 																		name:GROWL_CLOSE_NOTIFICATION
 																	 object:[[notification dictionaryRepresentation] objectForKey:GROWL_NOTIFICATION_INTERNAL_ID]];
       [[NSDistributedNotificationCenter defaultCenter] removeObserver:self];
-      [notification release];
-		notification = [theNotification retain];
+		notification = theNotification;
 	}
 	
 	NSDictionary *noteDict = [theNotification dictionaryRepresentation];
@@ -524,7 +516,7 @@ static NSMutableDictionary *existingInstances;
 		if ([iconData isKindOfClass:[NSImage class]])
 			icon = (NSImage *)iconData;
 		else
-			icon = (iconData ? [[[NSImage alloc] initWithData:iconData] autorelease] : nil);
+			icon = (iconData ? [[NSImage alloc] initWithData:iconData] : nil);
 		
 		[notificationView setPriority:[[noteDict objectForKey:GROWL_NOTIFICATION_PRIORITY] intValue]];
 		[notificationView setTitle:[notification title]];
@@ -664,7 +656,7 @@ static NSMutableDictionary *existingInstances;
 					   name:GrowlDisplayWindowControllerDidDisplayWindowNotification
 					 object:self];
 
-		if ([observer respondsToSelector:@selector(displayWindowControllerWillTakeDownWindow:)])
+		if ([observer respondsToSelector:@selector(displayWindowControllerWillTakeWindowDown:)])
 			[nc addObserver:observer
 				   selector:@selector(displayWindowControllerWillTakeWindowDown:)
 					   name:GrowlDisplayWindowControllerWillTakeWindowDownNotification

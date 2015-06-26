@@ -11,11 +11,11 @@
 @class GrowlHistoryNotification;
 @interface GrowlImageCache : NSManagedObject {
 }
-@property (nonatomic, retain) NSString * Checksum;
-@property (nonatomic, retain) NSData * ImageData;
-@property (nonatomic, retain) NSImage *Image;
-@property (nonatomic, retain) NSSet* Notifications;
-@property (nonatomic, readonly) NSImage *Thumbnail;
+@property (nonatomic, strong) NSString * Checksum;
+@property (nonatomic, strong) NSData * ImageData;
+@property (nonatomic, strong) NSImage *Image;
+@property (nonatomic, strong) NSSet* Notifications;
+@property (weak, nonatomic, readonly) NSImage *Thumbnail;
 
 -(void)setImage:(NSData*)data andHash:(NSString*)hash;
 

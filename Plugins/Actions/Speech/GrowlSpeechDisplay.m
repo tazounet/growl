@@ -25,7 +25,7 @@
 - (id) init {
     if((self = [super init])) {
         self.speech_queue = [NSMutableArray array];
-        self.syn = [[[NSSpeechSynthesizer alloc] initWithVoice:nil] autorelease];
+        self.syn = [[NSSpeechSynthesizer alloc] initWithVoice:nil];
         syn.delegate = self;
 		 self.prefDomain = GrowlSpeechPrefDomain;
 		 speech_dispatch_queue = dispatch_queue_create("com.growl.Speech.speech_dispatch_queue", 0);
@@ -37,13 +37,6 @@
     return self;
 }
 
-- (void) dealloc {
-	dispatch_release(speech_dispatch_queue);
-	[speech_queue release];
-	[syn release];
-	[preferencePane release];
-	[super dealloc];
-}
 
 -(void)updateKeyCombo:(SpeechHotKey)key {
 	NSString *identifier = nil;
@@ -82,10 +75,10 @@
     }
     
     if(combo && combo.keyCode) {
-        SGHotKey *hotKey = [[[SGHotKey alloc] initWithIdentifier:identifier
+        SGHotKey *hotKey = [[SGHotKey alloc] initWithIdentifier:identifier
                                                         keyCombo:combo
                                                           target:self
-                                                          action:keySelector] autorelease];
+                                                          action:keySelector];
         [[SGHotKeyCenter sharedCenter] registerHotKey:hotKey];
     }else{
         SGHotKey *hotKey = [[SGHotKeyCenter sharedCenter] hotKeyWithIdentifier:identifier];
@@ -94,22 +87,22 @@
 }
 
 - (GrowlPluginPreferencePane *) preferencePane {
-	if (!preferencePane){
-		preferencePane = [[GrowlSpeechPrefs alloc] initWithBundle:[NSBundle bundleForClass:[self class]]];
-		__block GrowlSpeechDisplay *blockSelf = self;
+	if (!_preferencePane){
+		_preferencePane = [[GrowlSpeechPrefs alloc] initWithBundle:[NSBundle bundleForClass:[self class]]];
+		__weak GrowlSpeechDisplay *weakSelf = self;
 		[[NSNotificationCenter defaultCenter] addObserverForName:GrowlSpeechHotKeyChanged
-																		  object:preferencePane
+																		  object:_preferencePane
 																			queue:[NSOperationQueue mainQueue]
 																	 usingBlock:^(NSNotification *note) {
 																		 SpeechHotKey hotKey = (int)[[[note userInfo] valueForKey:@"hotKeyType"] integerValue];
-																		 [blockSelf updateKeyCombo:hotKey];
+																		 [weakSelf updateKeyCombo:hotKey];
 																	 }];
 	}
-	return preferencePane;
+	return _preferencePane;
 }
 
 - (void)dispatchNotification:(NSDictionary*)noteDict withConfiguration:(NSDictionary*)configuration {
-	__block GrowlSpeechDisplay *blockSelf = self;
+	__weak GrowlSpeechDisplay *weakSelf = self;
 	//We are called on a background concurrent queue, but we want access to our queue serialized to one thread/serial queue
 	dispatch_async(speech_dispatch_queue, ^{
 		NSString *title = [noteDict valueForKey:GROWL_NOTIFICATION_TITLE];
@@ -130,10 +123,10 @@
 		
 		NSDictionary *queueDict = [NSDictionary dictionaryWithObjectsAndKeys:summary, @"summary", noteDict, @"note", configuration, @"configuration", nil];
 		
-		[blockSelf.speech_queue addObject:queueDict];
-		if(![blockSelf.syn isSpeaking] && !blockSelf.paused)
+		[weakSelf.speech_queue addObject:queueDict];
+		if(![weakSelf.syn isSpeaking] && !weakSelf.paused)
 		{
-			[blockSelf speakNotification:summary withConfiguration:configuration];
+			[weakSelf speakNotification:summary withConfiguration:configuration];
 		}
 	});
 }
@@ -162,33 +155,33 @@
 }
 
 -(void)toggleSpeech {
-	__block GrowlSpeechDisplay *blockSelf = self;
+	__weak GrowlSpeechDisplay *weakSelf = self;
 	dispatch_async(speech_dispatch_queue, ^{
-		if([blockSelf.syn isSpeaking] || blockSelf.paused){
-			blockSelf.paused = blockSelf.paused ? NO : YES;
-			if(blockSelf.paused){
-				[blockSelf.syn pauseSpeakingAtBoundary:NSSpeechWordBoundary];
+		if([weakSelf.syn isSpeaking] || weakSelf.paused){
+			weakSelf.paused = weakSelf.paused ? NO : YES;
+			if(weakSelf.paused){
+				[weakSelf.syn pauseSpeakingAtBoundary:NSSpeechWordBoundary];
 			}else{
-				[blockSelf.syn continueSpeaking];
+				[weakSelf.syn continueSpeaking];
 			}
 		}
 	});
 }
 
 -(void)skipNote {
-	__block GrowlSpeechDisplay *blockSelf = self;
+	__weak GrowlSpeechDisplay *weakSelf = self;
 	dispatch_async(speech_dispatch_queue, ^{
-		blockSelf.paused = NO;
-		[blockSelf.syn stopSpeaking];
+		weakSelf.paused = NO;
+		[weakSelf.syn stopSpeaking];
 	});
 }
 
 -(void)clickNote {
-	__block GrowlSpeechDisplay *blockSelf = self;
+	__weak GrowlSpeechDisplay *weakSelf = self;
 	dispatch_async(speech_dispatch_queue, ^{
-		if([blockSelf.speech_queue count]){
-			NSDictionary *noteDict = [[blockSelf.speech_queue objectAtIndex:0U] valueForKey:@"note"];
-			NSDictionary *configDict = [[blockSelf.speech_queue objectAtIndex:0U] valueForKey:@"configuration"];
+		if([weakSelf.speech_queue count]){
+			NSDictionary *noteDict = [[weakSelf.speech_queue objectAtIndex:0U] valueForKey:@"note"];
+			NSDictionary *configDict = [[weakSelf.speech_queue objectAtIndex:0U] valueForKey:@"configuration"];
 			GrowlNotification *note = [GrowlNotification notificationWithDictionary:noteDict configurationDict:configDict];
 			[[NSNotificationCenter defaultCenter] postNotificationName:GROWL_NOTIFICATION_CLICKED
 																				 object:note
@@ -210,12 +203,12 @@
 			if([speech_queue count])
 			{
 				//insert a slight delay
-				__block GrowlSpeechDisplay *blockSelf = self;
+				__weak GrowlSpeechDisplay *weakSelf = self;
 				NSDictionary *speechDict = [speech_queue objectAtIndex:0U];
 				double delayInSeconds = 1.0;
 				dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
 				dispatch_after(popTime, speech_dispatch_queue, ^(void){
-					[blockSelf speakNotification:[speechDict valueForKey:@"summary"] withConfiguration:[speechDict valueForKey:@"configuration"]];
+					[weakSelf speakNotification:[speechDict valueForKey:@"summary"] withConfiguration:[speechDict valueForKey:@"configuration"]];
 				});
 			}
 		}

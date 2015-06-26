@@ -15,19 +15,13 @@
 
 - (id) initWithAllNotifications:(NSArray *)allNotifications defaultNotifications:(NSArray *)defaultNotifications {
 	if ((self = [self init])) {
-		self.registrationDictionaryForGrowl = [[[NSDictionary alloc] initWithObjectsAndKeys:
+		self.registrationDictionaryForGrowl = [[NSDictionary alloc] initWithObjectsAndKeys:
 			allNotifications,     GROWL_NOTIFICATIONS_ALL,
 			defaultNotifications, GROWL_NOTIFICATIONS_DEFAULT,
-			nil] autorelease];
+			nil];
 	}
 	return self;
 }
 
-- (void) dealloc {
-	[registrationDictionary release];
-	[applicationNameForGrowl release];
-	[applicationIconDataForGrowl release];
-	[super dealloc];
-}
 
 @end

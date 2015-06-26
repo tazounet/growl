@@ -26,8 +26,8 @@
 
 @interface GNTPForwarder ()
 
-@property (nonatomic, retain) NSMutableArray *attemptArray;
-@property (nonatomic, retain) NSMutableArray *attemptQueue;
+@property (nonatomic, strong) NSMutableArray *attemptArray;
+@property (nonatomic, strong) NSMutableArray *attemptQueue;
 
 @end
 
@@ -55,8 +55,8 @@
       
       // create a deep mutable copy of the forward destinations
       NSArray *dests = [self.preferences objectForKey:GrowlForwardDestinationsKey];
-      __block NSMutableArray *theServices = [NSMutableArray array];
-      __block GNTPForwarder *blockFowarder = self;
+      __weak NSMutableArray *theServices = [NSMutableArray array];
+      __weak GNTPForwarder *blockFowarder = self;
       [dests enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
          if(![obj isKindOfClass:[NSDictionary class]])
             return;
@@ -64,7 +64,6 @@
          GrowlBrowserEntry *entry = [[GrowlBrowserEntry alloc] initWithDictionary:obj];
          [entry setOwner:blockFowarder];
          [theServices addObject:entry];
-         [entry release];
       }];
       [self setDestinations:theServices];
       
@@ -102,8 +101,6 @@
 
 - (void)dealloc {
    [[NSNotificationCenter defaultCenter] removeObserver:self];
-   [destinations release];
-   [super dealloc];
 }
 
 - (void)preferencesChanged:(NSNotification*)note {
@@ -134,7 +131,7 @@
 #pragma mark UI Support
 
 - (void)newManualEntry {
-   GrowlBrowserEntry *newEntry = [[[GrowlBrowserEntry alloc] initWithComputerName:@""] autorelease];
+   GrowlBrowserEntry *newEntry = [[GrowlBrowserEntry alloc] initWithComputerName:@""];
    [newEntry setManualEntry:YES];
    [newEntry setOwner:self];
    [self willChangeValueForKey:@"destinations"];
@@ -167,7 +164,6 @@
          [newDestinations addObject:[obj properties]];
    }];
 	[self.preferences setObject:newDestinations forKey:GrowlForwardDestinationsKey];
-	[newDestinations release];
 }
 
 #pragma mark Forwarding support
@@ -230,12 +226,11 @@
 }
 
 - (void)forwardDictionary:(NSDictionary*)dict isRegistration:(BOOL)registration toEntryIDs:(NSArray*)entryIDs {
-   __block GNTPForwarder *blockForwarder = self;
+   __weak GNTPForwarder *blockForwarder = self;
    if(!registration){
       NSMutableArray *keys = [[dict allKeys] mutableCopy];
       [keys removeObject:GROWL_NOTIFICATION_ALREADY_SHOWN];
       dict = [dict dictionaryWithValuesForKeys:keys];
-      [keys release];
    }
    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
       NSArray *sendingDetails = nil;
@@ -258,7 +253,6 @@
 				[[blockForwarder attemptArray] addObject:attempt];
 				[attempt begin];
          });
-         [attempt release];
       }];
    });
 }
@@ -292,7 +286,7 @@
 {
    /* Clean up any entries which we wont be saving, as well as turning the active flag off on all entries */
    NSArray *currentNames = [[self.preferences objectForKey:GrowlForwardDestinationsKey] valueForKey:@"computer"];
-   __block NSMutableArray *toRemove = [NSMutableArray array];
+   __weak NSMutableArray *toRemove = [NSMutableArray array];
    [destinations enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
       if(![obj isKindOfClass:[GrowlBrowserEntry class]])
          return;
@@ -341,7 +335,6 @@
    [self willChangeValueForKey:@"destinations"];
 	[destinations addObject:entry];
    [self didChangeValueForKey:@"destinations"];
-	[entry release];
 }
 
 -(void)serviceRemoved:(NSNotification*)note
@@ -375,7 +368,7 @@
 #pragma mark GrowlCommunicationDelegate
 
 - (void) attemptDidSucceed:(GrowlCommunicationAttempt *)attempt {
-	__block GNTPForwarder *blockForwarder = self;
+	__weak GNTPForwarder *blockForwarder = self;
 	if([attempt attemptType] == GrowlCommunicationAttemptTypeRegister){
 		//Not the most efficient way to do this, we could probably add in checks about whether the succesfull registration had anything to do with the queued notes
 		dispatch_async(dispatch_get_main_queue(), ^{
@@ -390,7 +383,7 @@
 	}
 }
 - (void) attemptDidFail:(GrowlCommunicationAttempt *)attempt {
-	__block GNTPForwarder *blockForwarder = self;
+	__weak GNTPForwarder *blockForwarder = self;
 	if([attempt attemptType] == GrowlCommunicationAttemptTypeRegister){
 		//Not the most efficient way to do this, we could probably add in checks about whether the succesfull registration had anything to do with the queued notes
 		dispatch_async(dispatch_get_main_queue(), ^{
@@ -402,13 +395,13 @@
 	}
 }
 - (void) finishedWithAttempt:(GrowlCommunicationAttempt *)attempt {
-	__block GNTPForwarder *blockForwarder = self;
+	__weak GNTPForwarder *blockForwarder = self;
 	dispatch_async(dispatch_get_main_queue(), ^{
 		[[blockForwarder attemptArray] removeObject:attempt];
 	});
 }
 - (void) queueAndReregister:(GrowlCommunicationAttempt *)attempt {
-	__block GNTPForwarder *blockForwarder = self;
+	__weak GNTPForwarder *blockForwarder = self;
 	dispatch_async(dispatch_get_main_queue(), ^{
 		NSString *appName = [[attempt dictionary] valueForKey:GROWL_APP_NAME];
 		GrowlTicketDatabaseApplication *ticket = [[GrowlTicketDatabase sharedInstance] ticketForApplicationName:appName hostName:nil];

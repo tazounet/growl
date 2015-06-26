@@ -17,7 +17,7 @@
 - (id) initWithStyleBundle:(NSBundle *)styleBundle {
 	if ((self = [super initWithBundle:styleBundle])) {
 		NSDictionary *styleInfo = [styleBundle infoDictionary];
-		style = [[styleInfo valueForKey:@"CFBundleName"] retain];
+		style = [styleInfo valueForKey:@"CFBundleName"];
 		prefDomain = [[NSString alloc] initWithFormat:@"%@.%@", GrowlWebKitPrefDomain, style];
 		windowControllerClass = NSClassFromString(@"GrowlWebKitWindowController");
 
@@ -26,7 +26,6 @@
 			bundle contain all the files we need? */
 
 		if (!validBundle) {
-			[self release];
 			return nil;
 		}
 	}
@@ -35,13 +34,13 @@
 }
 
 - (GrowlPluginPreferencePane *) preferencePane {
-	if (!preferencePane) {
+	if (!_preferencePane) {
 		// load GrowlWebKitPrefsController dynamically so that GHA does not
 		// have to link against it and all of its dependencies
 		Class prefsController = NSClassFromString(@"GrowlWebKitPrefsController");
-		preferencePane = [[prefsController alloc] initWithStyle:style];
+		_preferencePane = [[prefsController alloc] initWithStyle:style];
 	}
-	return preferencePane;
+	return _preferencePane;
 }
 
 - (BOOL)requiresPositioning {

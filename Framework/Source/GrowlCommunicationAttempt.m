@@ -23,14 +23,13 @@
 - (id) init {
 	Class class = [self class];
 #pragma unused(class)
-	[self release];
 	NSAssert1(NO, @"-init is not a valid way to instantiate a GrowlCommunicationAttempt (sent to instance of %@", class);
 	return nil;
 }
 
 - (id) initWithDictionary:(NSDictionary *)dict {
 	if ((self = [super init])) {
-		dictionary = [dict retain];
+		dictionary = dict;
 		attemptType = [[self class] attemptType];
       nextAttempt = nil;
       _finished = NO;
@@ -38,20 +37,13 @@
 	return self;
 }
 
-- (void) dealloc {
-	[dictionary release]; dictionary = nil;
-	[nextAttempt release]; nextAttempt = nil;
-	[error release]; error = nil;
-    
-	[super dealloc];
-}
 
 - (id) makeNextAttemptOfClass:(Class)classToTryNext {
 	NSAssert1([classToTryNext isSubclassOfClass:[GrowlCommunicationAttempt class]], @"Can't make a communication attempt from %@, which is not a subclass of GrowlCommunicationAttempt", classToTryNext);
 	NSAssert1(classToTryNext != [GrowlCommunicationAttempt class], @"Can't directly instantiate %@", classToTryNext);
 	NSAssert2(self.nextAttempt, @"Trying to have %@ create its next attempt while it already has one (%@)!", self, self.nextAttempt);
     
-	GrowlCommunicationAttempt *next = [[[classToTryNext alloc] initWithDictionary:self.dictionary] autorelease];
+	GrowlCommunicationAttempt *next = [[classToTryNext alloc] initWithDictionary:self.dictionary];
 	self.nextAttempt = next;
 	return next;
 }
@@ -74,10 +66,9 @@
 - (void) stopAttempts {
     GrowlCommunicationAttempt *next = [self nextAttempt];
     while(next != nil){
-        GrowlCommunicationAttempt *temp = [next retain];
+        GrowlCommunicationAttempt __attribute__((unused)) *temp = next;
         [next finished];
         next = [next nextAttempt];
-        [temp release];
     }
     
     if(delegate && [delegate respondsToSelector:@selector(stoppedAttempts:)])

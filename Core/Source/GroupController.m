@@ -39,12 +39,6 @@
 	[self didChangeValueForKey:@"showGroup"];
 }
 
--(void)dealloc
-{
-    [groupID release];
-    [groupArray release];
-   [super dealloc];
-}
 
 -(NSComparisonResult)compare:(id)obj2
 {

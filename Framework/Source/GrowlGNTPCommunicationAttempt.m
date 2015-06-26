@@ -19,8 +19,8 @@
 
 @interface GrowlGNTPCommunicationAttempt ()
 
-@property(nonatomic, retain) NSString *responseParseErrorString;
-@property(nonatomic, retain) NSString *bogusResponse;
+@property(nonatomic, strong) NSString *responseParseErrorString;
+@property(nonatomic, strong) NSString *bogusResponse;
 
 @end
 
@@ -57,39 +57,11 @@ enum {
 	return self;
 }
 
-- (void) dealloc {
-	self.callbackHeaderItems = nil;
-	
-	[socket setDelegate:nil];
-   [socket disconnect];
-	[socket release];
-	socket = nil;
-	
-	self.key = nil;
-	self.responseParseErrorString = nil;
-	self.bogusResponse = nil;
-	self.host = nil;
-	self.addressData = nil;
-	self.password = nil;
-	
-    if(connection)
-    {
-        xpc_release(connection);
-        connection = nil;
-    }
-	[super dealloc];
-}
-
 - (void)setConnection:(xpc_connection_t)newConnection
 {
     if(newConnection)
     {
-        if(connection)
-        {
-            xpc_release(connection);
-            connection = nil;
-        }
-        connection = xpc_retain(newConnection);
+        connection = newConnection;
     }
 }
 
@@ -105,7 +77,6 @@ enum {
 - (void) failed {
 	//NSLog(@"%@ failed because %@", self, self.error);
 	[super failed];
-	[socket release];
 	socket = nil;
 }
 
@@ -166,15 +137,15 @@ enum {
 
 - (void)socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(UInt16)port {	
 	if(password){
-		self.key = [[[GNTPKey alloc] initWithPassword:password
+		self.key = [[GNTPKey alloc] initWithPassword:password
 												 hashAlgorithm:GNTPSHA512
-										 encryptionAlgorithm:GNTPNone] autorelease];
+										 encryptionAlgorithm:GNTPNone];
 		[self.key generateSalt];
 		[self.key generateKey];
 	}else{
-		self.key = [[[GNTPKey alloc] initWithPassword:nil
+		self.key = [[GNTPKey alloc] initWithPassword:nil
 												 hashAlgorithm:GNTPNoHash
-										 encryptionAlgorithm:GNTPNone] autorelease];
+										 encryptionAlgorithm:GNTPNone];
 	}
 	
 	NSData *outData = [self outgoingData];
@@ -188,7 +159,7 @@ enum {
 }
 
 - (void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag {
-	NSString *readString = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+	NSString *readString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
    //NSLog(@"read: %@", readString);
    
    if(tag == GrowlGNTPCommAttemptReadExtraPacketData){
@@ -282,7 +253,7 @@ enum {
       
 	} else if (tag == GrowlGNTPCommAttemptReadPhaseResponseHeaderLine) {
 		NSData *trimmed = [NSData dataWithBytes:[data bytes] length:[data length] - [[GCDAsyncSocket CRLFData] length]];
-		NSString *header = [trimmed length] > 0 ? [[[NSString alloc] initWithData:trimmed encoding:NSUTF8StringEncoding] autorelease] : @"";
+		NSString *header = [trimmed length] > 0 ? [[NSString alloc] initWithData:trimmed encoding:NSUTF8StringEncoding] : @"";
 		
 		if([self parseHeader:header]){
 			[self readOneLineFromSocket:socket tag:GrowlGNTPCommAttemptReadPhaseResponseHeaderLine];
@@ -290,7 +261,7 @@ enum {
 	} else if (tag == GrowlGNTPCommAttemptReadPhaseEncrypted){
 		//Trim and decrypt
 		NSData *decrypted = [self.key decrypt:[NSData dataWithBytes:[data bytes] length:[data length] - [[GNTPUtilities doubleCRLF] length]]];
-		NSString *headersString = [[[NSString alloc] initWithData:decrypted encoding:NSUTF8StringEncoding] autorelease];
+		NSString *headersString = [[NSString alloc] initWithData:decrypted encoding:NSUTF8StringEncoding];
 		
 		NSArray *headerArray = [headersString componentsSeparatedByString:@"\r\n"];
 		[headerArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {

@@ -106,31 +106,29 @@ static const NSSize iconSize = { 1024.0f, 1024.0f };
 		if (imageUrl) {
             static dispatch_once_t onceToken;
             dispatch_once(&onceToken, ^{
-                NSLog([NSString stringWithFormat:@"'icon from location' is deprecated as of Growl 2.0, it will now fire using a generic icon.  To update your own applescript, see instructions here: %@, or contact the developer of your script and tell them they need to update their applescript.  This message will only show once.", IMAGE_FROM_LOCATION_DEPRECATION_URL]);
+                NSLog(@"%@", [NSString stringWithFormat:@"'icon from location' is deprecated as of Growl 2.0, it will now fire using a generic icon.  To update your own applescript, see instructions here: %@, or contact the developer of your script and tell them they need to update their applescript.  This message will only show once.", IMAGE_FROM_LOCATION_DEPRECATION_URL]);
             });
             //we retain this icon because all the other paths assume an owning reference
-            icon = [[[NSWorkspace sharedWorkspace] iconForApplication:@"AppleScript Editor.app"] retain];
+            icon = [[NSWorkspace sharedWorkspace] iconForApplication:@"AppleScript Editor.app"];
 		} else if (iconOfFile) {
 			//Command used the "icon of file" argument
 			if (!(url = [self fileUrlForLocationReference:iconOfFile])) {
 				//NSLog(@"That's a no go on that file's icon.");
 				return nil;
 			}
-			icon = [[[NSWorkspace sharedWorkspace] iconForFile:[url path]] retain];
+			icon = [[NSWorkspace sharedWorkspace] iconForFile:[url path]];
 		} else if (iconOfApplication) {
 			//Command used the "icon of application" argument
-			icon = [[[NSWorkspace sharedWorkspace] iconForApplication:iconOfApplication] retain];
+			icon = [[NSWorkspace sharedWorkspace] iconForApplication:iconOfApplication];
 		} else if (imageData) {
 			icon = [[NSImage alloc] initWithData:imageData];
 		} else if (pictureData) {
 			icon = [[NSImage alloc] initWithData:pictureData];
-			[icon setScalesWhenResized:YES];
 		}
 
 		if (icon) {
 			[icon setSize:iconSize];
 			[noteDict setObject:[icon PNGRepresentation] forKey:GROWL_NOTIFICATION_ICON_DATA];
-			[icon release];
 		}
 
 		[[GrowlApplicationController sharedController] dispatchNotificationWithDictionary:noteDict];
@@ -139,7 +137,6 @@ static const NSSize iconSize = { 1024.0f, 1024.0f };
 		[self setError:ERROR_EXCEPTION failure:e];
 	}
 
-	[noteDict release];
 
 	return nil;
 }

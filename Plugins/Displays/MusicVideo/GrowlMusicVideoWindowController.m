@@ -59,7 +59,6 @@
 	[panel setHasShadow:NO];
 	[panel setCanHide:NO];
 	[panel setOneShot:YES];
-	[panel useOptimizedDrawing:YES];
 	[panel setDelegate:self];
 
 	GrowlMusicVideoWindowView *view = [[GrowlMusicVideoWindowView alloc] initWithFrame:panelFrame];
@@ -68,7 +67,6 @@
 	[view setAction:@selector(notificationClicked:)]; // Not used for now
 
 	[panel setContentView:view]; // retains subview
-	[view release];
 
 	[panel setFrameTopLeftPoint:screen.origin];
 
@@ -98,7 +96,6 @@
 				[self setStartPercentage:0 endPercentage:100 forTransition:slider];
 				[slider setAutoReverses:YES];
 				[self addTransition:slider];
-				[slider release];
 				break;
 			}
 			case MUSICVIDEO_EFFECT_FADING:
@@ -107,7 +104,6 @@
 				[self addTransition:fader];
 				[self setStartPercentage:0 endPercentage:100 forTransition:fader];
 				[fader setAutoReverses:YES];
-				[fader release];
 				
 				// I am adding in a sliding transition from screen,screen to screen,screen to make sure the window is properly positioned during the animation - swr
 				GrowlSlidingWindowTransition *slider = [[GrowlSlidingWindowTransition alloc] initWithWindow:panel];
@@ -115,7 +111,6 @@
 				[self setStartPercentage:0 endPercentage:100 forTransition:slider];
 				[slider setAutoReverses:YES];
 				[self addTransition:slider];
-				[slider release];
 				break;
 			}
 			case MUSICVIDEO_EFFECT_WIPE:
@@ -135,7 +130,6 @@
 		}
 	}
 	
-	[panel release];
 	
 	return self;
 

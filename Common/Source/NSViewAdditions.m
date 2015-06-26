@@ -18,9 +18,24 @@
 
 	NSData *data = [bitmap representationUsingType:NSPNGFileType
 	                                    properties:nil];
-	[bitmap release];
 
 	return data;
+}
+
+- (NSPoint)convertPointFromScreen:(NSPoint)point
+{
+    // -[NSWindow convertScreenToBase:] is deprecated, so we have to work with an NSRect
+    NSRect screenRect = (NSRect){.origin = point, .size = NSMakeSize(0.0f, 0.0f)};
+    NSPoint windowPoint = [[self window] convertRectFromScreen:screenRect].origin;
+    return [self convertPoint:windowPoint fromView:nil];
+}
+
+- (NSPoint)convertPointToScreen:(NSPoint)point
+{
+    // -[NSWindow convertBaseToScreen:] is deprecated, so we have to work with an NSRect
+    NSPoint windowPoint = [self convertPoint:point toView:nil];
+    NSRect windowRect = (NSRect){.origin = windowPoint, .size = NSMakeSize(0.0f, 0.0f)};
+    return [[self window] convertRectToScreen:windowRect].origin;
 }
 
 @end

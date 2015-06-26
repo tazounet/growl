@@ -19,6 +19,7 @@
 #import "GroupedArrayController.h"
 #import "GroupController.h"
 #import "GrowlMenu.h"
+#import "GrowlTicketDatabaseApplication.h"
 
 #define GROWL_ROLLUP_WINDOW_HEIGHT @"GrowlRollupWindowHeight"
 #define GROWL_ROLLUP_WINDOW_WIDTH @"GrowlRollupWindowWidth"
@@ -70,12 +71,10 @@
 {
     [groupController removeObserver:self forKeyPath:nil];
     
-    [historyTable release], historyTable = nil;
+    historyTable = nil;
     groupController.delegate = nil;
-    [groupController release], groupController = nil;
+    groupController = nil;
     _notificationDatabase = nil;
-    [windowTitle release];
-    [super dealloc];
 }
 
 -(BOOL)windowShouldClose:(NSNotification *)notfication
@@ -97,7 +96,7 @@
         if (groupController)
         {
             [groupController setDelegate:nil];
-            [groupController release], groupController = nil;
+            groupController = nil;
         }
         
         groupController = [[GroupedArrayController alloc] initWithEntityName:@"Notification" 
@@ -238,7 +237,7 @@
         [rowHeights removeAllObjects];
     }
     
-    __block GrowlNotificationHistoryWindow *blockSafeSelf = self;
+    __weak GrowlNotificationHistoryWindow *blockSafeSelf = self;
     NSMutableIndexSet *modified = [NSMutableIndexSet indexSet];
     [[groupController arrangedObjects] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         CGFloat newHeight = [blockSafeSelf heightForRow:idx];
@@ -344,7 +343,6 @@
         }else{
             [[groupView imageView] setImage:[[NSWorkspace sharedWorkspace] iconForFileType:NSFileTypeForHFSTypeCode(kGenericApplicationIcon)]];
         }
-        [icon release];
         
         [[groupView deleteButton] setState:NSOnState];
         
@@ -419,7 +417,7 @@
 }
 -(void)groupedController:(GroupedArrayController*)groupedController insertIndexes:(NSIndexSet*)indexSet
 {    
-    __block GrowlNotificationHistoryWindow *blockSafeSelf = self;
+    __weak GrowlNotificationHistoryWindow *blockSafeSelf = self;
     [indexSet enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
         NSNumber *height = [NSNumber numberWithFloat:[blockSafeSelf heightForRow:idx]];
         [rowHeights insertObject:height atIndex:idx];
@@ -431,10 +429,9 @@
 }
 -(void)groupedController:(GroupedArrayController*)groupedController moveIndex:(NSUInteger)start toIndex:(NSUInteger)end
 {
-    id temp = [[rowHeights objectAtIndex:start] retain];
+    id temp = [rowHeights objectAtIndex:start];
     [rowHeights removeObjectAtIndex:start];
     [rowHeights insertObject:temp atIndex:end];
-    [temp release];
 }
 
 @end

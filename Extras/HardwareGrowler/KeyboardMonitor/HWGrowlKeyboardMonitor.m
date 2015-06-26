@@ -10,13 +10,13 @@
 
 @interface HWGrowlKeyboardMonitor ()
 
-@property (nonatomic, assign) id<HWGrowlPluginControllerProtocol> delegate;
-@property (nonatomic, assign) IBOutlet NSView *prefsView;
+@property (nonatomic, unsafe_unretained) id<HWGrowlPluginControllerProtocol> delegate;
+@property (nonatomic, strong) IBOutlet NSView *prefsView;
 
-@property (nonatomic, retain) NSString *notifyForLabel;
-@property (nonatomic, retain) NSString *capsLockLabel;
-@property (nonatomic, retain) NSString *fnKeyLabel;
-@property (nonatomic, retain) NSString *shifyKeyLabel;
+@property (nonatomic, strong) NSString *notifyForLabel;
+@property (nonatomic, strong) NSString *capsLockLabel;
+@property (nonatomic, strong) NSString *fnKeyLabel;
+@property (nonatomic, strong) NSString *shifyKeyLabel;
 
 @property (nonatomic) BOOL capsFlag;
 @property (nonatomic) BOOL fnFlag;
@@ -61,21 +61,6 @@
 	return self;
 }
 
--(void)dealloc {
-    [notifyForLabel release];
-    notifyForLabel = nil;
-    
-    [capsLockLabel release];
-    capsLockLabel = nil;
-
-    [fnKeyLabel release];
-    fnKeyLabel = nil;
-
-    [shifyKeyLabel release];
-    shifyKeyLabel = nil;
-
-	[super dealloc];
-}
 
 -(void)postRegistrationInit {
 	[self initFlags];
@@ -149,7 +134,9 @@ self.NAME ## Flag = NAME;
 	NSNumber *enabled = [[[NSUserDefaultsController sharedUserDefaultsController] values] valueForKeyPath:[NSString stringWithFormat:@"hwgkeyboardkeysenabled.%@", enabledKey]];
 	if(![enabled boolValue])
 		return;
-	
+
+    @autoreleasepool
+    {
     NSString *imagePath = [[NSBundle mainBundle] pathForResource:imageName ofType:@"tif"];
     NSData *iconData = [NSData dataWithContentsOfFile:imagePath];
     [delegate notifyWithName:name
@@ -159,6 +146,7 @@ self.NAME ## Flag = NAME;
             identifierString:identifier
                contextString:nil
                       plugin:self];
+    }
 }
 
 -(void) initFlags
@@ -184,14 +172,15 @@ self.NAME ## Flag = NAME;
 	static NSImage *_icon = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		_icon = [[NSImage imageNamed:@"HWGPrefsCapster"] retain];
+		_icon = [NSImage imageNamed:@"HWGPrefsCapster"];
 	});
 	return _icon;
 }
 -(NSView*)preferencePane {
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		[NSBundle loadNibNamed:@"KeyboardMonitorPrefs" owner:self];
+        NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+        [bundle loadNibNamed:@"KeyboardMonitorPrefs" owner:self topLevelObjects:nil];
 	});
 	return prefsView;
 }

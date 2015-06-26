@@ -10,9 +10,9 @@
 
 @interface GrowlRollupGroupCellView : NSTableCellView
 
-@property (nonatomic, assign) IBOutlet NSButton *deleteButton;
-@property (nonatomic, assign) IBOutlet NSButton *revealButton;
-@property (nonatomic, assign) IBOutlet NSTextField *countLabel;
-@property (nonatomic, assign) IBOutlet NSView *countBubble;
+@property (nonatomic, weak) IBOutlet NSButton *deleteButton;
+@property (nonatomic, weak) IBOutlet NSButton *revealButton;
+@property (nonatomic, weak) IBOutlet NSTextField *countLabel;
+@property (nonatomic, weak) IBOutlet NSView *countBubble;
 
 @end

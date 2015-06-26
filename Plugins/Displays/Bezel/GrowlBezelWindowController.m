@@ -80,7 +80,6 @@
 	[panel setHasShadow:NO];
 	[panel setCanHide:NO];
 	[panel setOneShot:YES];
-	[panel useOptimizedDrawing:YES];
 	[panel setAlphaValue:0.0];
 	[panel setDelegate:self];
 
@@ -88,7 +87,6 @@
 	[view setTarget:self];
 	[view setAction:@selector(notificationClicked:)];
 	[panel setContentView:view];
-	[view release];
 
 	panelFrame = [[panel contentView] frame];
    panelFrame.origin = [self idealOriginInRect:[[self screen] frame]];
@@ -108,14 +106,12 @@
 		[self addTransition:fader];
 		[self setStartPercentage:0 endPercentage:100 forTransition:fader];
 		[fader setAutoReverses:YES];
-		[fader release];
 
 		if (shrinkEnabled) {
 			GrowlShrinkingWindowTransition *shrinker = [[GrowlShrinkingWindowTransition alloc] initWithWindow:panel];
 			[self addTransition:shrinker];
 			[self setStartPercentage:0 endPercentage:80 forTransition:shrinker];
 			[shrinker setAutoReverses:YES];
-			[shrinker release];
 		}
 		if (flipEnabled) {
 			GrowlFlippingWindowTransition *flipper = [[GrowlFlippingWindowTransition alloc] initWithWindow:panel];
@@ -123,12 +119,10 @@
 			[self setStartPercentage:0 endPercentage:100 forTransition:flipper];
 			[flipper setFlipsX:YES];
 			[flipper setAutoReverses:YES];
-			[flipper release];
 		}
 		
 		[self setIgnoresOtherNotifications:YES];
 	}
-	[panel release];
 
 	return self;
 }

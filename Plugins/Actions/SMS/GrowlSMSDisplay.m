@@ -25,17 +25,11 @@
 	return self;
 }
 
-- (void) dealloc {
-	[commandQueue release];
-
-	[preferencePane release];
-	[super dealloc];
-}
 
 - (GrowlPluginPreferencePane *) preferencePane {
-	if (!preferencePane)
-		preferencePane = [[GrowlSMSPrefs alloc] initWithBundle:[NSBundle bundleForClass:[self class]]];
-	return preferencePane;
+	if (!_preferencePane)
+		_preferencePane = [[GrowlSMSPrefs alloc] initWithBundle:[NSBundle bundleForClass:[self class]]];
+	return _preferencePane;
 }
 
 - (NSDictionary*)upgradeConfigDict:(NSDictionary*)stored toConfigID:(NSString*)configID {
@@ -78,7 +72,6 @@
 
 //	NSLog(@"SMS Display...  %@" , smsSendCommand);
 	[self sendXMLCommand:smsSendCommand];
-	[smsSendCommand release];
 
 	//	Check credit balance.
 	NSString *checkBalanceCommand = [[NSString alloc] initWithFormat:
@@ -88,7 +81,6 @@
 		password];
 
 	[self sendXMLCommand:checkBalanceCommand];
-	[checkBalanceCommand release];
 }
 
 
@@ -100,8 +92,6 @@
 }
 
 - (void) setResponseData:(NSData *)newResponseData {
-	[newResponseData retain];
-	[responseData release];
 	responseData = newResponseData;
 
 //	NSLog(@"SMS display: responseData:  %@", responseData);
@@ -146,7 +136,6 @@
 	[post setHTTPMethod:@"POST"];
 	[post setHTTPBody:(NSData *)postData];
 	[commandQueue addObject:post];
-	[post release];
 
 	[self processQueue];
 }
@@ -177,8 +166,6 @@
 }
 
 - (void) handleResponse {
-	if (responseParser)
-		[responseParser release];
 	responseParser = [[NSXMLParser alloc] initWithData:[self responseData]];
 	[responseParser setDelegate:self];
 	[responseParser setShouldResolveExternalEntities:YES];
@@ -226,33 +213,27 @@
 		return;
 	} else if ([elementName isEqualToString:@"getBalanceResp"]) {
 		inBalanceResponseElement = NO;
-		[xmlHoldingStringValue release];
 		xmlHoldingStringValue = nil;
 	} else if ([elementName isEqualToString:@"sendMsgResp"]) {
 		inMessageSendResponseElement = NO;
-		[xmlHoldingStringValue release];
 		xmlHoldingStringValue = nil;
 	} else if ([elementName isEqualToString:@"fault"]) {
 		NSLog(@"SMS display: The fault was: %@" , [xmlHoldingStringValue stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]] );
-		[xmlHoldingStringValue release];
 		xmlHoldingStringValue = nil;
 	} else if ([elementName isEqualToString:@"ok"]) {
 		if (inBalanceResponseElement) {
 			creditBalance = [[xmlHoldingStringValue stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]] floatValue];
 			NSLog(@"SMS display: Your Balance is: %4.1f 'credits'" , creditBalance);
-			[xmlHoldingStringValue release];
 			xmlHoldingStringValue = nil;
 		}
 	} else if ([elementName isEqualToString:@"apiMsgId"]) {
 		if (inMessageSendResponseElement) {
 			NSLog(@"SMS display: Your SMS Message has been sent by Clickatell (messageId: %@)" , [xmlHoldingStringValue stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]]);
-			[xmlHoldingStringValue release];
 			xmlHoldingStringValue = nil;
 		}
 	} else if ([elementName isEqualToString:@"sequence_no"]) {
 		if (inMessageSendResponseElement) {
 //			NSLog(@"SMS display: sequence_no: %@" , [xmlHoldingStringValue stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]]);
-			[xmlHoldingStringValue release];
 			xmlHoldingStringValue = nil;
 		}
 	} else {

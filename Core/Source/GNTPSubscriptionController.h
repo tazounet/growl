@@ -15,11 +15,11 @@
 
 //Remote are those that have subscribed to us
 //Local are those that we subscribe to
-@property (nonatomic, retain) NSMutableDictionary *remoteSubscriptions;
-@property (nonatomic, retain) NSMutableArray *localSubscriptions;
-@property (nonatomic, retain) NSString *subscriberID;
+@property (nonatomic, strong) NSMutableDictionary *remoteSubscriptions;
+@property (nonatomic, strong) NSMutableArray *localSubscriptions;
+@property (nonatomic, strong) NSString *subscriberID;
 
-@property (nonatomic, assign) GrowlPreferencesController *preferences;
+@property (nonatomic, weak) GrowlPreferencesController *preferences;
 
 +(GNTPSubscriptionController*)sharedController;
 

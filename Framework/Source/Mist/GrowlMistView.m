@@ -17,14 +17,14 @@
 - (id)initWithFrame:(NSRect)frame {
    self = [super initWithFrame:frame];
    if (self) {
-      clipPath = [[NSBezierPath bezierPathWithRoundedRect:[self bounds] xRadius:8 yRadius:8] retain];
+      clipPath = [NSBezierPath bezierPathWithRoundedRect:[self bounds] xRadius:8 yRadius:8];
       NSRect insetRect = NSInsetRect([self bounds], 1, 1);
-      strokePath = [[NSBezierPath bezierPathWithRoundedRect:insetRect xRadius:8 yRadius:8] retain];
-      NSMutableParagraphStyle *titleParaStyle = [[[NSParagraphStyle defaultParagraphStyle] mutableCopyWithZone:nil] autorelease];
+      strokePath = [NSBezierPath bezierPathWithRoundedRect:insetRect xRadius:8 yRadius:8];
+      NSMutableParagraphStyle *titleParaStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopyWithZone:nil];
       [titleParaStyle setLineBreakMode:NSLineBreakByTruncatingTail];
-      notificationTitleFont = [[NSFont boldSystemFontOfSize:MIST_TITLE_SIZE] retain];
+      notificationTitleFont = [NSFont boldSystemFontOfSize:MIST_TITLE_SIZE];
       notificationTitleAttrs = [[NSDictionary alloc] initWithObjectsAndKeys:notificationTitleFont,NSFontAttributeName,[NSColor whiteColor],NSForegroundColorAttributeName,titleParaStyle,NSParagraphStyleAttributeName,nil];
-      notificationTextFont = [[NSFont systemFontOfSize:MIST_TEXT_SIZE] retain];
+      notificationTextFont = [NSFont systemFontOfSize:MIST_TEXT_SIZE];
       notificationTextAttrs = [[NSDictionary alloc] initWithObjectsAndKeys:notificationTextFont,NSFontAttributeName,[NSColor whiteColor],NSForegroundColorAttributeName,nil];
       
       trackingArea = [[NSTrackingArea alloc] initWithRect:[self bounds] options:(NSTrackingMouseEnteredAndExited | NSTrackingActiveAlways) owner:self userInfo:nil];
@@ -35,39 +35,23 @@
 
 - (void)dealloc {
    [self removeTrackingArea:trackingArea];
-   [trackingArea release];
-   [notificationImage release];
-   [notificationTitleAttrs release];
-   [notificationTitleFont release];
-   [notificationTitle release];
-   [notificationTextAttrs release];
-   [notificationTextFont release];
-   [notificationText release];
-   [strokePath release];
-   [clipPath release];
-   [super dealloc];
 }
 
 // Override the default synthesized notificationImage setter, to pre-size our image.
 - (void)setNotificationImage:(NSImage *)image {
-   NSImage *oldImage = notificationImage;
-   notificationImage = [[[image imageSizedToDimensionSquaring:MIST_IMAGE_DIM] flippedImage] retain];
-   [oldImage release];
+   notificationImage = [[image imageSizedToDimensionSquaring:MIST_IMAGE_DIM] flippedImage];
 }
 
 - (void)setFrame:(NSRect)frameRect
 {
    [super setFrame:frameRect];
    
-   [clipPath release];
-   clipPath = [[NSBezierPath bezierPathWithRoundedRect:[self bounds] xRadius:8 yRadius:8] retain];
+   clipPath = [NSBezierPath bezierPathWithRoundedRect:[self bounds] xRadius:8 yRadius:8];
    
-   [strokePath release];
    NSRect insetRect = NSInsetRect([self bounds], 1, 1);
-   strokePath = [[NSBezierPath bezierPathWithRoundedRect:insetRect xRadius:8 yRadius:8] retain];
+   strokePath = [NSBezierPath bezierPathWithRoundedRect:insetRect xRadius:8 yRadius:8];
    
    [self removeTrackingArea:trackingArea];
-   [trackingArea release];
    trackingArea = [[NSTrackingArea alloc] initWithRect:[self bounds] options:(NSTrackingMouseEnteredAndExited | NSTrackingActiveAlways) owner:self userInfo:nil];
    [self addTrackingArea:trackingArea];
 }

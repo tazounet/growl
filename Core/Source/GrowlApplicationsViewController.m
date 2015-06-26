@@ -30,7 +30,7 @@ static BOOL awoken = NO;
 {
    if (self == [GrowlHostNameTransformer class]) {
        @autoreleasepool {
-           [self setValueTransformer:[[[self alloc] init] autorelease]
+           [self setValueTransformer:[[self alloc] init]
                              forName:@"GrowlHostNameTransformer"];
        }
    }
@@ -107,33 +107,8 @@ static BOOL awoken = NO;
 -(void)dealloc {
    [ticketsArrayController removeObserver:self forKeyPath:@"selection"];
    
-   [enableApplicationLabel release];
-   [enableLoggingLabel release];
-   [applicationDefaultStyleLabel release];
-   [applicationSettingsTabLabel release];
-   [notificationSettingsTabLabel release];
-   [defaultStartPositionLabel release];
-   [customStartPositionLabel release];
-   [noteDisplayStyleLabel release];
-   [stayOnScreenLabel release];
-   [priorityLabel release];
-   [stayOnScreenNever release];
-   [stayOnScreenAlways release];
-   [stayOnScreenAppDecides release];
-   [priorityLow release];
-   [priorityModerate release];
-   [priorityNormal release];
-   [priorityHigh release];
-   [priorityEmergency release];
    
-   self.globalDefaultTitle = nil;
-   self.appDefaultTitle = nil;
-   self.noDefaultActionTitle = nil;
-   self.noDefaultActionTitle = nil;
-   self.actionsPopupTitle = nil;
-   self.actionsPopupLabel = nil;
 
-   [super dealloc];
 }
 
 -(id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil forPrefPane:(GrowlPreferencePane *)aPrefPane
@@ -176,10 +151,10 @@ static BOOL awoken = NO;
       return;
    
    awoken = YES;
-	self.ticketsArrayController = [[[GroupedArrayController alloc] initWithEntityName:@"GrowlApplicationTicket" 
+	self.ticketsArrayController = [[GroupedArrayController alloc] initWithEntityName:@"GrowlApplicationTicket" 
 																					  basePredicateString:@"" 
 																									 groupKey:@"parent.name"
-																					 managedObjectContext:[[GrowlTicketDatabase sharedInstance] managedObjectContext]] autorelease];
+																					 managedObjectContext:[[GrowlTicketDatabase sharedInstance] managedObjectContext]];
 	
 	NSSortDescriptor *ascendingName = [NSSortDescriptor sortDescriptorWithKey:@"name" 
 																						 ascending:YES 
@@ -230,11 +205,11 @@ static BOOL awoken = NO;
                                                 name:GrowlPositionPickerChangedSelectionNotification 
                                               object:appPositionPicker];
    
-	__block GrowlApplicationsViewController *blockSelf = self;
+	__weak GrowlApplicationsViewController *weakSelf = self;
 	dispatch_async(dispatch_get_main_queue(), ^{
-		NSUInteger index = [[blockSelf ticketsArrayController] indexOfFirstNonGroupItem];
+		NSUInteger index = [[weakSelf ticketsArrayController] indexOfFirstNonGroupItem];
 		if(index != NSNotFound){
-			[[blockSelf growlApplications] selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO]; 
+			[[weakSelf growlApplications] selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO]; 
 		}
 	});
 
@@ -266,6 +241,10 @@ static BOOL awoken = NO;
 }
 
 - (void) deleteTicket:(id)sender {
+    
+    // Ignore warnings for NSLocalizedString stuff
+    #pragma GCC diagnostic ignored "-Wformat-security"
+
    if(![[[ticketsArrayController selectedObjects] objectAtIndex:0U] isKindOfClass:[GrowlTicketDatabaseApplication class]])
       return;
    
@@ -276,7 +255,7 @@ static BOOL awoken = NO;
 									   otherButton:nil
 						 informativeTextWithFormat:[NSString stringWithFormat:
 													NSLocalizedStringFromTableInBundle(@"This will remove all Growl settings for %@.", nil, [NSBundle mainBundle], ""), appName]];
-	[alert setIcon:[[[NSImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForImageResource:@"growl-icon"]] autorelease]];
+	[alert setIcon:[[NSImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForImageResource:@"growl-icon"]]];
 	[alert beginSheetModalForWindow:[[NSApplication sharedApplication] keyWindow] modalDelegate:self didEndSelector:@selector(deleteCallbackDidEnd:returnCode:contextInfo:) contextInfo:nil];
 }
 
@@ -469,17 +448,16 @@ static BOOL awoken = NO;
 }
 - (void) setSelectedNotificationIndexes:(NSIndexSet *)newSelectedNotificationIndexes {
 	if(selectedNotificationIndexes != newSelectedNotificationIndexes) {
-		[selectedNotificationIndexes release];
 		selectedNotificationIndexes = [newSelectedNotificationIndexes copy];
 		
 		NSUInteger selectedNote = [notificationsArrayController selectionIndex];
 		if(selectedNote == NSNotFound)
 			return;
 		
-      __block GrowlApplicationsViewController *blockSelf = self;
+      __weak GrowlApplicationsViewController *weakSelf = self;
       dispatch_async(dispatch_get_main_queue(), ^{
-         [blockSelf selectDefaultDisplay:NO];
-         [blockSelf selectDefaultActions:NO];
+         [weakSelf selectDefaultDisplay:NO];
+         [weakSelf selectDefaultActions:NO];
       });
 	}
 }
@@ -540,7 +518,7 @@ static BOOL awoken = NO;
 }
 
 -(void)selectDefaultActions:(BOOL)app {
-	__block NSPopUpButton *popupButton = app ? actionMenuButton : notificationActionMenuButton;
+	__weak NSPopUpButton *popupButton = app ? actionMenuButton : notificationActionMenuButton;
 	
 	[[popupButton itemArray] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 		[(NSMenuItem*)obj setState:NSOffState];
@@ -557,10 +535,10 @@ static BOOL awoken = NO;
 	
 	NSSet *actions = [ticket actions];
 	
-	__block GrowlApplicationsViewController *blockSelf = self;
-	__block NSMutableIndexSet *indexSet = [NSMutableIndexSet indexSet];
+	__weak GrowlApplicationsViewController *weakSelf = self;
+	__weak NSMutableIndexSet *indexSet = [NSMutableIndexSet indexSet];
 	[actions enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
-		NSUInteger index = [[blockSelf.actionConfigsArrayController arrangedObjects] indexOfObjectPassingTest:^BOOL(id testObj, NSUInteger testIDX, BOOL *testStop) {
+		NSUInteger index = [[weakSelf.actionConfigsArrayController arrangedObjects] indexOfObjectPassingTest:^BOOL(id testObj, NSUInteger testIDX, BOOL *testStop) {
 			if([[testObj configID] caseInsensitiveCompare:[obj configID]] == NSOrderedSame){
 				return YES;
 			}
@@ -624,13 +602,13 @@ static BOOL awoken = NO;
             [self setEnabled:YES];
             
 			//Give it a chance to update its contents before trying to tell it to arrange.
-			__block GrowlApplicationsViewController *blockSelf = self;
+			__weak GrowlApplicationsViewController *weakSelf = self;
 			dispatch_async(dispatch_get_main_queue(), ^{
-				[[blockSelf notificationsArrayController] rearrangeObjects];
-				[blockSelf selectDefaultDisplay:YES];
-				[blockSelf selectDefaultDisplay:NO];
-				[blockSelf selectDefaultActions:YES];
-				[blockSelf selectDefaultActions:NO];
+				[[weakSelf notificationsArrayController] rearrangeObjects];
+				[weakSelf selectDefaultDisplay:YES];
+				[weakSelf selectDefaultDisplay:NO];
+				[weakSelf selectDefaultActions:YES];
+				[weakSelf selectDefaultActions:NO];
 			});
 			if([[[GrowlTicketDatabase sharedInstance] managedObjectContext] hasChanges])
 				[[GrowlTicketDatabase sharedInstance] saveDatabase:YES];

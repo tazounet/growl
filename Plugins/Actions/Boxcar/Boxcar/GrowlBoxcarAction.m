@@ -20,7 +20,7 @@
 
 @interface GrowlBoxcarAction ()
 
-@property (nonatomic, retain) NSMutableArray *connections;
+@property (nonatomic, strong) NSMutableArray *connections;
 
 @end
 
@@ -105,7 +105,6 @@
 	[connections addObject:connection];
 	[connection setDelegateQueue:[NSOperationQueue mainQueue]];
 	[connection start];
-	[connection release];
 }
 
 #pragma mark NSURLConnectionDelegate
@@ -152,10 +151,10 @@
 
 /* Auto generated method returning our PreferencePane, do not touch */
 - (GrowlPluginPreferencePane *) preferencePane {
-	if (!preferencePane)
-		preferencePane = [[GrowlBoxcarPreferencePane alloc] initWithBundle:[NSBundle bundleForClass:[self class]]];
+	if (!_preferencePane)
+		_preferencePane = [[GrowlBoxcarPreferencePane alloc] initWithBundle:[NSBundle bundleForClass:[self class]]];
 	
-	return preferencePane;
+	return _preferencePane;
 }
 
 @end

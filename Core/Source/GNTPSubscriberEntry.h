@@ -13,18 +13,18 @@
 
 @interface GNTPSubscriberEntry : NSObject <GrowlCommunicationAttemptDelegate>
 
-@property (nonatomic, retain) NSString *computerName;
-@property (nonatomic, retain) NSString *addressString;
-@property (nonatomic, retain) NSString *domain;
-@property (nonatomic, retain) NSData *lastKnownAddress;
-@property (nonatomic, retain) NSString *password;
-@property (nonatomic, retain) NSString *subscriberID;
-@property (nonatomic, retain) NSString *uuid;
-@property (nonatomic, retain) GNTPKey *key;
-@property (nonatomic, retain) NSTimer *resubscribeTimer;
+@property (nonatomic, strong) NSString *computerName;
+@property (nonatomic, strong) NSString *addressString;
+@property (nonatomic, strong) NSString *domain;
+@property (nonatomic, strong) NSData *lastKnownAddress;
+@property (nonatomic, strong) NSString *password;
+@property (nonatomic, strong) NSString *subscriberID;
+@property (nonatomic, strong) NSString *uuid;
+@property (nonatomic, strong) GNTPKey *key;
+@property (nonatomic, strong) NSTimer *resubscribeTimer;
 
-@property (nonatomic, retain) NSDate *initialTime;
-@property (nonatomic, retain) NSDate *validTime;
+@property (nonatomic, strong) NSDate *initialTime;
+@property (nonatomic, strong) NSDate *validTime;
 @property (nonatomic) NSInteger timeToLive;
 @property (nonatomic) NSInteger subscriberPort;
 @property (nonatomic) BOOL remote;
@@ -35,9 +35,9 @@
 @property (nonatomic) BOOL alreadyBrowsing;
 @property (nonatomic) BOOL attemptingToSubscribe;
 @property (nonatomic) BOOL subscriptionError;
-@property (nonatomic, retain) NSString* subscriptionErrorDescription;
+@property (nonatomic, strong) NSString* subscriptionErrorDescription;
 
-@property (nonatomic, retain) GrowlGNTPSubscriptionAttempt *subscriptionAttempt;
+@property (nonatomic, strong) GrowlGNTPSubscriptionAttempt *subscriptionAttempt;
 
 -(id)initWithName:(NSString*)name
     addressString:(NSString*)addrString

@@ -70,7 +70,6 @@
 	[panel setHasShadow:NO];
 	[panel setCanHide:NO];
 	[panel setOneShot:YES];
-	[panel useOptimizedDrawing:YES];
 	[panel setDelegate:self];
 
 	GrowlNanoWindowView *view = [[GrowlNanoWindowView alloc] initWithFrame:panelFrame];
@@ -79,7 +78,6 @@
 	[view setAction:@selector(notificationClicked:)]; // Not used for now
 
 	[panel setContentView:view]; // retains subview
-	[view release];
 
 	// call super so everything else is set up...
 	if ((self = [super initWithWindow:panel andPlugin:aPlugin])) {
@@ -103,7 +101,6 @@
 				[self addTransition:slider];
 				[self setStartPercentage:0 endPercentage:100 forTransition:slider];
 				
-				[slider release];
 				
 				break;
 			}
@@ -117,7 +114,6 @@
 				[self addTransition:wiper];
 				[self setStartPercentage:0 endPercentage:100 forTransition:wiper];
 				
-				[wiper release];
 				
 				NSLog(@"Wipe not implemented");
 				break;
@@ -128,7 +124,6 @@
 				[self addTransition:fader];
 				[self setStartPercentage:0 endPercentage:100 forTransition:fader];
 				[fader setAutoReverses:YES];
-				[fader release];
 				
 				CGPoint frameOrigin = CGPointMake(xPosition, yPosition - frameHeight);
 				GrowlSlidingWindowTransition *slider = [[GrowlSlidingWindowTransition alloc] initWithWindow:panel];
@@ -136,13 +131,11 @@
 				[self setStartPercentage:0 endPercentage:100 forTransition:slider];
 				[slider setAutoReverses:YES];
 				[self addTransition:slider];
-				[slider release];
 				break;
 			}
 		}
 	}
 	
-	[panel release];
 	
 	return self;
 }

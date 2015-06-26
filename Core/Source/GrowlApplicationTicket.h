@@ -71,7 +71,7 @@
 - (void) setIconData:(NSData *) inIconData;
 
 - (NSString *) applicationName;
-@property (nonatomic, readonly) NSString *appID;
+@property (weak, nonatomic, readonly) NSString *appID;
 @property (nonatomic, readonly) NSString *appPath;
 @property (nonatomic, readonly) NSString *hostName;
 @property (nonatomic, readonly) NSString* appNameHostName;

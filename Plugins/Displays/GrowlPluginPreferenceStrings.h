@@ -12,30 +12,30 @@
 
 @interface GrowlPluginPreferenceStrings : NSObject
 
-@property (nonatomic, retain) NSString *growlDisplayOpacity;
-@property (nonatomic, retain) NSString *growlDisplayDuration;
+@property (nonatomic, strong) NSString *growlDisplayOpacity;
+@property (nonatomic, strong) NSString *growlDisplayDuration;
 
-@property (nonatomic, retain) NSString *growlDisplayPriority;
-@property (nonatomic, retain) NSString *growlDisplayPriorityVeryLow;
-@property (nonatomic, retain) NSString *growlDisplayPriorityModerate;
-@property (nonatomic, retain) NSString *growlDisplayPriorityNormal;
-@property (nonatomic, retain) NSString *growlDisplayPriorityHigh;
-@property (nonatomic, retain) NSString *growlDisplayPriorityEmergency;
+@property (nonatomic, strong) NSString *growlDisplayPriority;
+@property (nonatomic, strong) NSString *growlDisplayPriorityVeryLow;
+@property (nonatomic, strong) NSString *growlDisplayPriorityModerate;
+@property (nonatomic, strong) NSString *growlDisplayPriorityNormal;
+@property (nonatomic, strong) NSString *growlDisplayPriorityHigh;
+@property (nonatomic, strong) NSString *growlDisplayPriorityEmergency;
 
-@property (nonatomic, retain) NSString *growlDisplayTextColor;
-@property (nonatomic, retain) NSString *growlDisplayBackgroundColor;
+@property (nonatomic, strong) NSString *growlDisplayTextColor;
+@property (nonatomic, strong) NSString *growlDisplayBackgroundColor;
 
-@property (nonatomic, retain) NSString *growlDisplayLimitLines;
-@property (nonatomic, retain) NSString *growlDisplayScreen;
-@property (nonatomic, retain) NSString *growlDisplaySize;
-@property (nonatomic, retain) NSString *growlDisplaySizeNormal;
-@property (nonatomic, retain) NSString *growlDisplaySizeLarge;
-@property (nonatomic, retain) NSString *growlDisplaySizeSmall;
+@property (nonatomic, strong) NSString *growlDisplayLimitLines;
+@property (nonatomic, strong) NSString *growlDisplayScreen;
+@property (nonatomic, strong) NSString *growlDisplaySize;
+@property (nonatomic, strong) NSString *growlDisplaySizeNormal;
+@property (nonatomic, strong) NSString *growlDisplaySizeLarge;
+@property (nonatomic, strong) NSString *growlDisplaySizeSmall;
 
-@property (nonatomic, retain) NSString *growlDisplayFloatingIcon;
+@property (nonatomic, strong) NSString *growlDisplayFloatingIcon;
 
-@property (nonatomic, retain) NSString *effectLabel;
-@property (nonatomic, retain) NSString *slideEffect;
-@property (nonatomic, retain) NSString *fadeEffect;
+@property (nonatomic, strong) NSString *effectLabel;
+@property (nonatomic, strong) NSString *slideEffect;
+@property (nonatomic, strong) NSString *fadeEffect;
 
 @end

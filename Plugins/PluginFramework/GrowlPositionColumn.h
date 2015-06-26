@@ -16,7 +16,7 @@
 
 @property (nonatomic) CGFloat xOrigin;
 @property (nonatomic) CGFloat width;
-@property (nonatomic, retain) NSMutableArray *rects;
+@property (nonatomic, strong) NSMutableArray *rects;
 
 -(void)addWidth:(CGFloat)newWidth;
 -(void)removeWidth:(CGFloat)oldWidth;

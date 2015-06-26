@@ -10,6 +10,6 @@
 
 @interface GrowlSubscriptionCellView : NSTableCellView
 
-@property (nonatomic, retain) NSString *validUntilLabel;
+@property (nonatomic, strong) NSString *validUntilLabel;
 
 @end

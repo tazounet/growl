@@ -4,10 +4,10 @@
 #import "PRWebViewWindowController.h"
 
 @interface PRPreferencePane() <PRGeneratorDelegate, PRValidatorDelegate, PRWebViewWindowControllerDelegate>
-@property (nonatomic, retain, readwrite) NSMutableArray *apiKeys;
-@property (nonatomic, retain) PRGenerator *generator; // short-lived
-@property (nonatomic, retain) PRValidator *validator; // long-lived
-@property (nonatomic, retain) PRWebViewWindowController *webViewWindowController;
+@property (nonatomic, strong, readwrite) NSMutableArray *apiKeys;
+@property (nonatomic, strong) PRGenerator *generator; // short-lived
+@property (nonatomic, strong) PRValidator *validator; // long-lived
+@property (nonatomic, strong) PRWebViewWindowController *webViewWindowController;
 @end
 
 @implementation PRPreferencePane
@@ -30,7 +30,7 @@
 {
     self = [super initWithBundle:bundle];
     if (self) {
-        self.validator = [[[PRValidator alloc] initWithDelegate:self] autorelease];
+        self.validator = [[PRValidator alloc] initWithDelegate:self];
     }
     return self;
 }
@@ -38,10 +38,6 @@
 - (void)dealloc
 {
 	[NSNotificationCenter.defaultCenter removeObserver:self];
-	[_apiKeys release];
-	[_generator release];
-	[_validator release];
-    [super dealloc];
 }
 
 - (NSString*)mainNibName
@@ -77,13 +73,13 @@
 	static NSSet *keys = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		keys = [[NSSet setWithObjects:
+		keys = [NSSet setWithObjects:
 				 PR_SELECTOR(minimumPriority),
 				 PR_SELECTOR(minimumPriorityEnabled),
 				 PR_SELECTOR(onlyWhenIdle),
 				 PR_SELECTOR(prefixEnabled),
 				 PR_SELECTOR(prefix),
-				 nil] retain];
+				 nil];
 	});
 	return keys;
 }
@@ -176,15 +172,15 @@
 - (IBAction)generate:(id)sender
 {
 	[self.generateProgressIndicator startAnimation:nil];
-	self.generator = [[[PRGenerator alloc] initWithProviderKey:PRProviderKey
-															  delegate:self] autorelease];
+	self.generator = [[PRGenerator alloc] initWithProviderKey:PRProviderKey
+															  delegate:self];
 	[self.generator fetchToken];
 	[self refreshButtons];
 }
 
 - (IBAction)add:(id)sender
 {
-	[self addApiKey:[[[PRAPIKey alloc] init] autorelease]];
+	[self addApiKey:[[PRAPIKey alloc] init]];
 	
 	[self.tableView editColumn:[self.tableView columnWithIdentifier:@"apikey"]
 						   row:self.apiKeys.count - 1
@@ -268,11 +264,11 @@
 		NSData *keyData = [self.configuration valueForKey:PRPreferenceKeyAPIKeys];
 		if(keyData) {
 			NSArray *keys = [NSKeyedUnarchiver unarchiveObjectWithData:keyData];
-			_apiKeys = [[NSMutableArray arrayWithArray:keys] retain];
+			_apiKeys = [NSMutableArray arrayWithArray:keys];
 		}
 		
 		if(!_apiKeys) {
-			_apiKeys = [[NSMutableArray array] retain];
+			_apiKeys = [NSMutableArray array];
 		}
 	}
 	
@@ -369,8 +365,8 @@
 {
 	//NSLog(@"Got retrieve URL: %@", retrieveURL);
 
-	self.webViewWindowController = [[[PRWebViewWindowController alloc] initWithURL:retrieveURL
-																				  delegate:self] autorelease];
+	self.webViewWindowController = [[PRWebViewWindowController alloc] initWithURL:retrieveURL
+																				  delegate:self];
 	
 	[self.webViewWindowController showWindow:nil];
 }

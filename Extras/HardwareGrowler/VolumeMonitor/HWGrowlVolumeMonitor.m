@@ -22,7 +22,7 @@
 	static NSImage *_ejectIconImage = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		_ejectIconImage = [[NSImage imageNamed:@"DisksVolumes-Eject"] retain];
+		_ejectIconImage = [NSImage imageNamed:@"DisksVolumes-Eject"];
 	});
 	return _ejectIconImage;
 }
@@ -41,11 +41,11 @@
 }
 
 + (VolumeInfo *) volumeInfoForMountWithPath:(NSString *)aPath {
-	return [[[VolumeInfo alloc] initForMountWithPath:aPath] autorelease];
+	return [[VolumeInfo alloc] initForMountWithPath:aPath];
 }
 
 + (VolumeInfo *) volumeInfoForUnmountWithPath:(NSString *)aPath {
-	return [[[VolumeInfo alloc] initForUnmountWithPath:aPath] autorelease];
+	return [[VolumeInfo alloc] initForUnmountWithPath:aPath];
 }
 
 - (id) initForMountWithPath:(NSString *)aPath {
@@ -53,7 +53,7 @@
 		if (path) {
             NSImage *icon = [[NSWorkspace sharedWorkspace] iconForFile:path];
             CGImageRef iconRef = [icon CGImageForProposedRect:nil context:nil hints:nil];
-            NSBitmapImageRep *bitmapRep = [[[NSBitmapImageRep alloc] initWithCGImage:iconRef] autorelease];
+            NSBitmapImageRep *bitmapRep = [[NSBitmapImageRep alloc] initWithCGImage:iconRef];
 			self.iconData = [bitmapRep representationUsingType: NSPNGFileType
                                                       properties: nil];
 		} else {
@@ -72,7 +72,6 @@
 			NSSize iconSize = [icon size];
 			//Also get the standard Eject icon.
 			NSImage *ejectIcon = [VolumeInfo ejectIconImage];
-			[ejectIcon setScalesWhenResized:NO]; //Use the high-res rep instead.
 			NSSize ejectIconSize = [ejectIcon size];
 			
 			//Badge the volume icon with the Eject icon. This is what we'll pass off te Growl.
@@ -86,7 +85,7 @@
 			
 			//For some reason, passing [icon TIFFRepresentation] only passes the unbadged volume icon to Growl, even though writing the same TIFF data out to a file and opening it in Preview does show the badge. If anybody can figure that out, you're welcome to do so. Until then:
 			//We get a NSBIR for the current focused view (the image), and make PNG data from it. (There is no reason why this could not be TIFF if we wanted it to be. I just generally prefer PNG. —boredzo)
-			NSBitmapImageRep *imageRep = [[[NSBitmapImageRep alloc] initWithFocusedViewRect:(NSRect){ NSZeroPoint, iconSize }] autorelease];
+			NSBitmapImageRep *imageRep = [[NSBitmapImageRep alloc] initWithFocusedViewRect:(NSRect){ NSZeroPoint, iconSize }];
 			self.iconData = [imageRep representationUsingType:NSPNGFileType properties:nil];
 			
 			[icon unlockFocus];
@@ -101,26 +100,14 @@
 - (id) initWithPath:(NSString *)aPath {
 	if ((self = [super init])) {
 		if (aPath) {
-			path = [aPath retain];
-			name = [[[NSFileManager defaultManager] displayNameAtPath:path] retain];
+			path = aPath;
+			name = [[NSFileManager defaultManager] displayNameAtPath:path];
 		}
 	}
 	
 	return self;
 }
 
-- (void) dealloc {
-	[path release];
-	path = nil;
-	
-	[name release];
-	name = nil;
-	
-	[iconData release];
-	iconData = nil;
-	
-	[super dealloc];
-}
 
 - (NSString *) description {
 	NSMutableDictionary *desc = [NSMutableDictionary dictionary];
@@ -139,12 +126,12 @@
 
 @interface HWGrowlVolumeMonitor ()
 
-@property (nonatomic, assign) id<HWGrowlPluginControllerProtocol> delegate;
-@property (nonatomic, retain) NSMutableDictionary *ejectCache;
-@property (nonatomic, retain) NSString *ignoredVolumeColumnTitle;
+@property (nonatomic, unsafe_unretained) id<HWGrowlPluginControllerProtocol> delegate;
+@property (nonatomic, strong) NSMutableDictionary *ejectCache;
+@property (nonatomic, strong) NSString *ignoredVolumeColumnTitle;
 
-@property (nonatomic, assign) IBOutlet NSArrayController *arrayController;
-@property (nonatomic, assign) IBOutlet NSTableView *tableView;
+@property (nonatomic, weak) IBOutlet NSArrayController *arrayController;
+@property (nonatomic, weak) IBOutlet NSTableView *tableView;
 
 @end
 
@@ -181,13 +168,8 @@
 		[[obj objectAtIndex:VolumeEjectCacheTimerIndex] invalidate];
 	}];		
 	
-	[ejectCache release];
-	ejectCache = nil;
 	
-    [_ignoredVolumeColumnTitle release];
-	_ignoredVolumeColumnTitle = nil;
 
-	[super dealloc];
 }
 
 - (void) sendMountNotificationForVolume:(VolumeInfo*)volume mounted:(BOOL)mounted {
@@ -316,14 +298,15 @@
 	static NSImage *_icon = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		_icon = [[NSImage imageNamed:@"HWGPrefsDrivesVolumes"] retain];
+		_icon = [NSImage imageNamed:@"HWGPrefsDrivesVolumes"];
 	});
 	return _icon;
 }
 -(NSView*)preferencePane {
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		[NSBundle loadNibNamed:@"VolumeMonitorPrefs" owner:self];
+        NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+        [bundle loadNibNamed:@"VolumeMonitorPrefs" owner:self topLevelObjects:nil];
 	});
 	return prefsView;
 }
@@ -347,9 +330,9 @@
 
 -(void)fireOnLaunchNotes{
 	NSArray *paths = [[NSWorkspace sharedWorkspace] mountedLocalVolumePaths];
-	__block HWGrowlVolumeMonitor *blockSelf = self;
+	__weak HWGrowlVolumeMonitor *weakSelf = self;
 	[paths enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-		[blockSelf sendMountNotificationForVolume:[VolumeInfo volumeInfoForMountWithPath:obj] mounted:YES];
+		[weakSelf sendMountNotificationForVolume:[VolumeInfo volumeInfoForMountWithPath:obj] mounted:YES];
 	}];
 }
 -(void)noteClosed:(NSString*)contextString byClick:(BOOL)clicked {

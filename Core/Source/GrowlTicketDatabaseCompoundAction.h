@@ -14,7 +14,7 @@
 
 @interface GrowlTicketDatabaseCompoundAction : GrowlTicketDatabaseAction
 
-@property (nonatomic, retain) NSSet *actions;
+@property (nonatomic, strong) NSSet *actions;
 @end
 
 @interface GrowlTicketDatabaseCompoundAction (CoreDataGeneratedAccessors)

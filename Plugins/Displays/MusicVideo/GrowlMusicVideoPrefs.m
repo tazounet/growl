@@ -11,15 +11,15 @@
 
 @interface GrowlMusicVideoPrefs ()
 
-@property (nonatomic, retain) NSString *justificationLabel;
-@property (nonatomic, retain) NSString *leftJustification;
-@property (nonatomic, retain) NSString *rightJustification;
+@property (nonatomic, strong) NSString *justificationLabel;
+@property (nonatomic, strong) NSString *leftJustification;
+@property (nonatomic, strong) NSString *rightJustification;
 
 @end
 
 @implementation GrowlMusicVideoPrefs
 
-@synthesize textAlignment;
+@dynamic textAlignment;
 
 @synthesize justificationLabel;
 @synthesize leftJustification;
@@ -34,12 +34,6 @@
 	return self;
 }
 
--(void)dealloc {
-	self.justificationLabel = nil;
-	self.leftJustification = nil;
-	self.rightJustification = nil;
-	[super dealloc];
-}
 
 - (NSString *) mainNibName {
 	return @"GrowlMusicVideoPrefs";
@@ -53,7 +47,7 @@
 	static NSSet *keys = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		keys = [[NSSet setWithObjects:@"size",
+		keys = [NSSet setWithObjects:@"size",
 				  @"opacity",	
 				  @"duration",
 				  @"screen",
@@ -67,7 +61,7 @@
 				  @"textColorModerate",	
 				  @"textColorNormal",
 				  @"textColorHigh",	
-				  @"textColorEmergency", nil] retain];
+				  @"textColorEmergency", nil];
 	});
 	return keys;
 }

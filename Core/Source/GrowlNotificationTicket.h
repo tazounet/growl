@@ -16,7 +16,7 @@
 	NSString				*notificationDescription;
 	NSString                *sound;
 
-	GrowlApplicationTicket  *ticket;        // Our owner
+	GrowlApplicationTicket  *__weak ticket;        // Our owner
 	NSString				*displayPluginName;
 	GrowlDisplayPlugin      *displayPlugin;
 	int                      sticky;
@@ -51,15 +51,15 @@
 #pragma mark -
    
 
-@property (nonatomic, retain) NSString *name;
-@property (nonatomic, retain) NSString *humanReadableName;
-@property (nonatomic, retain) NSString *notificationDescription;
+@property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSString *humanReadableName;
+@property (nonatomic, strong) NSString *notificationDescription;
 @property (nonatomic, assign) enum GrowlPriority priority;
 @property (nonatomic, assign) BOOL enabled;
 @property (nonatomic, assign) BOOL logNotification;
 @property (nonatomic, assign) int sticky;
-@property (nonatomic, assign) GrowlApplicationTicket *ticket;
+@property (nonatomic, weak) GrowlApplicationTicket *ticket;
 @property (nonatomic, copy) NSString *displayPluginName;
-@property (nonatomic, retain) NSString *sound;
+@property (nonatomic, strong) NSString *sound;
 
 @end

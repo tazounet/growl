@@ -12,10 +12,10 @@
 
 @interface GrowlNanoPrefs ()
 
-@property (nonatomic, retain) NSString *positionLabel;
-@property (nonatomic, retain) NSString *leftPosition;
-@property (nonatomic, retain) NSString *centerPosition;
-@property (nonatomic, retain) NSString *rightPosition;
+@property (nonatomic, strong) NSString *positionLabel;
+@property (nonatomic, strong) NSString *leftPosition;
+@property (nonatomic, strong) NSString *centerPosition;
+@property (nonatomic, strong) NSString *rightPosition;
 
 @end
 
@@ -36,13 +36,6 @@
 	return self;
 }
 
--(void)dealloc {
-	self.positionLabel = nil;
-	self.leftPosition = nil;
-	self.centerPosition = nil;
-	self.rightPosition = nil;
-	[super dealloc];
-}
 
 - (NSString *) mainNibName {
 	return @"GrowlNanoPrefs";
@@ -56,7 +49,7 @@
 	static NSSet *keys = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		keys = [[NSSet setWithObjects:@"size",
+		keys = [NSSet setWithObjects:@"size",
 				  @"opacity",	
 				  @"duration",
 				  @"screen",
@@ -71,7 +64,7 @@
 				  @"textColorNormal",
 				  @"textColorHigh",	
 				  @"textColorEmergency",
-				  @"position", nil] retain];
+				  @"position", nil];
 	});
 	return keys;
 }

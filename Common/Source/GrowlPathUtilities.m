@@ -93,7 +93,7 @@
 
 		NSArray *searchPath = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, domainMask, /*expandTilde*/ YES);
 		NSMutableArray *mSearchPath = [NSMutableArray arrayWithCapacity:[searchPath count]];
-		for (NSString *path in searchPath) {
+		for (__strong NSString *path in searchPath) {
 			path = [path stringByAppendingPathComponent:subpath];
 			if ([mgr fileExistsAtPath:path isDirectory:&isDir] && isDir)
 				[mSearchPath addObject:path];

@@ -54,24 +54,25 @@
       }
    }
    freeifaddrs(interfaces);
-	return [[addresses copy] autorelease];
+	return [addresses copy];
 }
 
 +(NSString*)getPrimaryIPOfType:(NSString*)type fromStore:(SCDynamicStoreRef)dynStore
 {
    NSString *returnIP = nil;
    NSString *primaryKey = [NSString stringWithFormat:@"State:/Network/Global/%@", type];
-   CFDictionaryRef newValue = SCDynamicStoreCopyValue(dynStore, (CFStringRef)primaryKey);
+   CFDictionaryRef newValue = SCDynamicStoreCopyValue(dynStore, (__bridge CFStringRef)primaryKey);
+
    if (newValue) {
 		//Get a key to look up the actual IPv4 info in the dynStore
 		NSString *ipKey = [NSString stringWithFormat:@"State:/Network/Interface/%@/%@",
-								 [(NSDictionary*)newValue objectForKey:@"PrimaryInterface"], type];
-		CFDictionaryRef ipInfo = SCDynamicStoreCopyValue(dynStore, (CFStringRef)ipKey);
+								 [(__bridge NSDictionary*)newValue objectForKey:@"PrimaryInterface"], type];
+		CFDictionaryRef ipInfo = SCDynamicStoreCopyValue(dynStore, (__bridge CFStringRef)ipKey);
 		if (ipInfo) {
 			CFArrayRef addrs = CFDictionaryGetValue(ipInfo, CFSTR("Addresses"));
 			if (addrs && CFArrayGetCount(addrs)) {
 				CFStringRef ip = CFArrayGetValueAtIndex(addrs, 0);
-				returnIP = [NSString stringWithString:(NSString*)ip];
+				returnIP = (__bridge NSString*)ip;
 			}
 			CFRelease(ipInfo);
 		}
@@ -86,7 +87,7 @@
    
    CFStringRef cfHostName = SCDynamicStoreCopyLocalHostName(NULL);
    if(cfHostName != NULL){
-      hostname = [[(NSString*)cfHostName copy] autorelease];
+      hostname = [(__bridge NSString*)cfHostName copy];
       CFRelease(cfHostName);
       if ([hostname hasSuffix:@".local"]) {
          hostname = [hostname substringToIndex:([hostname length] - [@".local" length])];
@@ -140,16 +141,16 @@
 		name = [name substringWithRange:NSMakeRange(0, [name length] - [@".local" length])];
    
 	if ([name Growl_isLikelyDomainName]) {
-		CFHostRef host = CFHostCreateWithName(kCFAllocatorDefault, (CFStringRef)name);
+		CFHostRef host = CFHostCreateWithName(kCFAllocatorDefault, (__bridge CFStringRef)name);
 		CFStreamError error;
 		if (CFHostStartInfoResolution(host, kCFHostAddresses, &error)) {
-			NSArray *addresses = (NSArray *)CFHostGetAddressing(host, NULL);
+			NSArray *addresses = (__bridge NSArray *)CFHostGetAddressing(host, NULL);
 			
 			if ([addresses count]) {
 				/* DNS lookup success! Make a copy, as releasing host will deallocate it. */
-            NSData *result = [[[addresses objectAtIndex:0] copy] autorelease];
+            NSData *result = [[addresses objectAtIndex:0] copy];
             CFRelease(host);
-            result = [[[self addressData:result coercedToPort:GROWL_TCP_PORT] copy] autorelease];
+            result = [[self addressData:result coercedToPort:GROWL_TCP_PORT] copy];
 				return result;
 			}
 		}
@@ -188,7 +189,7 @@
    if(!machineDomain)
       machineDomain = @"local.";
 	/* If we make it here, treat it as a computer name on the local network */ 
-	NSNetService *service = [[[NSNetService alloc] initWithDomain:machineDomain type:type name:name] autorelease];
+	NSNetService *service = [[NSNetService alloc] initWithDomain:machineDomain type:type name:name];
 	if (!service) {
 		/* No such service exists. The computer is probably offline. */
 		return nil;
@@ -213,7 +214,7 @@
 	}
 	
     /* Making a copy appears to be necessary, just like for CFNetServiceGetAddressing() */
-	return [[[addresses objectAtIndex:0] copy] autorelease];
+	return [[addresses objectAtIndex:0] copy];
 }
 
 @end

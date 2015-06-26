@@ -10,7 +10,7 @@
 
 @interface GrowlBoxcarPreferencePane : GrowlPluginPreferencePane <NSURLConnectionDelegate>
 
-@property (nonatomic, retain) NSString *errorMessage;
+@property (nonatomic, strong) NSString *errorMessage;
 @property (nonatomic) BOOL validating;
 
 -(NSString*)emailAddress;

@@ -10,7 +10,7 @@
 
 @interface GrowlPluginPreferencePane ()
 
-@property (nonatomic, retain) NSManagedObject *pluginConfiguration;
+@property (nonatomic, strong) NSManagedObject *pluginConfiguration;
 
 @end
 
@@ -24,32 +24,26 @@
 	if(!plugin){
 		if(self.pluginConfiguration){
 			//We really only do this pre deletion, so it shouldn't ne nesescary to save out the config, but eh
-			[_pluginConfiguration setValue:[[self.configuration copy] autorelease] forKey:@"configuration"];
-			[_pluginConfiguration release];
+			[_pluginConfiguration setValue:[self.configuration copy] forKey:@"configuration"];
 			[self willChangeValueForKey:@"pluginConfiguration"];
 			_pluginConfiguration = nil;
 			[self didChangeValueForKey:@"pluginConfiguration"];
 		}
 		self.configuration = [NSMutableDictionary dictionary];
 		
-		if(_configurationID)
-			[_configurationID release];
 		_configurationID = nil;
 	}else{
 		if(self.pluginConfiguration) {
-			[_pluginConfiguration setValue:[[self.configuration copy] autorelease] forKey:@"configuration"];
-			[_pluginConfiguration release];
+			[_pluginConfiguration setValue:[self.configuration copy] forKey:@"configuration"];
 		}
 		[self willChangeValueForKey:@"pluginConfiguration"];
-		_pluginConfiguration = [plugin retain];
+		_pluginConfiguration = plugin;
 		[self didChangeValueForKey:@"pluginConfiguration"];
 		if([plugin valueForKey:@"configuration"])
-			self.configuration = [[[plugin valueForKey:@"configuration"] mutableCopy] autorelease];
+			self.configuration = [[plugin valueForKey:@"configuration"] mutableCopy];
 		else
 			self.configuration = [NSMutableDictionary dictionary];
 		
-		if(_configurationID)
-			[_configurationID release];
 		_configurationID = [[plugin valueForKey:@"configID"] copy];
 		
 	}
@@ -63,7 +57,7 @@
 		[self.configuration removeObjectForKey:key];
 	
 	if(self.pluginConfiguration)
-		[self.pluginConfiguration setValue:[[self.configuration copy] autorelease] forKey:@"configuration"];
+		[self.pluginConfiguration setValue:[self.configuration copy] forKey:@"configuration"];
 }
 
 -(void)updateConfigurationValues {
@@ -95,6 +89,10 @@
 -(void)_setDisplayName:(NSString*)displayName {
    if(self.pluginConfiguration)
       [self.pluginConfiguration setValue:displayName forKey:@"displayName"];
+}
+
+-(NSSet*)bindingKeys {
+    return nil;
 }
 
 @end

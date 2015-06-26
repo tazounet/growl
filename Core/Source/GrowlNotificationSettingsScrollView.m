@@ -34,11 +34,6 @@
    [self setScrollerStyle:NSScrollerStyleOverlay];
 }
 
--(void)dealloc {
-   [top release];
-   [bottom release];
-   [super dealloc];
-}
 
 -(void)tile {
    [super tile];

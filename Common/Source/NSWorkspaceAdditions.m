@@ -27,7 +27,7 @@
 
 	struct LSItemInfoRecord rec;
 
-	OSStatus err = LSCopyItemInfoForURL((CFURLRef)URL, kLSRequestTypeCreator, &rec);
+	OSStatus err = LSCopyItemInfoForURL((__bridge CFURLRef)URL, kLSRequestTypeCreator, &rec);
 	if (err == noErr) {
 		if (outFileType)    *outFileType    = NSFileTypeForHFSTypeCode(rec.filetype);
 		if (outCreatorCode) *outCreatorCode = NSFileTypeForHFSTypeCode(rec.creator);
@@ -38,7 +38,6 @@
 - (BOOL) getFileType:(out NSString **)outFileType creatorCode:(out NSString **)outCreatorCode forFile:(NSString *)path {
 	NSURL *URL = [[NSURL alloc] initFileURLWithPath:path];
 	BOOL success = [self getFileType:outFileType creatorCode:outCreatorCode forURL:URL];
-	[URL release];
 	return success;
 }
 

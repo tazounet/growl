@@ -62,20 +62,19 @@
 #pragma mark -
 
 + (id) ticketWithDictionary:(NSDictionary *)ticketDict {
-	return [[[GrowlApplicationTicket alloc] initWithDictionary:ticketDict] autorelease];
+	return [[GrowlApplicationTicket alloc] initWithDictionary:ticketDict];
 }
 
 - (id) initWithDictionary:(NSDictionary *)ticketDict {
 	if (!ticketDict) {
-		[self release];
 		NSParameterAssert(ticketDict != nil);
 		return nil;
 	}
 	if ((self = [self init])) {
 		synchronizeOnChanges = NO;
 
-		appName = [[ticketDict objectForKey:GROWL_APP_NAME] retain];
-		appId = [[ticketDict objectForKey:GROWL_APP_ID] retain];
+		appName = [ticketDict objectForKey:GROWL_APP_NAME];
+		appId = [ticketDict objectForKey:GROWL_APP_ID];
       NSString *host = [ticketDict valueForKey:GROWL_NOTIFICATION_GNTP_SENT_BY];
       if ([host hasSuffix:@".local"]) {
          host = [host substringToIndex:([host length] - [@".local" length])];
@@ -92,13 +91,12 @@
       if(isLocalHost){
          appNameHostName = appName;
       }else {
-         hostName = [host retain];
-         appNameHostName = [[[NSString alloc] initWithFormat:@"%@ - %@", hostName, appName] autorelease];
+         hostName = host;
+         appNameHostName = [[NSString alloc] initWithFormat:@"%@ - %@", hostName, appName];
       }
       
 		if (appId && ![appId isKindOfClass:[NSString class]]) {
 			NSLog(@"Ticket for application %@ contains invalid bundle ID %@! Rejecting.", appName, appId);
-			[self release];
 			return nil;
 		}
       
@@ -107,8 +105,8 @@
       else
          loggingEnabled = YES;
 
-		humanReadableNames = [[ticketDict objectForKey:GROWL_NOTIFICATIONS_HUMAN_READABLE_NAMES] retain];
-		notificationDescriptions = [[ticketDict objectForKey:GROWL_NOTIFICATIONS_DESCRIPTIONS] retain];
+		humanReadableNames = [ticketDict objectForKey:GROWL_NOTIFICATIONS_HUMAN_READABLE_NAMES];
+		notificationDescriptions = [ticketDict objectForKey:GROWL_NOTIFICATIONS_DESCRIPTIONS];
 
 		//Get all the notification names and the data about them
 		allNotificationNames = [ticketDict objectForKey:GROWL_NOTIFICATIONS_ALL];
@@ -137,7 +135,6 @@
 			[notification setNotificationDescription:[notificationDescriptions objectForKey:name]];
 
 			[allNotificationsTemp setObject:notification forKey:name];
-			[notification release];
 		}
 		allNotifications = allNotificationsTemp;
 		allNotificationNames = allNamesTemp;
@@ -164,19 +161,19 @@
 			if (appId) {
 				CFURLRef appURL = NULL;
 				OSStatus err = LSFindApplicationForInfo(kLSUnknownCreator,
-														(CFStringRef)appId,
+														(__bridge CFStringRef)appId,
 														/*inName*/ NULL,
 														/*outAppRef*/ NULL,
 														&appURL);
 				if (err == noErr) {
-					fullPath = [(NSString *)CFURLCopyPath(appURL) autorelease];
+					fullPath = (NSString *)CFBridgingRelease(CFURLCopyPath(appURL));
 					CFRelease(appURL);
 				}
 			}
 			if (!fullPath)
 				fullPath = [[NSWorkspace sharedWorkspace] fullPathForApplication:appName];
 		}
-		appPath = [fullPath retain];
+		appPath = fullPath;
 //		NSLog(@"got appPath: %@", appPath);
 
 		[self setIconData:[ticketDict objectForKey:GROWL_APP_ICON_DATA]];
@@ -212,11 +209,11 @@
 		changed = YES;
 		synchronizeOnChanges = YES;
 		
-		[self addObserver:self forKeyPath:@"displayPluginName" options:NSKeyValueObservingOptionNew context:self];
-		[self addObserver:self forKeyPath:@"ticketEnabled" options:NSKeyValueObservingOptionNew context:self];
-		[self addObserver:self forKeyPath:@"positionType" options:NSKeyValueObservingOptionNew context:self];
-		[self addObserver:self forKeyPath:@"selectedPosition" options:NSKeyValueObservingOptionNew context:self];
-		[self addObserver:self forKeyPath:@"loggingEnabled" options:NSKeyValueObservingOptionNew context:self];
+		[self addObserver:self forKeyPath:@"displayPluginName" options:NSKeyValueObservingOptionNew context:(__bridge void *)(self)];
+		[self addObserver:self forKeyPath:@"ticketEnabled" options:NSKeyValueObservingOptionNew context:(__bridge void *)(self)];
+		[self addObserver:self forKeyPath:@"positionType" options:NSKeyValueObservingOptionNew context:(__bridge void *)(self)];
+		[self addObserver:self forKeyPath:@"selectedPosition" options:NSKeyValueObservingOptionNew context:(__bridge void *)(self)];
+		[self addObserver:self forKeyPath:@"loggingEnabled" options:NSKeyValueObservingOptionNew context:(__bridge void *)(self)];
 	}
 	return self;
 }
@@ -229,19 +226,7 @@
 	[self removeObserver:self forKeyPath:@"selectedPosition"];
 	[self removeObserver:self forKeyPath:@"loggingEnabled"];   
 	
-	[appName                  release];
-	[appId                    release];
-	[appPath                  release];
-	[iconData                 release];
-	[icon					  release];
-	[allNotifications         release];
-	[defaultNotifications     release];
-	[humanReadableNames       release];
-	[notificationDescriptions release];
-	[allNotificationNames     release];
-	[displayPluginName        release];
 
-	[super dealloc];
 }
 
 #pragma mark -
@@ -252,7 +237,6 @@
 
 	if (!ticketDict) {
 		NSLog(@"Tried to init a ticket from this file, but it isn't a ticket file: %@", ticketPath);
-		[self release];
 		return nil;
 	}
 
@@ -294,7 +278,6 @@
 	if (appPath) {
 		NSURL *url = [[NSURL alloc] initFileURLWithPath:appPath];
 		file_data = dockDescriptionWithURL(url);
-		[url release];
 	}
 
 	id location = file_data ? [NSDictionary dictionaryWithObject:file_data forKey:@"file-data"] : appPath;
@@ -321,11 +304,6 @@
       localHost,               @"isGrowlAppLocalHost",
       logNumber,               LoggingEnabled,
 		nil];
-	[useDefaultsValue					release];
-	[ticketEnabledValue					release];
-	[positionTypeValue					release];
-	[selectedCustomPositionValue		release];
-	[saveNotifications					release];
 	
    if (hostName)
       [saveDict setObject:hostName forKey:GROWL_NOTIFICATION_GNTP_SENT_BY];
@@ -351,7 +329,6 @@
 		[plistData writeToFile:savePath atomically:YES];
 	else
 		NSLog(@"Error writing ticket for application %@: %@", appName, error);
-	[saveDict release];
 
 	changed = NO;
 }
@@ -389,15 +366,13 @@
 - (NSData *) iconData {
 	if (!iconData) {
 		if (appPath) {
-			[icon release];
-			icon = [[[NSWorkspace sharedWorkspace] iconForFile:appPath] retain];
-			iconData = [[icon PNGRepresentation] retain];
+			icon = [[NSWorkspace sharedWorkspace] iconForFile:appPath];
+			iconData = [icon PNGRepresentation];
 		}
 		if (!iconData) {
-			[icon release];
-			icon = [[[NSWorkspace sharedWorkspace] iconForFileType:NSFileTypeForHFSTypeCode(kGenericApplicationIcon)] retain];
+			icon = [[NSWorkspace sharedWorkspace] iconForFileType:NSFileTypeForHFSTypeCode(kGenericApplicationIcon)];
 			[icon setSize:NSMakeSize(128.0f, 128.0f)];
-			iconData = [[icon PNGRepresentation] retain];
+			iconData = [icon PNGRepresentation];
 		}
 	}
 	return iconData;
@@ -420,17 +395,15 @@
 		if (!isValidData)
 			inIconData = nil;
 
-		[iconData release];
-		iconData = [inIconData retain];
-		[icon release]; icon = nil;
+		iconData = inIconData;
+		 icon = nil;
 	}
 }
 
 - (void)setIcon:(NSImage *)inIcon {
 	[self setIconData:[inIcon PNGRepresentation]];
 
-	[icon autorelease];
-	icon = [inIcon retain];
+	icon = inIcon;
 }
 
 - (NSString *) applicationName {
@@ -511,11 +484,9 @@
 		}
 
 		if (![allNotifications isEqual:allNotesCopy]) {
-			[allNotifications release];
 			allNotifications = allNotesCopy;
 			changed = YES;
 		} else {
-			[allNotesCopy release];
 		}
 	}
 
@@ -533,8 +504,7 @@
 	NSString *bundleId = [dict objectForKey:GROWL_APP_ID];
 
 	if (bundleId != appId && ![bundleId isEqualToString:appId]) {
-		[appId release];
-		appId = [bundleId retain];
+		appId = bundleId;
 		changed = YES;
 	}
 
@@ -544,15 +514,13 @@
 
 	NSDictionary *newNames = [dict objectForKey:GROWL_NOTIFICATIONS_HUMAN_READABLE_NAMES];
 	if (newNames != humanReadableNames && ![newNames isEqual:humanReadableNames]) {
-		[humanReadableNames release];
-		humanReadableNames = [newNames retain];
+		humanReadableNames = newNames;
 		changed = YES;
 	}
 
 	NSDictionary *newDescriptions = [dict objectForKey:GROWL_NOTIFICATIONS_DESCRIPTIONS];
 	if (newDescriptions != notificationDescriptions && ![newDescriptions isEqual:notificationDescriptions]) {
-		[notificationDescriptions release];
-		notificationDescriptions = [newDescriptions retain];
+		notificationDescriptions = newDescriptions;
 		changed = YES;
 	}
 
@@ -583,14 +551,13 @@
 		if (appId) {
 			CFURLRef appURL = NULL;
 			OSStatus err = LSFindApplicationForInfo(kLSUnknownCreator,
-													(CFStringRef)appId,
+													(__bridge CFStringRef)appId,
 													/*inName*/ NULL,
 													/*outAppRef*/ NULL,
 													&appURL);
 			if (err == noErr) {
-				fullPath = [(NSString *)CFURLCopyPath(appURL) autorelease];
-				if(fullPath)
-					CFMakeCollectable(fullPath);		
+				fullPath = (NSString *)CFBridgingRelease(CFURLCopyPath(appURL));
+
 				CFRelease(appURL);
 			}
 		}
@@ -598,14 +565,13 @@
 			fullPath = [workspace fullPathForApplication:appName];
 	}
 	if (fullPath != appPath && ![fullPath isEqualToString:appPath]) {
-		[appPath release];
-		appPath = [fullPath retain];
+		appPath = fullPath;
 		changed = YES;
 	}
 }
 
 - (NSArray *) allNotifications {
-	return [[[allNotifications allKeys] retain] autorelease];
+	return [allNotifications allKeys];
 }
 
 - (void) setAllNotifications:(NSArray *)inArray {
@@ -613,8 +579,7 @@
 		if ([inArray isEqualToArray:allNotificationNames])
 			return;
 		changed = YES;
-		[allNotificationNames release];
-		allNotificationNames = [inArray retain];
+		allNotificationNames = inArray;
 
 		//We want to keep all of the old notification settings and create entries for the new ones
 		NSMutableDictionary *tmp = [[NSMutableDictionary alloc] initWithCapacity:[inArray count]];
@@ -628,25 +593,20 @@
 				[notification setHumanReadableName:[humanReadableNames objectForKey:key]];
 				[notification setNotificationDescription:[notificationDescriptions objectForKey:key]];
 				[tmp setObject:notification forKey:key];
-				[notification release];
 			}
 		}
-		[allNotifications release];
 		allNotifications = tmp;
 
 		// And then make sure the list of default notifications also doesn't have any straglers...
 		NSMutableSet *cur = [[NSMutableSet alloc] initWithArray:defaultNotifications];
 		NSSet *new = [[NSSet alloc] initWithArray:allNotificationNames];
 		[cur intersectSet:new];
-		[defaultNotifications release];
-		defaultNotifications = [[cur allObjects] retain];
-		[cur release];
-		[new release];
+		defaultNotifications = [cur allObjects];
 	}
 }
 
 - (NSArray *) defaultNotifications {
-	return [[defaultNotifications retain] autorelease];
+	return defaultNotifications;
 }
 
 - (void) setDefaultNotifications:(id)inObject {
@@ -656,8 +616,7 @@
 		 *	WILL NOT be dereferenced. ALWAYS set the all-notifications list FIRST.
 		 */
 		if (![defaultNotifications isEqual:inObject]) {
-			[defaultNotifications release];
-			defaultNotifications = [inObject retain];
+			defaultNotifications = inObject;
 			changed = YES;
 		}
 	} else if ([inObject isKindOfClass:NSClassFromString(@"NSArray")] ) {
@@ -683,11 +642,9 @@
 			}
 		}
 		if (![defaultNotifications isEqualToArray:mDefaultNotifications]) {
-			[defaultNotifications release];
 			defaultNotifications = mDefaultNotifications;
 			changed = YES;
 		} else {
-			[mDefaultNotifications release];
 		}
 	} else if ([inObject isKindOfClass:[NSIndexSet class]]) {
 		NSUInteger notificationIndex;
@@ -704,18 +661,15 @@
 			}
 		}
 		if (![defaultNotifications isEqualToArray:mDefaultNotifications]) {
-			[defaultNotifications release];
 			defaultNotifications = mDefaultNotifications;
 			changed = YES;
 		} else {
-			[mDefaultNotifications release];
 		}
 	} else {
 		if (inObject)
 			NSLog(@"WARNING: application %@ passed an invalid object for the default notifications: %@.", appName, inObject);
 		if (![defaultNotifications isEqualToArray:allNotificationNames]) {
-			[defaultNotifications release];
-			defaultNotifications = [allNotificationNames retain];
+			defaultNotifications = allNotificationNames;
 			changed = YES;
 		}
 	}
@@ -739,7 +693,6 @@
 	for (GrowlNotificationTicket *obj in [allNotifications objectEnumerator]) {
 		[obj setEnabled:[allowed containsObject:[obj name]]];
 	}
-	[allowed release];
 
 	useDefaults = NO;
 }

@@ -20,10 +20,6 @@
 	return GrowlCommunicationAttemptTypeRegister;
 }
 
-- (void)dealloc
-{	
-	[super dealloc];
-}
 
 - (void) begin {
 	BOOL success = NO;
@@ -53,7 +49,7 @@
 					CFUUIDRef uuid = CFUUIDCreate(kCFAllocatorDefault);
 					CFStringRef uuidString = CFUUIDCreateString(kCFAllocatorDefault, uuid);
 					CFRelease(uuid);
-					regDictFileName = [[NSString stringWithFormat:@"%@-%u-%@", [self.dictionary objectForKey:GROWL_APP_NAME], getpid(), (NSString *)uuidString] stringByAppendingPathExtension:GROWL_REG_DICT_EXTENSION];
+					regDictFileName = [[NSString stringWithFormat:@"%@-%u-%@", [self.dictionary objectForKey:GROWL_APP_NAME], getpid(), (__bridge NSString *)uuidString] stringByAppendingPathExtension:GROWL_REG_DICT_EXTENSION];
 					CFRelease(uuidString);
 					if ([regDictFileName length] > NAME_MAX)
 						regDictFileName = [[regDictFileName substringToIndex:(NAME_MAX - [GROWL_REG_DICT_EXTENSION length])] stringByAppendingPathExtension:GROWL_REG_DICT_EXTENSION];
@@ -75,7 +71,6 @@
 					} else {
 						NSLog(@"GrowlApplicationBridge: Error writing registration dictionary at %@: %@", regDictPath, errorString);
 						NSLog(@"GrowlApplicationBridge: Registration dictionary follows\n%@", self.dictionary);
-						[errorString release];
 					}
                     
 					if ([[NSFileManager defaultManager] fileExistsAtPath:regDictPath]) {
@@ -98,18 +93,18 @@
 						NSData *regItemURLUTF8Data = [regItemURLString dataUsingEncoding:NSUTF8StringEncoding];
 						err = AEStreamWriteKeyDesc(stream, keyDirectObject, typeFileURL, [regItemURLUTF8Data bytes], [regItemURLUTF8Data length]);
 						if (err != noErr) {
-							NSLog(@"%@: Could not set direct object of open-document event to register this application with Growl because AEStreamWriteKeyDesc returned %li/%s", [self class], (long)err, GetMacOSStatusCommentString(err));
+							NSLog(@"%@: Could not set direct object of open-document event to register this application with Growl because AEStreamWriteKeyDesc returned %li/%@", [self class], (long)err, [NSError errorWithDomain: NSOSStatusErrorDomain code: err userInfo: nil]);
 						}
 					}
                     
 					AppleEvent event;
 					err = AEStreamClose(stream, &event);
 					if (err != noErr) {
-						NSLog(@"%@: Could not finish open-document event to register this application with Growl because AEStreamClose returned %li/%s", [self class], (long)err, GetMacOSStatusCommentString(err));
+						NSLog(@"%@: Could not finish open-document event to register this application with Growl because AEStreamClose returned %li/%@", [self class], (long)err, [NSError errorWithDomain: NSOSStatusErrorDomain code: err userInfo: nil]);
 					} else {
 						err = AESendMessage(&event, /*reply*/ NULL, kAENoReply | kAEDontReconnect | kAENeverInteract | kAEDontRecord, kAEDefaultTimeout);
 						if (err != noErr) {
-							NSLog(@"%@: Could not send open-document event to register this application with Growl because AESend returned %li/%s", [self class], (long)err, GetMacOSStatusCommentString(err));
+							NSLog(@"%@: Could not send open-document event to register this application with Growl because AESend returned %li/%@", [self class], (long)err, [NSError errorWithDomain: NSOSStatusErrorDomain code: err userInfo: nil]);
 						}
                         
 						AEDisposeDesc(&event);

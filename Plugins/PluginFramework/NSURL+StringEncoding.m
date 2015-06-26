@@ -16,10 +16,10 @@
 																						 NULL,
 																						 (CFStringRef)@";/?:@&=+$",
 																						 kCFStringEncodingUTF8);
-	NSString *encodedString = [(NSString*)stringRef copy];
+	NSString *encodedString = [(__bridge NSString*)stringRef copy];
 	CFRelease(stringRef);
 	
-	return [encodedString autorelease];
+	return encodedString;
 }
 
 @end

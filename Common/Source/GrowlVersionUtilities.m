@@ -222,7 +222,7 @@ NSString* createVersionDescription(const struct Version v) {
 		}
 		CFStringAppendFormat(str, /*formatOptions*/ NULL, CFSTR("%@%u"), releaseTypeNames[v.releaseType], v.development);
 	}
-	return (NSString*)str;
+	return (__bridge_transfer NSString*)str;
 }
 
 #pragma mark -

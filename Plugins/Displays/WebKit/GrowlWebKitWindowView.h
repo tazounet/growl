@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <WebKit/WebKit.h>
+#import "GrowlNotificationView.h"
 
 @interface WebView(Transparency)
 - (void) setDrawsBackground:(BOOL)flag;
@@ -26,7 +27,7 @@
 	NSRect				closeButtonRect;
 }
 
-@property (nonatomic, retain) NSBundle *styleBundle;
+@property (nonatomic, strong) NSBundle *styleBundle;
 
 - (void) sizeToFit;
 
@@ -38,4 +39,9 @@
 
 - (BOOL) mouseOver;
 - (void) setCloseOnMouseExit:(BOOL)flag;
+
+- (void) mouseEnteredNotificationView:(GrowlNotificationView *)notificationView;
+- (void) mouseExitedNotificationView:(GrowlNotificationView *)notificationView;
+- (void) stopDisplay;
+
 @end

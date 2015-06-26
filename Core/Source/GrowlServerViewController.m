@@ -26,7 +26,7 @@
 {
    if (self == [GNTPHostAvailableColorTransformer class]) {
        @autoreleasepool {
-           [self setValueTransformer:[[[self alloc] init] autorelease]
+           [self setValueTransformer:[[self alloc] init]
                              forName:@"GNTPHostAvailableColorTransformer"];
        }
    }
@@ -56,7 +56,7 @@
 {
    if (self == [GNTPHostAvailableColorTransformer class]) {
        @autoreleasepool {
-           [self setValueTransformer:[[[self alloc] init] autorelease]
+           [self setValueTransformer:[[self alloc] init]
                              forName:@"GNTPManualEntryImageTransformer"];
        }
    }
@@ -140,26 +140,9 @@
 
 - (void)dealloc {
    [[NSNotificationCenter defaultCenter] removeObserver:self];
-   [networkAddressString release];
    
-   [listenForIncomingNoteLabel release];
-   [serverPasswordLabel release];
-   [ipAddressesLabel release];
-   [forwardingTabTitle release];
-   [subscriptionsTabTitle release];
-   [subscribersTabTitle release];
-   [bonjourDiscoveredLabel release];
-   [manualEntryLabel release];
-   [firewallLabel release];
    
-   [forwardEnableCheckboxLabel release];
-   [subscriberEnableCheckboxLabel release];
-   [useColumnTitle release];
-   [computerColumnTitle release];
-   [passwordColumnTitle release];
-   [validColumnTitle release];
    
-   [super dealloc];
 }
 
 - (void) awakeFromNib {

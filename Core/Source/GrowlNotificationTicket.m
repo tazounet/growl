@@ -25,11 +25,11 @@
 @synthesize notificationDescription;
 
 + (GrowlNotificationTicket *) notificationWithName:(NSString *)theName {
-	return [[[GrowlNotificationTicket alloc] initWithName:theName] autorelease];
+	return [[GrowlNotificationTicket alloc] initWithName:theName];
 }
 
 + (GrowlNotificationTicket *) notificationWithDictionary:(NSDictionary *)dict {
-	return [[[GrowlNotificationTicket alloc] initWithDictionary:dict] autorelease];
+	return [[GrowlNotificationTicket alloc] initWithDictionary:dict];
 }
 
 - (GrowlNotificationTicket *) initWithDictionary:(NSDictionary *)dict {
@@ -125,13 +125,7 @@
     [self removeObserver:self forKeyPath:@"displayPluginName"];
     [self removeObserver:self forKeyPath:@"sound"];
     
-	[name release];
-	[humanReadableName release];
-	[displayPluginName release];
-	[notificationDescription release];
-	[sound release];
 
-	[super dealloc];
 }
 
 #pragma mark -
@@ -146,9 +140,6 @@
 		stickyValue,  @"Sticky",
       loggingValue, @"Logging",
 		nil];
-	[enabledValue release];
-	[stickyValue  release];
-   [loggingValue release];
 	if (priority != GrowlPriorityUnset)
       [dict setObject:[NSNumber numberWithInteger:priority] forKey:@"Priority"];
 	if (displayPluginName)

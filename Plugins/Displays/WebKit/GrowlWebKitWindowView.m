@@ -10,6 +10,7 @@
 #import "GrowlWebKitWindowView.h"
 #import "GrowlDefinesInternal.h"
 #import "GrowlWebKitDefines.h"
+#import "NSViewAdditions.h"
 
 @interface NSView (MouseOver)
 - (void) _updateMouseoverWithFakeEvent;
@@ -33,9 +34,6 @@
 
 - (void) dealloc {
 	[self setUIDelegate:nil];
-	[styleBundle release];
-	styleBundle = nil;
-	[super dealloc];
 }
 
 - (NSView *) hitTest:(NSPoint)aPoint {
@@ -87,7 +85,7 @@
 
 	if (trackingRectTag)
 		[self removeTrackingRect:trackingRectTag];
-	BOOL mouseInside = NSPointInRect([self convertPoint:[window convertScreenToBase:[NSEvent mouseLocation]] fromView:self],
+	BOOL mouseInside = NSPointInRect([self convertPointFromScreen:[NSEvent mouseLocation]],
 									 rect);
 	trackingRectTag = [self addTrackingRect:rect owner:self userData:NULL assumeInside:mouseInside];
 	if (mouseInside)
@@ -224,6 +222,15 @@
 - (NSArray *) webView:(WebView *)sender contextMenuItemsForElement:(NSDictionary *)element defaultMenuItems:(NSArray *)defaultMenuItems {
 	// disable context menu
 	return nil;
+}
+
+- (void) mouseEnteredNotificationView:(GrowlNotificationView *)notificationView {
+}
+
+- (void) mouseExitedNotificationView:(GrowlNotificationView *)notificationView {
+}
+
+- (void) stopDisplay {
 }
 
 @end

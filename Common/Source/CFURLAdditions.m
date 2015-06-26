@@ -20,76 +20,6 @@ static NSString *_CFURLAliasDataKey  = @"_CFURLAliasData";
 static NSString *_CFURLStringKey     = @"_CFURLString";
 static NSString *_CFURLStringTypeKey = @"_CFURLStringType";
 
-//'alias' as in the Alias Manager.
-NSURL *fileURLWithAliasData(NSData *aliasData) {
-	if (!aliasData) {
-		NSLog(@"WARNING: createFileURLWithAliasData called with NULL aliasData");
-		return NULL;
-	}
-
-	NSURL *url = nil;
-
-	AliasHandle alias = NULL;
-	OSStatus err = PtrToHand([aliasData bytes], (Handle *)&alias, [aliasData length]);
-	if (err != noErr) {
-		NSLog(@"in createFileURLWithAliasData: Could not allocate an alias handle from %lu bytes of alias data (data follows) because PtrToHand returned %li\n%@", [aliasData length], (long)err, aliasData);
-	} else {
-		CFStringRef path = nil;
-		/*
-		 * FSResolveAlias mounts disk images or network shares to resolve
-		 * aliases, thus we resort to FSCopyAliasInfo.
-		 */
-		err = FSCopyAliasInfo(alias,
-							  /* targetName */ NULL,
-							  /* volumeName */ NULL,
-							  &path,
-							  /* whichInfo */ NULL,
-							  /* info */ NULL);
-		DisposeHandle((Handle)alias);
-		if (err != noErr) {
-			if (err != fnfErr) //ignore file-not-found; it's harmless
-				NSLog(@"in createFileURLWithAliasData: Could not resolve alias (alias data follows) because FSResolveAlias returned %li - will try path\n%@", (long)err, aliasData);
-		} else if (path) {
-			url = [[NSURL alloc] initFileURLWithPath:(NSString*)path isDirectory:YES];
-		} else {
-			NSLog(@"in createFileURLWithAliasData: FSCopyAliasInfo returned a NULL path");
-		}
-      if(path)
-         CFRelease(path);
-	}
-
-	return [url autorelease];
-}
-
-NSData *createAliasDataWithURL(NSURL *theURL) {
-	//return NULL for non-file: URLs.
-	CFStringRef scheme = CFURLCopyScheme((CFURLRef)theURL);
-	CFComparisonResult isFileURL = CFStringCompare(scheme, (CFStringRef)@"file", kCFCompareCaseInsensitive);
-	CFRelease(scheme);
-	if (isFileURL != kCFCompareEqualTo)
-		return NULL;
-
-	NSData *aliasData = nil;
-
-	FSRef fsref;
-	if (CFURLGetFSRef((CFURLRef)theURL, &fsref)) {
-		AliasHandle alias = NULL;
-		OSStatus    err   = FSNewAlias(/*fromFile*/ NULL, &fsref, &alias);
-		if (err != noErr) {
-			NSLog(@"in createAliasDataForURL: FSNewAlias for %@ returned %li", theURL, (long)err);
-		} else {
-			HLock((Handle)alias);
-
-			aliasData = (NSData*)CFDataCreate(kCFAllocatorDefault, (const UInt8 *)*alias, GetHandleSize((Handle)alias));
-
-			HUnlock((Handle)alias);
-			DisposeHandle((Handle)alias);
-		}
-	}
-
-	return aliasData;
-}
-
 //these are the type of external representations used by Dock.app.
 NSURL *fileURLWithDockDescription(NSDictionary *dict) {
 	NSURL *url = nil;
@@ -98,7 +28,8 @@ NSURL *fileURLWithDockDescription(NSDictionary *dict) {
 	NSData *aliasData = [dict valueForKey:_CFURLAliasDataKey];
 
 	if (aliasData)
-		url = fileURLWithAliasData(aliasData);
+        NSLog(@"%@", aliasData);
+		//url = fileURLWithAliasData(aliasData);
 
 	if (!url) {
 		if (path) {
@@ -118,8 +49,7 @@ NSURL *fileURLWithDockDescription(NSDictionary *dict) {
 				struct stat sb;
 				fstat(fd, &sb);
 				close(fd);
-				url = (NSURL*)CFURLCreateWithFileSystemPath(kCFAllocatorDefault, (CFStringRef)path, pathStyle, /*isDirectory*/ (bool)(sb.st_mode & S_IFDIR));
-            [url autorelease];
+				url = (NSURL*)CFBridgingRelease(CFURLCreateWithFileSystemPath(kCFAllocatorDefault, (CFStringRef)path, pathStyle, /*isDirectory*/ (bool)(sb.st_mode & S_IFDIR)));
 			}
 		}
 	}
@@ -135,21 +65,20 @@ NSDictionary *dockDescriptionWithURL(NSURL *theURL) {
 		return NULL;
 	}
 
-	CFStringRef path     = CFURLCopyFileSystemPath((CFURLRef)theURL, kCFURLPOSIXPathStyle);
-	CFDataRef aliasData  = (CFDataRef)createAliasDataWithURL(theURL);
+	CFStringRef path   = CFURLCopyFileSystemPath((CFURLRef)theURL, kCFURLPOSIXPathStyle);
+    NSData* aliasData  = nil; //createAliasDataWithURL(theURL);
 
 	if (path || aliasData) {
 		dict = [NSMutableDictionary dictionary];
 
 		if (path) {
-			[dict setValue:(NSString*)path forKey:_CFURLStringKey];
+			[dict setValue:(__bridge NSString*)path forKey:_CFURLStringKey];
 			CFRelease(path);
             [dict setValue:[NSNumber numberWithInt:kCFURLPOSIXPathStyle] forKey:_CFURLStringTypeKey];
 		}
 
 		if (aliasData) {
-			[dict setValue:(NSData*)aliasData forKey:_CFURLAliasDataKey];
-			CFRelease(aliasData);
+			[dict setValue:aliasData forKey:_CFURLAliasDataKey];
 		}
 	} else {
 		dict = NULL;

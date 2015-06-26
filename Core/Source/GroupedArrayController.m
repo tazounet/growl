@@ -43,7 +43,7 @@
 		self.selection = nil;
 		
 		// Initialization code here.
-		self.countController = [[[NSArrayController alloc] init] autorelease];
+		self.countController = [[NSArrayController alloc] init];
 		[countController setManagedObjectContext:self.context];
 		[countController setEntityName:entityName];
 		if(basePredicateString && ![basePredicateString isEqualToString:@""])
@@ -77,17 +77,7 @@
 }
 
 - (void)dealloc {
-	[entityName release];
-	[basePredicateString release];
-	[groupKey release];
-	[currentGroups release];
-	[groupControllers release];
 	[countController unbind:@"filterPredicate"];
-	[countController release];
-	[arrangedObjects release];
-	[groupCompareBlock release];
-	[selection release];
-	[super dealloc];
 }
 
 
@@ -138,7 +128,7 @@
 -(void)updateArray
 {
 	NSArray *destination = [self updatedArray];
-	NSArray *current = [arrangedObjects retain];
+	NSArray *current = arrangedObjects;
 	self.arrangedObjects = destination;
 	
 	//NSLog(@"Current: %lu", [current count]);
@@ -159,11 +149,11 @@
 	}else{
 		//Add/Remove in the right order to make NSTableView happy
 		[self beginUpdates];
-		__block NSMutableArray *currentCopy = [current mutableCopy];
-		__block NSMutableArray *updatingCopy = [current mutableCopy];
+		NSMutableArray *currentCopy = [current mutableCopy];
+		NSMutableArray *updatingCopy = [current mutableCopy];
 		
 		__block NSUInteger added = 0;
-		__block GroupedArrayController *blockSafeSelf = self;
+		__weak GroupedArrayController *blockSafeSelf = self;
 		[destination enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop){
 			NSInteger oldIndex = [currentCopy indexOfObject:obj];
 			if(oldIndex == NSNotFound){
@@ -202,11 +192,8 @@
 			NSLog(@"sigh");
 		}*/
 		
-		[updatingCopy release];
-		[currentCopy release];
 		[self endUpdates];
 	}
-	[current release];
 }
 
 /* Our new arranged objects, based on whether we are grouped or not
@@ -217,7 +204,7 @@
 {
     NSArray *array = nil;
     if(!grouped || ([currentGroups count] <= 1 && doNotShowSingleGroupHeader)){
-        array = [[[countController arrangedObjects] copy] autorelease];
+        array = [[countController arrangedObjects] copy];
     }else{
         NSMutableArray *temp = [NSMutableArray array];
         [currentGroups enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
@@ -230,14 +217,14 @@
                 }
             }
         }];
-        array = [[temp copy] autorelease];
+        array = [temp copy];
     }
     return array;
 }
         
 -(void)updateArrayGroups
 {
-	__block GroupedArrayController *blockSafeSelf = self;
+	__weak GroupedArrayController *blockSafeSelf = self;
 	
 	//Determine which groups have been added and removed
 	NSMutableSet *added = [NSMutableSet set];
@@ -289,28 +276,25 @@
 		[newController addObserver:blockSafeSelf 
 							 forKeyPath:@"arrangedObjects.count" 
 								 options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld 
-								 context:newGroup];
+								 context:(__bridge void *)(newGroup)];
 		
 		[newController bind:@"filterPredicate"
 					  toObject:self
 				  withKeyPath:@"self.filterPredicate"
 						options:nil];
 		
-		[newGroup release];
 		newGroup = nil;
-		[newController release];
 		newController = nil;
 	}];
 	
 	//remove any old arrayControllers
 	[removed enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
 		NSString *groupID = obj;
-		GroupController *group = [[groupControllers valueForKey:groupID] retain];
+		GroupController *group = [groupControllers valueForKey:groupID];
 		[groupControllers removeObjectForKey:groupID];
 		[currentGroups removeObject:group];
 		[[group groupArray] unbind:@"filterPredicate"];
 		[[group groupArray] removeObserver:self forKeyPath:@"arrangedObjects.count"];
-		[group release];
 	}];
 	
 	
@@ -333,8 +317,8 @@
             [self updateArrayGroups];
 				[self updatedTotalCount];
         }else{            
-            if(ctxt != NULL && [(id)ctxt isKindOfClass:[GroupController class]]){
-                GroupController *group = (GroupController*)ctxt;
+            if(ctxt != NULL && [(__bridge id)ctxt isKindOfClass:[GroupController class]]){
+                GroupController *group = (__bridge GroupController*)ctxt;
                 if(grouped && [group showGroup])
                     [self updateArray];
             }

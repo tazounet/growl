@@ -8,12 +8,12 @@
 @end
 
 @interface PRWebViewWindowController : NSWindowController
-@property (assign) IBOutlet WebView *webView;
-@property (assign) IBOutlet NSProgressIndicator *progressIndicator;
+@property (weak) IBOutlet WebView *webView;
+@property (weak) IBOutlet NSProgressIndicator *progressIndicator;
 
 - (id)initWithURL:(NSString *)retrieveURL
 		 delegate:(id<PRWebViewWindowControllerDelegate>)delegate;
-@property (nonatomic, assign, readonly) id<PRWebViewWindowControllerDelegate> delegate;
-@property (nonatomic, retain, readonly) NSString *retrieveURL;
+@property (nonatomic, unsafe_unretained, readonly) id<PRWebViewWindowControllerDelegate> delegate;
+@property (nonatomic, strong, readonly) NSString *retrieveURL;
 
 @end

@@ -14,10 +14,10 @@
 
 @interface GrowlTicketDatabaseNotification : GrowlTicketDatabaseTicket
 
-@property (nonatomic, retain) NSNumber * defaultEnabled;
-@property (nonatomic, retain) NSString * humanReadableName;
-@property (nonatomic, retain) NSNumber * priority;
-@property (nonatomic, retain) NSNumber * sticky;
+@property (nonatomic, strong) NSNumber * defaultEnabled;
+@property (nonatomic, strong) NSString * humanReadableName;
+@property (nonatomic, strong) NSNumber * priority;
+@property (nonatomic, strong) NSNumber * sticky;
 
 -(void)setWithNotificationTicket:(GrowlNotificationTicket*)ticket;
 

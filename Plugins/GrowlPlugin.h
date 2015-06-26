@@ -35,7 +35,7 @@
 	NSBundle *pluginBundle;
 	NSString *pluginPathName;
 
-	GrowlPluginPreferencePane *preferencePane;
+	GrowlPluginPreferencePane *_preferencePane;
 	NSString	     *prefDomain;
 }
 
@@ -85,7 +85,7 @@
  * @method bundle
  * @abstract Returns the bundle of the receiver.
  */
-@property (nonatomic, retain) NSBundle *bundle;
+@property (nonatomic, strong) NSBundle *bundle;
 
 /*!
  * @method pathname
@@ -97,7 +97,7 @@
  * @method pathname
  * @abstract Returns the string used to access the preference domain of the receiver.
  */
-@property (nonatomic, retain) NSString *prefDomain;
+@property (nonatomic, strong) NSString *prefDomain;
 
 /*!	@method	preferencePane
  *	@abstract	Return an <code>NSPreferencePane</code> instance that manages
@@ -113,6 +113,6 @@
  *	 The default implementation of this method returns <code>nil</code>.
  *	@result	The preference pane. Can be <code>nil</code>.
  */
-@property (nonatomic, assign) GrowlPluginPreferencePane *preferencePane;
+@property (nonatomic, strong) GrowlPluginPreferencePane *preferencePane;
 
 @end

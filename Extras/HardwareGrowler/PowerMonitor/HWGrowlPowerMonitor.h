@@ -18,6 +18,6 @@ typedef enum {
 
 @interface HWGrowlPowerMonitor : NSObject <HWGrowlPluginProtocol, HWGrowlPluginNotifierProtocol>
 
-@property (nonatomic, assign) IBOutlet NSView *prefsView;
+@property (nonatomic, strong) IBOutlet NSView *prefsView;
 
 @end

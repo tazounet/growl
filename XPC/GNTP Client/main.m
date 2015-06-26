@@ -50,10 +50,10 @@ static void GNTP_peer_event_handler(xpc_connection_t peer, xpc_object_t event)
 		
 		GrowlGNTPCommunicationAttempt *attempt = nil;
 		if ([purpose caseInsensitiveCompare:@"registration"] == NSOrderedSame) {
-			attempt = [[[GrowlGNTPRegistrationAttempt alloc] initWithDictionary:growlDict] autorelease];
+			attempt = [[GrowlGNTPRegistrationAttempt alloc] initWithDictionary:growlDict];
 			
 		}else if ([purpose caseInsensitiveCompare:@"notification"] == NSOrderedSame) {
-			attempt = [[[GrowlGNTPNotificationAttempt alloc] initWithDictionary:growlDict] autorelease];
+			attempt = [[GrowlGNTPNotificationAttempt alloc] initWithDictionary:growlDict];
 		}else if ([purpose caseInsensitiveCompare:@"shutdown"] == NSOrderedSame){
 			if(keepAlive){
 				NSLog(@"Shutting down GNTP Client XPC");

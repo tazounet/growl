@@ -25,7 +25,7 @@
 
 @interface GNTPServer : NSObject <GCDAsyncSocketDelegate>
 
-@property (nonatomic, assign) id<GNTPServerDelegate> delegate;
+@property (nonatomic, unsafe_unretained) id<GNTPServerDelegate> delegate;
 
 -(id)initWithInterface:(NSString*)interface;
 

@@ -54,7 +54,7 @@
    NSString *_appName;
    NSData *_appIconData;
    
-   id<GrowlApplicationBridgeDelegate> _delegate;
+   id<GrowlApplicationBridgeDelegate> __strong _delegate;
    
    @private   
    GrowlCommunicationAttempt *_registrationAttempt;
@@ -74,7 +74,7 @@
 @property (nonatomic, copy) NSString *appName;
 @property (nonatomic, copy) NSData *appIconData;
 
-@property (nonatomic, assign) id<GrowlApplicationBridgeDelegate> delegate;
+@property (nonatomic, strong) id<GrowlApplicationBridgeDelegate> delegate;
 
 +(GrowlApplicationBridge*)sharedBridge;
 

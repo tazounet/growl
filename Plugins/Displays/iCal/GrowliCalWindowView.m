@@ -71,8 +71,8 @@ static void addTopRoundedRectToPath(CGContextRef context, CGRect rect, CGFloat r
 
 - (id) initWithFrame:(NSRect) frame configurationDict:(NSDictionary*)configDict {
 	if ((self = [super initWithFrame:frame])) {
-		titleFont = [[NSFont systemFontOfSize:TITLE_FONT_SIZE_PTS] retain];
-		textFont = [[NSFont systemFontOfSize:DESCR_FONT_SIZE_PTS] retain];
+		titleFont = [NSFont systemFontOfSize:TITLE_FONT_SIZE_PTS];
+		textFont = [NSFont systemFontOfSize:DESCR_FONT_SIZE_PTS];
 		textLayoutManager = [[NSLayoutManager alloc] init];
 		titleLayoutManager = [[NSLayoutManager alloc] init];
 		lineHeight = [textLayoutManager defaultLineHeightForFont:textFont];
@@ -90,21 +90,6 @@ static void addTopRoundedRectToPath(CGContextRef context, CGRect rect, CGFloat r
 	return self;
 }
 
-- (void) dealloc {
-	[titleFont          release];
-	[textFont           release];
-	[icon               release];
-	[textColor          release];
-	[bgColor            release];
-	[lightColor         release];
-	[borderColor        release];
-	[textStorage        release];
-	[titleStorage       release];
-	[textLayoutManager  release];
-	[titleLayoutManager release];
-    
-	[super dealloc];
-}
 
 - (CGFloat) titleHeight {
 	return haveTitle ? titleHeight : 0.0;
@@ -191,11 +176,11 @@ static void addTopRoundedRectToPath(CGContextRef context, CGRect rect, CGFloat r
 	drawRect.origin.y = PANEL_VSPACE_PX;
 	drawRect.size.width = iconSize;
 	drawRect.size.height = iconSize;
-    
-	[icon setFlipped:YES];
+
 	[icon drawScaledInRect:drawRect
 				 operation:NSCompositeSourceOver
-				  fraction:1.0];
+				  fraction:1.0
+                neverFlipped:YES];
     
 	drawRect.origin.x = PANEL_HSPACE_PX;
     
@@ -222,12 +207,8 @@ static void addTopRoundedRectToPath(CGContextRef context, CGRect rect, CGFloat r
 	}
 	backgroundAlpha *= 0.01;
     
-	[textColor release];
-	textColor = [[NSColor whiteColor] retain];
+	textColor = [NSColor whiteColor];
     
-	[bgColor release];
-	[lightColor release];
-	[borderColor release];
 	
 	GrowliCalColorType color = GrowliCalPurple;
 	if([[self configurationDict] valueForKey:GrowliCalColor]){
@@ -297,14 +278,10 @@ static void addTopRoundedRectToPath(CGContextRef context, CGRect rect, CGFloat r
 		}
 	}
 	
-	[bgColor retain];
-	[lightColor retain];
-	[borderColor retain];
 }
 
 - (void) setIcon:(NSImage *) anIcon {
-	[icon release];
-	icon = [anIcon retain];
+	icon = anIcon;
 	[self setNeedsDisplay:YES];
 }
 
@@ -323,7 +300,6 @@ static void addTopRoundedRectToPath(CGContextRef context, CGRect rect, CGFloat r
 		titleStorage = [[NSTextStorage alloc] init];
 		titleContainer = [[NSTextContainer alloc] initWithContainerSize:containerSize];
 		[titleLayoutManager addTextContainer:titleContainer];	// retains textContainer
-		[titleContainer release];
 		[titleStorage addLayoutManager:titleLayoutManager];	// retains layoutManager
 		[titleContainer setLineFragmentPadding:0.0];
 	}
@@ -335,12 +311,10 @@ static void addTopRoundedRectToPath(CGContextRef context, CGRect rect, CGFloat r
                                        textColor,      NSForegroundColorAttributeName,
                                        paragraphStyle, NSParagraphStyleAttributeName,
                                        nil];
-	[paragraphStyle release];
     
 	[[titleStorage mutableString] setString:aTitle];
 	[titleStorage setAttributes:defaultAttributes range:NSMakeRange(0, [titleStorage length])];
     
-	[defaultAttributes release];
     
 	titleRange = [titleLayoutManager glyphRangeForTextContainer:titleContainer];	// force layout
 	titleHeight = [titleLayoutManager usedRectForTextContainer:titleContainer].size.height;
@@ -370,7 +344,6 @@ static void addTopRoundedRectToPath(CGContextRef context, CGRect rect, CGFloat r
 		textStorage = [[NSTextStorage alloc] init];
   		textContainer = [[NSTextContainer alloc] initWithContainerSize:containerSize];
 		[textLayoutManager addTextContainer:textContainer];	// retains textContainer
-		[textContainer release];
 		[textStorage addLayoutManager:textLayoutManager];	// retains layoutManager
 		[textContainer setLineFragmentPadding:0.0];
 	}
@@ -383,7 +356,6 @@ static void addTopRoundedRectToPath(CGContextRef context, CGRect rect, CGFloat r
 	[[textStorage mutableString] setString:aText];
 	[textStorage setAttributes:defaultAttributes range:NSMakeRange(0, [textStorage length])];
     
-	[defaultAttributes release];
     
 	textRange = [textLayoutManager glyphRangeForTextContainer:textContainer];	// force layout
 	textHeight = [textLayoutManager usedRectForTextContainer:textContainer].size.height;

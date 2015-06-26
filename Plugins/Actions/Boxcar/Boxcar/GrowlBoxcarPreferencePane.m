@@ -15,13 +15,13 @@
 
 @interface GrowlBoxcarPreferencePane ()
 
-@property (nonatomic, retain) NSMutableArray *connections;
-@property (nonatomic, retain) NSString *testEmail;
+@property (nonatomic, strong) NSMutableArray *connections;
+@property (nonatomic, strong) NSString *testEmail;
 
-@property (nonatomic, retain) NSString *emailLabel;
-@property (nonatomic, retain) NSString *onlyIfPriorityLabel;
-@property (nonatomic, retain) NSString *onlyIfIdleLabel;
-@property (nonatomic, retain) NSString *prefixLabel;
+@property (nonatomic, strong) NSString *emailLabel;
+@property (nonatomic, strong) NSString *onlyIfPriorityLabel;
+@property (nonatomic, strong) NSString *onlyIfIdleLabel;
+@property (nonatomic, strong) NSString *prefixLabel;
 
 @end
 
@@ -51,11 +51,6 @@
 	return self;
 }
 
--(void)dealloc {
-	self.connections = nil;
-	self.testEmail = nil;
-	[super dealloc];
-}
 
 -(NSString*)mainNibName {
 	return @"BoxcarPrefPane";
@@ -69,12 +64,12 @@
 	static NSSet *keys = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		keys = [[NSSet setWithObjects:@"emailAddress",
+		keys = [NSSet setWithObjects:@"emailAddress",
 					@"prefixString",
 					@"usePrefix",
 					@"usePriority",
 					@"minPriority",
-					@"pushIdle", nil] retain];
+					@"pushIdle", nil];
 	});
 	return keys;
 }
@@ -114,7 +109,6 @@
 	[connections addObject:connection];
 	[connection setDelegateQueue:[NSOperationQueue mainQueue]];
 	[connection start];
-	[connection release];
 }
 
 -(NSString*)emailAddress {

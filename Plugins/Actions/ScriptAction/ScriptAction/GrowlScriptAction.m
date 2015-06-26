@@ -45,7 +45,7 @@
    if(iconData != nil){
       //[result setObject:iconData forKey:@"icon"];
    }
-   return [[result copy] autorelease];
+   return [result copy];
 }
 
 -(NSArray*)unixArgumentsForDictionary:(NSDictionary*)dict withOrderedKeys:(NSArray*)keys {
@@ -84,14 +84,14 @@
 	static NSArray *_arguments = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		_arguments = [@[@"GNTP Notification Sent-By",
+		_arguments = @[@"GNTP Notification Sent-By",
 						  GROWL_APP_NAME,
 						  GROWL_NOTIFICATION_NAME,
 						  GROWL_NOTIFICATION_TITLE,
 						  GROWL_NOTIFICATION_DESCRIPTION,
 						  GROWL_NOTIFICATION_PRIORITY,
 						  GROWL_NOTIFICATION_STICKY/*,
-						  GROWL_NOTIFICATION_ICON_DATA*/] retain];
+						  GROWL_NOTIFICATION_ICON_DATA*/];
 	});
 	return _arguments;
 }
@@ -171,10 +171,10 @@
 
 /* Auto generated method returning our PreferencePane, do not touch */
 - (GrowlPluginPreferencePane *) preferencePane {
-	if (!preferencePane)
-		preferencePane = [[GrowlScriptActionPreferencePane alloc] initWithBundle:[NSBundle bundleWithIdentifier:@"com.Growl.ScriptAction"]];
+	if (!_preferencePane)
+		_preferencePane = [[GrowlScriptActionPreferencePane alloc] initWithBundle:[NSBundle bundleWithIdentifier:@"com.Growl.ScriptAction"]];
 	
-	return preferencePane;
+	return _preferencePane;
 }
 
 @end

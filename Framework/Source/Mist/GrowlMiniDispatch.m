@@ -41,20 +41,19 @@
       }else{
          GrowlPositionController *controller = [[GrowlPositionController alloc] initWithScreenFrame:[[NSScreen mainScreen] visibleFrame]];
          self.positionController = controller;
-         [controller release];
       }
 	
-		__block GrowlMiniDispatch *blockSelf = self;
+		__weak GrowlMiniDispatch *weakSelf = self;
 		void (^screenChangeBlock)(NSNotification*) = ^(NSNotification *note){
 			CGRect newRect = [[NSScreen mainScreen] visibleFrame];
-			CGRect currentRect = [blockSelf.positionController screenFrame];
+			CGRect currentRect = [weakSelf.positionController screenFrame];
 			if(!CGRectEqualToRect(newRect, currentRect))
 			{
-				if([blockSelf.positionController isFrameFree:[blockSelf.positionController screenFrame]])
-					[blockSelf.positionController setScreenFrame:newRect];
+				if([weakSelf.positionController isFrameFree:[weakSelf.positionController screenFrame]])
+					[weakSelf.positionController setScreenFrame:newRect];
 				else{
-					[blockSelf.positionController setUpdateFrame:YES];
-					[blockSelf.positionController setNewFrame:newRect];
+					[weakSelf.positionController setUpdateFrame:YES];
+					[weakSelf.positionController setNewFrame:newRect];
 				}
 			}
 		};
@@ -68,10 +67,7 @@
 }
 
 - (void)dealloc {
-   [windowDictionary release]; windowDictionary = nil;
-	[positionController release]; positionController = nil;
-	[queuedWindows release]; queuedWindows = nil;
-	[super dealloc];
+	 queuedWindows = nil;
 }
 
 - (void)queueWindow:(GrowlMistWindowController*)newWindow
@@ -119,7 +115,6 @@
 		[queuedWindows removeObjectsInArray:toRemove];
 	
 	if([queuedWindows count] == 0){
-		[queuedWindows release];
 		queuedWindows = nil;
 	}
 }
@@ -182,7 +177,7 @@
          image = (NSImage *)iconData;
       }
       else {
-         image = [[[NSImage alloc] initWithData:iconData] autorelease];
+         image = [[NSImage alloc] initWithData:iconData];
       }
    
       GrowlMistWindowController *mistWindow = [[GrowlMistWindowController alloc] initWithNotificationTitle:title
@@ -194,7 +189,6 @@
       
       if(![self insertWindow:mistWindow])
          [self queueWindow:mistWindow];
-      [mistWindow release];
    });
    return YES;
 }
@@ -216,7 +210,7 @@
    }
    
    dispatch_async(dispatch_get_main_queue(), ^{
-      NSMutableDictionary *notificationDict = [[@{GROWL_NOTIFICATION_INTERNAL_ID: note.noteUUID} mutableCopy] autorelease];
+      NSMutableDictionary *notificationDict = [@{GROWL_NOTIFICATION_INTERNAL_ID: note.noteUUID} mutableCopy];
       if ([dict objectForKey:GROWL_NOTIFICATION_CLICK_CONTEXT])
          [notificationDict setObject:[dict objectForKey:GROWL_NOTIFICATION_CLICK_CONTEXT] forKey:GROWL_NOTIFICATION_CLICK_CONTEXT];
       
@@ -234,7 +228,7 @@
          if ([iconData isKindOfClass:[NSImage class]]) {
             icon = (NSImage *)iconData;
          } else {
-            icon = (iconData ? [[[NSImage alloc] initWithData:iconData] autorelease] : nil);
+            icon = (iconData ? [[NSImage alloc] initWithData:iconData] : nil);
          }
 
          //if ([appleNotification respondsToSelector:@selector(setContentImage:)]) {
@@ -256,7 +250,6 @@
       [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:appleNotification];
       [windowDictionary setObject:appleNotification forKey:note.noteUUID];
       
-      [appleNotification release];
    });
    
    return YES;
@@ -289,7 +282,6 @@
 }
 
 - (void)mistWindow:(GrowlMistWindowController*)window statusUpdate:(GrowlNoteStatus)status {
-   [window retain];
 	[windowDictionary removeObjectForKey:[window uuid]];
 	[self clearWindowFrame:window];
 	
@@ -297,7 +289,6 @@
 	
    GrowlNote *note = [[GrowlApplicationBridge sharedBridge] noteForUUID:[window uuid]];
    [note handleStatusUpdate:status];
-	[window release];
 }
 - (void)mistNotificationDismissed:(GrowlMistWindowController *)window
 {
@@ -335,7 +326,7 @@
    }
    
    NSString *uuid = [[notification userInfo] objectForKey:GROWL_NOTIFICATION_INTERNAL_ID];
-   GrowlNote *note = [[[GrowlApplicationBridge sharedBridge] noteForUUID:uuid] retain];
+   GrowlNote *note = [[GrowlApplicationBridge sharedBridge] noteForUUID:uuid];
    [windowDictionary removeObjectForKey:uuid];
    if(note){
       [note handleStatusUpdate:status];
@@ -346,7 +337,6 @@
    
    // Remove the notification, so it doesn't sit around forever.
    [center removeDeliveredNotification:notification];
-   [note release];
 }
 
 - (void)expireNotification:(NSDictionary *)dict
@@ -381,7 +371,6 @@
          [self performSelector:@selector(expireNotification:) withObject:dict afterDelay:lifetime];
       }
       
-      [dict release];
    }
 }
 

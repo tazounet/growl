@@ -11,6 +11,7 @@
 #import "GrowlTicketDatabasePlugin.h"
 #import "GrowlTicketDatabaseCompoundAction.h"
 #import "GrowlPreferencesController.h"
+#import "GrowlTicketDatabaseDisplay.h"
 
 @implementation GrowlTicketDatabaseTicket
 
@@ -52,7 +53,7 @@
 	return plugin;
 }
 -(NSSet*)resolvedActionConfigSet {
-	__block NSMutableSet *buildSet = [NSMutableSet set];
+	__weak NSMutableSet *buildSet = [NSMutableSet set];
 	if(self.actions && [self.actions count] > 0){
 		[self.actions enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
 			if([[obj entityName] isEqualToString:@"GrowlCompoundAction"])
@@ -68,7 +69,7 @@
 			[buildSet unionSet:[[GrowlTicketDatabase sharedInstance] defaultActionConfigSet]];
 		}
 	}
-	return [[buildSet copy] autorelease];
+	return [buildSet copy];
 }
 
 -(GrowlPositionOrigin)resolvedDisplayOrigin {

@@ -45,10 +45,10 @@ NSMutableData *HexUnencode(NSString* string);
 
 @property (assign) GrowlGNTPHashingAlgorithm hashAlgorithm;
 @property (assign) GrowlGNTPEncryptionAlgorithm encryptionAlgorithm;
-@property (retain) NSData *encryptionKey;
-@property (retain) NSData *keyHash;
-@property (retain) NSString *password;
-@property (retain) NSData *salt;
-@property (retain) NSData *IV;
+@property (strong) NSData *encryptionKey;
+@property (strong) NSData *keyHash;
+@property (strong) NSString *password;
+@property (strong) NSData *salt;
+@property (strong) NSData *IV;
 
 @end

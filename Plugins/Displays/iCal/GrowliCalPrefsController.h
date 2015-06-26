@@ -15,8 +15,8 @@
 	IBOutlet NSSlider		*slider_opacity;
 }
 
-@property (nonatomic, retain) NSString *colorLabel;
-@property (nonatomic, retain) NSArray *colorNames;
+@property (nonatomic, strong) NSString *colorLabel;
+@property (nonatomic, strong) NSArray *colorNames;
 
 - (CGFloat) duration;
 - (void) setDuration:(CGFloat)value;

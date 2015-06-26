@@ -12,37 +12,37 @@
 
 @interface GrowlServerViewController : GrowlPrefsViewController
 
-@property (nonatomic, assign) GNTPForwarder *forwarder;
-@property (nonatomic, assign) GNTPSubscriptionController *subscriptionController;
-@property (nonatomic, assign) IBOutlet NSTableColumn *serviceNameColumn;
-@property (nonatomic, assign) IBOutlet NSTableColumn *servicePasswordColumn;
-@property (nonatomic, assign) IBOutlet NSTableView *networkTableView;
-@property (nonatomic, assign) IBOutlet NSTableView *subscriptionsTableView;
-@property (nonatomic, assign) IBOutlet NSTableView *subscriberTableView;
-@property (nonatomic, assign) IBOutlet NSArrayController *subscriptionArrayController;
-@property (nonatomic, assign) IBOutlet NSArrayController *subscriberArrayController;
-@property (nonatomic, assign) IBOutlet NSTabView *networkConnectionTabView;
+@property (nonatomic, weak) GNTPForwarder *forwarder;
+@property (nonatomic, weak) GNTPSubscriptionController *subscriptionController;
+@property (nonatomic, weak) IBOutlet NSTableColumn *serviceNameColumn;
+@property (nonatomic, weak) IBOutlet NSTableColumn *servicePasswordColumn;
+@property (nonatomic, weak) IBOutlet NSTableView *networkTableView;
+@property (nonatomic, weak) IBOutlet NSTableView *subscriptionsTableView;
+@property (nonatomic, weak) IBOutlet NSTableView *subscriberTableView;
+@property (nonatomic, weak) IBOutlet NSArrayController *subscriptionArrayController;
+@property (nonatomic, weak) IBOutlet NSArrayController *subscriberArrayController;
+@property (nonatomic, weak) IBOutlet NSTabView *networkConnectionTabView;
 
-@property (nonatomic, retain) NSString *listenForIncomingNoteLabel;
-@property (nonatomic, retain) NSString *serverPasswordLabel;
-@property (nonatomic, retain) NSString *ipAddressesLabel;
-@property (nonatomic, retain) NSString *forwardingTabTitle;
-@property (nonatomic, retain) NSString *subscriptionsTabTitle;
-@property (nonatomic, retain) NSString *subscribersTabTitle;
-@property (nonatomic, retain) NSString *bonjourDiscoveredLabel;
-@property (nonatomic, retain) NSString *manualEntryLabel;
-@property (nonatomic, retain) NSString *firewallLabel;
+@property (nonatomic, strong) NSString *listenForIncomingNoteLabel;
+@property (nonatomic, strong) NSString *serverPasswordLabel;
+@property (nonatomic, strong) NSString *ipAddressesLabel;
+@property (nonatomic, strong) NSString *forwardingTabTitle;
+@property (nonatomic, strong) NSString *subscriptionsTabTitle;
+@property (nonatomic, strong) NSString *subscribersTabTitle;
+@property (nonatomic, strong) NSString *bonjourDiscoveredLabel;
+@property (nonatomic, strong) NSString *manualEntryLabel;
+@property (nonatomic, strong) NSString *firewallLabel;
 
-@property (nonatomic, retain) NSString *forwardEnableCheckboxLabel;
-@property (nonatomic, retain) NSString *subscriberEnableCheckboxLabel;
-@property (nonatomic, retain) NSString *useColumnTitle;
-@property (nonatomic, retain) NSString *computerColumnTitle;
-@property (nonatomic, retain) NSString *passwordColumnTitle;
-@property (nonatomic, retain) NSString *validColumnTitle;
+@property (nonatomic, strong) NSString *forwardEnableCheckboxLabel;
+@property (nonatomic, strong) NSString *subscriberEnableCheckboxLabel;
+@property (nonatomic, strong) NSString *useColumnTitle;
+@property (nonatomic, strong) NSString *computerColumnTitle;
+@property (nonatomic, strong) NSString *passwordColumnTitle;
+@property (nonatomic, strong) NSString *validColumnTitle;
 
 @property (nonatomic) int currentServiceIndex;
 
-@property (nonatomic, retain) NSString *networkAddressString;
+@property (nonatomic, strong) NSString *networkAddressString;
 
 - (void)updateAddresses:(NSNotification*)note;
 - (void)showNetworkConnectionTab:(NSUInteger)tab;

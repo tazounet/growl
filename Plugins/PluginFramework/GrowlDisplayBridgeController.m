@@ -26,17 +26,17 @@
 	NSMutableDictionary *queuingDisplayCurrentWindows;
 }
 
-@property (nonatomic, retain) NSMutableSet *pending;
-@property (nonatomic, retain) NSMutableSet *allWindows;
-@property (nonatomic, retain) NSMutableSet *displayedWindows;
-@property (nonatomic, retain) NSMutableArray *windowQueue;
-@property (nonatomic, retain) NSMutableDictionary *windowsByDisplayID;
+@property (nonatomic, strong) NSMutableSet *pending;
+@property (nonatomic, strong) NSMutableSet *allWindows;
+@property (nonatomic, strong) NSMutableSet *displayedWindows;
+@property (nonatomic, strong) NSMutableArray *windowQueue;
+@property (nonatomic, strong) NSMutableDictionary *windowsByDisplayID;
 
-@property (nonatomic, retain) NSMutableDictionary *positionControllers;
+@property (nonatomic, strong) NSMutableDictionary *positionControllers;
 
-@property (nonatomic, retain) NSMutableDictionary *queueKeysByDisplayID;
-@property (nonatomic, retain) NSMutableDictionary *queuingDisplayQueues;
-@property (nonatomic, retain) NSMutableDictionary *queuingDisplayCurrentWindows;
+@property (nonatomic, strong) NSMutableDictionary *queueKeysByDisplayID;
+@property (nonatomic, strong) NSMutableDictionary *queuingDisplayQueues;
+@property (nonatomic, strong) NSMutableDictionary *queuingDisplayCurrentWindows;
 
 @end
 
@@ -75,10 +75,10 @@
 		self.queuingDisplayQueues = [NSMutableDictionary dictionary];
 		self.queuingDisplayCurrentWindows = [NSMutableDictionary dictionary];
 		
-		__block GrowlDisplayBridgeController *blockSelf = self;
+		__weak GrowlDisplayBridgeController *weakSelf = self;
 		//Generate a position controller for each display
 		[[NSScreen screens] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-			[blockSelf addPositionControllersForScreen:obj];
+			[weakSelf addPositionControllersForScreen:obj];
 		}];
 		
 /*		void (^screenChangeBlock)(NSNotification*) = ^(NSNotification *note){
@@ -90,39 +90,39 @@
 			}];
 			
 			__block NSMutableArray *toRemove = [NSMutableArray array];
-			[blockSelf.positionControllers enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+			[weakSelf.positionControllers enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
 				if(![newIDs containsObject:key])
 					[toRemove addObject:key];
 			}];
 			
 			if([toRemove count]) NSLog(@"Removing %lu positioning controller(s)", [toRemove count]);
-			[[blockSelf.positionControllers dictionaryWithValuesForKeys:toRemove] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-				NSMutableSet *displayed = [blockSelf.windowsByDisplayID valueForKey:key];
-				[blockSelf.displayedWindows minusSet:displayed];
-				[blockSelf.allWindows minusSet:displayed];
-				[blockSelf.positionControllers removeObjectForKey:key];
-				[blockSelf.windowsByDisplayID removeObjectForKey:key];
+			[[weakSelf.positionControllers dictionaryWithValuesForKeys:toRemove] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+				NSMutableSet *displayed = [weakSelf.windowsByDisplayID valueForKey:key];
+				[weakSelf.displayedWindows minusSet:displayed];
+				[weakSelf.allWindows minusSet:displayed];
+				[weakSelf.positionControllers removeObjectForKey:key];
+				[weakSelf.windowsByDisplayID removeObjectForKey:key];
 				
-				NSMutableSet *queueKeys = [blockSelf.queueKeysByDisplayID valueForKey:key];
+				NSMutableSet *queueKeys = [weakSelf.queueKeysByDisplayID valueForKey:key];
 				[queueKeys enumerateObjectsUsingBlock:^(id queueObj, BOOL *queueStop) {
-					[blockSelf.queuingDisplayCurrentWindows removeObjectForKey:queueObj];
+					[weakSelf.queuingDisplayCurrentWindows removeObjectForKey:queueObj];
 					//tell these to redisplay
 					NSMutableArray *queue = [queuingDisplayQueues valueForKey:queueObj];
 					[queue enumerateObjectsUsingBlock:^(id windowObj, NSUInteger windowIDX, BOOL *windowStop) {
 						//NSLog(@"old queue key: %@ new key: %@", queueObj, [windowObj displayQueueKey]);
 						//This isn't working quite right yet
-						[blockSelf displayQueueWindow:windowObj];
+						[weakSelf displayQueueWindow:windowObj];
 					}];
 					[queuingDisplayQueues removeObjectForKey:queueObj];
 				}];
-				[blockSelf.queueKeysByDisplayID removeObjectForKey:key];
+				[weakSelf.queueKeysByDisplayID removeObjectForKey:key];
 			}];
 			
 			[screens enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 				CGRect newRect = [obj visibleFrame];
-				GrowlPositionController *controller = [blockSelf positionControllerForScreen:obj];
+				GrowlPositionController *controller = [weakSelf positionControllerForScreen:obj];
 				if(!controller){
-					[blockSelf addPositionControllersForScreen:obj];
+					[weakSelf addPositionControllersForScreen:obj];
 				}else{
 					CGRect currentRect = [controller screenFrame];
 					if(!CGRectEqualToRect(newRect, currentRect))
@@ -152,7 +152,7 @@
 }
 
 -(void)displayChangeNotification:(NSNotification*)note {
-   __block GrowlDisplayBridgeController *blockSelf = self;
+   __weak GrowlDisplayBridgeController *weakSelf = self;
    NSArray *screens = [NSScreen screens];
 	
 	/* Special case for laptops with dynamic graphics switching on
@@ -183,12 +183,12 @@
 		}
 	}
 	
-   __block NSMutableArray *newIDs = [NSMutableArray array];
+   __weak NSMutableArray *newIDs = [NSMutableArray array];
    [screens enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
       [newIDs addObject:[obj screenIDString]];
    }];
    
-   __block NSMutableArray *toRemove = [NSMutableArray array];
+   __weak NSMutableArray *toRemove = [NSMutableArray array];
    [self.positionControllers enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
       if(![newIDs containsObject:key])
          [toRemove addObject:key];
@@ -196,32 +196,32 @@
    
    if([toRemove count]) NSLog(@"Removing %lu positioning controller(s)", [toRemove count]);
    [[self.positionControllers dictionaryWithValuesForKeys:toRemove] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-      NSMutableSet *displayed = [blockSelf.windowsByDisplayID valueForKey:key];
-      [blockSelf.displayedWindows minusSet:displayed];
-      [blockSelf.allWindows minusSet:displayed];
-      [blockSelf.positionControllers removeObjectForKey:key];
-      [blockSelf.windowsByDisplayID removeObjectForKey:key];
+      NSMutableSet *displayed = [weakSelf.windowsByDisplayID valueForKey:key];
+      [weakSelf.displayedWindows minusSet:displayed];
+      [weakSelf.allWindows minusSet:displayed];
+      [weakSelf.positionControllers removeObjectForKey:key];
+      [weakSelf.windowsByDisplayID removeObjectForKey:key];
       
-      NSMutableSet *queueKeys = [blockSelf.queueKeysByDisplayID valueForKey:key];
+      NSMutableSet *queueKeys = [weakSelf.queueKeysByDisplayID valueForKey:key];
       [queueKeys enumerateObjectsUsingBlock:^(id queueObj, BOOL *queueStop) {
-         [blockSelf.queuingDisplayCurrentWindows removeObjectForKey:queueObj];
+         [weakSelf.queuingDisplayCurrentWindows removeObjectForKey:queueObj];
          //tell these to redisplay
          NSMutableArray *queue = [queuingDisplayQueues valueForKey:queueObj];
          [queue enumerateObjectsUsingBlock:^(id windowObj, NSUInteger windowIDX, BOOL *windowStop) {
             //NSLog(@"old queue key: %@ new key: %@", queueObj, [windowObj displayQueueKey]);
             //This isn't working quite right yet
-            [blockSelf displayQueueWindow:windowObj];
+            [weakSelf displayQueueWindow:windowObj];
          }];
          [queuingDisplayQueues removeObjectForKey:queueObj];
       }];
-      [blockSelf.queueKeysByDisplayID removeObjectForKey:key];
+      [weakSelf.queueKeysByDisplayID removeObjectForKey:key];
    }];
    
    [screens enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
       CGRect newRect = [obj visibleFrame];
-      GrowlPositionController *controller = [blockSelf positionControllerForScreen:obj];
+      GrowlPositionController *controller = [weakSelf positionControllerForScreen:obj];
       if(!controller){
-         [blockSelf addPositionControllersForScreen:obj];
+         [weakSelf addPositionControllersForScreen:obj];
       }else{
          CGRect currentRect = [controller screenFrame];
          if(!CGRectEqualToRect(newRect, currentRect))
@@ -248,7 +248,6 @@
 	
 	NSMutableSet *controllerSet = [NSMutableSet set];
 	[windowsByDisplayID setValue:controllerSet forKey:screenIDKey];
-	[controller release];
 }
 
 -(GrowlPositionController*)positionControllerForScreenID:(NSUInteger)screenID {
@@ -301,7 +300,6 @@
 }
 
 -(void)windowReadyToStart:(GrowlDisplayWindowController*)window {
-	[window retain];
 	//If pending doesn't contain us, likely webkit is telling us to update the position due to a coalescing update
 	//In that case, tell it to reposition.  Makes sure that we dont have a problem with coalescing in WebKit displays
 	if([pending containsObject:window]){
@@ -310,7 +308,6 @@
 	}else{
 		[self displayWindow:window reposition:YES];
 	}
-	[window release];
 }
 
 -(void)displayQueueWindow:(GrowlDisplayWindowController*)window 
@@ -377,20 +374,20 @@
 
 -(void)checkQueuedWindows
 {
-	__block GrowlDisplayBridgeController *blockSelf = self;
+	__weak GrowlDisplayBridgeController *weakSelf = self;
 	if([windowQueue count]){
 		dispatch_async(dispatch_get_main_queue(), ^{
-			__block NSMutableArray *found = [NSMutableArray array];
-			[blockSelf.windowQueue enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-				if([blockSelf displayWindow:obj]){
+			__weak NSMutableArray *found = [NSMutableArray array];
+			[weakSelf.windowQueue enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+				if([weakSelf displayWindow:obj]){
 					[found addObject:obj];
 					[obj foundSpaceToStart];
-					[[blockSelf displayedWindows] addObject:obj];
-					NSMutableSet *controllerSet = [blockSelf.windowsByDisplayID valueForKey:[[obj screen] screenIDString]];
+					[[weakSelf displayedWindows] addObject:obj];
+					NSMutableSet *controllerSet = [weakSelf.windowsByDisplayID valueForKey:[[obj screen] screenIDString]];
 					if(controllerSet) [controllerSet addObject:obj];
 				}
 			}];
-			[blockSelf.windowQueue removeObjectsInArray:found];
+			[weakSelf.windowQueue removeObjectsInArray:found];
 		});
 	}
 }

@@ -14,10 +14,6 @@
 @synthesize width;
 @synthesize rects;
 
--(void)dealloc {
-	[rects release];
-	[super dealloc];
-}
 
 -(void)addWidth:(CGFloat)newWidth {
 	NSNumber *number = [NSNumber numberWithFloat:newWidth];

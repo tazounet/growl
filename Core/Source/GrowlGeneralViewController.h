@@ -13,22 +13,22 @@
 
 @interface GrowlGeneralViewController : GrowlPrefsViewController
 
-@property (nonatomic, assign) IBOutlet GrowlPositionPicker *globalPositionPicker;
-@property (nonatomic, assign) IBOutlet GrowlOnSwitch *startAtLoginSwitch;
-@property (assign) IBOutlet SRRecorderControl *recorderControl;
-@property (nonatomic, assign) IBOutlet NSImageView *growlClawLogo;
-@property (nonatomic, assign) IBOutlet GrowlOnSwitch *useAppleNotificationCenterSwitch;
-@property (nonatomic, assign) IBOutlet NSTextField *useAppleNotificationCenterLabelField;
-@property (nonatomic, assign) IBOutlet NSTextField *useAppleNotificationCenterExplanationField;
-@property (nonatomic, assign) IBOutlet NSButton *additionalDownloadsButton;
+@property (nonatomic, weak) IBOutlet GrowlPositionPicker *globalPositionPicker;
+@property (nonatomic, weak) IBOutlet GrowlOnSwitch *startAtLoginSwitch;
+@property (weak) IBOutlet SRRecorderControl *recorderControl;
+@property (nonatomic, weak) IBOutlet NSImageView *growlClawLogo;
+@property (nonatomic, weak) IBOutlet GrowlOnSwitch *useAppleNotificationCenterSwitch;
+@property (nonatomic, weak) IBOutlet NSTextField *useAppleNotificationCenterLabelField;
+@property (nonatomic, weak) IBOutlet NSTextField *useAppleNotificationCenterExplanationField;
+@property (nonatomic, weak) IBOutlet NSButton *additionalDownloadsButton;
 
-@property (nonatomic, retain) NSString *closeAllNotificationsTitle;
-@property (nonatomic, retain) NSString *additionalDownloadsButtonTitle;
-@property (nonatomic, retain) NSString *startGrowlAtLoginLabel;
-@property (nonatomic, retain) NSString *useAppleNotificationCenterLabel;
-@property (nonatomic, retain) NSString *appleNotificationCenterExplanation;
-@property (nonatomic, retain) NSString *defaultStartingPositionLabel;
-@property (nonatomic, retain) NSArray *iconMenuOptionsList;
+@property (nonatomic, strong) NSString *closeAllNotificationsTitle;
+@property (nonatomic, strong) NSString *additionalDownloadsButtonTitle;
+@property (nonatomic, strong) NSString *startGrowlAtLoginLabel;
+@property (nonatomic, strong) NSString *useAppleNotificationCenterLabel;
+@property (nonatomic, strong) NSString *appleNotificationCenterExplanation;
+@property (nonatomic, strong) NSString *defaultStartingPositionLabel;
+@property (nonatomic, strong) NSArray *iconMenuOptionsList;
 
 @property (nonatomic, assign) BOOL showRulesUI;
 

@@ -61,13 +61,13 @@ typedef NSUInteger GrowlCommunicationAttemptType;
 - (id) makeNextAttemptOfClass:(Class)classToTryNext;
 
 //Each attempt that fails will automatically tell the next attempt to begin.
-@property(nonatomic, retain) GrowlCommunicationAttempt *nextAttempt;
+@property(nonatomic, strong) GrowlCommunicationAttempt *nextAttempt;
 
-@property(nonatomic, assign) id <GrowlCommunicationAttemptDelegate> delegate;
+@property(nonatomic, strong) id <GrowlCommunicationAttemptDelegate> delegate;
 
 //Users of this class should examine this property if the attempt fails and they want to know why.
 //Only subclasses should assign to it.
-@property(nonatomic, retain) NSError *error;
+@property(nonatomic, strong) NSError *error;
 
 //Start to try to communicate the dictionary. Subclasses: You must implement this completely yourself; this class's implementation throws an exception.
 - (void) begin;

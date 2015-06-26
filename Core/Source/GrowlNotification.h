@@ -76,6 +76,6 @@
 @property(nonatomic, assign) NSInteger priority;
 
 @property(nonatomic, copy) NSDictionary *auxiliaryDictionary;
-@property(nonatomic, retain) NSDictionary *configurationDict;
+@property(nonatomic, strong) NSDictionary *configurationDict;
 
 @end

@@ -14,9 +14,9 @@
 #import "GrowlDefines.h"
 
 @interface GrowlTCPPathway ()
-@property (nonatomic, retain) GNTPServer *localServer;
-@property (nonatomic, retain) GNTPServer *remoteServer;
-@property (nonatomic, retain) NSNetService *netService;
+@property (nonatomic, strong) GNTPServer *localServer;
+@property (nonatomic, strong) GNTPServer *remoteServer;
+@property (nonatomic, strong) NSNetService *netService;
 @end
 
 @implementation GrowlTCPPathway
@@ -28,11 +28,11 @@
 - (id)init
 {
 	if ((self = [super init])) {
-		self.localServer = [[[GNTPServer alloc] initWithInterface:@"localhost"] autorelease];
+		self.localServer = [[GNTPServer alloc] initWithInterface:@"localhost"];
 		self.localServer.delegate = (id<GNTPServerDelegate>)self;
 		[self.localServer startServer];
 		
-		self.remoteServer = [[[GNTPServer alloc] initWithInterface:nil] autorelease];
+		self.remoteServer = [[GNTPServer alloc] initWithInterface:nil];
 		self.remoteServer.delegate = (id<GNTPServerDelegate>)self;
 		
 		[[NSNotificationCenter defaultCenter] addObserverForName:GROWL_NOTIFICATION_CLICKED
@@ -93,8 +93,6 @@
 - (void)dealloc
 {
 	[self.localServer stopServer];
-	self.localServer = nil;
-	[super dealloc];
 }
 
 - (void)publish
@@ -113,10 +111,10 @@
 		}else
 			publishingName = thisHostName;
       
-      self.netService = [[[NSNetService alloc] initWithDomain:publishingDomain 
+      self.netService = [[NSNetService alloc] initWithDomain:publishingDomain 
 																			type:@"_gntp._tcp." 
 																			name:publishingName 
-																			port:GROWL_TCP_PORT] autorelease];
+																			port:GROWL_TCP_PORT];
       NSDictionary * txtRecordDataDictionary = [NSDictionary dictionaryWithObjectsAndKeys: @"1.0", @"version", @"mac", @"platform", @"13", @"websocket", nil];
       [self.netService setTXTRecordData:[NSNetService dataFromTXTRecordDictionary:txtRecordDataDictionary]];
       [self.netService publish];
@@ -144,7 +142,6 @@
       NSMutableArray *keys = [[dictionary allKeys] mutableCopy];
       [keys removeObject:GROWL_NOTIFICATION_ALREADY_SHOWN];
       dictionary = [dictionary dictionaryWithValuesForKeys:keys];
-      [keys release];
    }
    
 	return [super resultOfPostNotificationWithDictionary:dictionary];

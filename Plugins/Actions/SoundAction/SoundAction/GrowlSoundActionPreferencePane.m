@@ -11,8 +11,8 @@
 
 @interface GrowlSoundActionPreferencePane ()
 
-@property (nonatomic, retain) NSString *soundTableTitle;
-@property (nonatomic, retain) NSString *volumeLabel;
+@property (nonatomic, strong) NSString *soundTableTitle;
+@property (nonatomic, strong) NSString *volumeLabel;
 
 @end
 
@@ -20,7 +20,7 @@
 
 @synthesize sounds;
 @synthesize soundTableView;
-@synthesize soundVolume;
+@dynamic soundVolume;
 
 @synthesize soundTableTitle;
 @synthesize volumeLabel;
@@ -33,12 +33,6 @@
 	return self;
 }
 
--(void)dealloc {
-	self.soundTableTitle = nil;
-	self.volumeLabel = nil;
-	[sounds release];
-	[super dealloc];
-}
 
 -(NSString*)mainNibName {
 	return @"GrowlSoundActionPrefPane";
@@ -48,9 +42,9 @@
 	static NSSet *keys = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		keys = [[NSSet setWithObjects:@"soundName",
+		keys = [NSSet setWithObjects:@"soundName",
 									  @"sounds",
-									  @"soundVolume", nil] retain];
+									  @"soundVolume", nil];
 	});
 	return keys;
 }

@@ -37,12 +37,12 @@
 
 - (void) setOwner:(GNTPForwarder *)pref;
 
-@property (retain) NSString *uuid;
-@property (nonatomic, retain) NSString *computerName;
+@property (strong) NSString *uuid;
+@property (nonatomic, strong) NSString *computerName;
 @property (nonatomic, assign) BOOL use;
 @property (nonatomic, assign) BOOL active;
 @property (assign) BOOL manualEntry;
-@property (retain) NSString *domain;
-@property (retain) GNTPKey *key;
-@property (nonatomic, retain) NSData *lastKnownAddress;
+@property (strong) NSString *domain;
+@property (strong) GNTPKey *key;
+@property (nonatomic, strong) NSData *lastKnownAddress;
 @end

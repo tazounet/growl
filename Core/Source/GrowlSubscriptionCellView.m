@@ -19,10 +19,5 @@
    return self;
 }
 
--(void)dealloc
-{
-   [validUntilLabel release];
-   [super dealloc];
-}
 
 @end

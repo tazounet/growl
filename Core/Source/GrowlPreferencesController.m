@@ -24,11 +24,12 @@
 #import <GrowlPlugins/GrowlKeychainUtilities.h>
 #import <GrowlPlugins/GrowlIdleStatusObserver.h>
 #import <ShortcutRecorder/ShortcutRecorder.h>
+#import "GrowlApplicationController.h"
 
 #import <ServiceManagement/ServiceManagement.h>
 
 CFTypeRef GrowlPreferencesController_objectForKey(CFTypeRef key) {
-	return [[GrowlPreferencesController sharedController] objectForKey:(id)key];
+	return (__bridge CFTypeRef)([[GrowlPreferencesController sharedController] objectForKey:(__bridge id)key]);
 }
 
 CFIndex GrowlPreferencesController_integerForKey(CFTypeRef key) {
@@ -104,7 +105,6 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
     [self removeObserver:self forKeyPath:@"closeAllCombo"];
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 
-	[super dealloc];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -113,7 +113,7 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
     {
         if(self.rollupKeyCombo.keyCode)
         {
-            SGHotKey *hotKey = [[[SGHotKey alloc] initWithIdentifier:showHideHotKey keyCombo:self.rollupKeyCombo target:[GrowlApplicationController sharedController] action:@selector(toggleRollup)] autorelease];
+            SGHotKey *hotKey = [[SGHotKey alloc] initWithIdentifier:showHideHotKey keyCombo:self.rollupKeyCombo target:[GrowlApplicationController sharedController] action:@selector(toggleRollup)];
             [[SGHotKeyCenter sharedCenter] registerHotKey:hotKey];
             [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:self.rollupKeyCombo.keyCode] forKey:GrowlRollupKeyComboCode];
             [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithUnsignedInteger:self.rollupKeyCombo.modifiers] forKey:GrowlRollupKeyComboFlags];
@@ -132,7 +132,7 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
     {
         if(self.closeAllCombo.keyCode)
         {
-            SGHotKey *hotKey = [[[SGHotKey alloc] initWithIdentifier:closeAllHotKey keyCombo:self.closeAllCombo target:[GrowlApplicationController sharedController] action:@selector(closeAllNotifications)] autorelease];
+            SGHotKey *hotKey = [[SGHotKey alloc] initWithIdentifier:closeAllHotKey keyCombo:self.closeAllCombo target:[GrowlApplicationController sharedController] action:@selector(closeAllNotifications)];
             [[SGHotKeyCenter sharedCenter] registerHotKey:hotKey];
             [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:self.closeAllCombo.keyCode] forKey:GrowlCloseAllKeyComboCode];
             [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithUnsignedInteger:self.closeAllCombo.modifiers] forKey:GrowlCloseAllKeyComboFlags];
@@ -159,11 +159,9 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
 		NSMutableDictionary *domain = [inDefaults mutableCopy];
 		[domain addEntriesFromDictionary:existing];
 		[helperAppDefaults setPersistentDomain:domain forName:GROWL_HELPERAPP_BUNDLE_IDENTIFIER];
-		[domain release];
 	} else {
 		[helperAppDefaults setPersistentDomain:inDefaults forName:GROWL_HELPERAPP_BUNDLE_IDENTIFIER];
 	}
-	[helperAppDefaults release];
 	[[NSUserDefaults standardUserDefaults] synchronize];
 	
 	self.idleThreshold = [self objectForKey:GrowlIdleThresholdKey];
@@ -175,10 +173,9 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
 }
 
 - (id) objectForKey:(NSString *)key {
-	id value = (id)CFPreferencesCopyAppValue((CFStringRef)key, (CFStringRef)GROWL_HELPERAPP_BUNDLE_IDENTIFIER);
-	if(value)
-		CFMakeCollectable(value);
-	return [value autorelease];
+	id value = (id)CFBridgingRelease(CFPreferencesCopyAppValue((CFStringRef)key, (CFStringRef)GROWL_HELPERAPP_BUNDLE_IDENTIFIER));
+
+	return value;
 }
 
 - (void) setObject:(id)object forKey:(NSString *)key {
@@ -191,17 +188,16 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
 }
 
 - (BOOL) boolForKey:(NSString *)key {
-	return GrowlPreferencesController_boolForKey((CFTypeRef)key);
+	return GrowlPreferencesController_boolForKey((__bridge CFTypeRef)key);
 }
 
 - (void) setBool:(BOOL)value forKey:(NSString *)key {
 	NSNumber *object = [[NSNumber alloc] initWithBool:value];
 	[self setObject:object forKey:key];
-	[object release];
 }
 
 - (CFIndex) integerForKey:(NSString *)key {
-	return GrowlPreferencesController_integerForKey((CFTypeRef)key);
+	return GrowlPreferencesController_integerForKey((__bridge CFTypeRef)key);
 }
 
 - (void) setInteger:(CFIndex)value forKey:(NSString *)key {
@@ -211,12 +207,11 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
 	NSNumber *object = [[NSNumber alloc] initWithInt:value];
 #endif
 	[self setObject:object forKey:key];
-	[object release];
 }
 
 - (unsigned short)unsignedShortForKey:(NSString *)key
 {
-	return GrowlPreferencesController_unsignedShortForKey((CFTypeRef)key);
+	return GrowlPreferencesController_unsignedShortForKey((__bridge CFTypeRef)key);
 }
 
 
@@ -242,7 +237,7 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
 
 - (void) setShouldStartGrowlAtLogin:(BOOL)flag {
    NSURL *urlOfLoginItem = [[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"Contents/Library/LoginItems/GrowlLauncher.app"];
-   if(!LSRegisterURL((/* __bridge */ CFURLRef)urlOfLoginItem, YES)){
+   if(!LSRegisterURL((__bridge CFURLRef)urlOfLoginItem, YES)){
       //NSLog(@"Failure registering %@ with Launch Services", [urlOfLoginItem description]);
    }
    if(!SMLoginItemSetEnabled(CFSTR("com.growl.GrowlLauncher"), flag)){
@@ -341,9 +336,7 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
 }
 
 - (void) setIdleThreshold:(NSNumber*)value {
-	if(idleThreshold)
-		[idleThreshold release];
-	idleThreshold = [value retain];
+	idleThreshold = value;
 	[self setObject:value forKey:GrowlIdleThresholdKey];
 	[self updateIdleThreshold];
 }
@@ -371,9 +364,7 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
 }
 
 - (void)setIdleTimeExceptionApps:(NSArray *)array {
-	if(idleTimeExceptionApps)
-		[idleTimeExceptionApps release];
-	idleTimeExceptionApps = [array retain];
+	idleTimeExceptionApps = array;
 	[self setObject:array forKey:GrowlIdleTimeExceptionsKey];
 	[[GrowlIdleStatusObserver sharedObserver] setValue:array forKey:@"applicationExceptions"];
 }
@@ -634,6 +625,9 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
             [self didChangeValueForKey:@"shouldUseAppleNotifications"];
         }
 	}
+}
+
+- (void)closeAllNotifications {
 }
 
 @end

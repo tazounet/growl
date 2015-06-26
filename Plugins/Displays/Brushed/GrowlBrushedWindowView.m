@@ -20,7 +20,7 @@
 
 - (id) initWithFrame:(NSRect) frame configurationDict:(NSDictionary *)configDict{
 	if ((self = [super initWithFrame:frame])) {
-		textFont = [[NSFont systemFontOfSize:GrowlBrushedTextFontSize] retain];
+		textFont = [NSFont systemFontOfSize:GrowlBrushedTextFontSize];
 		textLayoutManager = [[NSLayoutManager alloc] init];
 		titleLayoutManager = [[NSLayoutManager alloc] init];
 		lineHeight = [textLayoutManager defaultLineHeightForFont:textFont];
@@ -44,18 +44,6 @@
 	return self;
 }
 
-- (void) dealloc {
-	[textFont           release];
-	[icon               release];
-	[textColor          release];
-	[textShadow         release];
-	[textStorage        release];
-	[textLayoutManager  release];
-	[titleStorage       release];
-	[titleLayoutManager release];
-    
-	[super dealloc];
-}
 
 - (BOOL)isFlipped {
 	// Coordinates are based on top left corner
@@ -112,11 +100,11 @@
 	drawRect.origin.y = GrowlBrushedPadding;
 	drawRect.size.width = iconSize;
 	drawRect.size.height = iconSize;
-    
-	[icon setFlipped:YES];
+
 	[icon drawScaledInRect:drawRect
 				 operation:NSCompositeSourceOver
-				  fraction:1.0];
+				  fraction:1.0
+                 neverFlipped:YES];
     
 	drawRect.origin.x += iconSize + GrowlBrushedIconTextPadding;
     
@@ -133,8 +121,7 @@
 }
 
 - (void) setIcon:(NSImage *)anIcon {
-	[icon release];
-	icon = [anIcon retain];
+	icon = anIcon;
 	[self setNeedsDisplay:YES];
 }
 
@@ -153,7 +140,6 @@
 		titleStorage = [[NSTextStorage alloc] init];
 		titleContainer = [[NSTextContainer alloc] initWithContainerSize:containerSize];
 		[titleLayoutManager addTextContainer:titleContainer];	// retains textContainer
-		[titleContainer release];
 		[titleStorage addLayoutManager:titleLayoutManager];	// retains layoutManager
 		[titleContainer setLineFragmentPadding:0.0];
 	}
@@ -168,12 +154,10 @@
                                        textShadow,     NSShadowAttributeName,
                                        paragraphStyle, NSParagraphStyleAttributeName,
                                        nil];
-	[paragraphStyle release];
     
 	[[titleStorage mutableString] setString:aTitle];
 	[titleStorage setAttributes:defaultAttributes range:NSMakeRange(0, [titleStorage length])];
     
-	[defaultAttributes release];
     
 	titleRange = [titleLayoutManager glyphRangeForTextContainer:titleContainer];	// force layout
 	titleHeight = [titleLayoutManager usedRectForTextContainer:titleContainer].size.height;
@@ -203,7 +187,6 @@
 		textStorage = [[NSTextStorage alloc] init];
 		textContainer = [[NSTextContainer alloc] initWithContainerSize:containerSize];
 		[textLayoutManager addTextContainer:textContainer];	// retains textContainer
-		[textContainer release];
 		[textStorage addLayoutManager:textLayoutManager];	// retains layoutManager
 		[textContainer setLineFragmentPadding:0.0];
 	}
@@ -218,7 +201,6 @@
 	[[textStorage mutableString] setString:aText];
 	[textStorage setAttributes:defaultAttributes range:NSMakeRange(0, [textStorage length])];
     
-	[defaultAttributes release];
     
 	textRange = [textLayoutManager glyphRangeForTextContainer:textContainer];	// force layout
 	textHeight = [textLayoutManager usedRectForTextContainer:textContainer].size.height;
@@ -248,13 +230,11 @@
 	}
 	NSData *data = [[self configurationDict] valueForKey:textKey];
 	
-	[textColor release];
 	if (data && [data isKindOfClass:[NSData class]]) {
 		textColor = [NSUnarchiver unarchiveObjectWithData:data];
 	} else {
 		textColor = [NSColor colorWithCalibratedWhite:0.1f alpha:1.0f];
 	}
-	[textColor retain];
 	data = nil;
 }
 

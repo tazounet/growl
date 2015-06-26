@@ -30,8 +30,6 @@ static BOOL xpcInUse = NO;
 {   
 	static BOOL searched = NO;
 	static BOOL found = NO;
-	if (xpc_connection_create == NULL)
-		return NO;
 	
 	if(searched) 
 		return found;
@@ -73,8 +71,6 @@ static BOOL xpcInUse = NO;
 		xpc_connection_resume(shutdownConnection);
 		xpc_object_t message = [[NSDictionary dictionaryWithObject:@"shutdown" forKey:@"GrowlDictType"] newXPCObject];
 		xpc_connection_send_message(shutdownConnection, message);
-		xpc_release(message);
-		xpc_release(shutdownConnection);
 	}else{
 		//NSLog(@"endpoint doesn't exist, xpc not running");
 	}
@@ -84,34 +80,13 @@ static BOOL xpcInUse = NO;
 {
     if(newConnection)
     {
-        if(connection)
-        {
-            xpc_release(connection);
-            connection = nil;
-        }
-        connection = xpc_retain(newConnection);
+        connection = newConnection;
     }
 }
 
 - (NSString *)purpose
 {
 	return @"erehwon";
-}
-
-- (void)dealloc
-{
-    [sendingDetails release];
-	sendingDetails = nil;
-    
-	[responseDict release];
-    responseDict= nil;
-	
-	if (connection) {
-		xpc_release(connection);
-		connection = NULL;
-	}
-	
-	[super dealloc];
 }
 
 - (void)begin
@@ -132,12 +107,7 @@ static BOOL xpcInUse = NO;
 
 - (BOOL) establishConnection
 {
-	if (xpc_connection_create == NULL) {
-		// We are not on Lion.  We can't do this.
-		return NO;
-	}
-	
-	__block GrowlXPCCommunicationAttempt *blockSafe = self;
+    GrowlXPCCommunicationAttempt *blockSafe = self;
 	//Third party developers will need to make sure to rename the bundle, executable, and info.plist stuff to tld.company.product.GNTPClientService 
 	connection = xpc_connection_create([[GrowlXPCCommunicationAttempt XPCBundleID] UTF8String], dispatch_get_main_queue());
 	if (!connection)
@@ -279,7 +249,6 @@ static BOOL xpcInUse = NO;
 	xpc_object_t xpcMessage = [(NSObject*)messageDict newXPCObject];
 	if(xpcMessage){
 		xpc_connection_send_message(connection, xpcMessage);
-		xpc_release(xpcMessage);
 	}else{
 		NSLog(@"Error generating XPC message for dictionary: %@", dictionary);
 		return NO;

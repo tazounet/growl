@@ -11,13 +11,13 @@
 @interface GrowlSMSPrefs: GrowlPluginPreferencePane {
 }
 
-@property (nonatomic, retain) NSString *smsNotifications;
-@property (nonatomic, retain) NSString *accountRequiredLabel;
-@property (nonatomic, retain) NSString *instructions;
-@property (nonatomic, retain) NSString *accountLabel;
-@property (nonatomic, retain) NSString *passwordLabel;
-@property (nonatomic, retain) NSString *apiIDLabel;
-@property (nonatomic, retain) NSString *destinationLabel;
+@property (nonatomic, strong) NSString *smsNotifications;
+@property (nonatomic, strong) NSString *accountRequiredLabel;
+@property (nonatomic, strong) NSString *instructions;
+@property (nonatomic, strong) NSString *accountLabel;
+@property (nonatomic, strong) NSString *passwordLabel;
+@property (nonatomic, strong) NSString *apiIDLabel;
+@property (nonatomic, strong) NSString *destinationLabel;
 
 - (NSString *) getAccountName;
 - (void) setAccountName:(NSString *)value;

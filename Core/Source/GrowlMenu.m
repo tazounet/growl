@@ -70,14 +70,9 @@
 
 - (void) dealloc {
 	[[NSStatusBar systemStatusBar] removeStatusItem:statusItem];
-	[statusItem release];
-   statusItem = nil;
-   [menu release];
-   menu = nil;
 
    [preferences removeObserver:self forKeyPath:@"squelchMode"];
    [[NSNotificationCenter defaultCenter] removeObserver:self];
-	[super dealloc];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -116,13 +111,11 @@
       [statusItem setView:buttonView];
       [self setImage:[NSNumber numberWithBool:![preferences squelchMode]]];
       //[buttonView setNeedsDisplay];
-      [buttonView release];
    }else{
       if(!statusItem)
          return;
       
       [[NSStatusBar systemStatusBar] removeStatusItem:statusItem];
-      [statusItem release];
       statusItem = nil;
    }
 }
@@ -334,7 +327,7 @@
    }
    
 
-	return [m autorelease];
+	return m;
 }
 
 - (BOOL) validateMenuItem:(NSMenuItem *)item {

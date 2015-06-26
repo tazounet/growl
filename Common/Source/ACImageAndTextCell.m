@@ -48,14 +48,9 @@
 @implementation ACImageAndTextCell
 @synthesize image;
 
-- (void) dealloc {
-	[image release];
-	[super dealloc];
-}
-
 - (id) copyWithZone:(NSZone *)zone {
 	ACImageAndTextCell *cell = (ACImageAndTextCell *)[super copyWithZone:zone];
-	cell->image = [image retain];
+	cell.image = image;
 	return cell;
 }
 
@@ -121,13 +116,12 @@
 		imageFrame.origin.x += 3.0;
 		//imageFrame.size = imageSize;
 
-		if ([controlView isFlipped]) {
-			imageFrame.origin.y += ceilf((cellFrame.size.height + imageSize.height) * 0.5);
-		} else {
-			imageFrame.origin.y += ceilf((cellFrame.size.height - imageSize.height) * 0.5);
-		}
-
-		[image compositeToPoint:imageFrame.origin operation:NSCompositeSourceOver];
+        [self.image drawInRect:imageFrame
+                        fromRect:NSZeroRect
+                       operation:NSCompositeSourceOver
+                        fraction:1.0
+                  respectFlipped:YES
+                           hints:nil];
 	}
 
 	NSAttributedString *string = [self attributedStringValue];

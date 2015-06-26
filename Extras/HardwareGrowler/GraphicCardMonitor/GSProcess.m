@@ -83,8 +83,6 @@ static void _procTask(const void *value, void *param) {
     [arr addObject:[NSDictionary dictionaryWithObjectsAndKeys:
                     procName, kTaskItemName,
                     [key stringValue], kTaskItemPID, nil]];
-    [procName release];
-    [key release];
     free(buf);
     goto done;
 err:
@@ -92,8 +90,6 @@ err:
     [arr addObject:[NSDictionary dictionaryWithObjectsAndKeys:
                     procName, kTaskItemName,
                     @"", kTaskItemPID, nil]];
-    [procName release];
-    [key release];
 done:
     return;
 }

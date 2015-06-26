@@ -11,7 +11,7 @@
 
 @interface HWGrowlFirewireMonitor ()
 
-@property (nonatomic, assign) id<HWGrowlPluginControllerProtocol> delegate;
+@property (nonatomic, unsafe_unretained) id<HWGrowlPluginControllerProtocol> delegate;
 @property (nonatomic, assign) BOOL notificationsArePrimed;
 
 @property (nonatomic, assign) IONotificationPortRef ioKitNotificationPort;
@@ -45,7 +45,6 @@
 		CFRunLoopRemoveSource(CFRunLoopGetCurrent(), notificationRunLoopSource, kCFRunLoopDefaultMode);
 		IONotificationPortDestroy(ioKitNotificationPort);
 	}
-	[super dealloc];
 }
 
 -(void)postRegistrationInit {
@@ -70,23 +69,23 @@
 			return tempDeviceName;
 	}
 	
-	tempDeviceName = IORegistryEntrySearchCFProperty(thisObject,
+	tempDeviceName = CFBridgingRelease(IORegistryEntrySearchCFProperty(thisObject,
 																	 kIOFireWirePlane,
 																	 CFSTR("FireWire Product Name"),
 																	 nil,
-																	 kIORegistryIterateRecursively);
+																	 kIORegistryIterateRecursively));
 	
 	if (tempDeviceName)
-		return [tempDeviceName autorelease];
+		return tempDeviceName;
 	
-	tempDeviceName = IORegistryEntrySearchCFProperty(thisObject,
+	tempDeviceName = CFBridgingRelease(IORegistryEntrySearchCFProperty(thisObject,
 																	 kIOFireWirePlane,
 																	 CFSTR("FireWire Vendor Name"),
 																	 nil,
-																	 kIORegistryIterateRecursively);
+																	 kIORegistryIterateRecursively));
 	
 	if (tempDeviceName)
-		return [tempDeviceName autorelease];
+		return tempDeviceName;
 	
 	return NSLocalizedString(@"Unnamed FireWire Device", @"");
 }
@@ -121,7 +120,7 @@
 }
 
 static void fwDeviceAdded(void *refCon, io_iterator_t iterator) {
-	HWGrowlFirewireMonitor *monitor = (HWGrowlFirewireMonitor*)refCon;
+	HWGrowlFirewireMonitor *monitor = (__bridge HWGrowlFirewireMonitor*)refCon;
 	[monitor fwDeviceAdded:iterator];
 }
 
@@ -135,7 +134,7 @@ static void fwDeviceAdded(void *refCon, io_iterator_t iterator) {
 }
 
 static void fwDeviceRemoved(void *refCon, io_iterator_t iterator) {
-	HWGrowlFirewireMonitor *monitor = (HWGrowlFirewireMonitor*)refCon;
+	HWGrowlFirewireMonitor *monitor = (__bridge HWGrowlFirewireMonitor*)refCon;
 	[monitor fwDeviceRemoved:iterator];
 }
 
@@ -159,7 +158,7 @@ static void fwDeviceRemoved(void *refCon, io_iterator_t iterator) {
 																	  kIOPublishNotification,
 																	  myFireWireMatchDictionary,
 																	  fwDeviceAdded,
-																	  self,
+																	  (__bridge void *)(self),
 																	  &addedIterator);
 	
 	if (matchingResult)
@@ -176,7 +175,7 @@ static void fwDeviceRemoved(void *refCon, io_iterator_t iterator) {
 																		 kIOTerminatedNotification,
 																		 myFireWireMatchDictionary,
 																		 fwDeviceRemoved,
-																		 self,
+																		 (__bridge void *)(self),
 																		 &removedIterator);
 	
 	// Matching notification must be "primed" by iterating over the
@@ -206,7 +205,7 @@ static void fwDeviceRemoved(void *refCon, io_iterator_t iterator) {
 	static NSImage *_icon = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		_icon = [[NSImage imageNamed:@"HWGPrefsFireWire"] retain];
+		_icon = [NSImage imageNamed:@"HWGPrefsFireWire"];
 	});
 	return _icon;
 }

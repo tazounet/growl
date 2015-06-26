@@ -27,15 +27,11 @@
 	return self;
 }
 
-- (void) dealloc {
-	[preferencePane release];
-	[super dealloc];
-}
 
 - (GrowlPluginPreferencePane *) preferencePane {
-	if (!preferencePane)
-		preferencePane = [[GrowlBubblesPrefsController alloc] initWithBundle:[NSBundle bundleForClass:[self class]]];
-	return preferencePane;
+	if (!_preferencePane)
+		_preferencePane = [[GrowlBubblesPrefsController alloc] initWithBundle:[NSBundle bundleForClass:[self class]]];
+	return _preferencePane;
 }
 
 @end

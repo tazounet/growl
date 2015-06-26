@@ -125,33 +125,33 @@
 }
 
 - (void) postBackupStartedNotification {
-   __block HWGrowlTimeMachineMonitor *blockSelf = self;
+   __block HWGrowlTimeMachineMonitor *weakSelf = self;
 	dispatch_async(dispatch_get_main_queue(), ^{
 		NSString *description = nil;
-		NSString *timeString = [blockSelf stringWithTimeInterval:[blockSelf->lastStartTime timeIntervalSinceDate:blockSelf->lastEndTime]];
-		if(blockSelf->lastEndTime)
+		NSString *timeString = [weakSelf stringWithTimeInterval:[weakSelf->lastStartTime timeIntervalSinceDate:weakSelf->lastEndTime]];
+		if(weakSelf->lastEndTime)
 			description = [NSString stringWithFormat:NSLocalizedString(@"%@ since last back-up", @""), timeString];
 		else
 			description = NSLocalizedString(@"First backup, or no previous backup found in the system log", @"");
         
         NSString *iconPath = [[NSBundle mainBundle] resourceNamed:@"TimeMachine-On" ofType:@"tif"];
         NSData *iconData = [NSData dataWithContentsOfFile:iconPath];
-		[blockSelf->delegate notifyWithName:@"TimeMachineStart"
+		[weakSelf->delegate notifyWithName:@"TimeMachineStart"
 												title:NSLocalizedString(@"Time Machine started", @"") 
 										description:description
 												 icon:iconData
 								 identifierString:@"HWGTimeMachineMonitor"
 									 contextString:nil
-											  plugin:blockSelf];
+											  plugin:weakSelf];
 	});
 }
 
 - (void) pollLogDatabase:(NSTimer *)timer {
 	//We really shouldn't pile parse upon parse
 	if(!parsing){
-      __block HWGrowlTimeMachineMonitor *blockSelf = self;
+      __block HWGrowlTimeMachineMonitor *weakSelf = self;
 		dispatch_async(tmQueue, ^{
-			[blockSelf parseLogDatabase];
+			[weakSelf parseLogDatabase];
 		});
 	}else {
 		static dispatch_once_t onceToken;
@@ -162,7 +162,7 @@
 }
 
 - (void) parseLogDatabase {
-	__block HWGrowlTimeMachineMonitor *blockSelf = self;
+	__block HWGrowlTimeMachineMonitor *weakSelf = self;
 	
 	aslmsg query = asl_new(ASL_TYPE_QUERY);
 	const char *backupd_sender = "com.apple.backupd";
@@ -203,16 +203,16 @@
 				
 				if (postGrowlNotifications) {
 					dispatch_async(dispatch_get_main_queue(), ^{
-						NSString *timeString = [blockSelf stringWithTimeInterval:[blockSelf->lastEndTime timeIntervalSinceDate:blockSelf->lastStartTime]];
+						NSString *timeString = [weakSelf stringWithTimeInterval:[weakSelf->lastEndTime timeIntervalSinceDate:weakSelf->lastStartTime]];
                         NSString *iconPath = [[NSBundle mainBundle] resourceNamed:@"TimeMachine-Off" ofType:@"tif"];
                         NSData *iconData = [NSData dataWithContentsOfFile:iconPath];
-                        [blockSelf->delegate notifyWithName:@"TimeMachineFinish"
+                        [weakSelf->delegate notifyWithName:@"TimeMachineFinish"
 																title:NSLocalizedString(@"Time Machine finished", @"")
 														description:[NSString stringWithFormat:NSLocalizedString(@"Back-up took %@", @""), timeString]
 																 icon:iconData
 												 identifierString:@"HWGTimeMachineMonitor"
 													 contextString:nil
-															  plugin:blockSelf];
+															  plugin:weakSelf];
 					});
 				}
 				
@@ -227,7 +227,7 @@
 				if (postGrowlNotifications) {
 					dispatch_async(dispatch_get_main_queue(), ^{
 						NSString *description = nil;
-						NSString *timeString = [blockSelf stringWithTimeInterval:[date timeIntervalSinceDate:blockSelf->lastStartTime]];
+						NSString *timeString = [weakSelf stringWithTimeInterval:[date timeIntervalSinceDate:weakSelf->lastStartTime]];
 						if(wasFailure)
 							description = [NSString stringWithFormat:NSLocalizedString(@"Failed after %@", @""), timeString];
 						else
@@ -235,13 +235,13 @@
                         NSString *iconPath = [[NSBundle mainBundle] resourceNamed:@"TimeMachine-Failed" ofType:@"tif"];
                         NSData *iconData = [NSData dataWithContentsOfFile:iconPath];
 
-						[blockSelf->delegate notifyWithName:wasFailure ? @"TimeMachineFailed" : @"TimeMachineCanceled"
+						[weakSelf->delegate notifyWithName:wasFailure ? @"TimeMachineFailed" : @"TimeMachineCanceled"
 																title:wasFailure ? NSLocalizedString(@"Time Machine Failed", @"") : NSLocalizedString(@"Time Machine Canceled", @"")
 														description:description
 																 icon:iconData
 												 identifierString:@"HWGTimeMachineMonitor"
 													 contextString:nil
-															  plugin:blockSelf];
+															  plugin:weakSelf];
 					});
 				}
 			} 
@@ -266,7 +266,7 @@
 	postGrowlNotifications = YES;
 	
 	dispatch_async(dispatch_get_main_queue(), ^{
-		[blockSelf setParsing:NO]; 
+		[weakSelf setParsing:NO]; 
 	});
 }
 

@@ -10,7 +10,7 @@
 
 @interface GrowlCompoundActionPreferencePane ()
 
-@property (nonatomic, retain) NSString *actionsColumnTitle;
+@property (nonatomic, strong) NSString *actionsColumnTitle;
 
 @end
 
@@ -29,10 +29,6 @@
 	return self;
 }
 
--(void)dealloc {
-	self.actionsColumnTitle = nil;
-	[super dealloc];
-}
 
 -(NSString*)mainNibName {
 	return @"CompoundActionPrefs";

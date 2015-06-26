@@ -13,45 +13,45 @@
 
 @interface GrowlDisplaysViewController : GrowlPrefsViewController <GroupedArrayControllerDelegate, NSTableViewDelegate, NSTableViewDataSource, NSTextFieldDelegate>
 
-@property (nonatomic, assign) GrowlPluginController *pluginController;
-@property (nonatomic, assign) GrowlTicketDatabase *ticketDatabase;
-@property (nonatomic, assign) IBOutlet NSTableView *displayPluginsTable;
-@property (nonatomic, assign) IBOutlet NSView *displayPrefView;
-@property (nonatomic, assign) IBOutlet NSView *displayDefaultPrefView;
-@property (nonatomic, assign) IBOutlet NSTextField *displayAuthor;
-@property (nonatomic, assign) IBOutlet NSTextField *displayVersion;
-@property (nonatomic, assign) IBOutlet NSTextField *displayName;
-@property (nonatomic, assign) IBOutlet NSButton *previewButton;
-@property (nonatomic, assign) IBOutlet NSPopUpButton *defaultDisplayPopUp;
-@property (nonatomic, assign) IBOutlet NSPopUpButton *defaultActionPopUp;
-@property (nonatomic, retain) IBOutlet GroupedArrayController *pluginConfigGroupController;
-@property (nonatomic, assign) IBOutlet NSArrayController *displayConfigsArrayController;
-@property (nonatomic, assign) IBOutlet NSArrayController *actionConfigsArrayController;
-@property (nonatomic, assign) IBOutlet NSArrayController *displayPluginsArrayController;
+@property (nonatomic, weak) GrowlPluginController *pluginController;
+@property (nonatomic, weak) GrowlTicketDatabase *ticketDatabase;
+@property (nonatomic, weak) IBOutlet NSTableView *displayPluginsTable;
+@property (nonatomic, weak) IBOutlet NSView *displayPrefView;
+@property (nonatomic, weak) IBOutlet NSView *displayDefaultPrefView;
+@property (nonatomic, weak) IBOutlet NSTextField *displayAuthor;
+@property (nonatomic, weak) IBOutlet NSTextField *displayVersion;
+@property (nonatomic, weak) IBOutlet NSTextField *displayName;
+@property (nonatomic, weak) IBOutlet NSButton *previewButton;
+@property (nonatomic, weak) IBOutlet NSPopUpButton *defaultDisplayPopUp;
+@property (nonatomic, weak) IBOutlet NSPopUpButton *defaultActionPopUp;
+@property (nonatomic, strong) IBOutlet GroupedArrayController *pluginConfigGroupController;
+@property (nonatomic, weak) IBOutlet NSArrayController *displayConfigsArrayController;
+@property (nonatomic, weak) IBOutlet NSArrayController *actionConfigsArrayController;
+@property (nonatomic, weak) IBOutlet NSArrayController *displayPluginsArrayController;
 
-@property (nonatomic, assign) IBOutlet NSWindow *disabledDisplaysSheet;
-@property (nonatomic, assign) IBOutlet NSTextView *disabledDisplaysList;
+@property (nonatomic, weak) IBOutlet NSWindow *disabledDisplaysSheet;
+@property (nonatomic, unsafe_unretained) IBOutlet NSTextView *disabledDisplaysList;
 
-@property (nonatomic, retain) GrowlPluginPreferencePane *pluginPrefPane;
-@property (nonatomic, retain) NSMutableArray *loadedPrefPanes;
+@property (nonatomic, strong) GrowlPluginPreferencePane *pluginPrefPane;
+@property (nonatomic, strong) NSMutableArray *loadedPrefPanes;
 
-@property (nonatomic, retain) GrowlPlugin *currentPluginController;
+@property (nonatomic, strong) GrowlPlugin *currentPluginController;
 
-@property (nonatomic, retain) NSString *defaultStyleLabel;
-@property (nonatomic, retain) NSString *showDisabledButtonTitle;
-@property (nonatomic, retain) NSString *getMoreStylesButtonTitle;
-@property (nonatomic, retain) NSString *previewButtonTitle;
-@property (nonatomic, retain) NSString *displayStylesColumnTitle;
-@property (nonatomic, retain) NSString *noDefaultDisplayPluginLabel;
+@property (nonatomic, strong) NSString *defaultStyleLabel;
+@property (nonatomic, strong) NSString *showDisabledButtonTitle;
+@property (nonatomic, strong) NSString *getMoreStylesButtonTitle;
+@property (nonatomic, strong) NSString *previewButtonTitle;
+@property (nonatomic, strong) NSString *displayStylesColumnTitle;
+@property (nonatomic, strong) NSString *noDefaultDisplayPluginLabel;
 
-@property (nonatomic, retain) NSString *defaultActionsLabel;
-@property (nonatomic, retain) NSString *addConfigButtonTitle;
-@property (nonatomic, retain) NSString *defaultActionPopUpTitle;
-@property (nonatomic, retain) NSString *addCompoundOption;
-@property (nonatomic, retain) NSString *noActionsTitle;
+@property (nonatomic, strong) NSString *defaultActionsLabel;
+@property (nonatomic, strong) NSString *addConfigButtonTitle;
+@property (nonatomic, strong) NSString *defaultActionPopUpTitle;
+@property (nonatomic, strong) NSString *addCompoundOption;
+@property (nonatomic, strong) NSString *noActionsTitle;
 
-@property (nonatomic, retain) NSString *disabledPluginSheetDescription;
-@property (nonatomic, retain) NSString *disabledPluginSheetCloseButtonTitle;
+@property (nonatomic, strong) NSString *disabledPluginSheetDescription;
+@property (nonatomic, strong) NSString *disabledPluginSheetCloseButtonTitle;
 
 @property (nonatomic) BOOL awokeFromNib;
 

@@ -56,10 +56,10 @@ static void GrowlBubblesShadeInterpolate( void *info, const CGFloat *inData, CGF
 
 - (id) initWithFrame:(NSRect) frame configurationDict:(NSDictionary*)configDict {
 	if ((self = [super initWithFrame:frame])) {
-		titleFont = [[NSFont boldSystemFontOfSize:TITLE_FONT_SIZE_PTS] retain];
-		textFont = [[NSFont messageFontOfSize:DESCR_FONT_SIZE_PTS] retain];
-		borderColor = [[NSColor colorWithCalibratedWhite:0.0 alpha:0.5] retain];
-		highlightColor = [[NSColor colorWithCalibratedWhite:0.0 alpha:0.75] retain];
+		titleFont = [NSFont boldSystemFontOfSize:TITLE_FONT_SIZE_PTS];
+		textFont = [NSFont messageFontOfSize:DESCR_FONT_SIZE_PTS];
+		borderColor = [NSColor colorWithCalibratedWhite:0.0 alpha:0.5];
+		highlightColor = [NSColor colorWithCalibratedWhite:0.0 alpha:0.75];
 		textLayoutManager = [[NSLayoutManager alloc] init];
 		titleLayoutManager = [[NSLayoutManager alloc] init];
 		lineHeight = [textLayoutManager defaultLineHeightForFont:textFont];
@@ -77,22 +77,6 @@ static void GrowlBubblesShadeInterpolate( void *info, const CGFloat *inData, CGF
 	return self;
 }
 
-- (void) dealloc {
-	[titleFont          release];
-	[textFont           release];
-	[icon               release];
-	[textColor          release];
-	[bgColor            release];
-	[lightColor         release];
-	[borderColor        release];
-	[highlightColor     release];
-	[textStorage        release];
-	[titleStorage       release];
-	[textLayoutManager  release];
-	[titleLayoutManager release];
-
-	[super dealloc];
-}
 
 - (CGFloat) titleHeight {
 	return haveTitle ? titleHeight : 0.0;
@@ -167,10 +151,10 @@ static void GrowlBubblesShadeInterpolate( void *info, const CGFloat *inData, CGF
 	drawRect.size.width = iconSize;
 	drawRect.size.height = iconSize;
 
-	[icon setFlipped:YES];
 	[icon drawScaledInRect:drawRect
 				 operation:NSCompositeSourceOver
-				  fraction:1.0];
+				  fraction:1.0
+                neverFlipped:YES];
 
 	drawRect.origin.x += iconSize + ICON_HSPACE_PX;
 
@@ -262,8 +246,7 @@ static void GrowlBubblesShadeInterpolate( void *info, const CGFloat *inData, CGF
 }
 
 - (void) setIcon:(NSImage *) anIcon {
-	[icon release];
-	icon = [anIcon retain];
+	icon = anIcon;
 	[self setNeedsDisplay:YES];
 }
 
@@ -282,7 +265,6 @@ static void GrowlBubblesShadeInterpolate( void *info, const CGFloat *inData, CGF
 		titleStorage = [[NSTextStorage alloc] init];
 		titleContainer = [[NSTextContainer alloc] initWithContainerSize:containerSize];
 		[titleLayoutManager addTextContainer:titleContainer];	// retains textContainer
-		[titleContainer release];
 		[titleStorage addLayoutManager:titleLayoutManager];	// retains layoutManager
 		[titleContainer setLineFragmentPadding:0.0];
 	}
@@ -294,12 +276,10 @@ static void GrowlBubblesShadeInterpolate( void *info, const CGFloat *inData, CGF
 		textColor,      NSForegroundColorAttributeName,
 		paragraphStyle, NSParagraphStyleAttributeName,
 		nil];
-	[paragraphStyle release];
 
 	[[titleStorage mutableString] setString:aTitle];
 	[titleStorage setAttributes:defaultAttributes range:NSMakeRange(0, [titleStorage length])];
 
-	[defaultAttributes release];
 
 	titleRange = [titleLayoutManager glyphRangeForTextContainer:titleContainer];	// force layout
 	titleHeight = [titleLayoutManager usedRectForTextContainer:titleContainer].size.height;
@@ -329,7 +309,6 @@ static void GrowlBubblesShadeInterpolate( void *info, const CGFloat *inData, CGF
 		textStorage = [[NSTextStorage alloc] init];
   		textContainer = [[NSTextContainer alloc] initWithContainerSize:containerSize];
 		[textLayoutManager addTextContainer:textContainer];	// retains textContainer
-		[textContainer release];
 		[textStorage addLayoutManager:textLayoutManager];	// retains layoutManager
 		[textContainer setLineFragmentPadding:0.0];
 	}
@@ -342,7 +321,6 @@ static void GrowlBubblesShadeInterpolate( void *info, const CGFloat *inData, CGF
 	[[textStorage mutableString] setString:aText];
 	[textStorage setAttributes:defaultAttributes range:NSMakeRange(0, [textStorage length])];
 		
-	[defaultAttributes release];
 
 	textRange = [textLayoutManager glyphRangeForTextContainer:textContainer];	// force layout
 	textHeight = [textLayoutManager usedRectForTextContainer:textContainer].size.height;

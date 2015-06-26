@@ -12,11 +12,11 @@
 	BOOL				closeOnMouseExit;
 	NSPoint				closeBoxOrigin;
 	SEL					action;
-	id					target;
+	id					__weak target;
 	NSTrackingRectTag	trackingRectTag;
 }
 
-@property (assign) id target;
+@property (weak) id target;
 @property (assign) SEL action;
 
 - (BOOL) mouseOver;
@@ -30,6 +30,11 @@
 - (void) setCloseBoxVisible:(BOOL)yorn;
 - (void) setCloseBoxOrigin:(NSPoint)inOrigin;
 - (void) clickedCloseBox:(id)sender;
+- (void) clickedCloseBox;
+
+- (void) mouseEnteredNotificationView:(GrowlNotificationView *)notificationView;
+- (void) mouseExitedNotificationView:(GrowlNotificationView *)notificationView;
+- (void) stopDisplay;
 
 - (void) setPriority:(int)priority;
 - (void) setTitle:(NSString *) aTitle;

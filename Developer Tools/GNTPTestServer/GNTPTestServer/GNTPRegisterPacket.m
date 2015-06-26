@@ -73,7 +73,7 @@
 }
 
 +(NSString*)headersForGNTPDictionary:(NSDictionary *)dict {
-	NSMutableString *headers = [[[super headersForGNTPDictionary:dict] mutableCopy] autorelease];
+	NSMutableString *headers = [[super headersForGNTPDictionary:dict] mutableCopy];
 	NSArray *allNotes = [dict objectForKey:GROWL_NOTIFICATIONS_ALL];
 	[allNotes enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 		//Seperate our the notes from each other
@@ -82,7 +82,7 @@
 			[headers appendFormat:@"%@: %@\r\n", key, innerObj];
 		}];
 	}];
-	return [[headers copy] autorelease];
+	return [headers copy];
 }
 
 -(id)init {
@@ -107,7 +107,7 @@
 			//Reading in notifications
 			//break it down
 			//No need to handle the extra CLRF's after the last line
-			NSString *noteHeaderBlock = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+			NSString *noteHeaderBlock = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 			
 			NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
 			[GNTPUtilities enumerateHeaders:noteHeaderBlock
@@ -132,7 +132,6 @@
 			}else{
 				[self.notificationDicts addObject:dictionary];
 			}
-			[dictionary release];
 			//Even if we can't validate it, we did read it, skip it and move on
 			self.readNotifications++;
 			
@@ -190,7 +189,7 @@
 }
 
 -(NSDictionary*)convertedGrowlDict {
-	NSMutableDictionary *convertedDict = [[super convertedGrowlDict] retain];
+	NSMutableDictionary *convertedDict = [super convertedGrowlDict];
 	NSMutableArray *notificationNames = [NSMutableArray arrayWithCapacity:[self.notificationDicts count]];
 	NSMutableDictionary *displayNames = [NSMutableDictionary dictionary];
 	//2.0 framework should be upgraded to include descriptions
@@ -241,7 +240,7 @@
 		[convertedDict setObject:notificationDescriptions forKey:GROWL_NOTIFICATIONS_DESCRIPTIONS];
 	if([[noteIcons allValues] count] > 0)
 		[convertedDict setObject:noteIcons forKey:GROWL_NOTIFICATIONS_ICONS];
-	return [convertedDict autorelease];
+	return convertedDict;
 }
 
 @end

@@ -21,16 +21,6 @@
 	return self;
 }
 
-- (void) dealloc {
-	[icon            release];
-	[title           release];
-	[text            release];
-	[textColor       release];
-	[backgroundColor release];
-	[layoutManager   release];
-
-	[super dealloc];
-}
 
 static void CharcoalShadeInterpolate( void *info, const CGFloat *inData, CGFloat *outData ) {
 //	const CGFloat colors[2] = {0.15, 0.35};
@@ -183,7 +173,6 @@ static void CharcoalShadeInterpolate( void *info, const CGFloat *inData, CGFloat
 	if (minFontSize)
 		[parrafo setLineBreakMode:NSLineBreakByTruncatingTail];
 	[title drawInRect:titleRect withAttributes:titleAttributes];
-	[titleAttributes release];
 
 	NSFont *textFont = [NSFont systemFontOfSize:14.0];
 	NSMutableDictionary *textAttributes = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
@@ -192,8 +181,6 @@ static void CharcoalShadeInterpolate( void *info, const CGFloat *inData, CGFloat
 		textFont,   NSFontAttributeName,
 		textShadow, NSShadowAttributeName,
 		nil];
-	[textShadow release];
-	[parrafo release];
 
 	CGFloat height = [self descriptionHeight:text attributes:textAttributes width:textRect.size.width];
 	CGFloat lineHeight = [layoutManager defaultLineHeightForFont:textFont];
@@ -202,30 +189,25 @@ static void CharcoalShadeInterpolate( void *info, const CGFloat *inData, CGFloat
 	if (rowCount > maxRows)
 		[textAttributes setObject:[NSFont systemFontOfSize:12.0] forKey:NSFontAttributeName];
 	[text drawInRect:textRect withAttributes:textAttributes];
-	[textAttributes release];
 
 	NSRect iconRect;
 	iconRect.origin = iconPoint;
 	iconRect.size = maxIconSize;
-	[icon setFlipped:NO];
-	[icon drawScaledInRect:iconRect operation:NSCompositeSourceOver fraction:1.0];
+	[icon drawScaledInRect:iconRect operation:NSCompositeSourceOver fraction:1.0 neverFlipped:NO];
 	[super drawRect:rect];
 }
 
 - (void) setIcon:(NSImage *)anIcon {
-	[icon release];
-	icon = [anIcon retain];
+	icon = anIcon;
 	[self setNeedsDisplay:YES];
 }
 
 - (void) setTitle:(NSString *)aTitle {
-	[title release];
 	title = [aTitle copy];
 	[self setNeedsDisplay:YES];
 }
 
 - (void) setText:(NSString *)aText {
-	[text release];
 	text = [aText copy];
 	[self setNeedsDisplay:YES];
 }
@@ -257,7 +239,6 @@ static void CharcoalShadeInterpolate( void *info, const CGFloat *inData, CGFloat
 			break;
 	}
 
-	[backgroundColor release];
 
 	Class NSDataClass = [NSData class];
 	NSData *data = [[self configurationDict] valueForKey:key];
@@ -267,17 +248,14 @@ static void CharcoalShadeInterpolate( void *info, const CGFloat *inData, CGFloat
 	} else {
 		backgroundColor = [NSColor blackColor];
 	}
-	[backgroundColor retain];
 	data = nil;
 
-	[textColor release];
 	data = [[self configurationDict] valueForKey:textKey];
 	if (data && [data isKindOfClass:NSDataClass]) {
 			textColor = [NSUnarchiver unarchiveObjectWithData:data];
 	} else {
 		textColor = [NSColor whiteColor];
 	}
-	[textColor retain];
 }
 
 - (CGFloat) descriptionHeight:(NSString *)theText attributes:(NSDictionary *)attributes width:(CGFloat)width {
@@ -293,8 +271,6 @@ static void CharcoalShadeInterpolate( void *info, const CGFloat *inData, CGFloat
 	[layoutManager glyphRangeForTextContainer:textContainer];	// force layout
 
 	CGFloat textHeight = [layoutManager usedRectForTextContainer:textContainer].size.height;
-	[textContainer release];
-	[textStorage release];
 
 	return MAX (textHeight, 30.0);
 }

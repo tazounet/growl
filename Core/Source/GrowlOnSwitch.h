@@ -14,7 +14,7 @@
    NSTextField *_offLabel;
 }
 
-@property (nonatomic, retain) IBOutlet NSTextField *onLabel;
-@property (nonatomic, retain) IBOutlet NSTextField *offLabel;
+@property (nonatomic, strong) IBOutlet NSTextField *onLabel;
+@property (nonatomic, strong) IBOutlet NSTextField *offLabel;
 
 @end

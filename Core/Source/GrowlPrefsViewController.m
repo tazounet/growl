@@ -28,11 +28,6 @@
     return self;
 }
 
-- (void)dealloc
-{
-   [prefPane release];
-   [super dealloc];
-}
 
 + (NSString*)nibName {
    return nil;

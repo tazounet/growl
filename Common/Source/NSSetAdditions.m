@@ -18,7 +18,6 @@
 		[unionSet unionSet:setToAdd];
 
 	NSSet *result = [self setWithSet:unionSet];
-	[unionSet release];
 
 	return result;
 }

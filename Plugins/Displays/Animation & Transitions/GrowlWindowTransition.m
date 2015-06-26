@@ -73,15 +73,10 @@
 
 - (void) setWindow:(NSWindow *)inWindow {
 	if (inWindow != window) {
-		[window release];
-		window = [inWindow retain];
+		window = inWindow;
 	}
 }
 
-- (void) dealloc {
-	[window release];
-	[super dealloc];
-}
 
 - (void)animationDidEnd
 {

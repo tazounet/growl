@@ -46,18 +46,6 @@
    return self;
 }
 
-- (void)dealloc {
-   [styleLabel release];
-   [positionLabel release];
-   [shrinkLabel release];
-   [flipLabel release];
-   
-   [styleDefault release];
-   [styleCharcoal release];
-   
-   [positionStrings release];
-   [super dealloc];
-}
 
 - (NSString *) mainNibName {
 	return @"GrowlBezelPrefs";
@@ -71,7 +59,7 @@
 	static NSSet *keys = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		keys = [[NSSet setWithObjects:@"position",
+		keys = [NSSet setWithObjects:@"position",
 				  @"size",
 				  @"opacity",	
 				  @"duration",
@@ -88,7 +76,7 @@
 				  @"textColorModerate",	
 				  @"textColorNormal",
 				  @"textColorHigh",	
-				  @"textColorEmergency", nil] retain];
+				  @"textColorEmergency", nil];
 	});
 	return keys;
 }

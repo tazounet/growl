@@ -13,20 +13,20 @@
 
 @interface GrowlRollupPrefsViewController : GrowlPrefsViewController
 
-@property (nonatomic, retain) IBOutlet SRRecorderControl *recorderControl;
-@property (nonatomic, retain) NSString *rollupEnabledTitle;
-@property (nonatomic, retain) NSString *rollupAutomaticTitle;
-@property (nonatomic, retain) NSString *rollupAllTitle;
-@property (nonatomic, retain) NSString *rollupLoggedTitle;
-@property (nonatomic, retain) NSString *showHideTitle;
+@property (nonatomic, strong) IBOutlet SRRecorderControl *recorderControl;
+@property (nonatomic, strong) NSString *rollupEnabledTitle;
+@property (nonatomic, strong) NSString *rollupAutomaticTitle;
+@property (nonatomic, strong) NSString *rollupAllTitle;
+@property (nonatomic, strong) NSString *rollupLoggedTitle;
+@property (nonatomic, strong) NSString *showHideTitle;
 
-@property (nonatomic, retain) NSString *pulseMenuItemTitle;
-@property (nonatomic, retain) NSString *idleDetectionBoxTitle;
-@property (nonatomic, retain) NSString *idleAfterTitle;
-@property (nonatomic, retain) NSString *secondsTitle;
-@property (nonatomic, retain) NSString *minutesTitle;
-@property (nonatomic, retain) NSString *hoursTitle;
-@property (nonatomic, retain) NSString *whenScreenSaverActiveTitle;
-@property (nonatomic, retain) NSString *whenScreenLockedTitle;
+@property (nonatomic, strong) NSString *pulseMenuItemTitle;
+@property (nonatomic, strong) NSString *idleDetectionBoxTitle;
+@property (nonatomic, strong) NSString *idleAfterTitle;
+@property (nonatomic, strong) NSString *secondsTitle;
+@property (nonatomic, strong) NSString *minutesTitle;
+@property (nonatomic, strong) NSString *hoursTitle;
+@property (nonatomic, strong) NSString *whenScreenSaverActiveTitle;
+@property (nonatomic, strong) NSString *whenScreenLockedTitle;
 
 @end

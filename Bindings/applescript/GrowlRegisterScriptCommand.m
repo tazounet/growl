@@ -55,7 +55,6 @@ static const NSSize iconSize = { 1024.0f, 1024.0f };
 			}
 			num = [[NSNumber alloc] initWithUnsignedLong:value];
 			[temp replaceObjectAtIndex:i withObject:num];
-			[num release];
 		}
 		++i;
 	}
@@ -66,7 +65,6 @@ static const NSSize iconSize = { 1024.0f, 1024.0f };
 		allNotifications,     GROWL_NOTIFICATIONS_ALL,
 		defaultNotifications, GROWL_NOTIFICATIONS_DEFAULT,
 		nil];
-	[defaultNotifications release];
 
 	@try {
 		if (iconOfApplication) {
@@ -83,7 +81,6 @@ static const NSSize iconSize = { 1024.0f, 1024.0f };
 		[self setError:ERROR_EXCEPTION failure:e];
 	}
 
-	[registerDict release];
 
 	return nil;
 }

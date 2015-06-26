@@ -24,18 +24,9 @@ extern CGLayerRef CGLayerCreateWithContext() __attribute__((weak_import));
 }
 
 - (void) dealloc {
-	[titleAttributes release];
-	[textAttributes  release];
-	[backgroundColor release];
-	[textColor       release];
-	[icon            release];
-	[title           release];
-	[text            release];
-	[cache           release];
 	if (layer)
 		CGLayerRelease(layer);
 
-	[super dealloc];
 }
 
 #define HUGE_TITLE_X_SHIFT 192.0f
@@ -123,8 +114,7 @@ extern CGLayerRef CGLayerCreateWithContext() __attribute__((weak_import));
 
 		[text drawInRect:textRect withAttributes:textAttributes];
 
-		[icon setFlipped:NO];
-		[icon drawScaledInRect:iconRect operation:NSCompositeSourceOver fraction:1.0];
+		[icon drawScaledInRect:iconRect operation:NSCompositeSourceOver fraction:1.0 neverFlipped:NO];
 
 		if (CGLayerCreateWithContext)
 			[NSGraphicsContext setCurrentContext:context];
@@ -174,19 +164,16 @@ extern CGLayerRef CGLayerCreateWithContext() __attribute__((weak_import));
 }
 
 - (void) setIcon:(NSImage *)anIcon {
-	[icon autorelease];
-	icon = [anIcon retain];
+	icon = anIcon;
 	[self setNeedsDisplay:(needsDisplay = YES)];
 }
 
 - (void) setTitle:(NSString *)aTitle {
-	[title autorelease];
 	title = [aTitle copy];
 	[self setNeedsDisplay:(needsDisplay = YES)];
 }
 
 - (void) setText:(NSString *)aText {
-	[text autorelease];
 	text = [aText copy];
 	[self setNeedsDisplay:(needsDisplay = YES)];
 }
@@ -218,7 +205,6 @@ extern CGLayerRef CGLayerCreateWithContext() __attribute__((weak_import));
 			break;
 	}
 
-	[backgroundColor release];
 
 	CGFloat opacityPref = MUSICVIDEO_DEFAULT_OPACITY;
 	if([[self configurationDict] valueForKey:MUSICVIDEO_OPACITY_PREF]){
@@ -233,16 +219,14 @@ extern CGLayerRef CGLayerCreateWithContext() __attribute__((weak_import));
 		backgroundColor = [NSUnarchiver unarchiveObjectWithData:data];
 	else
 		backgroundColor = [NSColor blackColor];
-	backgroundColor = [[backgroundColor colorWithAlphaComponent:alpha] retain];
+	backgroundColor = [backgroundColor colorWithAlphaComponent:alpha];
 	data = nil;
 
-	[textColor release];
 	data = [[self configurationDict] valueForKey:textKey];
 	if (data && [data isKindOfClass:NSDataClass])
 		textColor = [NSUnarchiver unarchiveObjectWithData:data];
 	else
 		textColor = [NSColor whiteColor];
-	[textColor retain];
 
 	CGFloat titleFontSize;
 	CGFloat textFontSize;
@@ -273,26 +257,21 @@ extern CGLayerRef CGLayerCreateWithContext() __attribute__((weak_import));
 	NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
 	[paragraphStyle setAlignment:alignment];
 	[paragraphStyle setLineBreakMode:NSLineBreakByTruncatingTail];
-	[titleAttributes release];
 	titleAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:
 		textColor,                                   NSForegroundColorAttributeName,
 		paragraphStyle,                              NSParagraphStyleAttributeName,
 		[NSFont boldSystemFontOfSize:titleFontSize], NSFontAttributeName,
 		textShadow,                                  NSShadowAttributeName,
 		nil];
-	[paragraphStyle release];
 
 	paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
 	[paragraphStyle setAlignment:alignment];
-	[textAttributes release];
 	textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:
 		textColor,                               NSForegroundColorAttributeName,
 		paragraphStyle,                          NSParagraphStyleAttributeName,
 		[NSFont messageFontOfSize:textFontSize], NSFontAttributeName,
 		textShadow,                              NSShadowAttributeName,
 		nil];
-	[paragraphStyle release];
-	[textShadow release];
 }
 
 - (id) target {

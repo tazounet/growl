@@ -9,11 +9,11 @@
 #import <AppKit/AppKit.h>
 
 @interface GrowlNotificationTableFadeView : NSView 
-@property (nonatomic, retain) NSGradient *gradient;
+@property (nonatomic, strong) NSGradient *gradient;
 @property (nonatomic) CGFloat angle;
 @end
 
 @interface GrowlNotificationSettingsScrollView : NSScrollView
-@property (nonatomic, retain) GrowlNotificationTableFadeView *top;
-@property (nonatomic, retain) GrowlNotificationTableFadeView *bottom;
+@property (nonatomic, strong) GrowlNotificationTableFadeView *top;
+@property (nonatomic, strong) GrowlNotificationTableFadeView *bottom;
 @end

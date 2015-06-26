@@ -24,12 +24,12 @@
 {
     self = [super init];
     if (self) {
-       self.registrationAttempt = [[[GrowlGNTPRegistrationAttempt alloc] initWithDictionary:regDict] autorelease];
+       self.registrationAttempt = [[GrowlGNTPRegistrationAttempt alloc] initWithDictionary:regDict];
        self.registrationAttempt.delegate = (id <GrowlCommunicationAttemptDelegate>)self;
        self.registrationAttempt.host = host;
        self.registrationAttempt.password = pass;
        
-       self.notificationAttempt = [[[GrowlGNTPNotificationAttempt alloc] initWithDictionary:noteDict] autorelease];
+       self.notificationAttempt = [[GrowlGNTPNotificationAttempt alloc] initWithDictionary:noteDict];
        self.notificationAttempt.delegate = (id <GrowlCommunicationAttemptDelegate>)self;
        self.notificationAttempt.host = host;
        self.notificationAttempt.password = pass;
@@ -43,12 +43,6 @@
     return self;
 }
 
--(void)dealloc
-{
-   [notificationAttempt release];
-   [registrationAttempt release];
-   [super dealloc];
-}
 
 -(int)start:(BOOL)shouldWait
 {

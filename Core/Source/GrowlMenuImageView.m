@@ -60,11 +60,7 @@
     [self removeObserver:self forKeyPath:@"mainImage"];
     [self removeObserver:self forKeyPath:@"mouseDown"];
 
-    [mainImage release];
-    [alternateImage release];
-    [squelchImage release];
     
-    [super dealloc];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context

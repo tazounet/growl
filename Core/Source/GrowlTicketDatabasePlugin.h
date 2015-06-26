@@ -12,11 +12,11 @@
 
 @interface GrowlTicketDatabasePlugin : NSManagedObject
 
-@property (nonatomic, retain) id configuration;
-@property (nonatomic, retain) NSString * pluginID;
-@property (nonatomic, retain) NSString * displayName;
-@property (nonatomic, retain) NSString * configID;
-@property (nonatomic, retain) NSString * pluginType;
+@property (nonatomic, strong) id configuration;
+@property (nonatomic, strong) NSString * pluginID;
+@property (nonatomic, strong) NSString * displayName;
+@property (nonatomic, strong) NSString * configID;
+@property (nonatomic, strong) NSString * pluginType;
 
 -(BOOL)canFindInstance;
 -(GrowlPlugin*)pluginInstanceForConfiguration;

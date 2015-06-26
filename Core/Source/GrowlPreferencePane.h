@@ -45,17 +45,17 @@
 -(void)releaseTab:(GrowlPrefsViewController*)tab;
 
 #pragma mark Properties
-@property (retain) NSString *networkAddressString;
-@property (retain) GrowlPrefsViewController *currentViewController;
-@property (retain) NSMutableDictionary *prefViewControllers;
+@property (strong) NSString *networkAddressString;
+@property (strong) GrowlPrefsViewController *currentViewController;
+@property (strong) NSMutableDictionary *prefViewControllers;
 
-@property (nonatomic, retain) NSString *settingsWindowTitle;
-@property (nonatomic, assign) IBOutlet NSToolbarItem *generalItem;
-@property (nonatomic, assign) IBOutlet NSToolbarItem *applicationsItem;
-@property (nonatomic, assign) IBOutlet NSToolbarItem *displaysItem;
-@property (nonatomic, assign) IBOutlet NSToolbarItem *networkItem;
-@property (nonatomic, assign) IBOutlet NSToolbarItem *rollupItem;
-@property (nonatomic, assign) IBOutlet NSToolbarItem *historyItem;
-@property (nonatomic, assign) IBOutlet NSToolbarItem *aboutItem;
+@property (nonatomic, strong) NSString *settingsWindowTitle;
+@property (nonatomic, weak) IBOutlet NSToolbarItem *generalItem;
+@property (nonatomic, weak) IBOutlet NSToolbarItem *applicationsItem;
+@property (nonatomic, weak) IBOutlet NSToolbarItem *displaysItem;
+@property (nonatomic, weak) IBOutlet NSToolbarItem *networkItem;
+@property (nonatomic, weak) IBOutlet NSToolbarItem *rollupItem;
+@property (nonatomic, weak) IBOutlet NSToolbarItem *historyItem;
+@property (nonatomic, weak) IBOutlet NSToolbarItem *aboutItem;
 
 @end

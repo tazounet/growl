@@ -10,12 +10,12 @@
 
 @interface HWGrowlPhoneMonitor ()
 
-@property (nonatomic, assign) id<HWGrowlPluginControllerProtocol> delegate;
+@property (nonatomic, unsafe_unretained) id<HWGrowlPluginControllerProtocol> delegate;
 
 @property (nonatomic, assign) BOOL starting;
-@property (nonatomic, assign) IOBluetoothUserNotification *connectionNotification;
+@property (nonatomic, weak) IOBluetoothUserNotification *connectionNotification;
 
-@property (nonatomic, retain) IOBluetoothHandsFree *phone;
+@property (nonatomic, strong) IOBluetoothHandsFree *phone;
 
 @end
 
@@ -32,10 +32,7 @@
 	[connectionNotification unregister];
 	connectionNotification = nil;
     
-    [phone release];
-    phone = nil;
     
-	[super dealloc];
 }
 
 #ifndef NSFoundationVersionNumber10_7
@@ -61,7 +58,6 @@
 											options:nil];
 			[alert runModal];
 		}
-		[self release];
 		return nil;
 	}
 	
@@ -69,7 +65,7 @@
 		NSString *path = [[NSBundle mainBundle] pathForResource:@"HandsFreeDeviceSDPRecord" ofType:@"plist"];
 		NSDictionary *serviceDict = [NSDictionary dictionaryWithContentsOfFile:path]; 
 		if(serviceDict){
-			IOReturn result = IOBluetoothAddServiceDict((CFDictionaryRef)serviceDict, NULL);
+			IOReturn result = IOBluetoothAddServiceDict((__bridge CFDictionaryRef)serviceDict, NULL);
 			if(result != kIOReturnSuccess){
 				NSLog(@"Error 0x%x", result);
 			}
@@ -136,20 +132,20 @@
 		
 		NSDictionary *scoDict = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES]
 																			 forKey:@"Autoconfig hidden"];
-		IOReturn result = IOBluetoothAddSCOAudioDevice((IOBluetoothDeviceRef)[device getDeviceRef], (CFDictionaryRef)scoDict); 
+		IOReturn result = IOBluetoothAddSCOAudioDevice((IOBluetoothDeviceRef)[device getDeviceRef], (__bridge CFDictionaryRef)scoDict);
 		if (result != kIOReturnSuccess)
 		{
 			NSLog(@"error 0x%x, trying removing and readding", result);
-			result = IOBluetoothRemoveSCOAudioDevice((IOBluetoothDeviceRef)device);
+			result = IOBluetoothRemoveSCOAudioDevice((__bridge IOBluetoothDeviceRef)device);
 			NSLog(@"remove result 0x%x", result);
-			result = IOBluetoothAddSCOAudioDevice([device getDeviceRef], (CFDictionaryRef)scoDict);
+			result = IOBluetoothAddSCOAudioDevice([device getDeviceRef], (__bridge CFDictionaryRef)scoDict);
 			if (result != kIOReturnSuccess)
 			{
 				NSLog(@"error adding SCO audio device. 0x%x", result);
 			}
 		}
 		
-		__block HWGrowlPhoneMonitor *blockSelf = self;
+		__weak HWGrowlPhoneMonitor *weakSelf = self;
 		double delayInSeconds = 5.0;
 		dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
 		dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
@@ -160,9 +156,8 @@
 				
 				[handsFree setSupportedFeatures:handsFree.supportedFeatures | IOBluetoothHandsFreeDeviceFeatureCLIPresentation];
 				[handsFree connect];
-				[blockSelf setPhone:handsFree];
-				[handsFree release];
-				[device registerForDisconnectNotification:blockSelf selector:@selector(bluetoothDisconnection:device:)];
+				[weakSelf setPhone:handsFree];
+				[device registerForDisconnectNotification:weakSelf selector:@selector(bluetoothDisconnection:device:)];
 			}else{
 				NSLog(@"Sigh");
 			}
@@ -185,7 +180,7 @@
 	static NSImage *_icon = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		_icon = [[NSImage imageNamed:@"HWGPrefsPhone"] retain];
+		_icon = [NSImage imageNamed:@"HWGPrefsPhone"];
 	});
 	return _icon;
 }

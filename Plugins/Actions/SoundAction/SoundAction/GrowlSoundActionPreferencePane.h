@@ -10,8 +10,8 @@
 
 @interface GrowlSoundActionPreferencePane : GrowlPluginPreferencePane <NSTableViewDelegate>
 
-@property (nonatomic, assign) IBOutlet NSTableView	*soundTableView;
-@property (nonatomic, retain) NSArray *sounds;
+@property (nonatomic, weak) IBOutlet NSTableView	*soundTableView;
+@property (nonatomic, strong) NSArray *sounds;
 
 -(void)updateSoundsList;
 

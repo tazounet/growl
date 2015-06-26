@@ -10,8 +10,8 @@
 
 @interface GrowlDispatchMutableDictionary ()
 
-@property (nonatomic, assign) dispatch_queue_t dispatchQueue;
-@property (nonatomic, retain) NSMutableDictionary *dictionary;
+@property (nonatomic, strong) dispatch_queue_t dispatchQueue;
+@property (nonatomic, strong) NSMutableDictionary *dictionary;
 
 @end
 
@@ -21,11 +21,11 @@
 @synthesize dictionary = _dictionary;
 
 +(GrowlDispatchMutableDictionary*)dictionaryWithQueueName:(NSString*)queueName {
-	return [[[GrowlDispatchMutableDictionary alloc] initWithDispatchQueueName:queueName] autorelease];
+	return [[GrowlDispatchMutableDictionary alloc] initWithDispatchQueueName:queueName];
 }
 
 +(GrowlDispatchMutableDictionary*)dictionaryWithQueue:(dispatch_queue_t)queue {
-	return [[[GrowlDispatchMutableDictionary alloc] initWithDispatchQueue:queue] autorelease];
+	return [[GrowlDispatchMutableDictionary alloc] initWithDispatchQueue:queue];
 }
 
 -(id)init {
@@ -46,16 +46,10 @@
 -(id)initWithDispatchQueue:(dispatch_queue_t)queue {
 	if((self = [self init])){
 		self.dispatchQueue = queue;
-		dispatch_retain(queue);
 	}
 	return self;
 }
 
--(void)dealloc {
-	dispatch_release(self.dispatchQueue);
-	self.dictionary = nil;
-	[super dealloc];
-}
 
 -(void)setObject:(id)anObject forKey:(NSString*)aKey {
 	dispatch_barrier_async(self.dispatchQueue, ^{
@@ -67,18 +61,16 @@
 	__block id obj = nil;
 	dispatch_sync(self.dispatchQueue, ^{
 		obj = [self.dictionary objectForKey:aKey];
-		[obj retain];
 	});
-	return [obj autorelease];
+	return obj;
 }
 
 -(NSArray*)allValues {
 	__block NSArray *array = nil;
 	dispatch_sync(self.dispatchQueue, ^{
 		array = [self.dictionary allValues];
-		[array retain];
 	});
-	return [array autorelease];
+	return array;
 }
 
 -(NSUInteger)objectCount {
@@ -94,7 +86,7 @@
 	dispatch_sync(self.dispatchQueue, ^{
 		copy = [self.dictionary copy];
 	});
-	return [copy autorelease];
+	return copy;
 }
 
 -(void)removeObjectForKey:(id)aKey {

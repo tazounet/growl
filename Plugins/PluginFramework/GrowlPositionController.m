@@ -22,10 +22,10 @@
 
 @property (nonatomic, assign) QuadTreeNode *c_rootNode;
 
-@property (nonatomic, retain) GrowlQuadTreeNode *rootNode;
-@property (nonatomic, retain) NSMutableArray *allColumns;
-@property (nonatomic, retain) NSMutableArray *leftColumns;
-@property (nonatomic, retain) NSMutableArray *rightColumns;
+@property (nonatomic, strong) GrowlQuadTreeNode *rootNode;
+@property (nonatomic, strong) NSMutableArray *allColumns;
+@property (nonatomic, strong) NSMutableArray *leftColumns;
+@property (nonatomic, strong) NSMutableArray *rightColumns;
 @property (nonatomic) CGFloat availableWidth;
 
 @end
@@ -66,10 +66,6 @@
 	c_consolidate(c_rootNode);
 	free(c_rootNode);
 #endif
-	[allColumns release];
-	[leftColumns release];
-	[rightColumns release];
-	[super dealloc];
 }
 
 -(BOOL)isFrameFree:(CGRect)frame {
@@ -389,7 +385,7 @@
 {
 	if([self canAddColumnOfWidth:width])
 	{
-		GrowlPositionColumn *newColumn = [[[GrowlPositionColumn alloc] init] autorelease];
+		GrowlPositionColumn *newColumn = [[GrowlPositionColumn alloc] init];
 		GrowlPositionColumn *nextTo = nil;
 		newColumn.width = width;
 		availableWidth -= width;

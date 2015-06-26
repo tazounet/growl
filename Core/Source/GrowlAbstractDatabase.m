@@ -125,7 +125,10 @@
  If the coordinator doesn't already exist, it is created and the application's store added to it.
  */
 - (NSPersistentStoreCoordinator *)persistentStoreCoordinator {
-	
+
+    // Ignore warnings for NSLocalizedString stuff
+    #pragma GCC diagnostic ignored "-Wformat-security"
+    
    if (persistentStoreCoordinator != nil) {
       return persistentStoreCoordinator;
    }
@@ -193,10 +196,6 @@
 -(void)dealloc
 {
    [[NSNotificationCenter defaultCenter] removeObserver:self];
-   [managedObjectContext release]; managedObjectContext = nil;
-   [managedObjectModel release]; managedObjectModel = nil;
-   [persistentStoreCoordinator release]; persistentStoreCoordinator = nil;
-   [super dealloc];
 }
 
 @end

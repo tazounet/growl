@@ -10,11 +10,15 @@
 
 @interface GrowlPluginPreferencePane : NSPreferencePane
 
-@property (nonatomic, retain) NSMutableDictionary *configuration;
+@property (nonatomic, strong) NSMutableDictionary *configuration;
 @property (nonatomic, readonly) NSString *configurationID;
 
 -(void)setConfigurationValue:(id)value forKey:(NSString*)key;
 -(void)updateConfigurationValues;
-- (NSColor *) loadColor:(NSString *)key defaultColor:(NSColor *)defaultColor;
+-(NSColor *) loadColor:(NSString *)key defaultColor:(NSColor *)defaultColor;
+
+-(void)_setDisplayName:(NSString*)displayName;
+-(NSSet*)bindingKeys;
+-(void)setPluginConfiguration:(NSManagedObject *)plugin;
 
 @end

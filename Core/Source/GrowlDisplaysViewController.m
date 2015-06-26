@@ -31,7 +31,7 @@
 {
    if (self == [GrowlPluginTypeLabelTransformer class]) {
        @autoreleasepool {
-           [self setValueTransformer:[[[self alloc] init] autorelease]
+           [self setValueTransformer:[[self alloc] init]
                              forName:@"GrowlPluginTypeLabelTransformer"];
        }
    }
@@ -69,7 +69,7 @@
 {
    if (self == [GrowlPluginNameTransformer class]) {
        @autoreleasepool {
-           [self setValueTransformer:[[[self alloc] init] autorelease]
+           [self setValueTransformer:[[self alloc] init]
                              forName:@"GrowlPluginNameTransformer"];
        }
    }
@@ -139,15 +139,6 @@
 -(void)dealloc {
 	[defaultDisplayPopUp removeObserver:self forKeyPath:@"selecteditem"];
 	
-   [pluginPrefPane release];
-   [loadedPrefPanes release];
-   [currentPluginController release];
-   [defaultStyleLabel release];
-   [showDisabledButtonTitle release];
-   [getMoreStylesButtonTitle release];
-   [previewButtonTitle release];
-   [displayStylesColumnTitle release];
-   [super dealloc];
 }
 
 - (id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil forPrefPane:(GrowlPreferencePane *)aPrefPane {
@@ -183,10 +174,10 @@
    self.loadedPrefPanes = [NSMutableArray array];
       
 	
-	self.pluginConfigGroupController = [[[GroupedArrayController alloc] initWithEntityName:@"GrowlPlugin" 
+	self.pluginConfigGroupController = [[GroupedArrayController alloc] initWithEntityName:@"GrowlPlugin" 
 																							 basePredicateString:@"" 
 																											groupKey:@"pluginType"
-																							managedObjectContext:[[GrowlTicketDatabase sharedInstance] managedObjectContext]] autorelease];
+																							managedObjectContext:[[GrowlTicketDatabase sharedInstance] managedObjectContext]];
 	
 	NSSortDescriptor *ascendingName = [NSSortDescriptor sortDescriptorWithKey:@"displayName" 
 																						 ascending:YES 
@@ -205,7 +196,7 @@
 	[displayPluginsTable setTarget:self];
 	[displayPluginsTable setDoubleAction:@selector(editPluginName:)];
 	
-	__block GrowlDisplaysViewController *blockSafe = self;
+	__weak GrowlDisplaysViewController *blockSafe = self;
 	dispatch_async(dispatch_get_main_queue(), ^(void){
 		[blockSafe selectDefaultPlugin:defaultDisplayPluginName];
 		[blockSafe selectPlugin:defaultDisplayPluginName];
@@ -224,10 +215,10 @@
 }
 
 - (void)selectDefaultActions:(NSArray*)actions {
-	__block GrowlDisplaysViewController *blockSelf = self;
-	__block NSMutableIndexSet *indexSet = [NSMutableIndexSet indexSet];
+	__weak GrowlDisplaysViewController *weakSelf = self;
+	__weak NSMutableIndexSet *indexSet = [NSMutableIndexSet indexSet];
 	[actions enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-		NSUInteger index = [[blockSelf.actionConfigsArrayController arrangedObjects] indexOfObjectPassingTest:^BOOL(id testObj, NSUInteger testIDX, BOOL *testStop) {
+		NSUInteger index = [[weakSelf.actionConfigsArrayController arrangedObjects] indexOfObjectPassingTest:^BOOL(id testObj, NSUInteger testIDX, BOOL *testStop) {
 			if([[testObj configID] caseInsensitiveCompare:obj] == NSOrderedSame){
 				return YES;
 			}
@@ -298,7 +289,7 @@
 -(NSArray*)selectedDefaultActions {
 	NSArray *menuItems = [defaultActionPopUp itemArray];
 	NSArray *selectedActions = nil;
-	__block NSMutableIndexSet *indexSet = [NSMutableIndexSet indexSet];
+	__weak NSMutableIndexSet *indexSet = [NSMutableIndexSet indexSet];
 	[menuItems enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 		if([obj state] == NSOnState && 
 			idx >= 3 &&
@@ -387,11 +378,11 @@
 }
 
 -(void) deleteCallbackDidEnd:(NSAlert *)alert returnCode:(int)returnCode contextInfo:(void *)displayPlugin {
-	if(returnCode == NSAlertDefaultReturn && displayPlugin != nil && [(id)displayPlugin isKindOfClass:[GrowlTicketDatabasePlugin class]]){
+	if(returnCode == NSAlertDefaultReturn && displayPlugin != nil && [(__bridge id)displayPlugin isKindOfClass:[GrowlTicketDatabasePlugin class]]){
 		if(pluginPrefPane && [pluginPrefPane respondsToSelector:@selector(setPluginConfiguration:)])
 			[pluginPrefPane setValue:nil forKey:@"pluginConfiguration"];		
 		
-		[[GrowlTicketDatabase sharedInstance] deletePluginConfiguration:(GrowlTicketDatabasePlugin*)displayPlugin];
+		[[GrowlTicketDatabase sharedInstance] deletePluginConfiguration:(__bridge GrowlTicketDatabasePlugin*)displayPlugin];
 	}
 	//Not the prettiest, but it makes sure we avoid empty selection
 	NSUInteger firstNonGroupItem = [self.pluginConfigGroupController indexOfFirstNonGroupItem];
@@ -429,13 +420,13 @@
 													 alternateButton:NSLocalizedStringFromTableInBundle(@"Cancel", nil, [NSBundle mainBundle], "Button title for canceling")
 														  otherButton:nil
 										informativeTextWithFormat:NSLocalizedString(@"This plugin configuration is in use, removing it will cause it to be removed from the applications and notifications where it is in use", "")];
-			[alert setIcon:[[[NSImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForImageResource:@"growl-icon"]] autorelease]];
+			[alert setIcon:[[NSImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForImageResource:@"growl-icon"]]];
 			[alert beginSheetModalForWindow:[[NSApplication sharedApplication] keyWindow] 
 									modalDelegate:self 
 								  didEndSelector:@selector(deleteCallbackDidEnd:returnCode:contextInfo:) 
-									  contextInfo:plugin];
+									  contextInfo:(__bridge void *)(plugin)];
 		}else{
-			[self deleteCallbackDidEnd:nil returnCode:NSAlertDefaultReturn contextInfo:plugin];
+			[self deleteCallbackDidEnd:nil returnCode:NSAlertDefaultReturn contextInfo:(__bridge void *)(plugin)];
 		}
 	}
 }
@@ -627,16 +618,16 @@
 }
 
 -(void)tableViewSelectionDidChange:(NSNotification *)notification {
-	__block GrowlDisplaysViewController *blockSelf = self;
+	__weak GrowlDisplaysViewController *weakSelf = self;
 	dispatch_async(dispatch_get_main_queue(), ^{
-		[blockSelf updatePluginPreferenceSelection];
+		[weakSelf updatePluginPreferenceSelection];
 	});
 }
 
 -(void)groupedControllerEndUpdates:(GroupedArrayController *)groupedController {
 	NSString *defaultDisplayPluginName = [[self preferencesController] defaultDisplayPluginName];
 	NSArray *defaultActions = [[self preferencesController] defaultActionPluginIDArray];
-	__block GrowlDisplaysViewController *blockSafe = self;
+	__weak GrowlDisplaysViewController *blockSafe = self;
 	dispatch_async(dispatch_get_main_queue(), ^(void){
 		[blockSafe selectDefaultPlugin:defaultDisplayPluginName];
 		[blockSafe selectDefaultActions:defaultActions];

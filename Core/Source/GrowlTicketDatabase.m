@@ -42,9 +42,6 @@
    return self;
 }
        
--(void)dealloc {
-   [super dealloc];
-}
 
 -(NSString*)storePath {
    return [[GrowlPathUtilities growlSupportDirectory] stringByAppendingPathComponent:@"tickets.database"];
@@ -65,7 +62,7 @@
 
 -(NSManagedObject*)managedObjectForEntity:(NSString*)entity predicate:(NSPredicate*)predicate {
 	__block NSManagedObject *object = nil;
-	__block NSManagedObjectContext *blockContext = self.managedObjectContext;
+	__weak NSManagedObjectContext *blockContext = self.managedObjectContext;
    void (^objectBlock)(void) = ^{
       NSError *objectErr = nil;
       
@@ -102,7 +99,7 @@
 	hostname = (!hostname || [hostname isLocalHost]) ? @"Localhost" : hostname;
    __block GrowlTicketDatabaseHost *host = (GrowlTicketDatabaseHost*)[self managedObjectForEntity:@"GrowlHostTicket"
 																													 predicate:[NSPredicate predicateWithFormat:@"name == %@", hostname]];
-	__block NSManagedObjectContext *blockContext = self.managedObjectContext;
+	__weak NSManagedObjectContext *blockContext = self.managedObjectContext;
 	if(!host) {
 		void (^hostBlock)(void) = ^{
 			host = [NSEntityDescription insertNewObjectForEntityForName:@"GrowlHostTicket"
@@ -133,7 +130,7 @@
          newConfig = nil;
       }
       
-      __block NSManagedObjectContext *blockContext = self.managedObjectContext;
+      __weak NSManagedObjectContext *blockContext = self.managedObjectContext;
       void (^pluginBlock)(void) = ^{
          NSString *type = [plugin isKindOfClass:[GrowlActionPlugin class]] ? @"GrowlAction" : @"GrowlDisplay";
          
@@ -167,7 +164,7 @@
 
 -(void)upgradeFromTicketFiles {
    __block BOOL importedTickets = NO;
-   __block GrowlTicketDatabase *blockSelf = self;
+   __weak GrowlTicketDatabase *weakSelf = self;
    [managedObjectContext performBlockAndWait:^{
       /* Pull in default configurations for each existing plugin */
       NSArray *actions = [managedObjectContext executeFetchRequest:[NSFetchRequest fetchRequestWithEntityName:@"GrowlPlugin"] error:nil];
@@ -180,7 +177,7 @@
          __block NSString *firstDisplayUUID = nil;
          __block NSString *smokeUUID = nil;
          [pluginArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            GrowlTicketDatabasePlugin *config = [blockSelf makeDefaultConfig:NO forPluginDict:obj];
+            GrowlTicketDatabasePlugin *config = [weakSelf makeDefaultConfig:NO forPluginDict:obj];
             if(config){
                if([[config pluginType] caseInsensitiveCompare:@"GrowlDisplay"] == NSOrderedSame &&
                   !firstDisplayUUID)
@@ -204,7 +201,6 @@
          }else{
             NSLog(@"There was an error, there should be some display plugins during import");
          }
-         [pluginArray release];
       }
       
       /* Pull in ticket for each existing app ticket */
@@ -214,15 +210,14 @@
          if([[obj applicationName] caseInsensitiveCompare:@"Growl"] == NSOrderedSame)
             return;
          
-         GrowlTicketDatabaseHost *host = [blockSelf hostWithName:[obj hostName]];
+         GrowlTicketDatabaseHost *host = [weakSelf hostWithName:[obj hostName]];
          
          GrowlTicketDatabaseApplication *app = [NSEntityDescription insertNewObjectForEntityForName:@"GrowlApplicationTicket"
-                                                                             inManagedObjectContext:[blockSelf managedObjectContext]];
+                                                                             inManagedObjectContext:[weakSelf managedObjectContext]];
          [app setParent:host];
          [app setWithApplicationTicket:obj];
          importedTickets = YES;
       }];
-      [controller release];
    }];
    [self saveDatabase:YES];
    
@@ -269,12 +264,12 @@
    void (^appBlock)(void) = nil;
    __block GrowlTicketDatabaseApplication *app = [self ticketForApplicationName:appName hostName:hostName];
    if(!app){
-      __block GrowlTicketDatabase *blockSelf = self;
+      GrowlTicketDatabase *weakSelf = self;
       appBlock = ^{
-         GrowlTicketDatabaseHost *host = [blockSelf hostWithName:hostName];
+         GrowlTicketDatabaseHost *host = [weakSelf hostWithName:hostName];
          
          app = [NSEntityDescription insertNewObjectForEntityForName:@"GrowlApplicationTicket"
-                                             inManagedObjectContext:[blockSelf managedObjectContext]];
+                                             inManagedObjectContext:[weakSelf managedObjectContext]];
          [app setParent:host];
          [app registerWithDictionary:regDict];
       };
@@ -315,10 +310,10 @@
 }
 
 -(void)createNewCompoundAction {
-	__block GrowlTicketDatabase *blockSelf = self;
+	__weak GrowlTicketDatabase *weakSelf = self;
 	void (^compoundBlock)(void) = ^{
 		GrowlTicketDatabaseCompoundAction *newCompound = [NSEntityDescription insertNewObjectForEntityForName:@"GrowlCompoundAction"
-																												 inManagedObjectContext:blockSelf.managedObjectContext];
+																												 inManagedObjectContext:weakSelf.managedObjectContext];
 		newCompound.pluginType = @"GrowlCompoundAction";
 		newCompound.displayName = @"NewCompoundAction";
 		newCompound.pluginID = @"com.Growl.compoundAction";
@@ -344,7 +339,7 @@
 		//resolve to a smoke display config if possible
 		plugin = (GrowlTicketDatabaseDisplay*)[self pluginConfigForBundleID:@"com.Growl.Smoke"];
 		if(!plugin || ![plugin canFindInstance]){
-			__block NSManagedObjectContext *blockContext = self.managedObjectContext;
+			__weak NSManagedObjectContext *blockContext = self.managedObjectContext;
 			void (^pluginBlock)(void) = ^{
 				NSError *pluginErr = nil;
 				
@@ -380,7 +375,7 @@
 
 -(NSSet*)defaultActionConfigSet {
 	NSArray *actionIDs = [[GrowlPreferencesController sharedController] defaultActionPluginIDArray];
-	__block NSMutableSet *resolvedSet = [NSMutableSet set];
+	__weak NSMutableSet *resolvedSet = [NSMutableSet set];
 	[actionIDs enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 		GrowlTicketDatabasePlugin *plugin = [self pluginConfigForID:obj];
 		if(plugin && [plugin isKindOfClass:[GrowlTicketDatabaseCompoundAction class]]){

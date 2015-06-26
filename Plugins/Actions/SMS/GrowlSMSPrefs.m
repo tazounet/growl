@@ -36,16 +36,6 @@
    return self;
 }
 
-- (void)dealloc {
-   [smsNotifications release];
-   [accountRequiredLabel release];
-   [instructions release];
-   [accountLabel release];
-   [passwordLabel release];
-   [apiIDLabel release];
-   [destinationLabel release];
-   [super dealloc];
-}
 
 - (NSString *) mainNibName {
 	return @"GrowlSMSPrefs";
@@ -55,10 +45,10 @@
 	static NSSet *keys = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		keys = [[NSSet setWithObjects:@"accountName",
+		keys = [NSSet setWithObjects:@"accountName",
 				  @"accountAPIID",
 				  @"destinationNumber",
-				  @"accountPassword", nil] retain];
+				  @"accountPassword", nil];
 	});
 	return keys;
 }

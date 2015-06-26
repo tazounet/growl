@@ -14,19 +14,19 @@
 
 @interface GrowlTicketDatabaseTicket : NSManagedObject
 
-@property (nonatomic, retain) NSNumber * enabled;
-@property (nonatomic, retain) NSData * iconData;
-@property (nonatomic, retain) NSNumber * loggingEnabled;
-@property (nonatomic, retain) NSString * name;
-@property (nonatomic, retain) NSNumber * positionType;
-@property (nonatomic, retain) NSNumber * selectedPosition;
-@property (nonatomic, retain) NSString * ticketDescription;
-@property (nonatomic, retain) NSNumber * useDisplay;
-@property (nonatomic, retain) NSNumber * useParentActions;
-@property (nonatomic, retain) NSSet *actions;
-@property (nonatomic, retain) NSSet *children;
-@property (nonatomic, retain) GrowlTicketDatabaseTicket *parent;
-@property (nonatomic, retain) GrowlTicketDatabaseDisplay *display;
+@property (nonatomic, strong) NSNumber * enabled;
+@property (nonatomic, strong) NSData * iconData;
+@property (nonatomic, strong) NSNumber * loggingEnabled;
+@property (nonatomic, strong) NSString * name;
+@property (nonatomic, strong) NSNumber * positionType;
+@property (nonatomic, strong) NSNumber * selectedPosition;
+@property (nonatomic, strong) NSString * ticketDescription;
+@property (nonatomic, strong) NSNumber * useDisplay;
+@property (nonatomic, strong) NSNumber * useParentActions;
+@property (nonatomic, strong) NSSet *actions;
+@property (nonatomic, strong) NSSet *children;
+@property (nonatomic, strong) GrowlTicketDatabaseTicket *parent;
+@property (nonatomic, strong) GrowlTicketDatabaseDisplay *display;
 @end
 
 @interface GrowlTicketDatabaseTicket (CoreDataGeneratedAccessors)

@@ -26,7 +26,7 @@ static NSTimeInterval currentIdleTime(void) {
 @property (nonatomic) BOOL useLock;
 @property (nonatomic) BOOL useSleep;
 @property (nonatomic) BOOL useTime;
-@property (nonatomic, retain) NSArray *applicationExceptions;
+@property (nonatomic, strong) NSArray *applicationExceptions;
 
 @property (nonatomic) BOOL screensaverActive;
 @property (nonatomic) BOOL screenLocked;
@@ -36,7 +36,7 @@ static NSTimeInterval currentIdleTime(void) {
 
 @property (nonatomic) NSTimeInterval lastSeenIdle;
 
-@property (nonatomic, retain) NSString *activeApplicationID;
+@property (nonatomic, strong) NSString *activeApplicationID;
 
 - (void)updateIdleByTime;
 
@@ -51,7 +51,7 @@ static NSTimeInterval currentIdleTime(void) {
 @synthesize useTime;
 @synthesize applicationExceptions;
 
-@synthesize isIdle;
+@dynamic isIdle;
 @synthesize screensaverActive;
 @synthesize screenLocked;
 @synthesize asleep;
@@ -76,56 +76,56 @@ static NSTimeInterval currentIdleTime(void) {
 	if((self = [super init])){
 		self.useSleep = YES;
 		
-		__block GrowlIdleStatusObserver *blockSelf = self;
+		__weak GrowlIdleStatusObserver *weakSelf = self;
 		NSDistributedNotificationCenter *nsdnc = [NSDistributedNotificationCenter defaultCenter];
 		[nsdnc addObserverForName:@"com.apple.screensaver.didstart"
 								 object:nil
 								  queue:[NSOperationQueue mainQueue]
 							usingBlock:^(NSNotification *note) {
-								blockSelf.screensaverActive = YES;
+								weakSelf.screensaverActive = YES;
 							}];
 		[nsdnc addObserverForName:@"com.apple.screensaver.didstop"
 								 object:nil
 								  queue:[NSOperationQueue mainQueue]
 							usingBlock:^(NSNotification *note) {
-								blockSelf.screensaverActive = NO;
+								weakSelf.screensaverActive = NO;
 							}];
 		[nsdnc addObserverForName:@"com.apple.screenIsLocked"
 								 object:nil
 								  queue:[NSOperationQueue mainQueue]
 							usingBlock:^(NSNotification *note) {
-								blockSelf.screenLocked = YES;
+								weakSelf.screenLocked = YES;
 							}];
 		[nsdnc addObserverForName:@"com.apple.screenIsUnlocked"
 								 object:nil
 								  queue:[NSOperationQueue mainQueue]
 							usingBlock:^(NSNotification *note) {
-								blockSelf.screenLocked = NO;
+								weakSelf.screenLocked = NO;
 							}];
 		NSNotificationCenter *workspaceNC = [[NSWorkspace sharedWorkspace] notificationCenter];
 		[workspaceNC addObserverForName:NSWorkspaceWillSleepNotification
 										 object:nil
 										  queue:[NSOperationQueue mainQueue]
 									usingBlock:^(NSNotification *note) {
-										blockSelf.asleep = YES;
+										weakSelf.asleep = YES;
 									}];
 		[workspaceNC addObserverForName:NSWorkspaceDidWakeNotification
 										 object:nil
 										  queue:[NSOperationQueue mainQueue]
 									usingBlock:^(NSNotification *note) {
-										blockSelf.asleep = NO;
+										weakSelf.asleep = NO;
 									}];
 		[workspaceNC addObserverForName:NSWorkspaceScreensDidSleepNotification
 										 object:nil
 										  queue:[NSOperationQueue mainQueue]
 									usingBlock:^(NSNotification *note) {
-										blockSelf.screenAsleep = YES;
+										weakSelf.screenAsleep = YES;
 									}];
 		[workspaceNC addObserverForName:NSWorkspaceScreensDidWakeNotification
 										 object:nil
 										  queue:[NSOperationQueue mainQueue]
 									usingBlock:^(NSNotification *note) {
-										blockSelf.screenAsleep = NO;
+										weakSelf.screenAsleep = NO;
 									}];
 		
 		[workspaceNC addObserverForName:NSWorkspaceDidActivateApplicationNotification 
@@ -133,13 +133,13 @@ static NSTimeInterval currentIdleTime(void) {
 										  queue:[NSOperationQueue mainQueue] 
 									usingBlock:^(NSNotification *note) {
 										NSString *newID = [[[note userInfo] valueForKey:NSWorkspaceApplicationKey] bundleIdentifier];
-										blockSelf.activeApplicationID = newID;
+										weakSelf.activeApplicationID = newID;
 									}];
 		
 		double delayInSeconds = MACHINE_ACTIVE_POLL_INTERVAL;
 		dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
 		dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-			[blockSelf updateIdleByTime];
+			[weakSelf updateIdleByTime];
 		});
 	}
 	return self;
@@ -149,7 +149,6 @@ static NSTimeInterval currentIdleTime(void) {
 {
 	[[NSDistributedNotificationCenter defaultCenter] removeObserver:self];
 	[[[NSWorkspace sharedWorkspace] notificationCenter] removeObserver:self];
-	[super dealloc];
 }
 
 + (NSSet*)keyPathsForValuesAffectingIsIdle {
@@ -191,10 +190,10 @@ static NSTimeInterval currentIdleTime(void) {
 	NSTimeInterval nextFireTime = MACHINE_ACTIVE_POLL_INTERVAL;
 	if(idleByTime)
 		nextFireTime = MACHINE_IDLE_POLL_INTERVAL;
-	__block GrowlIdleStatusObserver *blockSelf = self;
+	__weak GrowlIdleStatusObserver *weakSelf = self;
 	dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, nextFireTime * NSEC_PER_SEC);
 	dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-		[blockSelf updateIdleByTime];
+		[weakSelf updateIdleByTime];
 	});
 }
 

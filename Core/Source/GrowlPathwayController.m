@@ -63,7 +63,6 @@ NSString *GrowlPathwayNotificationKey = @"GrowlPathway";
 
 		GrowlPathway *rpw = [[GrowlTCPPathway alloc] init];
 		[self installPathway:rpw];
-		[rpw release];
 
 		//set it to the contrary value, so that -setServerEnabledFromPreferences (which compares the values) will turn the server on if necessary.
 		serverEnabled = ![[GrowlPreferencesController sharedController] isGrowlServerEnabled];
@@ -77,14 +76,11 @@ NSString *GrowlPathwayNotificationKey = @"GrowlPathway";
 	/*releasing pathways first, and setting it to nil, means that the
 	 *	-removeObject: calls that we get to from -stopServer will be no-ops.
 	 */
-	[pathways release];
 	 pathways = nil;
-	[remotePathways release];
 	 remotePathways = nil;
 
 	[self setServerEnabled:NO];
 
-	[super dealloc];
 }
 
 #pragma mark -

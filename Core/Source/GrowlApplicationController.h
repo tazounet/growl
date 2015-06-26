@@ -57,6 +57,8 @@
 
 - (void) preferencesChanged:(NSNotification *) note;
 
+- (void) toggleRollup;
+
 - (void) replyToPing:(NSNotification *)note;
 
 - (void) firstLaunchClosed;
@@ -67,6 +69,6 @@
 //To be used by the GAB pathway if it can't register its connection (which means that there's already a GHA running).
 - (IBAction)quitWithWarning:(id)sender;
 
-@property (retain) GrowlMenu                   *statusMenu;
+@property (strong) GrowlMenu                   *statusMenu;
 
 @end

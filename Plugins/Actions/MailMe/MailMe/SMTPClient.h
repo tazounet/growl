@@ -34,11 +34,11 @@ typedef NSInteger SMTPClientTLSMode;
 	NSString* _authPassword;
 }
 
-@property(readonly,retain) NSString* address;
-@property(readonly,retain) NSArray* ports;
+@property(readonly,strong) NSString* address;
+@property(readonly,strong) NSArray* ports;
 @property(readonly,assign) SMTPClientTLSMode tlsMode;
-@property(readonly,retain) NSString* username;
-@property(readonly,retain) NSString* password;
+@property(readonly,strong) NSString* username;
+@property(readonly,strong) NSString* password;
 
 +(void)send:(NSDictionary*)params;
 

@@ -15,17 +15,12 @@
 
 - (id) initWithStyle:(NSString *)styleName {
 	if ((self = [self initWithBundle:[NSBundle bundleForClass:[self class]]])) {
-		style = [styleName retain];
+		style = styleName;
 		prefDomain = [[NSString alloc] initWithFormat:@"%@.%@", GrowlWebKitPrefDomain, style];
    }
 	return self;
 }
 
-- (void) dealloc {
-	[style      release];
-	[prefDomain release];
-	[super dealloc];
-}
 
 - (NSString *) mainNibName {
 	return @"WebKitPrefs";
@@ -39,10 +34,10 @@
 	static NSSet *keys = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		keys = [[NSSet setWithObjects:@"limit",
+		keys = [NSSet setWithObjects:@"limit",
 				  @"opacity",	
 				  @"duration",
-				  @"screen", nil] retain];
+				  @"screen", nil];
 	});
 	return keys;
 }

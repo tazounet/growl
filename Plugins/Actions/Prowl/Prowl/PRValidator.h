@@ -11,7 +11,7 @@
 @interface PRValidator : NSObject
 
 - (id)initWithDelegate:(id<PRValidatorDelegate>)delegate;
-@property (nonatomic, assign, readonly) id<PRValidatorDelegate> delegate;
+@property (nonatomic, unsafe_unretained, readonly) id<PRValidatorDelegate> delegate;
 
 - (void)validateApiKey:(PRAPIKey *)apiKey;
 - (BOOL)isValidatingApiKey:(PRAPIKey *)apiKey;

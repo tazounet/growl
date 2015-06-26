@@ -10,8 +10,8 @@
 
 @interface GrowlCompoundActionPreferencePane : GrowlPluginPreferencePane
 
-@property (nonatomic, assign) IBOutlet NSArrayController *chosenArrayController;
-@property (nonatomic, assign) IBOutlet NSArrayController *availableArrayController;
-@property (nonatomic, assign) IBOutlet NSWindow *addWindow;
+@property (nonatomic, weak) IBOutlet NSArrayController *chosenArrayController;
+@property (nonatomic, weak) IBOutlet NSArrayController *availableArrayController;
+@property (nonatomic, weak) IBOutlet NSWindow *addWindow;
 
 @end

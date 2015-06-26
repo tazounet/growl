@@ -17,10 +17,7 @@
 	[[NSNotificationCenter defaultCenter] removeObserver:self
 													name:NSConnectionDidDieNotification
 												  object:growlConnection];
-	[growlConnection release];
-	[growlProxy release];
     
-	[super dealloc];
 }
 
 //When a connection dies, release our reference to its proxy
@@ -29,8 +26,8 @@
 		[[NSNotificationCenter defaultCenter] removeObserver:self
 														name:NSConnectionDidDieNotification
 													  object:growlConnection];
-		[growlProxy release]; growlProxy = nil;
-		[growlConnection release]; growlConnection = nil;
+		 growlProxy = nil;
+		 growlConnection = nil;
 	}
 }
 
@@ -47,8 +44,8 @@
 				NSDistantObject *theProxy = [connection rootProxy];
 				if ([theProxy respondsToSelector:@selector(registerApplicationWithDictionary:)]) {
 					[theProxy setProtocolForProxy:@protocol(GrowlNotificationProtocol)];
-					growlProxy = [(NSProxy<GrowlNotificationProtocol> *)theProxy retain];
-					growlConnection = [connection retain];
+					growlProxy = (NSProxy<GrowlNotificationProtocol> *)theProxy;
+					growlConnection = connection;
 				} else {
 					NSLog(@"Received a fake GrowlApplicationBridgePathway object. Some other application is interfering with Growl, or something went horribly wrong. Please file a bug report.");
 					growlProxy = nil;

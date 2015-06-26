@@ -15,9 +15,9 @@
 	NSString *path;
 }
 
-@property (nonatomic, retain) NSData *iconData;
-@property (nonatomic, retain) NSString *name;
-@property (nonatomic, retain) NSString *path;
+@property (nonatomic, strong) NSData *iconData;
+@property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSString *path;
 
 + (VolumeInfo *) volumeInfoForMountWithPath:(NSString *)aPath;
 + (VolumeInfo *) volumeInfoForUnmountWithPath:(NSString *)aPath;
@@ -30,6 +30,6 @@
 
 @interface HWGrowlVolumeMonitor : NSObject <HWGrowlPluginProtocol, HWGrowlPluginNotifierProtocol, NSTableViewDelegate>
 
-@property (nonatomic, retain) IBOutlet NSView *prefsView;
+@property (nonatomic, strong) IBOutlet NSView *prefsView;
 
 @end

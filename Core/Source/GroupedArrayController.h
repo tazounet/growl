@@ -28,19 +28,19 @@
                 groupKey:(NSString*)key
     managedObjectContext:(NSManagedObjectContext*)aContext;
 
-@property (nonatomic, assign) id<GroupedArrayControllerDelegate> delegate;
-@property (nonatomic, assign) NSManagedObjectContext *context;
-@property (nonatomic, assign) NSTableView *tableView; 
-@property (nonatomic, retain) NSPredicate *filterPredicate; 
-@property (nonatomic, retain) NSString *entityName;
-@property (nonatomic, retain) NSString *basePredicateString;
-@property (nonatomic, retain) NSString *groupKey;
-@property (nonatomic, retain) NSMutableArray *currentGroups;
-@property (nonatomic, retain) NSMutableDictionary *groupControllers;
-@property (nonatomic, retain) NSArrayController *countController;
-@property (nonatomic, retain) NSArray *arrangedObjects;
+@property (nonatomic, unsafe_unretained) id<GroupedArrayControllerDelegate> delegate;
+@property (nonatomic, unsafe_unretained) NSManagedObjectContext *context;
+@property (nonatomic, weak) NSTableView *tableView; 
+@property (nonatomic, strong) NSPredicate *filterPredicate; 
+@property (nonatomic, strong) NSString *entityName;
+@property (nonatomic, strong) NSString *basePredicateString;
+@property (nonatomic, strong) NSString *groupKey;
+@property (nonatomic, strong) NSMutableArray *currentGroups;
+@property (nonatomic, strong) NSMutableDictionary *groupControllers;
+@property (nonatomic, strong) NSArrayController *countController;
+@property (nonatomic, strong) NSArray *arrangedObjects;
 @property (nonatomic, copy) NSComparator groupCompareBlock;
-@property (nonatomic, retain) id selection;
+@property (nonatomic, strong) id selection;
 @property (nonatomic) BOOL grouped;
 @property (nonatomic) BOOL doNotShowSingleGroupHeader;
 @property (nonatomic) BOOL showEmptyGroups;

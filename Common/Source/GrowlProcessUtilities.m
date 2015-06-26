@@ -39,7 +39,7 @@ static BOOL Growl_GetPSNForProcessWithBundle(NSString *bundleIDArg, NSString *bu
 	//One potential failure case: If both a bundle path and a bundle ID are passed, and a process that matches by bundle ID but not by path comes before a match by path, this loop will return the match by bundle ID.
 	//We *should* return the match by path, but covering that corner case while still supporting other modes would make this much slower.
 	while (GetNextProcess(&PSN) == noErr) {
-		NSDictionary *infoDict = [NSMakeCollectable(ProcessInformationCopyDictionary(&PSN, kProcessDictionaryIncludeAllInformationMask)) autorelease];
+		NSDictionary *infoDict = (NSDictionary*) CFBridgingRelease(ProcessInformationCopyDictionary(&PSN, kProcessDictionaryIncludeAllInformationMask));
 		if (infoDict) {
 			NSString *bundlePath = [infoDict objectForKey:@"BundlePath"];
 			NSString *bundleID = [infoDict objectForKey:(NSString *)kCFBundleIdentifierKey];

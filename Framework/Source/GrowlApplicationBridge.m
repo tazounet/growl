@@ -43,7 +43,7 @@ static dispatch_queue_t notificationQueue_Queue;
 @property (nonatomic, assign) BOOL hasNetworkClient;
 @property (nonatomic, assign) BOOL registered;
 
-@property (nonatomic, retain) GrowlCommunicationAttempt *registrationAttempt;
+@property (nonatomic, strong) GrowlCommunicationAttempt *registrationAttempt;
 
 @end
 
@@ -177,7 +177,6 @@ static dispatch_queue_t notificationQueue_Queue;
 -(void)dealloc {
    [[NSWorkspace sharedWorkspace] removeObserver:self forKeyPath:@"runningApplications"];
    [[NSUserNotificationCenter defaultUserNotificationCenter] removeAllDeliveredNotifications];
-	[super dealloc];
 }
 
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
@@ -265,7 +264,6 @@ static dispatch_queue_t notificationQueue_Queue;
 		[NSDNC removeObserver:self
                        name:growlNotificationClickedName
                      object:nil];
-	[growlNotificationClickedName release];
 	
 	/* We also look for notifications which arne't pid-specific but which are for our application */
 	growlNotificationClickedName = [[NSString alloc] initWithFormat:@"%@-%@",
@@ -279,7 +277,6 @@ static dispatch_queue_t notificationQueue_Queue;
 		[NSDNC removeObserver:self
                        name:growlNotificationClickedName
                      object:nil];
-	[growlNotificationClickedName release];
    
 	NSString *growlNotificationTimedOutName = [[NSString alloc] initWithFormat:@"%@-%d-%@",
                                               self.appName, pid, GROWL_DISTRIBUTED_NOTIFICATION_TIMED_OUT_SUFFIX];
@@ -292,7 +289,6 @@ static dispatch_queue_t notificationQueue_Queue;
 		[NSDNC removeObserver:self
                        name:growlNotificationTimedOutName
                      object:nil];
-	[growlNotificationTimedOutName release];
 	
 	/* We also look for notifications which arne't pid-specific but which are for our application */
 	growlNotificationTimedOutName = [[NSString alloc] initWithFormat:@"%@-%@",
@@ -306,7 +302,6 @@ static dispatch_queue_t notificationQueue_Queue;
 		[NSDNC removeObserver:self
                        name:growlNotificationTimedOutName
                      object:nil];
-	[growlNotificationTimedOutName release];
    
 	[self reregisterGrowlNotifications];
 }
@@ -322,7 +317,6 @@ static dispatch_queue_t notificationQueue_Queue;
    if (![self.registrationDictionary isEqualToDictionary:registrationDictionary]){
       registrationDictionary = [self registrationDictionaryByFillingInDictionary:registrationDictionary];
       if(![self.registrationDictionary isEqualToDictionary:registrationDictionary]){
-         [_registrationDictionary release];
          _registrationDictionary = [registrationDictionary copy];
          self.appName = [self _applicationNameForGrowlSearchingRegistrationDictionary:self.registrationDictionary];
          self.appIconData = [self _applicationIconDataForGrowlSearchingRegistrationDictionary:self.registrationDictionary];
@@ -544,9 +538,9 @@ static dispatch_queue_t notificationQueue_Queue;
    if(self.hasGNTP){
       //These should be the only way we get marked as having gntp
       if([GrowlXPCCommunicationAttempt canCreateConnection])
-         self.registrationAttempt = [[[GrowlXPCRegistrationAttempt alloc] initWithDictionary:regDict] autorelease];
+         self.registrationAttempt = [[GrowlXPCRegistrationAttempt alloc] initWithDictionary:regDict];
       else if(self.hasNetworkClient)
-         self.registrationAttempt = [[[GrowlGNTPRegistrationAttempt alloc] initWithDictionary:regDict] autorelease];
+         self.registrationAttempt = [[GrowlGNTPRegistrationAttempt alloc] initWithDictionary:regDict];
       
       if(_registrationAttempt){
          _registrationAttempt.delegate = (id <GrowlCommunicationAttemptDelegate>)self;
@@ -560,7 +554,6 @@ static dispatch_queue_t notificationQueue_Queue;
          self.registrationAttempt.nextAttempt = secondAttempt;
       else
          self.registrationAttempt = secondAttempt;
-      [secondAttempt release];
    }
 
 	[self.registrationAttempt begin];
@@ -678,7 +671,6 @@ static dispatch_queue_t notificationQueue_Queue;
 				if (file_data) {
 					NSDictionary *location = [[NSDictionary alloc] initWithObjectsAndKeys:file_data, @"file-data", nil];
 					[mRegDict setObject:location forKey:GROWL_APP_LOCATION];
-					[location release];
 				} else {
 					[mRegDict removeObjectForKey:GROWL_APP_LOCATION];
 				}
@@ -698,7 +690,7 @@ static dispatch_queue_t notificationQueue_Queue;
 		if (![mRegDict objectForKey:GROWL_APP_ID])
 			[mRegDict setObject:(NSString *)CFBundleGetIdentifier(CFBundleGetMainBundle()) forKey:GROWL_APP_ID];
 
-	return [mRegDict autorelease];
+	return mRegDict;
 }
 
 + (NSDictionary *) notificationDictionaryByFillingInDictionary:(NSDictionary *)notifDict {

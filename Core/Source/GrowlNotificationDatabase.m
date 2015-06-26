@@ -38,8 +38,7 @@
    if((self = [super init]))
    {
       GrowlNotificationHistoryWindow *window = [[GrowlNotificationHistoryWindow alloc] initWithNotificationDatabase:self];
-      historyWindow = [window retain];
-      [window release];
+      historyWindow = window;
       [historyWindow window];
       [historyWindow resetArray];
       
@@ -54,11 +53,10 @@
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [periodicSaveTimer invalidate];
-    [periodicSaveTimer release]; periodicSaveTimer = nil;
+     periodicSaveTimer = nil;
     [maintenanceTimer invalidate];
-    [maintenanceTimer release]; maintenanceTimer = nil;
-    [lastImageCheck release]; lastImageCheck = nil;
-    [super dealloc]; 
+     maintenanceTimer = nil;
+     lastImageCheck = nil;
 }
 
 -(NSString*)storePath
@@ -89,9 +87,9 @@
    if(amount == 0)
       amount = 1;
    
-   NSFetchRequest *request = [[[NSFetchRequest alloc] initWithEntityName:@"Notification"] autorelease];
+   NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Notification"];
       
-   NSSortDescriptor *sortDescription = [[[NSSortDescriptor alloc] initWithKey:@"Time" ascending:NO] autorelease];
+   NSSortDescriptor *sortDescription = [[NSSortDescriptor alloc] initWithKey:@"Time" ascending:NO];
    NSArray *sortArray = [NSArray arrayWithObject:sortDescription];
    [request setSortDescriptors:sortArray];
    
@@ -116,7 +114,7 @@
 -(void)deleteSelectedObjects:(NSArray*)objects
 {
     void (^deleteBlock)(void) = ^{
-        NSFetchRequest *request = [[[NSFetchRequest alloc] initWithEntityName:@"Notification"] autorelease];
+        NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Notification"];
         NSError *error = nil;
         
         NSArray *notes = [managedObjectContext executeFetchRequest:request error:&error];
@@ -143,7 +141,7 @@
 {
     void (^deleteBlock)(void) = ^{
         NSError *error = nil;
-        NSFetchRequest *request = [[[NSFetchRequest alloc] initWithEntityName:@"Notification"] autorelease];
+        NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Notification"];
         
         NSArray *notes = [[self managedObjectContext] executeFetchRequest:request error:&error];
         if(error)
@@ -193,9 +191,7 @@
    if(!lastImageCheck || [[NSDate date] timeIntervalSinceDate:lastImageCheck] > 3600 * 24)
    {
       [self imageCacheMaintenance];
-      if(lastImageCheck)
-         [lastImageCheck release];
-      lastImageCheck = [[NSDate date] retain];
+      lastImageCheck = [NSDate date];
    }
    [self saveDatabase:NO];
 }
@@ -212,9 +208,9 @@
         
         GrowlPreferencesController *preferences = [GrowlPreferencesController sharedController];   
         
-        NSFetchRequest *request = [[[NSFetchRequest alloc] initWithEntityName:@"Notification"] autorelease];
+        NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Notification"];
         
-        NSSortDescriptor *dateSort = [[[NSSortDescriptor alloc] initWithKey:@"Time" ascending:NO] autorelease];
+        NSSortDescriptor *dateSort = [[NSSortDescriptor alloc] initWithKey:@"Time" ascending:NO];
         [request setSortDescriptors:[NSArray arrayWithObject:dateSort]];
         
         NSInteger trimDays = -[preferences growlHistoryDayLimit];
@@ -242,7 +238,7 @@
         GrowlPreferencesController *preferences = [GrowlPreferencesController sharedController];
         
         NSError *error = nil;
-        NSFetchRequest *countRequest = [[[NSFetchRequest alloc] initWithEntityName:@"Notification"] autorelease];
+        NSFetchRequest *countRequest = [[NSFetchRequest alloc] initWithEntityName:@"Notification"];
         
         NSUInteger totalCount = [managedObjectContext countForFetchRequest:countRequest error:&error];
         if(error)
@@ -256,10 +252,10 @@
             return;
         }
         
-        NSFetchRequest *request = [[[NSFetchRequest alloc] initWithEntityName:@"Notification"] autorelease];
+        NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Notification"];
         [request setFetchLimit:totalCount - countLimit];
         
-        NSSortDescriptor *dateSort = [[[NSSortDescriptor alloc] initWithKey:@"Time" ascending:YES] autorelease];
+        NSSortDescriptor *dateSort = [[NSSortDescriptor alloc] initWithKey:@"Time" ascending:YES];
         [request setSortDescriptors:[NSArray arrayWithObject:dateSort]];
         
         NSArray *notes = [managedObjectContext executeFetchRequest:request error:&error];
@@ -280,7 +276,7 @@
 {
     [managedObjectContext performBlock:^(void) {
         NSError *error = nil;
-        NSFetchRequest *request = [[[NSFetchRequest alloc] initWithEntityName:@"Image"] autorelease];
+        NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Image"];
         
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"ANY Notifications == nil"];
         [request setPredicate:predicate];
@@ -310,7 +306,7 @@
     
     [managedObjectContext performBlock:^(void) {
         NSError *error = nil;
-        NSFetchRequest *request = [[[NSFetchRequest alloc] initWithEntityName:@"Notification"] autorelease];
+        NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Notification"];
         NSNumber *boolYES = [NSNumber numberWithBool:YES];
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(deleteUponReturn == %@) OR (showInRollup == %@)", boolYES, boolYES];
         [request setPredicate:predicate];
@@ -342,15 +338,15 @@
     }
     NSLog(@"Setup timer, this should only happen once");
 	
-	periodicSaveTimer = [[NSTimer timerWithTimeInterval:20.0f target:self selector:@selector(periodicSave:) userInfo:nil repeats:YES] retain];
+	periodicSaveTimer = [NSTimer timerWithTimeInterval:20.0f target:self selector:@selector(periodicSave:) userInfo:nil repeats:YES];
 	[[NSRunLoop mainRunLoop] addTimer:periodicSaveTimer forMode:NSRunLoopCommonModes];
 	[[NSRunLoop mainRunLoop] addTimer:periodicSaveTimer forMode:NSEventTrackingRunLoopMode];
     //Setup timers, every half hour for DB maintenance, every night for Cache cleanup   
-    maintenanceTimer = [[NSTimer timerWithTimeInterval:30 * 60 
+    maintenanceTimer = [NSTimer timerWithTimeInterval:30 * 60 
                                                 target:self
                                               selector:@selector(storeMaintenance:)
                                               userInfo:nil
-                                               repeats:YES] retain];
+                                               repeats:YES];
     [[NSRunLoop mainRunLoop] addTimer:maintenanceTimer forMode:NSRunLoopCommonModes];
 	[[NSRunLoop mainRunLoop] addTimer:maintenanceTimer forMode:NSEventTrackingRunLoopMode];
     
@@ -358,7 +354,7 @@
     [components setDay:[components day] - 1];
     [components setHour:23];
     [components setMinute:59];
-    lastImageCheck = [[[NSCalendar currentCalendar] dateFromComponents:components] retain];
+    lastImageCheck = [[NSCalendar currentCalendar] dateFromComponents:components];
     NSLog(@"Next image check no earlier than 24 hours from %@", lastImageCheck);
 }
 

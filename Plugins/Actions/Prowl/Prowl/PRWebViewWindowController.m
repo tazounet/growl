@@ -2,8 +2,8 @@
 #import "PRDefines.h"
 
 @interface PRWebViewWindowController ()
-@property (nonatomic, assign, readwrite) id<PRWebViewWindowControllerDelegate> delegate;
-@property (nonatomic, retain, readwrite) NSString *retrieveURL;
+@property (nonatomic, unsafe_unretained, readwrite) id<PRWebViewWindowControllerDelegate> delegate;
+@property (nonatomic, strong, readwrite) NSString *retrieveURL;
 
 @property (nonatomic, assign) BOOL successful;
 @end
@@ -29,8 +29,6 @@
 - (void)dealloc
 {
 	[_webView close];
-	[_retrieveURL release];
-    [super dealloc];
 }
 
 - (void)windowDidLoad

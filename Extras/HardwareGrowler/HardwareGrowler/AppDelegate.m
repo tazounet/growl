@@ -71,24 +71,6 @@
 	[super initialize];
 }
 
-- (void)dealloc
-{
-	[showDevices release];
-	[quitTitle release];
-	[preferencesTitle release];
-	[openPreferencesTitle release];
-	[iconTitle release];
-	[startAtLoginTitle release];
-	[noPluginPrefsTitle release];
-	[moduleLabel release];
-	
-	[iconInMenu release];
-	[iconInDock release];
-	[iconInBoth release];
-	[noIcon release];
-	[pluginController release];
-	[super dealloc];
-}
 
 - (void) awakeFromNib {
 	self.iconInMenu = NSLocalizedString(@"Show icon in the menubar", @"default option for where the icon should be seen");
@@ -114,7 +96,7 @@
 							 options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld
 							 context:nil];
 	
-	self.pluginController = [[[HWGrowlPluginController alloc] init] autorelease];
+	self.pluginController = [[HWGrowlPluginController alloc] init];
 	
 	
 	NSShadow *shadow = [[NSShadow alloc] init];
@@ -130,10 +112,8 @@
 
 	
 	[noPrefsLabel setAttributedStringValue:noPrefsAttributed];
-	[shadow release];
-	[noPrefsAttributed release];
 	
-	ACImageAndTextCell *imageTextCell = [[[ACImageAndTextCell alloc] init] autorelease];
+	ACImageAndTextCell *imageTextCell = [[ACImageAndTextCell alloc] init];
    [moduleColumn setDataCell:imageTextCell];
 }
 
@@ -181,7 +161,7 @@
 }
 
 - (void) initMenu{
-	statusItem = [[[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength] retain];
+	statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
 	[statusItem setMenu:statusMenu];
 	
 	NSString* icon_path = [[NSBundle mainBundle] pathForResource:@"menubarIcon_Normal" ofType:@"png"];
@@ -191,8 +171,6 @@
 	
 	[statusItem setImage:icon];
 	[statusItem setAlternateImage:icon_selected];
-	[icon release];
-	[icon_selected release];
 	
 	[statusItem setHighlightMode:YES];
 	
@@ -266,7 +244,6 @@
 						}
 						[self warnUserAboutIcons];
 						[[NSStatusBar systemStatusBar] removeStatusItem:statusItem];
-						[statusItem release];
 						statusItem = nil;
 					}
 					else
@@ -278,7 +255,6 @@
 				}else{
 					[self warnUserAboutIcons];
 					[[NSStatusBar systemStatusBar] removeStatusItem:statusItem];
-					[statusItem release];
 					statusItem = nil;
 				}
 				break;
@@ -290,7 +266,6 @@
 			case kShowIconInDock:
 				[NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
 				[[NSStatusBar systemStatusBar] removeStatusItem:statusItem];
-				[statusItem release];
 				statusItem = nil;
 				break;
 			case kShowIconInMenu:
@@ -351,7 +326,7 @@
 - (void)warnUserAboutIcons
 {
 	if((BOOL)isless(NSFoundationVersionNumber, NSFoundationVersionNumber10_7)) {
-		NSAlert *alert = [[[NSAlert alloc] init] autorelease];
+		NSAlert *alert = [[NSAlert alloc] init];
 		[alert setMessageText:NSLocalizedString(@"This setting will take effect when Hardware Growler restarts",nil)];
 		[alert runModal];
 	}
@@ -382,7 +357,7 @@
 		}
 		
 		NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-		NSMutableDictionary *disabledDict = [[[defaults objectForKey:@"DisabledPlugins"] mutableCopy] autorelease];
+		NSMutableDictionary *disabledDict = [[defaults objectForKey:@"DisabledPlugins"] mutableCopy];
 		if(!disabledDict)
 			disabledDict = [NSMutableDictionary dictionary];
 		[disabledDict setObject:disabled forKey:identifier];
@@ -421,7 +396,7 @@
 			static NSImage *placeholder = nil;
 			static dispatch_once_t onceToken;
 			dispatch_once(&onceToken, ^{
-				placeholder = [[NSImage imageNamed:@"HWGPrefsDefault"] retain];
+				placeholder = [NSImage imageNamed:@"HWGPrefsDefault"];
 			});
 			[cell setImage:placeholder];
 		}

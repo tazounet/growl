@@ -60,10 +60,10 @@ NSString *const PRPreferenceKeyPrefixEnabled = @"PRPreferenceKeyPrefixEnabled";
 }
 
 - (GrowlPluginPreferencePane *)preferencePane {
-	if (!preferencePane)
-		preferencePane = [[PRPreferencePane alloc] initWithBundle:[NSBundle bundleForClass:[PRAction class]]];
+	if (!_preferencePane)
+		_preferencePane = [[PRPreferencePane alloc] initWithBundle:[NSBundle bundleForClass:[PRAction class]]];
 	
-	return preferencePane;
+	return _preferencePane;
 }
 
 - (void)dispatchNotification:(NSDictionary *)notification
@@ -143,20 +143,20 @@ NSString *const PRPreferenceKeyPrefixEnabled = @"PRPreferenceKeyPrefixEnabled";
 							   if(statusCode == 200) {
 								   //NSLog(@"Posted notification!");
 							   } else {
-								   NSLog(@"Error response: %@ %@", response, [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease]);
+								   NSLog(@"Error response: %@ %@", response, [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
 							   }
 						   }];
 }
 
 - (NSString *)encodedStringForString:(NSString *)string
 {
-	NSString *encodedString = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL,
+	NSString *encodedString = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL,
 																				  (CFStringRef)string, 
 																				  NULL,
 																				  (CFStringRef)@";/?:@&=+$",
-																				  kCFStringEncodingUTF8);
+																				  kCFStringEncodingUTF8));
 	
-	return [encodedString autorelease];
+	return encodedString;
 }
 
 - (NSString *)apiKeysStringForApiKeys:(NSArray *)apiKeys

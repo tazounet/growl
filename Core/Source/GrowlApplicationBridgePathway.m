@@ -23,7 +23,6 @@ static GrowlApplicationBridgePathway *theOneTrueGrowlApplicationBridgePathway;
 
 - (id) init {
 	if (theOneTrueGrowlApplicationBridgePathway) {
-		[self release];
 		return theOneTrueGrowlApplicationBridgePathway;
 	}
 
@@ -34,7 +33,6 @@ static GrowlApplicationBridgePathway *theOneTrueGrowlApplicationBridgePathway;
 
 		if (![connection registerName:@"GrowlApplicationBridgePathway"]) {
 			NSLog(@"WARNING: Could not register connection for GrowlApplicationBridgePathway");
-			[self release];
 			return nil;
 		}
 
@@ -47,10 +45,6 @@ static GrowlApplicationBridgePathway *theOneTrueGrowlApplicationBridgePathway;
 	}
 
 	return self;
-}
-- (void) dealloc {
-	[connection release];
-	[super dealloc];
 }
 
 @end

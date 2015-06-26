@@ -22,7 +22,7 @@
 @synthesize configurationDict;
 
 + (GrowlNotification *) notificationWithDictionary:(NSDictionary *)dict configurationDict:(NSDictionary*)config {
-	return [[[self alloc] initWithDictionary:dict configurationDict:config] autorelease];
+	return [[self alloc] initWithDictionary:dict configurationDict:config];
 }
 
 - (GrowlNotification *) initWithDictionary:(NSDictionary *)dict
@@ -37,7 +37,6 @@
 		[mutableDict removeObjectsForKeys:[[GrowlNotification standardKeys] allObjects]];
 		if ([mutableDict count])
 			[self setAuxiliaryDictionary:mutableDict];
-		[mutableDict release];
 	}
 	return self;
 }
@@ -59,18 +58,6 @@
 	return self;
 }
 
-- (void) dealloc {
-	[name            release];
-	[applicationName release];
-	[title           release];
-	[messageText     release];
-	[auxiliaryDictionary release];
-
-	[cachedDictionaryRepresentation release];
-	[configurationDict release];
-
-	[super dealloc];
-}
 
 #pragma mark -
 
@@ -98,7 +85,7 @@
 	if (!keys) {
 		//Try cache first.
 		if (cachedDictionaryRepresentation)
-			return [[cachedDictionaryRepresentation retain] autorelease];
+			return cachedDictionaryRepresentation;
 
 		//No joy - create it.
 		dict = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
@@ -130,14 +117,12 @@
 	}
 
 	NSDictionary *result = [NSDictionary dictionaryWithDictionary:dict];
-	[dict release];
 
 	if (!keys) {
 		//Update our cache.
-		[cachedDictionaryRepresentation release];
 		 cachedDictionaryRepresentation = nil;
 
-		cachedDictionaryRepresentation = [result retain];
+		cachedDictionaryRepresentation = result;
 	}
 
 	return result;
@@ -150,14 +135,12 @@
 }
 
 - (void) setAuxiliaryDictionary:(NSDictionary *)newAuxDict {
-	[auxiliaryDictionary release];
 	 auxiliaryDictionary = [newAuxDict copy];
 
 	/*-dictionaryRepresentationWithKeys:nil depends on the auxiliary dictionary.
 	 *so if the auxiliary dictionary changes, we must dirty the cache used by
 	 *	-dictionaryRepresentation.
 	 */
-	[cachedDictionaryRepresentation release];
 	 cachedDictionaryRepresentation = nil;
 }
 

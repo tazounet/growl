@@ -37,11 +37,6 @@ NSString *GrowlDisplayPluginInfoKeyWindowNibName = @"GrowlDisplayWindowNibName";
 	return self;
 }
 
-- (void) dealloc {
-	[coalescableWindows release];
-	
-	[super dealloc];
-}
 
 -(BOOL)fullCustomButton {
 	return NO;
@@ -56,7 +51,7 @@ NSString *GrowlDisplayPluginInfoKeyWindowNibName = @"GrowlDisplayWindowNibName";
 	
 	NSString *path = [[self bundle] pathForImageResource:imageName];
 	NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
-	return [image autorelease];
+	return image;
 }
 -(NSImage*)pressedButtonImage {
 	NSString *imageName = [[[self bundle] infoDictionary] objectForKey:@"GrowlCloseButtonPressedImage"];
@@ -65,7 +60,7 @@ NSString *GrowlDisplayPluginInfoKeyWindowNibName = @"GrowlDisplayWindowNibName";
 	
 	NSString *path = [[self bundle] pathForImageResource:imageName];
 	NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
-	return [image autorelease];
+	return image;
 }
 
 #pragma mark -
@@ -103,7 +98,6 @@ NSString *GrowlDisplayPluginInfoKeyWindowNibName = @"GrowlDisplayWindowNibName";
             [coalescableWindows setObject:thisWindow
                                    forKey:identifier];
          }
-         [thisWindow release];
       }else{
          NSLog(@"Error! Unable to make a display of class %@", NSStringFromClass(windowControllerClass));
       }
@@ -133,7 +127,6 @@ NSString *GrowlDisplayPluginInfoKeyWindowNibName = @"GrowlDisplayWindowNibName";
 - (void) displayWindowControllerDidTakeDownWindow:(GrowlDisplayWindowController *)wc {
 	@autoreleasepool {
 		
-		[wc retain];
 		
 		if (coalescableWindows) {
 			NSString *identifier = [[[wc notification] auxiliaryDictionary] objectForKey:GROWL_NOTIFICATION_IDENTIFIER];
@@ -141,7 +134,6 @@ NSString *GrowlDisplayPluginInfoKeyWindowNibName = @"GrowlDisplayWindowNibName";
 				[coalescableWindows removeObjectForKey:identifier];
 		}
 		
-		[wc release];
 	}
 }
 

@@ -23,8 +23,8 @@
 	NSMutableArray *queuedWindows;
 }
 
-@property (nonatomic,retain) GrowlPositionController *positionController;
-@property (nonatomic, retain) NSMutableDictionary *windowDictionary;
+@property (nonatomic,strong) GrowlPositionController *positionController;
+@property (nonatomic, strong) NSMutableDictionary *windowDictionary;
 
 + (GrowlMiniDispatch*)sharedDispatch;
 + (BOOL)copyNotificationCenter;

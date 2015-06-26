@@ -56,7 +56,7 @@
 
 @interface GrowlApplicationNotificationCenterDelegate ()
 
-@property (nonatomic, retain) NSMutableDictionary *growlDicts;
+@property (nonatomic, strong) NSMutableDictionary *growlDicts;
 
 @end
 
@@ -88,7 +88,7 @@
          notificationType = GROWL_NOTIFICATION_TIMED_OUT;
       }
       
-		GrowlNotification *growlNotification = [[[GrowlNotification alloc] initWithDictionary:growlNotificationDict configurationDict:nil] autorelease];
+		GrowlNotification *growlNotification = [[GrowlNotification alloc] initWithDictionary:growlNotificationDict configurationDict:nil];
       
 		[center removeDeliveredNotification:notification];
 		
@@ -107,7 +107,7 @@
 	NSString *noteKey = [[notification userInfo] valueForKey:@"AppleNotificationID"];
    NSDictionary *growlNotificationDict = [self.growlDicts valueForKey:noteKey];
 	if(growlNotificationDict){
-		GrowlNotification *growlNotification = [[[GrowlNotification alloc] initWithDictionary:growlNotificationDict configurationDict:nil] autorelease];
+		GrowlNotification *growlNotification = [[GrowlNotification alloc] initWithDictionary:growlNotificationDict configurationDict:nil];
 		
 		// Remove the notification
 		[center removeDeliveredNotification:notification];
@@ -136,7 +136,6 @@
          [self performSelector:@selector(expireNotification:) withObject:dict afterDelay:lifetime];
       }
 		
-		[dict release];
    }
 }
 
@@ -153,14 +152,13 @@
 - (void)dealloc
 {
    [[NSUserNotificationCenter defaultUserNotificationCenter] removeAllDeliveredNotifications];
-	self.growlDicts = nil;
-   [super dealloc];
 }
 
 @end
 #endif
 
 @interface GrowlApplicationController (PRIVATE)
+- (void) notificationClosed:(NSNotification*)notification;
 - (void) notificationClicked:(NSNotification *)notification;
 - (void) notificationTimedOut:(NSNotification *)notification;
 - (void) notificationCenterQuery:(NSNotification *)notification;
@@ -235,20 +233,19 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
 	Class pathwayControllerClass = NSClassFromString(@"GrowlPathwayController");
 	if (pathwayControllerClass)
 		[(id)[pathwayControllerClass sharedController] setServerEnabled:NO];
-    [preferencesWindow release]; preferencesWindow = nil;
+     preferencesWindow = nil;
 
 	[[NSNotificationCenter defaultCenter] removeObserver:self name:nil object:nil];
 	[[NSDistributedNotificationCenter defaultCenter] removeObserver:self name:nil object:nil];
 	
 	[growlNotificationCenterConnection invalidate];
-	[growlNotificationCenterConnection release]; growlNotificationCenterConnection = nil;
-	[growlNotificationCenter           release]; growlNotificationCenter = nil;
+	 growlNotificationCenterConnection = nil;
+	 growlNotificationCenter = nil;
 	
 #if defined(MAC_OS_X_VERSION_10_8) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
-   [appleNotificationDelegate release]; appleNotificationDelegate = nil;
+    appleNotificationDelegate = nil;
 #endif
    
-	[super dealloc];
 }
 
 #pragma mark Guts
@@ -283,12 +280,9 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
 										 sticky,     GROWL_NOTIFICATION_STICKY,
 										 [NSImage imageNamed:NSImageNameApplicationIcon],  GROWL_NOTIFICATION_ICON_DATA,
 										 nil];
-			[desc     release];
-			[priority release];
-			[sticky   release];
 			NSMutableDictionary *configCopy = nil;
 			if([displayConfig respondsToSelector:@selector(configuration)])
-				configCopy = [[[displayConfig configuration] mutableCopy] autorelease];
+				configCopy = [[displayConfig configuration] mutableCopy];
          if(!configCopy)
             configCopy = [NSMutableDictionary dictionary];
 			[configCopy setValue:[NSNumber numberWithLong:[[GrowlPreferencesController sharedController] selectedPosition]]
@@ -302,7 +296,6 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
 				dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), displayBlock);
 			else
 				dispatch_async(dispatch_get_main_queue(), displayBlock);
-			[info release];
 		}else{
 			NSLog(@"Invalid object for displaying a preview: %@", displayConfig);
 		}
@@ -336,7 +329,7 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
 	if(!dispatchedToBark){
 		// We want to preserve all the notification state, but we can't pass the icon
 		// data in, or OS X will whine about the userinfo being too large.
-		NSMutableDictionary *notificationDict = [[growlDict mutableCopy] autorelease];
+		NSMutableDictionary *notificationDict = [growlDict mutableCopy];
 		[notificationDict removeObjectForKey:GROWL_APP_ICON_DATA];
 		[notificationDict removeObjectForKey:GROWL_NOTIFICATION_APP_ICON_DATA];
 		[notificationDict removeObjectForKey:GROWL_NOTIFICATION_ICON_DATA];
@@ -366,7 +359,6 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
 		
 		[[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:appleNotificationDelegate];
 		[[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:appleNotification];
-		[appleNotification release];
 	}
 #endif
 }
@@ -384,12 +376,12 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
    
    GrowlPreferencesController *preferences = [GrowlPreferencesController sharedController];
    
-   [self logNotification:[[aDict copy] autorelease]];
+   [self logNotification:[aDict copy]];
    
    if([preferences isForwardingEnabled])
-      [self forwardGrowlDictViaNetwork:[[aDict copy] autorelease]];
+      [self forwardGrowlDictViaNetwork:[aDict copy]];
    
-   [self sendGrowlDictToSubscribers:[[aDict copy] autorelease]];
+   [self sendGrowlDictToSubscribers:[aDict copy]];
    
    if(![preferences squelchMode])
    {
@@ -420,7 +412,7 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
    BOOL logRuleResult = [[GrowlPreferencesController sharedController] rulesLoggingEnabled];
    //NSDate *startDate = [NSDate date];
    __block NSDictionary *copyDict = [dict copy];
-   __block GrowlApplicationController *blockSelf = self;
+   __weak GrowlApplicationController *weakSelf = self;
    [applescriptTask executeWithAppleEvent:event
                         completionHandler:^(NSAppleEventDescriptor *result, NSError *completionError) {
                            dispatch_async(dispatch_get_main_queue(), ^{
@@ -447,9 +439,8 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
 												{
 													if(logRuleResult){
 														[ruleLogString appendFormat:@"\nRule result returned enabled set to no"];
-														NSLog(ruleLogString);
+														NSLog(@"%@", ruleLogString);
 													}
-													[copyDict release];
 													return;
                                     }else{
                                        //Check if it is enabled in the UI
@@ -457,9 +448,8 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
                                        if(![noteTicket isTicketAllowed]){
                                           if(logRuleResult){
                                              [ruleLogString appendFormat:@"\nRule result did not return enabled, note disabled in UI"];
-                                             NSLog(ruleLogString);
+                                             NSLog(@"%@", ruleLogString);
                                           }
-                                          [copyDict release];
                                           return;
                                        }
                                     }
@@ -525,7 +515,7 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
                                              }
                                           }
                                           if(iconData && ![iconData isEqualToData:[copyDict valueForKey:GROWL_NOTIFICATION_ICON_DATA]]){
-                                             NSImage *imageFromData = [[[NSImage alloc] initWithData:iconData] autorelease];
+                                             NSImage *imageFromData = [[NSImage alloc] initWithData:iconData];
                                              if(imageFromData != nil){
                                                 [mutableCopy setObject:iconData forKey:GROWL_NOTIFICATION_ICON_DATA];
                                                 changed = YES;
@@ -552,12 +542,10 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
 														}
                                           
                                           if(changed){
-                                             [copyDict release];
                                              copyDict = [mutableCopy copy];
                                           }
                                        }
                                        
-                                       [mutableCopy release];
                                     }
                                     
                                     GrowlPositionOrigin origin = GrowlNoOrigin;
@@ -613,7 +601,7 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
                                                 if(logRuleResult){
                                                    [ruleLogString appendFormat:@"\nDisplay using global default"];
                                                 }
-                                                [blockSelf displayNotification:copyDict
+                                                [weakSelf displayNotification:copyDict
                                                              usingPluginConfig:[[GrowlTicketDatabase sharedInstance] defaultDisplayConfig]
                                                                     atPosition:origin];
                                                 displayed = YES;
@@ -628,7 +616,7 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
                                              if(logRuleResult){
                                                 [ruleLogString appendFormat:@"\nDisplay using notification-center"];
                                              }
-                                             [blockSelf _fireAppleNotificationCenter:copyDict];
+                                             [weakSelf _fireAppleNotificationCenter:copyDict];
                                              displayed = YES;
                                           }else{
                                              //Find this display if we can, otherwise fall back
@@ -637,7 +625,7 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
                                                 if(logRuleResult){
                                                    [ruleLogString appendFormat:@"\nDisplay using config: %@", displayName];
                                                 }
-                                                [blockSelf displayNotification:copyDict
+                                                [weakSelf displayNotification:copyDict
                                                              usingPluginConfig:(GrowlTicketDatabaseDisplay*)pluginConfig
                                                                     atPosition:origin];
                                                 displayed = YES;
@@ -653,7 +641,7 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
                                        if(logRuleResult){
                                           [ruleLogString appendFormat:@"\nDisplay using default for note type"];
                                        }
-                                       [blockSelf displayNotificationUsingDefaultDisplay:copyDict atPosition:origin];
+                                       [weakSelf displayNotificationUsingDefaultDisplay:copyDict atPosition:origin];
                                     }
                                     
                                     BOOL actedUpon = NO;
@@ -708,7 +696,7 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
                                              }];
                                           }
                                           
-                                          [blockSelf dispatchNotification:copyDict toActions:actions];
+                                          [weakSelf dispatchNotification:copyDict toActions:actions];
                                        }else if([actionsDesc descriptorType] == typeUnicodeText){
                                           NSString *actionName = [actionsDesc stringValue];
                                           //NSLog(@"use action: %@", [actionsDesc stringValue]);
@@ -722,14 +710,14 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
                                                    [ruleLogString appendFormat:@"%@, ", [obj displayName]];
                                                 }];
                                              }
-                                             [blockSelf dispatchNotification:copyDict toActions:compoundActions];
+                                             [weakSelf dispatchNotification:copyDict toActions:compoundActions];
                                              actedUpon = YES;
                                           }else if(pluginConfig && [pluginConfig isKindOfClass:[GrowlTicketDatabaseAction class]]){
                                              if(logRuleResult){
                                                 [ruleLogString appendFormat:@"\nDo action config: %@", actionName];
                                              }
                                              
-                                             [blockSelf dispatchNotification:copyDict toActions:[NSSet setWithObject:pluginConfig]];
+                                             [weakSelf dispatchNotification:copyDict toActions:[NSSet setWithObject:pluginConfig]];
                                              actedUpon = YES;
                                           }else{
                                              if(logRuleResult){
@@ -742,7 +730,7 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
                                        if(logRuleResult){
                                           [ruleLogString appendFormat:@"\nDo default actions for note type"];
                                        }
-                                       [blockSelf dispatchNotificationToDefaultConfigSet:copyDict];
+                                       [weakSelf dispatchNotificationToDefaultConfigSet:copyDict];
                                     }
                                     
                                     BOOL useDefaultForward = YES;
@@ -754,7 +742,7 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
                                                 [ruleLogString appendFormat:@"\nForwarding to UI selected entries"];
                                              }
                                              //This bypasses the checks on forwarding enabled
-                                             [[GNTPForwarder sharedController] forwardDictionary:[[copyDict copy] autorelease]
+                                             [[GNTPForwarder sharedController] forwardDictionary:[copyDict copy]
                                                                                   isRegistration:NO
                                                                                       toEntryIDs:nil];
                                           }else{
@@ -776,7 +764,7 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
                                                 [ruleLogString appendFormat:@"%@, ", obj];
                                              }];
                                           }
-                                          [[GNTPForwarder sharedController] forwardDictionary:[[copyDict copy] autorelease]
+                                          [[GNTPForwarder sharedController] forwardDictionary:[copyDict copy]
                                                                                isRegistration:NO
                                                                                    toEntryIDs:entryIDs];
                                           useDefaultForward = NO;
@@ -788,7 +776,7 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
                                           [ruleLogString appendFormat:@"\nForwarding according to default: %@", globalForwardingEnabled ? @"enabled" : @"disabled"];
                                        }
                                        if(globalForwardingEnabled)
-                                          [blockSelf forwardGrowlDictViaNetwork:[[copyDict copy] autorelease]];
+                                          [weakSelf forwardGrowlDictViaNetwork:[copyDict copy]];
                                     }
                                     
                                     BOOL useDefaultSubscription = YES;
@@ -801,7 +789,7 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
                                              if(logRuleResult){
                                                 [ruleLogString appendFormat:@"\nForwarding to all subscribers"];
                                              }
-                                             [[GNTPSubscriptionController sharedController] forwardDictionary:[[copyDict copy] autorelease]
+                                             [[GNTPSubscriptionController sharedController] forwardDictionary:[copyDict copy]
                                                                                                isRegistration:NO
 																															 toSubscriberIDs:nil];
                                           }else{
@@ -823,7 +811,7 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
                                                 [ruleLogString appendFormat:@"%@, ", obj];
                                              }];
                                           }
-                                          [[GNTPSubscriptionController sharedController] forwardDictionary:[[copyDict copy] autorelease]
+                                          [[GNTPSubscriptionController sharedController] forwardDictionary:[copyDict copy]
                                                                                             isRegistration:NO
 																														 toSubscriberIDs:entryIDs];
                                           useDefaultSubscription = NO;
@@ -833,7 +821,7 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
                                        if(logRuleResult){
                                           [ruleLogString appendFormat:@"\nForwarding according to subscription defaults"];
                                        }
-                                       [blockSelf sendGrowlDictToSubscribers:[[copyDict copy] autorelease]];
+                                       [weakSelf sendGrowlDictToSubscribers:[copyDict copy]];
                                     }
                                     
                                     if([result descriptorForKeyword:'GrHL']){
@@ -841,7 +829,7 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
                                           if(logRuleResult){
                                              [ruleLogString appendFormat:@"\nSending to the history log system"];
                                           }
-                                          [blockSelf logNotification:copyDict];
+                                          [weakSelf logNotification:copyDict];
                                        }else{
                                           [ruleLogString appendFormat:@"\nNot sending to the history log system"];
                                        }
@@ -849,13 +837,13 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
                                        if(logRuleResult){
                                           [ruleLogString appendFormat:@"\nSending to the history log system by default"];
                                        }
-                                       [blockSelf logNotification:copyDict];
+                                       [weakSelf logNotification:copyDict];
                                     }
                                     
                                     if(logRuleResult){
                                        //Make this better, don't send it raw to the console.
                                        //[ruleLogString appendFormat:@"Total time from receipt of note: %.3f\n", -[startDate timeIntervalSinceNow]];
-                                       NSLog(ruleLogString);
+                                       NSLog(@"%@", ruleLogString);
                                     }
                                  
                                  }else{
@@ -865,14 +853,13 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
 													else
 														NSLog(@"Unrecognized rule return type, sending to the default system");
                                     }
-                                    [blockSelf dispatchByClassicWithFilledInDict:copyDict];
+                                    [weakSelf dispatchByClassicWithFilledInDict:copyDict];
                                  }
                               }else{
                                  NSLog(@"completion error: %@", completionError);
-                                 [blockSelf dispatchByClassicWithFilledInDict:copyDict];
+                                 [weakSelf dispatchByClassicWithFilledInDict:copyDict];
                               }
                               
-                              [copyDict release];
                            });
                         }];
    return GrowlNotificationResultPosted;
@@ -900,20 +887,21 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
 }
 
 - (GrowlNotificationResult) dispatchNotificationWithDictionary:(NSDictionary *)note {
+
    NSDictionary *dict = [self filledInNotificationDictForDict:note];
+
    if(!dict)
       return GrowlNotificationResultNotRegistered;
-   
+
+   [growlNotificationCenter notifyObservers:dict];
+    
    if([GrowlUserScriptTaskUtilities hasScriptTaskClass] &&
 		[GrowlUserScriptTaskUtilities hasRulesScript] &&
-		[self showRulesWarning])
-	{
+		[self showRulesWarning]) {
       return [self dispatchByRuleSwithFilledInDict:dict];
    }else{
-		return [self dispatchByClassicWithFilledInDict:dict];
+      return [self dispatchByClassicWithFilledInDict:dict];
    }
-   
-   [growlNotificationCenter notifyObservers:dict];
 }
 
 -(GrowlTicketDatabaseApplication*)appTicketForDict:(NSDictionary*)dict {
@@ -929,7 +917,7 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
 
 -(NSDictionary*)filledInNotificationDictForDict:(NSDictionary*)dict
 {
-   NSMutableDictionary *aDict = [[dict mutableCopy] autorelease];
+   NSMutableDictionary *aDict = [dict mutableCopy];
    
    GrowlTicketDatabaseApplication *ticket = [self appTicketForDict:dict];
    //NSLog(@"Dispatching notification from %@: %@", appName, notificationName);
@@ -968,7 +956,7 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
       static NSData *defaultIconData = nil;
       static dispatch_once_t onceToken;
       dispatch_once(&onceToken, ^{
-         defaultIconData = [[[NSImage imageNamed:NSImageNameApplicationIcon] TIFFRepresentation] retain];
+         defaultIconData = [[NSImage imageNamed:NSImageNameApplicationIcon] TIFFRepresentation];
       });
       
       [aDict setObject:defaultIconData forKey:GROWL_NOTIFICATION_ICON_DATA];
@@ -989,7 +977,7 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
       static NSData *defaultIconData = nil;
       static dispatch_once_t onceToken;
       dispatch_once(&onceToken, ^{
-         defaultIconData = [[[NSImage imageNamed:NSImageNameApplicationIcon] TIFFRepresentation] retain];
+         defaultIconData = [[NSImage imageNamed:NSImageNameApplicationIcon] TIFFRepresentation];
       });
       
       [aDict setObject:defaultIconData forKey:GROWL_NOTIFICATION_APP_ICON_DATA];
@@ -1020,10 +1008,9 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
    /* Set a unique ID which we can use globally to identify this particular notification if it doesn't have one */
    if (![aDict objectForKey:GROWL_NOTIFICATION_INTERNAL_ID]) {
       CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
-      NSString *uuid = (NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuidRef);
+      NSString *uuid = (NSString *)CFBridgingRelease(CFUUIDCreateString(kCFAllocatorDefault, uuidRef));
       [aDict setValue:uuid
                forKey:GROWL_NOTIFICATION_INTERNAL_ID];
-      [uuid release];
       CFRelease(uuidRef);
    }
 
@@ -1055,7 +1042,7 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
 {
    GrowlTicketDatabaseApplication *ticket = [self appTicketForDict:dict];
    GrowlDisplayPlugin *display = (GrowlDisplayPlugin*)[pluginConfig pluginInstanceForConfiguration];
-   NSMutableDictionary *configCopy = [[[pluginConfig configuration] mutableCopy] autorelease];
+   NSMutableDictionary *configCopy = [[pluginConfig configuration] mutableCopy];
    if(!configCopy)
       configCopy = [NSMutableDictionary dictionary];
    if(origin == GrowlNoOrigin)
@@ -1078,10 +1065,10 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
 -(void)dispatchNotification:(NSDictionary*)note toActions:(NSSet*)configSet {
    [configSet enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
       GrowlActionPlugin *action = (GrowlActionPlugin*)[obj pluginInstanceForConfiguration];
-      NSDictionary *copyDict = [[note copy] autorelease];
+      NSDictionary *copyDict = [note copy];
       dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
          if([action conformsToProtocol:@protocol(GrowlDispatchNotificationProtocol)]){
-            NSMutableDictionary *actionConfigCopy = [[[obj configuration] mutableCopy] autorelease];
+            NSMutableDictionary *actionConfigCopy = [[obj configuration] mutableCopy];
             if(!actionConfigCopy)
                actionConfigCopy = [NSMutableDictionary dictionary];
             [actionConfigCopy setValue:[obj configID] forKey:GROWL_PLUGIN_CONFIG_ID];
@@ -1114,7 +1101,7 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
 	if (success) {
       [[NSNotificationCenter defaultCenter] postNotificationName:@"ApplicationRegistered"
                                                           object:nil 
-                                                        userInfo:[[userInfo copy] autorelease]];
+                                                        userInfo:[userInfo copy]];
 	}
    return success;
 }
@@ -1156,11 +1143,6 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
 
 			nil];
 
-		[major       release];
-		[minor       release];
-		[incremental release];
-		[releaseType release];
-		[development release];
 	}
 	return versionInfo;
 }
@@ -1269,7 +1251,7 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
 - (void) toggleStatusItem:(BOOL)toggle
 {
    if(!statusMenu)
-      self.statusMenu = [[[GrowlMenu alloc] init] autorelease];
+      self.statusMenu = [[GrowlMenu alloc] init];
    [statusMenu toggleStatusMenu:toggle];
 }
 
@@ -1387,9 +1369,8 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
    if(!growlFinishedLaunching){
       if(urlOnLaunch){
          NSLog(@"Replacing URL to handle %@ with %@", urlOnLaunch, escaped);
-         [urlOnLaunch release];
       }
-      urlOnLaunch = [escaped retain];
+      urlOnLaunch = escaped;
       return;
    }else{
       [self parseURLString:escaped];
@@ -1552,7 +1533,7 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
 	[GNTPSubscriptionController sharedController];
    
 	//register value transformer
-	id transformer = [[[GrowlImageTransformer alloc] init] autorelease];
+	id transformer = [[GrowlImageTransformer alloc] init];
 	[NSValueTransformer setValueTransformer:transformer forName:@"GrowlImageTransformer"];
 	
 	
@@ -1677,7 +1658,6 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
    
    if(urlOnLaunch){
       [self parseURLString:urlOnLaunch];
-      [urlOnLaunch release];
       urlOnLaunch = nil;
    }
 }

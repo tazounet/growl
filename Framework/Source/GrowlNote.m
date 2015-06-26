@@ -19,10 +19,10 @@
 @interface GrowlNote ()
 
 @property (nonatomic, retain) NSString *noteUUID;
-@property (nonatomic, retain) NSDictionary *otherKeysDict;
+@property (nonatomic, strong) NSDictionary *otherKeysDict;
 
-@property (nonatomic, retain) GrowlCommunicationAttempt *firstAttempt;
-@property (nonatomic, retain) GrowlCommunicationAttempt *secondAttempt;
+@property (nonatomic, strong) GrowlCommunicationAttempt *firstAttempt;
+@property (nonatomic, strong) GrowlCommunicationAttempt *secondAttempt;
 
 @property (nonatomic, assign) NSInteger status;
 
@@ -71,16 +71,15 @@
    NSNumber *pidNum = [[NSNumber alloc] initWithInt:[[NSProcessInfo processInfo] processIdentifier]];
    [mNotifDict setObject:pidNum
                   forKey:GROWL_APP_PID];
-   [pidNum release];
    
-	return [mNotifDict autorelease];
+	return mNotifDict;
 }
 
 + (NSArray*)ivarKeys {
    static NSArray *_ivarKeys = nil;
    static dispatch_once_t onceToken;
    dispatch_once(&onceToken, ^{
-      _ivarKeys = [@[GROWL_NOTIFICATION_NAME,
+      _ivarKeys = @[GROWL_NOTIFICATION_NAME,
                    GROWL_NOTIFICATION_TITLE,
                    GROWL_NOTIFICATION_DESCRIPTION,
                    GROWL_NOTIFICATION_ICON_DATA,
@@ -88,12 +87,12 @@
                    GROWL_NOTIFICATION_CALLBACK_URL_TARGET,
                    GROWL_NOTIFICATION_IDENTIFIER,
                    GROWL_NOTIFICATION_PRIORITY,
-                   GROWL_NOTIFICATION_STICKY] retain];
+                   GROWL_NOTIFICATION_STICKY];
    });
    return _ivarKeys;
 }
 + (NSDictionary *)notificationDictionaryByRemovingIvarKeys:(NSDictionary*)notifDict {
-   NSMutableArray *keysToKeep = [[[notifDict allKeys] mutableCopy] autorelease];
+   NSMutableArray *keysToKeep = [[notifDict allKeys] mutableCopy];
    [keysToKeep removeObjectsInArray:[self ivarKeys]];
    return [notifDict dictionaryWithValuesForKeys:keysToKeep];
 }
@@ -113,7 +112,7 @@
              identifier:(NSString *)identifier
 {
    BOOL useDict = dictionary != nil;
-   NSMutableDictionary *noteDict = [[[GrowlNote notificationDictionaryByFillingInDictionary:dictionary] mutableCopy] autorelease];
+   NSMutableDictionary *noteDict = [[GrowlNote notificationDictionaryByFillingInDictionary:dictionary] mutableCopy];
    if((self = [super init])){
       self.noteUUID = [[NSProcessInfo processInfo] globallyUniqueString];
       self.status = NSIntegerMax;
@@ -204,7 +203,7 @@
    return self;
 }
 +(GrowlNote*)noteWithDictionary:(NSDictionary *)dict {
-   return [[[GrowlNote alloc] initWithDictionary:dict] autorelease];
+   return [[GrowlNote alloc] initWithDictionary:dict];
 }
 
 - (id) initWithTitle:(NSString *)title
@@ -247,7 +246,7 @@
          cancelButtonTitle:(NSString *)cancelTitle
                 identifier:(NSString *)identifier
 {
-   return [[[GrowlNote alloc] initWithTitle:title
+   return [[GrowlNote alloc] initWithTitle:title
                                 description:description
                            notificationName:notifName
                                    iconData:iconData
@@ -256,42 +255,16 @@
                                clickContext:clickContext
                           actionButtonTitle:actionTitle
                           cancelButtonTitle:cancelTitle
-                                 identifier:identifier] autorelease];
+                                 identifier:identifier];
 }
 
 -(void)dealloc {
    [[NSDistributedNotificationCenter defaultCenter] removeObserver:self];
-   [_statusUpdateBlock release];
    _statusUpdateBlock = nil;
-   [_noteUUID release];
-   _noteUUID = nil;
-   [_otherKeysDict release];
-   _otherKeysDict = nil;
-   [_noteName release];
-   _noteName = nil;
-   [_title release];
-   _title = nil;
-   [_description release];
-   _description = nil;
-   [_iconData release];
-   _iconData = nil;
-   [_clickContext release];
-   _clickContext = nil;
-   [_clickCallbackURL release];
-   _clickCallbackURL = nil;
-   [_overwriteIdentifier release];
-   _overwriteIdentifier = nil;
-   [_otherKeysDict release];
-   _otherKeysDict = nil;
-   [_firstAttempt release];
-   _firstAttempt = nil;
-   [_secondAttempt release];
-   _secondAttempt = nil;
-   [super dealloc];
 }
 
 -(NSDictionary*)noteDictionary {
-   NSMutableDictionary *buildDict = [[self.otherKeysDict mutableCopy] autorelease];
+   NSMutableDictionary *buildDict = [self.otherKeysDict mutableCopy];
    
    [buildDict setObject:self.noteUUID forKey:GROWL_NOTIFICATION_INTERNAL_ID];
    if (self.noteName)         [buildDict setObject:self.noteName forKey:GROWL_NOTIFICATION_NAME];
@@ -304,7 +277,7 @@
    if (self.priority != 0)    [buildDict setObject:@(self.priority) forKey:GROWL_NOTIFICATION_PRIORITY];
    if (self.sticky)           [buildDict setObject:@(self.sticky) forKey:GROWL_NOTIFICATION_STICKY];
    
-   return [[buildDict copy] autorelease];
+   return [buildDict copy];
 }
 
 -(void)notify {
@@ -332,7 +305,6 @@
          if(firstAttempt){
             firstAttempt.delegate = (id <GrowlCommunicationAttemptDelegate>)self;
             self.firstAttempt = firstAttempt;
-            [firstAttempt release];
          }
       }
       
@@ -345,7 +317,6 @@
             self.secondAttempt = secondAttempt;
          }else
             self.firstAttempt = secondAttempt;
-         [secondAttempt release];
       }
       
       //We should always have a first attempt if Growl is reachable

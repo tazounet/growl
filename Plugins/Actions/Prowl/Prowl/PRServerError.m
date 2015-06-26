@@ -7,9 +7,9 @@ NSString *const PRServerErrorDomain = @"PRServerErrorDomain";
 
 + (id)serverErrorWithStatusCode:(NSInteger)statusCode
 {
-	return [[[self alloc] initWithDomain:PRServerErrorDomain
+	return [[self alloc] initWithDomain:PRServerErrorDomain
 									code:statusCode
-								userInfo:nil] autorelease];
+								userInfo:nil];
 }
 
 - (NSString *)localizedDescription

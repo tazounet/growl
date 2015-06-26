@@ -15,47 +15,47 @@
 
 @interface GrowlMailMePreferencePane ()
 
-@property (nonatomic, retain) NSString *serverAddress;
-@property (nonatomic, retain) NSString *serverPorts;
+@property (nonatomic, strong) NSString *serverAddress;
+@property (nonatomic, strong) NSString *serverPorts;
 @property (nonatomic) NSInteger serverTlsMode;
 @property (nonatomic) BOOL serverAuthFlag;
-@property (nonatomic, retain) NSString *serverAuthUsername;
-@property (nonatomic, retain) NSString *serverAuthPassword;
-@property (nonatomic, retain) NSString *messageFrom;
-@property (nonatomic, retain) NSString *messageTo;
-@property (nonatomic, retain) NSString *messageSubject;
+@property (nonatomic, strong) NSString *serverAuthUsername;
+@property (nonatomic, strong) NSString *serverAuthPassword;
+@property (nonatomic, strong) NSString *messageFrom;
+@property (nonatomic, strong) NSString *messageTo;
+@property (nonatomic, strong) NSString *messageSubject;
 
-@property (nonatomic, retain) IBOutlet NSString *fromLabel;
-@property (nonatomic, retain) IBOutlet NSString *toLabel;
-@property (nonatomic, retain) IBOutlet NSString *prefixLabel;
+@property (nonatomic, strong) IBOutlet NSString *fromLabel;
+@property (nonatomic, strong) IBOutlet NSString *toLabel;
+@property (nonatomic, strong) IBOutlet NSString *prefixLabel;
 
-@property (nonatomic, retain) IBOutlet NSString *smtpBoxLabel;
+@property (nonatomic, strong) IBOutlet NSString *smtpBoxLabel;
 
-@property (nonatomic, retain) IBOutlet NSString *addressLabel;
-@property (nonatomic, retain) IBOutlet NSString *portLabel;
+@property (nonatomic, strong) IBOutlet NSString *addressLabel;
+@property (nonatomic, strong) IBOutlet NSString *portLabel;
 
-@property (nonatomic, retain) IBOutlet NSString *securityLabel;
-@property (nonatomic, retain) IBOutlet NSString *noneLabel;
-@property (nonatomic, retain) IBOutlet NSString *tlsLabel;
-@property (nonatomic, retain) IBOutlet NSString *tlsOrCloseLabel;
+@property (nonatomic, strong) IBOutlet NSString *securityLabel;
+@property (nonatomic, strong) IBOutlet NSString *noneLabel;
+@property (nonatomic, strong) IBOutlet NSString *tlsLabel;
+@property (nonatomic, strong) IBOutlet NSString *tlsOrCloseLabel;
 
-@property (nonatomic, retain) IBOutlet NSString *authenticationCheckboxLabel;
-@property (nonatomic, retain) IBOutlet NSString *usernameLabel;
-@property (nonatomic, retain) IBOutlet NSString *passwordLabel;
+@property (nonatomic, strong) IBOutlet NSString *authenticationCheckboxLabel;
+@property (nonatomic, strong) IBOutlet NSString *usernameLabel;
+@property (nonatomic, strong) IBOutlet NSString *passwordLabel;
 
 @end
 
 @implementation GrowlMailMePreferencePane
 
-@synthesize serverAddress;
-@synthesize serverPorts;
-@synthesize serverTlsMode;
-@synthesize serverAuthFlag;
-@synthesize serverAuthUsername;
-@synthesize serverAuthPassword;
-@synthesize messageFrom;
-@synthesize messageTo;
-@synthesize messageSubject;
+@dynamic serverAddress;
+@dynamic serverPorts;
+@dynamic serverTlsMode;
+@dynamic serverAuthFlag;
+@dynamic serverAuthUsername;
+@dynamic serverAuthPassword;
+@dynamic messageFrom;
+@dynamic messageTo;
+@dynamic messageSubject;
 
 @synthesize fromLabel;
 @synthesize toLabel;
@@ -90,22 +90,6 @@
 	return self;
 }
 
--(void)dealloc {
-	self.fromLabel = nil;
-	self.toLabel = nil;
-	self.prefixLabel = nil;
-	self.smtpBoxLabel = nil;
-	self.addressLabel = nil;
-	self.portLabel = nil;
-	self.securityLabel = nil;
-	self.noneLabel = nil;
-	self.tlsLabel = nil;
-	self.tlsOrCloseLabel = nil;
-	self.authenticationCheckboxLabel = nil;
-	self.usernameLabel = nil;
-	self.passwordLabel = nil;
-	[super dealloc];
-}
 
 -(NSString*)mainNibName {
 	return @"MailMePrefPane";
@@ -119,7 +103,7 @@
 	static NSSet *keys = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		keys = [[NSSet setWithObjects:@"serverAddress",
+		keys = [NSSet setWithObjects:@"serverAddress",
 					@"serverPorts",
 					@"serverTlsMode",
 					@"serverAuthFlag",
@@ -127,7 +111,7 @@
 					@"serverAuthPassword",
 					@"messageFrom",
 					@"messageTo",
-					@"messageSubject", nil] retain];
+					@"messageSubject", nil];
 	});
 	return keys;
 }

@@ -12,10 +12,6 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 
-//'alias' as in the Alias Manager.
-NSURL *fileURLWithAliasData(NSData *aliasData);
-NSData *createAliasDataWithURL(NSURL *theURL);
-
 //these are the type of external representations used by Dock.app.
 NSURL *fileURLWithDockDescription(NSDictionary *dict);
 //createDockDescriptionWithURL returns NULL for non-file: URLs.

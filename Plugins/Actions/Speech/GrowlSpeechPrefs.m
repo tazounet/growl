@@ -15,17 +15,17 @@
 
 @interface GrowlSpeechPrefs ()
 
-@property (nonatomic, retain) NSString *voiceLabel;
-@property (nonatomic, retain) NSString *limitCharCheckboxTitle;
-@property (nonatomic, retain) NSString *charactersLabel;
-@property (nonatomic, retain) NSString *rateAdjustCheckbox;
-@property (nonatomic, retain) NSString *slowLabel;
-@property (nonatomic, retain) NSString *fastLabel;
-@property (nonatomic, retain) NSString *volumeAdjustCheckbox;
-@property (nonatomic, retain) NSString *globalHotkeysBoxLabel;
-@property (nonatomic, retain) NSString *pauseResumeLabel;
-@property (nonatomic, retain) NSString *skipNoteLabel;
-@property (nonatomic, retain) NSString *clickNoteLabel;
+@property (nonatomic, strong) NSString *voiceLabel;
+@property (nonatomic, strong) NSString *limitCharCheckboxTitle;
+@property (nonatomic, strong) NSString *charactersLabel;
+@property (nonatomic, strong) NSString *rateAdjustCheckbox;
+@property (nonatomic, strong) NSString *slowLabel;
+@property (nonatomic, strong) NSString *fastLabel;
+@property (nonatomic, strong) NSString *volumeAdjustCheckbox;
+@property (nonatomic, strong) NSString *globalHotkeysBoxLabel;
+@property (nonatomic, strong) NSString *pauseResumeLabel;
+@property (nonatomic, strong) NSString *skipNoteLabel;
+@property (nonatomic, strong) NSString *clickNoteLabel;
 
 @end
 
@@ -35,12 +35,12 @@
 @synthesize clickShortcut;
 @synthesize voices;
 
-@synthesize useLimit;
-@synthesize characterLimit;
-@synthesize useRate;
-@synthesize rate;
-@synthesize useVolume;
-@synthesize volume;
+@dynamic useLimit;
+@dynamic characterLimit;
+@dynamic useRate;
+@dynamic rate;
+@dynamic useVolume;
+@dynamic volume;
 
 @synthesize voiceLabel;
 @synthesize limitCharCheckboxTitle;
@@ -71,21 +71,6 @@
    return self;
 }
 
--(void)dealloc {
-	self.voices = nil;
-	self.voiceLabel = nil;
-	self.limitCharCheckboxTitle = nil;
-	self.charactersLabel = nil;
-	self.rateAdjustCheckbox = nil;
-	self.slowLabel = nil;
-	self.fastLabel = nil;
-	self.volumeAdjustCheckbox = nil;
-	self.globalHotkeysBoxLabel = nil;
-	self.pauseResumeLabel = nil;
-	self.skipNoteLabel = nil;
-	self.clickNoteLabel = nil;
-	[super dealloc];
-}
 
 - (NSString *) mainNibName {
 	return @"GrowlSpeechPrefs";
@@ -95,12 +80,12 @@
 	static NSSet *keys = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		keys = [[NSSet setWithObjects:@"useLimit",
+		keys = [NSSet setWithObjects:@"useLimit",
 					@"characterLimit",
 					@"useRate",
 					@"rate",
 					@"useVolume",
-					@"volume", nil] retain];
+					@"volume", nil];
 	});
 	return keys;
 }

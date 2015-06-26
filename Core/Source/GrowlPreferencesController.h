@@ -137,12 +137,12 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key);
 
 #pragma mark Idle Detection
 
-@property (nonatomic, retain) NSNumber *idleThreshold;
+@property (nonatomic, strong) NSNumber *idleThreshold;
 @property (nonatomic) NSUInteger idleMultiplier;
 @property (nonatomic) BOOL useIdleByTime;
 @property (nonatomic) BOOL useIdleByScreensaver;
 @property (nonatomic) BOOL useIdleByScreenLock;
-@property (nonatomic, retain) NSArray *idleTimeExceptionApps;
+@property (nonatomic, strong) NSArray *idleTimeExceptionApps;
 
 #pragma mark Rollup
 - (BOOL) isRollupShown;
@@ -151,8 +151,8 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key);
 - (void) setRollupEnabled:(BOOL)enabled;
 - (BOOL) isRollupAutomatic;
 - (void) setRollupAutomatic:(BOOL)automatic;
-@property (nonatomic, retain) SGKeyCombo *rollupKeyCombo;
-@property (nonatomic, retain) SGKeyCombo *closeAllCombo;
+@property (nonatomic, strong) SGKeyCombo *rollupKeyCombo;
+@property (nonatomic, strong) SGKeyCombo *closeAllCombo;
 
 #pragma mark Notification History
 - (BOOL) isGrowlHistoryLogEnabled;
@@ -199,6 +199,8 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key);
 
 -(BOOL)rulesLoggingEnabled;
 -(void)setRulesLoggingEnabled:(BOOL)flag;
+
+- (void)closeAllNotifications;
 
 @end
 

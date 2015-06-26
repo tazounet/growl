@@ -33,7 +33,7 @@
                            uuid:(id)theUUID
                        delegate:(id)aDelegate
 {
-   GrowlMistView *mistViewForSetup = [[[GrowlMistView alloc] initWithFrame:NSZeroRect] autorelease];
+   GrowlMistView *mistViewForSetup = [[GrowlMistView alloc] initWithFrame:NSZeroRect];
    mistViewForSetup.notificationTitle = title;
    mistViewForSetup.notificationText = text;
    mistViewForSetup.notificationImage = image;
@@ -48,7 +48,7 @@
    
    self = [super initWithWindow:tempWindow];
    if (self) {
-      mistView = [mistViewForSetup retain];
+      mistView = mistViewForSetup;
       [tempWindow setBecomesKeyOnlyIfNeeded:YES];
       [tempWindow setHidesOnDeactivate:NO];
       [tempWindow setCanHide:NO];
@@ -72,41 +72,30 @@
                                                         userInfo:nil
                                                          repeats:NO];
    }
-   [tempWindow release];
    return self;
 }
 
 - (void)dealloc {
    delegate = nil;
    [lifetime invalidate];
-   [lifetime release];
    lifetime = nil;
    fadeAnimation.delegate = nil;
    [fadeAnimation stopAnimation];
-   [fadeAnimation release];
    fadeAnimation = nil;
    mistView.delegate = nil;
-   [mistView release];
    mistView = nil;
-   [uuid release];
-   uuid = nil;
-   [super dealloc];
 }
 
 - (void)setLifetime:(NSTimer *)aLifetime
 {
-   [aLifetime retain];
    [lifetime invalidate];
-   [lifetime release];
    lifetime = aLifetime;
 }
 
 - (void)setFadeAnimation:(NSViewAnimation *)aFadeAnimation
 {
-   [aFadeAnimation retain];
    fadeAnimation.delegate = nil;
    [fadeAnimation stopAnimation];
-   [fadeAnimation release];
    fadeAnimation = aFadeAnimation;
 }
 
@@ -122,8 +111,8 @@
    NSArray *animations;
    animations = [NSArray arrayWithObject:fadeIn];
    
-   [self setFadeAnimation:[[[NSViewAnimation alloc]
-                            initWithViewAnimations:animations] autorelease]];
+   [self setFadeAnimation:[[NSViewAnimation alloc]
+                            initWithViewAnimations:animations]];
    
    [self.fadeAnimation setAnimationBlockingMode:NSAnimationNonblocking];
    [self.fadeAnimation setDuration:0.3];
@@ -161,8 +150,8 @@
    NSArray *animations;
    animations = [NSArray arrayWithObject:fadeOut];
    
-   [self setFadeAnimation:[[[NSViewAnimation alloc]
-                            initWithViewAnimations:animations] autorelease]];
+   [self setFadeAnimation:[[NSViewAnimation alloc]
+                            initWithViewAnimations:animations]];
    
    [self.fadeAnimation setAnimationBlockingMode:NSAnimationNonblocking];
    [self.fadeAnimation setDuration:0.3];

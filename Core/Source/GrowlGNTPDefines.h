@@ -5,28 +5,28 @@
 
 #define GROWL_NETWORK_DOMAIN		@"GrowlNetwork"
 
-typedef enum {
+typedef NS_ENUM(NSInteger, GrowlGNTPPacketErrorType) {
 	GrowlGNTPHeaderError,
 	GrowlGNTPMalformedProtocolIdentificationError,
 	GrowlGNTPRegistrationPacketError,
 	GrowlGNTPCallbackPacketError
-} GrowlGNTPPacketErrorType;
+};
 
-typedef enum {
+typedef NS_ENUM(NSInteger, GrowlGNTPCallbackBehavior) {
 	GrowlGNTP_NoCallback,
 	GrowlGNTP_TCPCallback,
 	GrowlGNTP_URLCallback
-} GrowlGNTPCallbackBehavior;
+};
 
-typedef enum {
+typedef NS_ENUM(NSInteger, GrowlGNTPConnectionType) {
 	GrowlGNTP_Close,
 	GrowlGNTP_KeepAlive
-} GrowlGNTPConnectionType;
+};
 
-typedef enum {
-GrowlGNTPCallback_Closed,
-GrowlGNTPCallback_Clicked
-} GrowlGNTPCallbackType;
+typedef NS_ENUM(NSInteger, GrowlGNTPCallbackType) {
+	GrowlGNTPCallback_Closed,
+	GrowlGNTPCallback_Clicked
+};
 
 /*!
  *  @brief Return codes for the various requests, these should be sent back to the originating host
@@ -65,7 +65,7 @@ GrowlGNTPCallback_Clicked
  * An internal server error occurred while processing the request
  *
  */
-enum {
+typedef NS_ENUM(NSInteger, GrowlGNTPErrorCode) {
 	GrowlGNTPReservedErrorCode = 100,
 	GrowlGNTPRequestTimedOutErrorCode = 200,
 	GrowlGNTPNetworkFailureErrorCode = 201,
@@ -78,9 +78,7 @@ enum {
 	GrowlGNTPUnknownNotificationErrorCode = 402,
     GrowlGNTPUserDisabledErrorCode = 404,
 	GrowlGNTPInternalServerErrorErrorCode = 500,
-} _GrowlGNTPErrorCode;
-
-typedef NSInteger GrowlGNTPErrorCode;
+};
 
 #pragma mark Encryption
 
@@ -93,24 +91,20 @@ extern NSString *GrowlGNTPAES;
 extern NSString *GrowlGNTPDES;
 extern NSString *GrowlGNTP3DES;
 
-enum
-{
+typedef NS_ENUM(NSInteger, GrowlGNTPEncryptionAlgorithm) {
 	GNTPNone,
 	GNTPAES,
 	GNTPDES,
 	GNTP3DES
-} _GrowlGNTPEncryptionAlgorithm;
+};
 
-typedef NSInteger GrowlGNTPEncryptionAlgorithm;
-
-typedef enum
-{
+typedef NS_ENUM(NSInteger, GrowlGNTPHashingAlgorithm) {
 	GNTPNoHash,
 	GNTPMD5,
 	GNTPSHA1,
 	GNTPSHA256,
 	GNTPSHA512
-} GrowlGNTPHashingAlgorithm;
+};
 
 #pragma mark Callback Results
 extern NSString *GrowlGNTPCallbackClicked;

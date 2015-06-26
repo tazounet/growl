@@ -9,12 +9,12 @@
 #import <AppKit/AppKit.h>
 
 @interface GrowlNotificationCellView : NSTableCellView{
-    IBOutlet NSTextField *description;
-    IBOutlet NSImageView *icon;
-    IBOutlet NSButton *deleteButton;
+    IBOutlet NSTextField *__weak description;
+    IBOutlet NSImageView *__weak icon;
+    IBOutlet NSButton *__weak deleteButton;
 }
-@property (assign) IBOutlet NSTextField *description;
-@property (assign) IBOutlet NSImageView *icon;
-@property (assign) IBOutlet NSButton *deleteButton;
+@property (weak) IBOutlet NSTextField *description;
+@property (weak) IBOutlet NSImageView *icon;
+@property (weak) IBOutlet NSButton *deleteButton;
 
 @end

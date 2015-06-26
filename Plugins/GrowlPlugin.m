@@ -51,18 +51,5 @@
 	return [self initWithBundle:[NSBundle bundleForClass:[self class]]];
 }
 
-- (void) dealloc {
-	[pluginName release];
-	[pluginAuthor release];
-	[pluginVersion release];
-	[pluginDesc release];
-
-	[pluginBundle release];
-	[pluginPathName release];
-
-	[prefDomain release];
-
-	[super dealloc];
-}
 
 @end

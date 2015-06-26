@@ -11,7 +11,7 @@
 
 @implementation NSImage (GrowlImageAdditions)
 
-- (void) drawScaledInRect:(NSRect)targetRect operation:(NSCompositingOperation)operation fraction:(CGFloat)f {
+- (void) drawScaledInRect:(NSRect)targetRect operation:(NSCompositingOperation)operation fraction:(CGFloat)f neverFlipped:(BOOL)neverFlipped {
 	if (!NSEqualSizes([self size], targetRect.size))
 		[self adjustSizeToDrawAtSize:targetRect.size];
 	NSRect imageRect;
@@ -30,7 +30,6 @@
 			targetRect.origin.x = GrowlCGFloatFloor(targetRect.origin.x - (targetRect.size.width - oldWidth) * 0.5f);
 		}
 
-		[self setScalesWhenResized:YES];
 		[[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationHigh];
 	} else {
 		// center image if it is too small
@@ -41,7 +40,7 @@
 		targetRect.size = imageRect.size;
 	}
 
-	[self drawInRect:targetRect fromRect:imageRect operation:operation fraction:f];
+    [self drawInRect:targetRect fromRect:imageRect operation:operation fraction:f neverFlipped:neverFlipped];
 }
 
 - (NSSize) adjustSizeToDrawAtSize:(NSSize)theSize {
@@ -101,9 +100,9 @@
 	CGImageDestinationRef cgDestRef = CGImageDestinationCreateWithData((CFMutableDataRef)mutableData, (CFStringRef)type, 1, NULL);
 	if(cgDestRef)
 	{
-		if([self isFlipped]){
-			[self setFlipped:NO];
-		}
+		//if([self isFlipped]){
+        //	[self setFlipped:NO];
+		//}
 		CGImageRef imageRef = [self CGImageForProposedRect:NULL context:nil hints:nil];
 		if(imageRef)
 		{
@@ -125,5 +124,34 @@
 	return [self representationWithType:(NSString*)kUTTypeJPEG];
 }
 
+- (void) drawInRect:(NSRect)dstRect
+         fromRect:(NSRect)srcRect
+         operation:(NSCompositingOperation)op
+         fraction:(CGFloat)requestedAlpha
+         neverFlipped:(BOOL)neverFlipped
+{
+    NSAffineTransform *transform = nil;
+
+    // Flip drawing and adjust the origin to make the image come out
+    // right.
+    if (neverFlipped && [[NSGraphicsContext currentContext] isFlipped])
+    {
+        transform = [NSAffineTransform transform];
+        [transform scaleXBy:1.0 yBy:-1.0];
+        [transform concat];
+
+        // The lower edge of the image is as far from the origin as the
+        // upper edge was, plus it's on the other side of the origin.
+        dstRect.origin.y -= NSMaxY(dstRect) + NSMinY(dstRect);
+    }
+
+    [self drawInRect:dstRect
+            fromRect:srcRect
+            operation:op
+            fraction:requestedAlpha];
+
+    // Flip drawing back, if needed.
+    [transform concat];
+}
 
 @end

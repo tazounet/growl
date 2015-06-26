@@ -66,7 +66,7 @@
       self.Identifier = [noteDict objectForKey:GROWL_NOTIFICATION_INTERNAL_ID];
    
    //Check for the image;
-   NSFetchRequest *request = [[[NSFetchRequest alloc] initWithEntityName:@"Image"] autorelease];
+   NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Image"];
    
    NSData *imageData = [noteDict objectForKey:GROWL_NOTIFICATION_ICON_DATA];
 	if(imageData && [imageData isKindOfClass:[NSImage class]])
@@ -96,7 +96,7 @@
 		}
 		
 	}
-	NSMutableDictionary *mutableDict = [[noteDict mutableCopyWithZone:nil] autorelease];
+	NSMutableDictionary *mutableDict = [noteDict mutableCopyWithZone:nil];
 	[mutableDict removeObjectForKey:GROWL_NOTIFICATION_APP_ICON_DATA];
 	[mutableDict removeObjectForKey:GROWL_NOTIFICATION_ICON_DATA];
 	[mutableDict removeObjectForKey:GROWL_APP_ICON_DATA];

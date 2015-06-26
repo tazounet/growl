@@ -19,10 +19,6 @@
 	return self;
 }
 
-- (void) dealloc{
-	[ticketsByApplicationName release];
-	[super dealloc];
-}
 
 #pragma mark -
 #pragma mark Private methods
@@ -61,7 +57,6 @@
 						[ticketsByApplicationName setObject:newTicket forKey:applicationName];
 				}
 				
-				[newTicket release];
 			}
 		}
 	}
@@ -101,7 +96,7 @@
       appHost = [NSString stringWithFormat:@"%@ - %@", hostName, appName];
    else
       appHost = appName;
-	return [[[ticketsByApplicationName objectForKey:appHost] retain] autorelease];
+	return [ticketsByApplicationName objectForKey:appHost];
 }
 - (void) addTicket:(GrowlApplicationTicket *) newTicket {
 	NSString *appName = [newTicket appNameHostName];

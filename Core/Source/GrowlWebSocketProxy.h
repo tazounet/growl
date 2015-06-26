@@ -12,8 +12,8 @@
 
 @interface GrowlWebSocketProxy : NSObject
 
-@property (nonatomic, retain) GCDAsyncSocket *socket;
-@property (nonatomic, assign) id delegate;
+@property (nonatomic, strong) GCDAsyncSocket *socket;
+@property (nonatomic, unsafe_unretained) id delegate;
 
 - (id)initWithSocket:(GCDAsyncSocket*)socket;
 

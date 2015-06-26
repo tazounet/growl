@@ -56,25 +56,6 @@
    return @"RollupPrefs";
 }
 
--(void)dealloc {
-   [rollupEnabledTitle release];
-   [rollupAutomaticTitle release];
-   [secondsTitle release];
-   [rollupAllTitle release];
-   [rollupLoggedTitle release];
-   [showHideTitle release];
-   
-   self.pulseMenuItemTitle = nil;
-   self.idleDetectionBoxTitle = nil;
-   self.idleAfterTitle = nil;
-   self.secondsTitle = nil;
-   self.minutesTitle = nil;
-   self.hoursTitle = nil;
-   self.whenScreenSaverActiveTitle = nil;
-   self.whenScreenLockedTitle = nil;
-   
-   [super dealloc];
-}
 
 - (BOOL)shortcutRecorder:(SRRecorderControl *)aRecorder isKeyCode:(NSInteger)keyCode andFlagsTaken:(NSUInteger)flags reason:(NSString **)aReason
 {

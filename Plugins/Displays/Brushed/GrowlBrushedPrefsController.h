@@ -11,7 +11,7 @@
 @interface GrowlBrushedPrefsController : GrowlPluginPreferencePane {
 }
 
-@property (nonatomic, retain) NSString *useAquaLabel;
+@property (nonatomic, strong) NSString *useAquaLabel;
 
 - (CGFloat) duration;
 - (void) setDuration:(CGFloat)value;

@@ -26,7 +26,7 @@
     if (beforeObject) 
     {
         NSData *beforeData = (NSData*)beforeObject;
-        result = [[[NSImage alloc] initWithData:beforeData] autorelease];
+        result = [[NSImage alloc] initWithData:beforeData];
     }
     return result;
 }

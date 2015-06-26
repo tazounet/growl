@@ -23,11 +23,6 @@
     return self;
 }
 
--(void)dealloc
-{
-    [trackingArea release];
-    [super dealloc];
-}
 
 - (void)setMouseInside:(BOOL)value {
     if (mouseInside != value) {
@@ -100,7 +95,7 @@
 static NSGradient *gradientWithTargetColor(NSColor *targetColor) {
     NSArray *colors = [NSArray arrayWithObjects:[targetColor colorWithAlphaComponent:0], targetColor, targetColor, [targetColor colorWithAlphaComponent:0], nil];
     const CGFloat locations[4] = { 0.0, 0.35, 0.65, 1.0 };
-    return [[[NSGradient alloc] initWithColors:colors atLocations:locations colorSpace:[NSColorSpace sRGBColorSpace]] autorelease];
+    return [[NSGradient alloc] initWithColors:colors atLocations:locations colorSpace:[NSColorSpace sRGBColorSpace]];
 }
 
 - (NSRect)separatorRect {
@@ -115,7 +110,7 @@ static NSGradient *gradientWithTargetColor(NSColor *targetColor) {
     // Use a common shared method of drawing the separator
     static NSGradient *gradient = nil;
     if (gradient == nil) {
-        gradient = [gradientWithTargetColor([NSColor colorWithSRGBRed:.80 green:.80 blue:.80 alpha:1]) retain];
+        gradient = gradientWithTargetColor([NSColor colorWithSRGBRed:.80 green:.80 blue:.80 alpha:1]);
     }
     [gradient drawInRect:[self separatorRect] angle:0];
 }

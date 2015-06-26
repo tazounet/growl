@@ -38,11 +38,11 @@ NSString *GrowlPositionPickerChangedSelectionNotification = @"GrowlPositionPicke
 	if (self != [GrowlPositionPicker class])
 		return;
 	
-	backgroundImage = [[self imageForCurrentOS] retain];
+	backgroundImage = [self imageForCurrentOS];
 	imageBounds = NSMakeRect(0.0,0.0,[backgroundImage size].width,[backgroundImage size].height);
-	unselectedColor = [[NSColor colorWithDeviceWhite:1.0 alpha:GrowlPositionPickerHotCornerUnselectedAlpha] retain];
-	rolloverColor = [[NSColor grayColor] retain];
-	selectedColor = [[NSColor whiteColor] retain];
+	unselectedColor = [NSColor colorWithDeviceWhite:1.0 alpha:GrowlPositionPickerHotCornerUnselectedAlpha];
+	rolloverColor = [NSColor grayColor];
+	selectedColor = [NSColor whiteColor];
 	
 	[NSObject exposeBinding:@"selectedPosition"];
 }
@@ -55,7 +55,7 @@ NSString *GrowlPositionPickerChangedSelectionNotification = @"GrowlPositionPicke
 		rolloverPosition = GrowlNoOrigin;
 		enabled = YES;
         
-		[self addObserver:self forKeyPath:@"selectedPosition" options:NSKeyValueObservingOptionNew context:self];
+		[self addObserver:self forKeyPath:@"selectedPosition" options:NSKeyValueObservingOptionNew context:(__bridge void *)(self)];
 	}
 	return self;
 }
@@ -65,11 +65,6 @@ NSString *GrowlPositionPickerChangedSelectionNotification = @"GrowlPositionPicke
 	[self removeObserver:self forKeyPath:@"selectePosition"];
 	
 	[self removeTrackingRect:trackingRectTag];
-	[topLeftHotCorner release];
-	[topRightHotCorner release];
-	[bottomRightHotCorner release];
-	[bottomRightHotCorner release];
-	[super dealloc];
 }
 
 + (NSImage*)imageForCurrentOS {
@@ -302,7 +297,7 @@ NSString *GrowlPositionPickerChangedSelectionNotification = @"GrowlPositionPicke
 #pragma mark KVO
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-	if ([keyPath isEqualToString:@"selectedPosition"] && context == self) {
+	if ([keyPath isEqualToString:@"selectedPosition"] && context == (__bridge void *)(self)) {
 		if(selectedPosition != lastPosition)
 			[[NSNotificationCenter defaultCenter] postNotificationName:GrowlPositionPickerChangedSelectionNotification
 																object:self];			

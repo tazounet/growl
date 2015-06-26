@@ -77,9 +77,8 @@ static dispatch_queue_t __imageCacheQueue;
    __block NSData *image = nil;
    dispatch_sync(__imageCacheQueue, ^{
       image = [[GrowlWebKitWindowController imageCache] objectForKey:key];
-      [image retain];
    });
-   return [image autorelease];
+   return image;
 }
 
 + (void)setCachedImage:(NSData*)image forKey:(NSString*)key {
@@ -104,7 +103,6 @@ static dispatch_queue_t __imageCacheQueue;
 													 defer:YES];
 	if (!(self = [super initWithWindow:panel andPlugin:aPlugin])) {
       NSLog(@"ERROR: could not create webkit notification window with panel '%@'", panel);
-		[panel release];
 		return nil;
 	}
 
@@ -119,10 +117,9 @@ static dispatch_queue_t __imageCacheQueue;
 													  error:&error];
 	if (!templateHTML) {
 		NSLog(@"ERROR: could not read template '%@' - %@", templateFile,error);
-		[self release];
 		return nil;
 	}
-	baseURL = [[NSURL fileURLWithPath:[displayBundle resourcePath]] retain];
+	baseURL = [NSURL fileURLWithPath:[displayBundle resourcePath]];
 
 	// Read the prefs for the plugin...
 	unsigned theScreenNo = 0U;
@@ -180,7 +177,6 @@ static dispatch_queue_t __imageCacheQueue;
 		[view setDrawsBackground:NO];
 	[panel setContentView:view];
 	[panel makeFirstResponder:[[[view mainFrame] frameView] documentView]];
-	[view release];
 
 	// set up the transitions...
 	NSDictionary *bundleDict = [[plugin bundle] infoDictionary];
@@ -189,27 +185,23 @@ static dispatch_queue_t __imageCacheQueue;
 		[self addTransition:fader];
 		[self setStartPercentage:0 endPercentage:100 forTransition:fader];
 		[fader setAutoReverses:YES];
-		[fader release];
 	}else{
 		//For now, just do this to force the window to be there
 		GrowlFadingWindowTransition *fader = [[GrowlFadingWindowTransition alloc] initWithWindow:panel];
 		[self addTransition:fader];
 		[self setStartPercentage:100 endPercentage:100 forTransition:fader];
 		[fader setAutoReverses:YES];
-		[fader release];
 	}
 	if([bundleDict objectForKey:@"UseWebKitAnimationOut"] && [[bundleDict objectForKey:@"UseWebKitAnimationOut"] boolValue]){
 		GrowlWebKitWindowTransition *webkitTransition = [[GrowlWebKitWindowTransition alloc] initWithWindow:panel];
 		[self addTransition:webkitTransition];
 		[self setStartPercentage:0 endPercentage:100 forTransition:webkitTransition];
 		[webkitTransition setAutoReverses:YES];
-		[webkitTransition release];
 	}
 	if([bundleDict objectForKey:@"WebKitAnimationDuration"]){
 		[self setTransitionDuration:[[bundleDict objectForKey:@"WebKitAnimationDuration"] floatValue]];
 	}
 	
-	[panel release];
 		
 	return self;
 }
@@ -223,7 +215,7 @@ static dispatch_queue_t __imageCacheQueue;
 	if (cacheKey) {
 		[GrowlWebKitWindowController removeCachedImageForKey:cacheKey];
 		
-		[cacheKey release]; cacheKey = nil;
+		 cacheKey = nil;
 	}
 	
 	[super stopDisplay];
@@ -241,12 +233,8 @@ static dispatch_queue_t __imageCacheQueue;
         [webView      setTarget:nil];
     }
     
-	[templateHTML release];
-	[baseURL	  release];
 	
-	[cacheKey     release];
 	
-	[super dealloc];
 }
 
 - (void) setTitle:(NSString *)title text:(NSString *)text iconData:(NSData *)iconData priority:(int)priority forView:(WebView *)view {
@@ -270,11 +258,10 @@ static dispatch_queue_t __imageCacheQueue;
 			break;
 	}
 
-	NSMutableString *htmlString = [[templateHTML mutableCopy] autorelease];
+	NSMutableString *htmlString = [templateHTML mutableCopy];
 	
 	if (cacheKey) {
 		[GrowlWebKitWindowController removeCachedImageForKey:cacheKey];
-		[cacheKey release];
 	}
 	
 	cacheKey = [[NSString alloc] initWithFormat:@"growlimage://%p", view];
@@ -436,6 +423,9 @@ static dispatch_queue_t __imageCacheQueue;
 
 - (CGFloat) requiredDistanceFromExistingDisplays {
 	return MAX(paddingX, paddingY);
+}
+
+- (void) clickedCloseBox {
 }
 
 @end

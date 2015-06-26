@@ -15,13 +15,13 @@
 - (id)initWithProviderKey:(NSString *)providerKey
 				 delegate:(id<PRGeneratorDelegate>)delegate;
 @property (nonatomic, copy, readonly) NSString *providerKey;
-@property (nonatomic, assign, readonly) id<PRGeneratorDelegate> delegate;
+@property (nonatomic, unsafe_unretained, readonly) id<PRGeneratorDelegate> delegate;
 
 - (void)fetchToken;
 @property (nonatomic, copy, readonly) NSString *token;
 @property (nonatomic, copy, readonly) NSString *tokenURL;
 
 - (void)fetchApiKey;
-@property (nonatomic, retain, readonly) PRAPIKey *apiKey;
+@property (nonatomic, strong, readonly) PRAPIKey *apiKey;
 
 @end

@@ -13,9 +13,9 @@
 
 @interface GrowlPrefsViewController : NSViewController
 
-@property (nonatomic, retain) GrowlPreferencePane *prefPane;
-@property (nonatomic, assign) GrowlPreferencesController *preferencesController;
-@property (nonatomic, retain) NSTimer *releaseTimer;
+@property (nonatomic, strong) GrowlPreferencePane *prefPane;
+@property (nonatomic, weak) GrowlPreferencesController *preferencesController;
+@property (nonatomic, strong) NSTimer *releaseTimer;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil 
                bundle:(NSBundle *)nibBundleOrNil

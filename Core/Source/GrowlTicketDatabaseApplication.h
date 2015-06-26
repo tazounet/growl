@@ -14,8 +14,8 @@
 
 @interface GrowlTicketDatabaseApplication : GrowlTicketDatabaseTicket
 
-@property (nonatomic, retain) NSString * appID;
-@property (nonatomic, retain) NSString * appPath;
+@property (nonatomic, strong) NSString * appID;
+@property (nonatomic, strong) NSString * appPath;
 
 -(void)setWithApplicationTicket:(GrowlApplicationTicket*)ticket;
 -(void)registerWithDictionary:(NSDictionary*)regDict;

@@ -36,11 +36,6 @@
    return self;
 }
 
-- (void)dealloc {
-   [colorLabel release];
-   [colorNames release];
-   [super dealloc];
-}
 
 - (NSString *) mainNibName {
 	return @"iCalPrefs";
@@ -50,12 +45,12 @@
 	static NSSet *keys = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		keys = [[NSSet setWithObjects:@"color",
+		keys = [NSSet setWithObjects:@"color",
 				  @"opacity",
 				  @"duration",
 				  @"limit",
 				  @"screen",
-				  @"size", nil] retain];
+				  @"size", nil];
 	});
 	return keys;
 }

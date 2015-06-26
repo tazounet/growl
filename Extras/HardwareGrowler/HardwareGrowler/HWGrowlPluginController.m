@@ -14,8 +14,8 @@
 
 @interface HWGrowlPluginController ()
 
-@property (nonatomic, retain) NSMutableArray *notifiers;
-@property (nonatomic, retain) NSMutableArray *monitors;
+@property (nonatomic, strong) NSMutableArray *notifiers;
+@property (nonatomic, strong) NSMutableArray *monitors;
 
 @end
 
@@ -25,10 +25,6 @@
 @synthesize notifiers;
 @synthesize monitors;
 
--(void)dealloc {
-	[plugins release];
-	[super dealloc];
-}
 
 -(id)init {
 	if((self = [super init])){
@@ -55,7 +51,7 @@
 	if(pluginBundles) {
 		NSDictionary *disabledPlugins = [[NSUserDefaults standardUserDefaults] objectForKey:@"DisabledPlugins"];
 		
-		__block HWGrowlPluginController *blockSelf = self;
+		__weak HWGrowlPluginController *weakSelf = self;
 		[pluginBundles enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 			NSString *bundlePath = [pluginsPath stringByAppendingPathComponent:obj];
 			NSBundle *pluginBundle = [NSBundle bundleWithPath:bundlePath];
@@ -76,16 +72,15 @@
 						
 						NSMutableDictionary *pluginDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:plugin, @"plugin", 
 																	  [NSNumber numberWithBool:disabled], @"disabled", nil];
-						[blockSelf.plugins addObject:pluginDict];
+						[weakSelf.plugins addObject:pluginDict];
 						
 						if([plugin conformsToProtocol:@protocol(HWGrowlPluginNotifierProtocol)])
-							[blockSelf.notifiers addObject:plugin];
+							[weakSelf.notifiers addObject:plugin];
 						if([plugin conformsToProtocol:@protocol(HWGrowlPluginMonitorProtocol)])
-							[blockSelf.monitors addObject:plugin];
+							[weakSelf.monitors addObject:plugin];
 					}else{
 						NSLog(@"%@ does not conform to HWGrowlPluginProtocol", NSStringFromClass([pluginBundle principalClass]));
 					}
-					[plugin release];
 				}else{
 					NSLog(@"We couldn't instantiate %@ for plugin %@", NSStringFromClass([pluginBundle principalClass]), bundleID);
 				}

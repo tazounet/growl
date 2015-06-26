@@ -13,10 +13,10 @@
 @property (nonatomic) NSInteger state;
 @property (nonatomic) CGRect frame;
 
-@property (nonatomic, retain) GrowlQuadTreeNode *topLeft;
-@property (nonatomic, retain) GrowlQuadTreeNode *topRight;
-@property (nonatomic, retain) GrowlQuadTreeNode *bottomLeft;
-@property (nonatomic, retain) GrowlQuadTreeNode *bottomRight;
+@property (nonatomic, strong) GrowlQuadTreeNode *topLeft;
+@property (nonatomic, strong) GrowlQuadTreeNode *topRight;
+@property (nonatomic, strong) GrowlQuadTreeNode *bottomLeft;
+@property (nonatomic, strong) GrowlQuadTreeNode *bottomRight;
 
 @end
 
@@ -38,13 +38,6 @@
 	return self;
 }
 
--(void)dealloc {
-	[topLeft release];
-	[topRight release];
-	[bottomLeft release];
-	[bottomRight release];
-	[super dealloc];
-}
 
 -(BOOL)createChildren{
 	if(topLeft){
@@ -62,14 +55,14 @@
 	CGRect bottomRightRect = CGRectMake(frame.origin.x + childWidth, frame.origin.y, childWidth, childHeight);
 	CGRect topLeftRect = CGRectMake(frame.origin.x, frame.origin.y + childHeight, childWidth, childHeight);
 	CGRect topRightRect = CGRectMake(frame.origin.x + childWidth, frame.origin.y + childHeight, childWidth, childHeight);
-	self.topLeft = [[[GrowlQuadTreeNode alloc] initWithState:state 
-																	 forRect:topLeftRect] autorelease];
-	self.topRight = [[[GrowlQuadTreeNode alloc] initWithState:state 
-																	  forRect:topRightRect] autorelease];
-	self.bottomLeft = [[[GrowlQuadTreeNode alloc] initWithState:state 
-																		 forRect:bottomLeftRect] autorelease];
-	self.bottomRight = [[[GrowlQuadTreeNode alloc] initWithState:state 
-																		  forRect:bottomRightRect] autorelease];	
+	self.topLeft = [[GrowlQuadTreeNode alloc] initWithState:state 
+																	 forRect:topLeftRect];
+	self.topRight = [[GrowlQuadTreeNode alloc] initWithState:state 
+																	  forRect:topRightRect];
+	self.bottomLeft = [[GrowlQuadTreeNode alloc] initWithState:state 
+																		 forRect:bottomLeftRect];
+	self.bottomRight = [[GrowlQuadTreeNode alloc] initWithState:state 
+																		  forRect:bottomRightRect];	
 	self.state = GrowlQuadTreeDividedState;
 	return YES;
 }

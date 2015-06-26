@@ -59,7 +59,6 @@
 - (void)setApiKey:(NSString *)apiKey
 {
 	if(_apiKey != apiKey) {
-		[_apiKey release];
 		_apiKey = [apiKey copy];
 		
 		self.validated = NO;

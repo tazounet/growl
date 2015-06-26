@@ -39,8 +39,8 @@ enum {
 - (BOOL) validateMenuItem:(NSMenuItem *)item;
 - (void) setGrowlMenuEnabled:(BOOL)state;
 
-@property (retain) GrowlPreferencePane *settingsWindow;
-@property (retain) NSStatusItem *statusItem;
-@property (retain) NSMenu *menu;
+@property (strong) GrowlPreferencePane *settingsWindow;
+@property (strong) NSStatusItem *statusItem;
+@property (strong) NSMenu *menu;
 
 @end

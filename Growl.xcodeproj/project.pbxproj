@@ -57,7 +57,7 @@
 		0A7F625C0767C84E00E1C1E4 /* GrowlMusicVideoPrefs.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A7F62530767C84E00E1C1E4 /* GrowlMusicVideoPrefs.m */; };
 		0A7F625E0767C84E00E1C1E4 /* GrowlMusicVideoWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A7F62550767C84E00E1C1E4 /* GrowlMusicVideoWindowController.m */; };
 		0A7F62600767C84E00E1C1E4 /* GrowlMusicVideoWindowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A7F62570767C84E00E1C1E4 /* GrowlMusicVideoWindowView.m */; };
-		113EA428152BEEC20070C235 /* Prowl.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 113EA414152BEE1D0070C235 /* Prowl.growlView */; };
+		113EA428152BEEC20070C235 /* Prowl.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 113EA414152BEE1D0070C235 /* Prowl.growlView */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3112428E13CBE56B0055A2AD /* GrowlCommunicationAttempt.h in Headers */ = {isa = PBXBuildFile; fileRef = 3112428C13CBE56B0055A2AD /* GrowlCommunicationAttempt.h */; };
 		3112429013CBE56B0055A2AD /* GrowlCommunicationAttempt.m in Sources */ = {isa = PBXBuildFile; fileRef = 3112428D13CBE56B0055A2AD /* GrowlCommunicationAttempt.m */; };
 		3112429B13CBEB100055A2AD /* GrowlApplicationBridgeRegistrationAttempt.h in Headers */ = {isa = PBXBuildFile; fileRef = 3112429913CBEB100055A2AD /* GrowlApplicationBridgeRegistrationAttempt.h */; };
@@ -96,9 +96,9 @@
 		31E1863F1084B7500011C78B /* TestVersionComparisonBetweenStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 31E1863E1084B7500011C78B /* TestVersionComparisonBetweenStrings.m */; };
 		31E60C5613D2AA2A00669E2A /* GrowlOperatingSystemVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = 34F909330EC1FAAE00566EE6 /* GrowlOperatingSystemVersion.h */; };
 		31E60C5713D2AA2C00669E2A /* GrowlOperatingSystemVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = 34F909340EC1FAAE00566EE6 /* GrowlOperatingSystemVersion.m */; };
-		3433458A0790E3D600C84B15 /* Speech.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 0AB508B10767C87B006EA5CB /* Speech.growlView */; };
-		3433458C0790E3D600C84B15 /* MusicVideo.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 0AB508B30767C87B006EA5CB /* MusicVideo.growlView */; };
-		3433458D0790E3D600C84B15 /* Bezel.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 0AB508B40767C87B006EA5CB /* Bezel.growlView */; };
+		3433458A0790E3D600C84B15 /* Speech.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 0AB508B10767C87B006EA5CB /* Speech.growlView */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3433458C0790E3D600C84B15 /* MusicVideo.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 0AB508B30767C87B006EA5CB /* MusicVideo.growlView */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3433458D0790E3D600C84B15 /* Bezel.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 0AB508B40767C87B006EA5CB /* Bezel.growlView */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		343350E00792769900C84B15 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AEE179C0702C4960024B1A0 /* ApplicationServices.framework */; };
 		34422F720BF3ED2E001DA9ED /* GrowlApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 34422F700BF3ED2E001DA9ED /* GrowlApplication.m */; };
 		34E9DC1A078FBFA800662E8E /* GrowlDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 34E9DC16078FBF1B00662E8E /* GrowlDefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -150,7 +150,7 @@
 		938CAEEE1080E64A00259421 /* GrowlGNTPDefines.m in Sources */ = {isa = PBXBuildFile; fileRef = 938CAEED1080E64A00259421 /* GrowlGNTPDefines.m */; };
 		938CB10C1081250600259421 /* GNTPKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 938CB10B1081250600259421 /* GNTPKey.m */; };
 		939FEC1C0942A0D3009EB9E6 /* GrowlBubblesDisplay.m in Sources */ = {isa = PBXBuildFile; fileRef = 939FEC1B0942A0D3009EB9E6 /* GrowlBubblesDisplay.m */; };
-		93A042BA1382159800C46F0A /* Show Growl Notification.action in Copy Automator Plugin */ = {isa = PBXBuildFile; fileRef = 93A042A2138214F800C46F0A /* Show Growl Notification.action */; };
+		93A042BA1382159800C46F0A /* Show Growl Notification.action in Copy Automator Plugin */ = {isa = PBXBuildFile; fileRef = 93A042A2138214F800C46F0A /* Show Growl Notification.action */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		93A60E4013C4159B00514EF8 /* Growl.icns in Resources */ = {isa = PBXBuildFile; fileRef = 93A60E3F13C4159B00514EF8 /* Growl.icns */; };
 		93A60E5C13C549A900514EF8 /* GrowlBrowserEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 9596C5F9081102BE00F43859 /* GrowlBrowserEntry.m */; };
 		93A60E5D13C549AC00514EF8 /* GrowlPreferencePane.m in Sources */ = {isa = PBXBuildFile; fileRef = 95E243E3087E9053008151E6 /* GrowlPreferencePane.m */; };
@@ -164,7 +164,7 @@
 		93BC37BE095A66950002B365 /* GrowlNanoPrefs.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BC37B1095A66950002B365 /* GrowlNanoPrefs.m */; };
 		93BC37BF095A66950002B365 /* GrowlNanoWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BC37B3095A66950002B365 /* GrowlNanoWindowController.m */; };
 		93BC37C0095A66950002B365 /* GrowlNanoWindowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BC37B5095A66950002B365 /* GrowlNanoWindowView.m */; };
-		93BC4057095DEDFF0002B365 /* Nano.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 93BC379E095A662B0002B365 /* Nano.growlView */; };
+		93BC4057095DEDFF0002B365 /* Nano.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 93BC379E095A662B0002B365 /* Nano.growlView */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		93BD8B8D15C59974004A2E7D /* GrowlOnSwitchLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BD8B8C15C59974004A2E7D /* GrowlOnSwitchLabel.m */; };
 		93CD92E80B5AFAAE000C39CD /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93CD92E70B5AFAAE000C39CD /* QuartzCore.framework */; };
 		93D87E3914721CC200A320EA /* GrowlWebKitImageProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 7625018C146DD60600B9F12F /* GrowlWebKitImageProtocol.m */; };
@@ -186,7 +186,7 @@
 		955437E207E048BE005534FA /* GrowlBrushedPrefsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 95FC311307E03B2600BD8674 /* GrowlBrushedPrefsController.m */; };
 		955437E407E048BF005534FA /* GrowlBrushedWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 95FC316507E03B2600BD8674 /* GrowlBrushedWindowController.m */; };
 		955437E607E048C0005534FA /* GrowlBrushedWindowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 95FC31B707E03B2600BD8674 /* GrowlBrushedWindowView.m */; };
-		95543EE107E04BA9005534FA /* Brushed.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 95FC347907E0458E00BD8674 /* Brushed.growlView */; };
+		95543EE107E04BA9005534FA /* Brushed.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 95FC347907E0458E00BD8674 /* Brushed.growlView */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		955497B5081125BD0062E27B /* Plain.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 9554979A081125A60062E27B /* Plain.growlStyle */; };
 		956ADB0207551C4500AF9545 /* GrowlImageAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 956ADADF07551C4500AF9545 /* GrowlImageAdditions.m */; };
 		9574B6FC0838C7A100106CA3 /* NSWorkspaceAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9574B6FA0838C7A100106CA3 /* NSWorkspaceAdditions.m */; };
@@ -247,7 +247,7 @@
 		BC1693CE151CED690000A05C /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC7E26D815065CF100828D29 /* Carbon.framework */; };
 		BC17CF8E147AB6EC005408AC /* GNTPSubscriptionController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC17CF8D147AB6EC005408AC /* GNTPSubscriptionController.m */; };
 		BC17CF91147BFDE4005408AC /* GNTPSubscriberEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = BC17CF90147BFDE4005408AC /* GNTPSubscriberEntry.m */; };
-		BC19A19B15198DE700A0CA64 /* Boxcar.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = BC19A17615198D4600A0CA64 /* Boxcar.growlView */; };
+		BC19A19B15198DE700A0CA64 /* Boxcar.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = BC19A17615198D4600A0CA64 /* Boxcar.growlView */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		BC1AF91A15B0567900CD47F9 /* GNTPPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = BC79CBDD15ACE3CA0081DCBE /* GNTPPacket.m */; };
 		BC1AF91B15B0567900CD47F9 /* GNTPRegisterPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = BC79CBDF15ACE3CA0081DCBE /* GNTPRegisterPacket.m */; };
 		BC1AF91C15B0567900CD47F9 /* GNTPNotifyPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = BC79CBDB15ACE3CA0081DCBE /* GNTPNotifyPacket.m */; };
@@ -350,7 +350,7 @@
 		BC80A35714D7288500B055FE /* GrowlMusicVideoPrefs.xib in Resources */ = {isa = PBXBuildFile; fileRef = BC80A35614D7288500B055FE /* GrowlMusicVideoPrefs.xib */; };
 		BC80A35914D728BD00B055FE /* GrowlNanoPrefs.xib in Resources */ = {isa = PBXBuildFile; fileRef = BC80A35814D728BD00B055FE /* GrowlNanoPrefs.xib */; };
 		BC83FC241500885F000504F9 /* GrowlPlugins-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = BC83FC221500885F000504F9 /* GrowlPlugins-Prefix.pch */; };
-		BC83FC2915008A29000504F9 /* GrowlPlugins.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = BC83FC11150087EB000504F9 /* GrowlPlugins.framework */; };
+		BC83FC2915008A29000504F9 /* GrowlPlugins.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = BC83FC11150087EB000504F9 /* GrowlPlugins.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		BC83FC2A15008B47000504F9 /* GrowlPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 07803B5D08E7E6A700299E08 /* GrowlPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC83FC2B15008B47000504F9 /* GrowlPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 07803B5E08E7E6A700299E08 /* GrowlPlugin.m */; };
 		BC83FC4C1500AB28000504F9 /* GrowlPlugins.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC83FC11150087EB000504F9 /* GrowlPlugins.framework */; };
@@ -383,10 +383,10 @@
 		BC977EAE1638381F007881D5 /* GrowlUserScriptTaskUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = BC977EAC1638381F007881D5 /* GrowlUserScriptTaskUtilities.m */; };
 		BC986FD514D0FE1F00CC5E57 /* FirstLaunchWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = BC986FD414D0FE1F00CC5E57 /* FirstLaunchWindow.xib */; };
 		BC9AE9731255952700759016 /* GrowlImageCache.m in Sources */ = {isa = PBXBuildFile; fileRef = BC9AE9721255952700759016 /* GrowlImageCache.m */; };
-		BC9EFDFE15105F0F00534A7C /* ShortcutRecorder.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = BC9EFDFA15105EDE00534A7C /* ShortcutRecorder.framework */; };
+		BC9EFDFE15105F0F00534A7C /* ShortcutRecorder.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = BC9EFDFA15105EDE00534A7C /* ShortcutRecorder.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		BC9EFE0215105FA000534A7C /* ShortcutRecorder.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC9EFDFA15105EDE00534A7C /* ShortcutRecorder.framework */; };
 		BCA08220153EF89000340F16 /* Growl.icns in Resources */ = {isa = PBXBuildFile; fileRef = 93A60E3F13C4159B00514EF8 /* Growl.icns */; };
-		BCA3774C162446BE003ABCD2 /* ScriptAction.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = BC0D530016238FFD0027B326 /* ScriptAction.growlView */; };
+		BCA3774C162446BE003ABCD2 /* ScriptAction.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = BC0D530016238FFD0027B326 /* ScriptAction.growlView */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		BCA446A215E6764D00BF4FDA /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = BCAD872B15BB8AEE00A80055 /* Localizable.strings */; };
 		BCA446BB15E676D800BF4FDA /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = BCAD872E15BB8CD000A80055 /* Localizable.strings */; };
 		BCA446BC15E678D600BF4FDA /* GrowlPluginPreferenceStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = BC80A32614D6F10100B055FE /* GrowlPluginPreferenceStrings.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -396,7 +396,7 @@
 		BCAC76F115BB796C00B0C6D5 /* GrowlSpeechDisplay.m in Sources */ = {isa = PBXBuildFile; fileRef = BCAC76EE15BB796C00B0C6D5 /* GrowlSpeechDisplay.m */; };
 		BCAC76F215BB796C00B0C6D5 /* GrowlSpeechPrefs.m in Sources */ = {isa = PBXBuildFile; fileRef = BCAC76F015BB796C00B0C6D5 /* GrowlSpeechPrefs.m */; };
 		BCAC76F515BB797400B0C6D5 /* GrowlSpeechPrefs.xib in Resources */ = {isa = PBXBuildFile; fileRef = BCAC76F315BB797400B0C6D5 /* GrowlSpeechPrefs.xib */; };
-		BCAD79F31512675C0052EB51 /* SoundAction.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = BCAD79F01512664F0052EB51 /* SoundAction.growlView */; };
+		BCAD79F31512675C0052EB51 /* SoundAction.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = BCAD79F01512664F0052EB51 /* SoundAction.growlView */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		BCAD8A7013E2FCA5000292F4 /* GroupedArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = BCAD8A6F13E2FCA5000292F4 /* GroupedArrayController.m */; };
 		BCAEAA6815347BCB00D00D6D /* NSURL+StringEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = BCAEAA6615347BCB00D00D6D /* NSURL+StringEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BCAEAA6915347BCB00D00D6D /* NSURL+StringEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = BCAEAA6715347BCB00D00D6D /* NSURL+StringEncoding.m */; };
@@ -425,12 +425,12 @@
 		BCC7F9B31503C844005FFE04 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83282741073A6BD70044A959 /* Cocoa.framework */; };
 		BCC7F9B41503C85B005FFE04 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83282741073A6BD70044A959 /* Cocoa.framework */; };
 		BCC7F9C51503CD47005FFE04 /* GrowlPluginPreferenceStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = BC80A32714D6F10100B055FE /* GrowlPluginPreferenceStrings.m */; };
-		BCC7F9CA1503D931005FFE04 /* Bubbles.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 0AB508AE0767C87B006EA5CB /* Bubbles.growlView */; };
-		BCC7F9CB1503D931005FFE04 /* Smoke.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 0AB508AF0767C87B006EA5CB /* Smoke.growlView */; };
+		BCC7F9CA1503D931005FFE04 /* Bubbles.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 0AB508AE0767C87B006EA5CB /* Bubbles.growlView */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		BCC7F9CB1503D931005FFE04 /* Smoke.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 0AB508AF0767C87B006EA5CB /* Smoke.growlView */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		BCC7F9DC15042751005FFE04 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95AA8653080065DE0045589D /* SystemConfiguration.framework */; };
 		BCC7F9DD15042790005FFE04 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E678F307511471002BF4E6 /* Security.framework */; };
 		BCCA96CE14C7DDFA0099EF29 /* GrowlNotificationSettingsScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = BCCA96CD14C7DDFA0099EF29 /* GrowlNotificationSettingsScrollView.m */; };
-		BCCB23E115372D310064FD1D /* MailMe.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = BCCB23DC15372D0C0064FD1D /* MailMe.growlView */; };
+		BCCB23E115372D310064FD1D /* MailMe.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = BCCB23DC15372D0C0064FD1D /* MailMe.growlView */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		BCD6012A13C769850013EEDE /* GrowlNotificationCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = BCD6012913C769850013EEDE /* GrowlNotificationCellView.m */; };
 		BCD6012D13C769B40013EEDE /* GrowlNotificationRowView.m in Sources */ = {isa = PBXBuildFile; fileRef = BCD6012C13C769B40013EEDE /* GrowlNotificationRowView.m */; };
 		BCDB220313F70E9400040108 /* GroupCountBubble.m in Sources */ = {isa = PBXBuildFile; fileRef = BCDB220213F70E9300040108 /* GroupCountBubble.m */; };
@@ -474,11 +474,11 @@
 		DD493B74084BB02A00D1CCCB /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 089C167FFE841241C02AAC07 /* AppKit.framework */; };
 		DD493BE2084BB89100D1CCCB /* PreferencePanes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83282746073A6C110044A959 /* PreferencePanes.framework */; };
 		DD493C31084BDF0200D1CCCB /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E678F307511471002BF4E6 /* Security.framework */; };
-		DDFADA6C084D1C770055DBC8 /* SMS.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = DD4939CC084BACA700D1CCCB /* SMS.growlView */; };
+		DDFADA6C084D1C770055DBC8 /* SMS.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = DD4939CC084BACA700D1CCCB /* SMS.growlView */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		E14410E90A94072E0063C4DC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 089C1672FE841209C02AAC07 /* Foundation.framework */; };
 		E14410EA0A94072E0063C4DC /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 089C167FFE841241C02AAC07 /* AppKit.framework */; };
 		E14410EB0A94072E0063C4DC /* PreferencePanes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83282746073A6C110044A959 /* PreferencePanes.framework */; };
-		E14411080A9407EA0063C4DC /* iCal.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = E14410EF0A94072E0063C4DC /* iCal.growlView */; };
+		E14411080A9407EA0063C4DC /* iCal.growlView in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = E14410EF0A94072E0063C4DC /* iCal.growlView */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		E144111C0A9408840063C4DC /* GrowliCalDisplay.m in Sources */ = {isa = PBXBuildFile; fileRef = E14411130A9408840063C4DC /* GrowliCalDisplay.m */; };
 		E144111D0A9408840063C4DC /* GrowliCalPrefsController.m in Sources */ = {isa = PBXBuildFile; fileRef = E14411150A9408840063C4DC /* GrowliCalPrefsController.m */; };
 		E144111E0A9408840063C4DC /* GrowliCalWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = E14411170A9408840063C4DC /* GrowliCalWindowController.m */; };
@@ -800,20 +800,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 95E17B8F085E216A00990AB3;
 			remoteInfo = "VCS Data";
-		};
-		BCCAB96A1516853600E83EBB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BCCAB9611516853600E83EBB /* Lumberjack.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = DCB3185114EB418E001CFBEE;
-			remoteInfo = Lumberjack;
-		};
-		BCCAB96C1516853600E83EBB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BCCAB9611516853600E83EBB /* Lumberjack.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = DCB318CA14ED6C3B001CFBEE;
-			remoteInfo = FmwkTest;
 		};
 		BCCB23DB15372D0C0064FD1D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1845,7 +1831,6 @@
 		BCC7F9A61503C4C5005FFE04 /* GrowlPlugins-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GrowlPlugins-Info.plist"; path = "Plugins/PluginFramework/GrowlPlugins-Info.plist"; sourceTree = "<group>"; };
 		BCCA96CC14C7DDFA0099EF29 /* GrowlNotificationSettingsScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GrowlNotificationSettingsScrollView.h; path = Core/Source/GrowlNotificationSettingsScrollView.h; sourceTree = "<group>"; };
 		BCCA96CD14C7DDFA0099EF29 /* GrowlNotificationSettingsScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GrowlNotificationSettingsScrollView.m; path = Core/Source/GrowlNotificationSettingsScrollView.m; sourceTree = "<group>"; };
-		BCCAB9611516853600E83EBB /* Lumberjack.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Lumberjack.xcodeproj; path = external_dependencies/cocoalumberjack/Xcode/LumberjackFramework/Desktop/Lumberjack.xcodeproj; sourceTree = "<group>"; };
 		BCCB23D015372D0C0064FD1D /* MailMe.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MailMe.xcodeproj; path = Plugins/Actions/MailMe/MailMe.xcodeproj; sourceTree = "<group>"; };
 		BCCFBF0F1475768500348DA9 /* GrowlKeychainUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GrowlKeychainUtilities.h; path = Common/Source/GrowlKeychainUtilities.h; sourceTree = "<group>"; };
 		BCCFBF101475768500348DA9 /* GrowlKeychainUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GrowlKeychainUtilities.m; path = Common/Source/GrowlKeychainUtilities.m; sourceTree = "<group>"; };
@@ -2568,7 +2553,6 @@
 			isa = PBXGroup;
 			children = (
 				934B85D215C26F4C0056A72A /* TMSliderControl */,
-				BCCAB9601516852C00E83EBB /* CocoaLumberjack */,
 				93D3C242150EF88000108F4A /* SGHotKeysLib */,
 				93D3C241150EF87600108F4A /* ShortcutRecorder */,
 				93FB21A61391B50D002E1F86 /* GCDAsyncSocket */,
@@ -3182,23 +3166,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		BCCAB9601516852C00E83EBB /* CocoaLumberjack */ = {
-			isa = PBXGroup;
-			children = (
-				BCCAB9611516853600E83EBB /* Lumberjack.xcodeproj */,
-			);
-			name = CocoaLumberjack;
-			sourceTree = "<group>";
-		};
-		BCCAB9621516853600E83EBB /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				BCCAB96B1516853600E83EBB /* Lumberjack.framework */,
-				BCCAB96D1516853600E83EBB /* FmwkTest.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		BCCB23D115372D0C0064FD1D /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -3659,7 +3626,7 @@
 			name = "Unit tests";
 			productName = "Unit tests";
 			productReference = 31E184D61084628D0011C78B /* Unit tests.octest */;
-			productType = "com.apple.product-type.bundle";
+			productType = "com.apple.product-type.bundle.ocunit-test";
 		};
 		34F60EAA078E1CD500CECA86 /* Growl.framework */ = {
 			isa = PBXNativeTarget;
@@ -3767,7 +3734,6 @@
 				BC83FC2815008A17000504F9 /* Copy Frameworks */,
 				CB61E5160637763C00E0DDC7 /* Frameworks */,
 				3433456D0790E38B00C84B15 /* Copy Growl Styles */,
-				772266881B1AF7F70024E99E /* Sign Growl Styles */,
 				34A96E300C95F6AE00F46006 /* Copy Automator Plugin */,
 				BC29B29D14D12E4800C72855 /* Copy Launcher */,
 				93A042C6138215C400C46F0A /* Copy QuickLook Plugin */,
@@ -3864,7 +3830,8 @@
 		089C1669FE841209C02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastTestingUpgradeCheck = 0630;
+				LastUpgradeCheck = 0630;
 				ORGANIZATIONNAME = "The Growl Project";
 			};
 			buildConfigurationList = 95EE27910855AA6C0045DB39 /* Build configuration list for PBXProject "Growl" */;
@@ -3926,10 +3893,6 @@
 				{
 					ProductGroup = 93A042A41382150A00C46F0A /* Products */;
 					ProjectRef = 93A042A31382150A00C46F0A /* GrowlQL.xcodeproj */;
-				},
-				{
-					ProductGroup = BCCAB9621516853600E83EBB /* Products */;
-					ProjectRef = BCCAB9611516853600E83EBB /* Lumberjack.xcodeproj */;
 				},
 				{
 					ProductGroup = BCCB23D115372D0C0064FD1D /* Products */;
@@ -4029,20 +3992,6 @@
 			fileType = wrapper.cfbundle;
 			path = SoundAction.growlView;
 			remoteRef = BCAD79EF1512664F0052EB51 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		BCCAB96B1516853600E83EBB /* Lumberjack.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Lumberjack.framework;
-			remoteRef = BCCAB96A1516853600E83EBB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		BCCAB96D1516853600E83EBB /* FmwkTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = FmwkTest.app;
-			remoteRef = BCCAB96C1516853600E83EBB /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		BCCB23DC15372D0C0064FD1D /* MailMe.growlView */ = {
@@ -4279,20 +4228,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "find \"$TARGET_BUILD_DIR/$FULL_PRODUCT_NAME\" '(' -name '.svn' -or -name '.DS_Store' ')' -prune -print0 | xargs -0 rm -rf\n";
-		};
-		772266881B1AF7F70024E99E /* Sign Growl Styles */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Sign Growl Styles";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ \"$CODE_SIGN_IDENTITY\" == \"\" ]; then exit 0; fi\nLOCATION=\"${BUILT_PRODUCTS_DIR}\"/\"${PLUGINS_FOLDER_PATH}\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/AboveTheNight.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Candybars.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Crystal.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Darkroom.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Garageband.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/LCD.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/NotifyOS9.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/NotifyOSX.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Plain.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Pseudo-Coda.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Raaarr.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Starwl.growlStyle\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Whiteboard.growlStyle\"";
 		};
 		932659421411B6070037AA2C /* Generate Localizable.strings */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5588,13 +5523,20 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 315C88BB1068F9A200880530 /* Localization.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_ANALYZER_OBJC_UNUSED_IVARS = NO;
+				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PROVISIONING_PROFILE = "";
 			};
 			name = Localization;
@@ -5604,6 +5546,7 @@
 			baseConfigurationReference = 315C88BB1068F9A200880530 /* Localization.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = Growl.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
@@ -5624,7 +5567,7 @@
 					"$(inherited)",
 					"\"$(SDKROOT)/usr/lib/system\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				"OTHER_CFLAGS[arch=ppc64]" = "-fvisibility=default";
 				"OTHER_CFLAGS[arch=x86_64]" = "-fvisibility=default";
 				PRODUCT_NAME = Growl;
@@ -5636,6 +5579,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93217438163A476900D5790F /* Localization-Framework.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -5646,7 +5590,7 @@
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				MACH_O_TYPE = mh_dylib;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_LDFLAGS = (
 					"-lobjc",
 					"-sub_library",
@@ -5663,6 +5607,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 315C88BB1068F9A200880530 /* Localization.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Plugins/Displays/Display Plugins_Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5686,6 +5631,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 315C88BB1068F9A200880530 /* Localization.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Plugins/Displays/Display Plugins_Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5708,6 +5654,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 315C88BB1068F9A200880530 /* Localization.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Plugins/Displays/Display Plugins_Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5730,6 +5677,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 315C88BB1068F9A200880530 /* Localization.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Plugins/Displays/Display Plugins_Prefix.pch";
 				HEADER_SEARCH_PATHS = Source;
@@ -5748,6 +5696,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 315C88BB1068F9A200880530 /* Localization.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Plugins/Displays/Display Plugins_Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5770,6 +5719,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 315C88BB1068F9A200880530 /* Localization.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Plugins/Displays/Display Plugins_Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5792,6 +5742,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 315C88BB1068F9A200880530 /* Localization.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Plugins/Displays/Display Plugins_Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5814,6 +5765,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 315C88BB1068F9A200880530 /* Localization.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Plugins/Displays/Display Plugins_Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5836,6 +5788,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 315C88BB1068F9A200880530 /* Localization.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Plugins/Displays/Display Plugins_Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5933,6 +5886,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93EA7FFD136908B100AB89AE /* Debug.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Plugins/Displays/Display Plugins_Prefix.pch";
 				HEADER_SEARCH_PATHS = Source;
@@ -5951,6 +5905,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93EA7FFE136908B100AB89AE /* Release.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Plugins/Displays/Display Plugins_Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5991,6 +5946,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93EA7FFD136908B100AB89AE /* Debug.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Plugins/Displays/Display Plugins_Prefix.pch";
 				HEADER_SEARCH_PATHS = Source;
@@ -6009,6 +5965,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93EA7FFE136908B100AB89AE /* Release.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Plugins/Displays/Display Plugins_Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -6031,6 +5988,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93EA7FFD136908B100AB89AE /* Debug.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Plugins/Displays/Display Plugins_Prefix.pch";
 				HEADER_SEARCH_PATHS = Source;
@@ -6049,6 +6007,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93EA7FFE136908B100AB89AE /* Release.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Plugins/Displays/Display Plugins_Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -6071,6 +6030,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93EA7FFD136908B100AB89AE /* Debug.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Plugins/Displays/Display Plugins_Prefix.pch";
 				HEADER_SEARCH_PATHS = Source;
@@ -6089,6 +6049,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93EA7FFE136908B100AB89AE /* Release.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Plugins/Displays/Display Plugins_Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -6111,6 +6072,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93EA7FFD136908B100AB89AE /* Debug.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Plugins/Displays/Display Plugins_Prefix.pch";
 				HEADER_SEARCH_PATHS = Source;
@@ -6130,6 +6092,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93EA7FFE136908B100AB89AE /* Release.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Plugins/Displays/Display Plugins_Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -6153,6 +6116,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93EA7FFD136908B100AB89AE /* Debug.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Plugins/Displays/Display Plugins_Prefix.pch";
 				HEADER_SEARCH_PATHS = Source;
@@ -6171,6 +6135,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93EA7FFE136908B100AB89AE /* Release.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Plugins/Displays/Display Plugins_Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -6193,6 +6158,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93EA7FFD136908B100AB89AE /* Debug.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Plugins/Displays/Display Plugins_Prefix.pch";
 				HEADER_SEARCH_PATHS = Source;
@@ -6211,6 +6177,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93EA7FFE136908B100AB89AE /* Release.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Plugins/Displays/Display Plugins_Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -6233,6 +6200,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93EA7FFD136908B100AB89AE /* Debug.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Plugins/Displays/Display Plugins_Prefix.pch";
 				HEADER_SEARCH_PATHS = source;
@@ -6251,6 +6219,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93EA7FFE136908B100AB89AE /* Release.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Plugins/Displays/Display Plugins_Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -6274,6 +6243,7 @@
 			baseConfigurationReference = 93EA7FFD136908B100AB89AE /* Debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = Growl.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
@@ -6294,7 +6264,7 @@
 					"$(inherited)",
 					"\"$(SDKROOT)/usr/lib/system\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				"OTHER_CFLAGS[arch=ppc64]" = "-fvisibility=default";
 				"OTHER_CFLAGS[arch=x86_64]" = "-fvisibility=default";
 				PRODUCT_NAME = Growl;
@@ -6307,6 +6277,7 @@
 			baseConfigurationReference = 93EA7FFE136908B100AB89AE /* Release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = Growl.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
@@ -6324,7 +6295,7 @@
 					"$(inherited)",
 					"\"$(SDKROOT)/usr/lib/system\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				"OTHER_CFLAGS[arch=ppc64]" = "-fvisibility=default";
 				"OTHER_CFLAGS[arch=x86_64]" = "-fvisibility=default";
 				PRODUCT_NAME = Growl;
@@ -6336,6 +6307,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93217437163A476900D5790F /* Debug-Framework.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -6346,7 +6318,7 @@
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				MACH_O_TYPE = mh_dylib;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_LDFLAGS = (
 					"-lobjc",
 					"-sub_library",
@@ -6363,6 +6335,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93217439163A476900D5790F /* Release-Framework.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -6373,7 +6346,7 @@
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				MACH_O_TYPE = mh_dylib;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_LDFLAGS = (
 					"-lobjc",
 					"-sub_library",
@@ -6390,13 +6363,20 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93EA7FFD136908B100AB89AE /* Debug.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_ANALYZER_OBJC_UNUSED_IVARS = NO;
+				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
@@ -6405,13 +6385,20 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93EA7FFE136908B100AB89AE /* Release.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_ANALYZER_OBJC_UNUSED_IVARS = NO;
+				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
@@ -6421,6 +6408,7 @@
 			baseConfigurationReference = 93EA7FFD136908B100AB89AE /* Debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = GrowlLauncher/GrowlLauncher.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
@@ -6436,7 +6424,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = "GrowlLauncher/GrowlLauncher-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -6447,6 +6435,7 @@
 			baseConfigurationReference = 315C88BB1068F9A200880530 /* Localization.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = GrowlLauncher/GrowlLauncher.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
@@ -6461,7 +6450,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = "GrowlLauncher/GrowlLauncher-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -6472,6 +6461,7 @@
 			baseConfigurationReference = 93EA7FFE136908B100AB89AE /* Release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = GrowlLauncher/GrowlLauncher.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
@@ -6486,7 +6476,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = "GrowlLauncher/GrowlLauncher-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -6497,6 +6487,7 @@
 			baseConfigurationReference = 93EA7FFD136908B100AB89AE /* Debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -6519,8 +6510,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = "Plugins/PluginFramework/GrowlPlugins-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				ONLY_ACTIVE_ARCH = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -6531,6 +6521,7 @@
 			baseConfigurationReference = 315C88BB1068F9A200880530 /* Localization.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -6548,7 +6539,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = "Plugins/PluginFramework/GrowlPlugins-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -6559,6 +6550,7 @@
 			baseConfigurationReference = 93EA7FFE136908B100AB89AE /* Release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -6576,7 +6568,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = "Plugins/PluginFramework/GrowlPlugins-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -6586,6 +6578,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93EA7FFD136908B100AB89AE /* Debug.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Plugins/Displays/Display Plugins_Prefix.pch";
 				HEADER_SEARCH_PATHS = Source;
@@ -6604,6 +6597,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93EA7FFE136908B100AB89AE /* Release.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Plugins/Displays/Display Plugins_Prefix.pch";
 				HEADER_SEARCH_PATHS = Source;
@@ -6623,6 +6617,7 @@
 			baseConfigurationReference = 93EA7FFD136908B100AB89AE /* Debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -6643,7 +6638,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = "XPC/GNTP Client/GNTPClientService-Info.plist";
 				MACH_O_TYPE = mh_execute;
-				ONLY_ACTIVE_ARCH = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "com.company.application.$(TARGET_NAME)";
 				WRAPPER_EXTENSION = xpc;
 			};
@@ -6654,6 +6649,7 @@
 			baseConfigurationReference = 315C88BB1068F9A200880530 /* Localization.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -6675,6 +6671,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = "XPC/GNTP Client/GNTPClientService-Info.plist";
 				MACH_O_TYPE = mh_execute;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "com.company.application.$(TARGET_NAME)";
 				WRAPPER_EXTENSION = xpc;
 			};
@@ -6685,6 +6682,7 @@
 			baseConfigurationReference = 93EA7FFE136908B100AB89AE /* Release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -6705,6 +6703,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = "XPC/GNTP Client/GNTPClientService-Info.plist";
 				MACH_O_TYPE = mh_execute;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "com.company.application.$(TARGET_NAME)";
 				WRAPPER_EXTENSION = xpc;
 			};

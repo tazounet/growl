@@ -205,16 +205,6 @@ NSData *ComputeHash(NSData *data, GrowlGNTPHashingAlgorithm algorithm)
 	return self;
 }
 
-- (void)dealloc
-{
-    [_encryptionKey release];
-    [_keyHash release];
-    [_password release];
-    [_salt release];
-    [_iv release];
-
-    [super dealloc];
-}
 
 + (NSData *)generateSalt:(int)length
 {
@@ -237,7 +227,7 @@ NSData *ComputeHash(NSData *data, GrowlGNTPHashingAlgorithm algorithm)
 - (void)generateKey
 {
 	//NSMutableData *keyBasis = [NSMutableData dataWithData:[[self password] dataUsingEncoding:NSUTF8StringEncoding]];
-   NSMutableData *keyBasis = [[[[self password] dataUsingEncoding:NSUTF8StringEncoding] mutableCopy] autorelease];
+   NSMutableData *keyBasis = [[[self password] dataUsingEncoding:NSUTF8StringEncoding] mutableCopy];
 	[keyBasis appendData:[self salt]];
 	NSData *keyBytes = ComputeHash(keyBasis, [self hashAlgorithm]);
 	[self setEncryptionKey:keyBytes];

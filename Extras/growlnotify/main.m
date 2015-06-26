@@ -366,7 +366,6 @@ int main(int argc, const char **argv) {
                                                                        host:hostName
                                                                    password:pass];
       code = [notifier start:wait];
-      [notifier release];
       
    }
 	return code;

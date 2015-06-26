@@ -20,15 +20,11 @@
 	return self;
 }
 
-- (void) dealloc {
-	[preferencePane release];
-	[super dealloc];
-}
 
 - (GrowlPluginPreferencePane *) preferencePane {
-	if (!preferencePane)
-		preferencePane = [[GrowlMusicVideoPrefs alloc] initWithBundle:[NSBundle bundleForClass:[self class]]];
-	return preferencePane;
+	if (!_preferencePane)
+		_preferencePane = [[GrowlMusicVideoPrefs alloc] initWithBundle:[NSBundle bundleForClass:[self class]]];
+	return _preferencePane;
 }
 
 - (BOOL) requiresPositioning {

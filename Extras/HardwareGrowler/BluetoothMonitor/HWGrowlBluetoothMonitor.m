@@ -12,10 +12,10 @@
 
 @interface HWGrowlBluetoothMonitor ()
 
-@property (nonatomic, assign) id<HWGrowlPluginControllerProtocol> delegate;
+@property (nonatomic, unsafe_unretained) id<HWGrowlPluginControllerProtocol> delegate;
 @property (nonatomic, assign) BOOL starting;
 
-@property (nonatomic, assign) IOBluetoothUserNotification *connectionNotification;
+@property (nonatomic, weak) IOBluetoothUserNotification *connectionNotification;
 
 @end
 
@@ -28,7 +28,6 @@
 -(void)dealloc {
 	[connectionNotification unregister];
 	connectionNotification = nil;
-	[super dealloc];
 }
 
 #ifndef NSFoundationVersionNumber10_7
@@ -55,7 +54,6 @@
 											options:nil];
 			[alert runModal];
 		}
-		[self release];
 		return nil;
 	}
 	
@@ -120,7 +118,7 @@
 	static NSImage *_icon = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		_icon = [[NSImage imageNamed:@"HWGPrefsBluetooth"] retain];
+		_icon = [NSImage imageNamed:@"HWGPrefsBluetooth"];
 	});
 	return _icon;
 }

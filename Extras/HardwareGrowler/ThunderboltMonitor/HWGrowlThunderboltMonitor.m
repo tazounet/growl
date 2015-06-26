@@ -11,7 +11,7 @@
 
 @interface HWGrowlThunderboltMonitor ()
 
-@property (nonatomic, assign) id<HWGrowlPluginControllerProtocol> delegate;
+@property (nonatomic, unsafe_unretained) id<HWGrowlPluginControllerProtocol> delegate;
 @property (nonatomic, assign) BOOL notificationsArePrimed;
 
 @property (nonatomic, assign) IONotificationPortRef ioKitNotificationPort;
@@ -45,7 +45,6 @@
 		CFRunLoopRemoveSource(CFRunLoopGetCurrent(), notificationRunLoopSource, kCFRunLoopDefaultMode);
 		IONotificationPortDestroy(ioKitNotificationPort);
 	}
-	[super dealloc];
 }
 
 -(void)postRegistrationInit {
@@ -98,7 +97,7 @@
 }
 
 static void tbDeviceAdded(void *refCon, io_iterator_t iterator) {
-	HWGrowlThunderboltMonitor *monitor = (HWGrowlThunderboltMonitor*)refCon;
+	HWGrowlThunderboltMonitor *monitor = (__bridge HWGrowlThunderboltMonitor*)refCon;
 	[monitor tbDeviceAdded:iterator];
 }
 
@@ -113,7 +112,7 @@ static void tbDeviceAdded(void *refCon, io_iterator_t iterator) {
 }
 
 static void tbDeviceRemoved(void *refCon, io_iterator_t iterator) {
-	HWGrowlThunderboltMonitor *monitor = (HWGrowlThunderboltMonitor*)refCon;
+	HWGrowlThunderboltMonitor *monitor = (__bridge HWGrowlThunderboltMonitor*)refCon;
 	[monitor tbDeviceRemoved:iterator];
 }
 
@@ -137,7 +136,7 @@ static void tbDeviceRemoved(void *refCon, io_iterator_t iterator) {
 																	  kIOPublishNotification,
 																	  myThunderboltMatchDictionary,
 																	  tbDeviceAdded,
-																	  self,
+																	  (__bridge void *)(self),
 																	  &addedIterator);
 	
 	if (matchingResult)
@@ -154,7 +153,7 @@ static void tbDeviceRemoved(void *refCon, io_iterator_t iterator) {
 																		 kIOTerminatedNotification,
 																		 myThunderboltMatchDictionary,
 																		 tbDeviceRemoved,
-																		 self,
+																		 (__bridge void *)(self),
 																		 &removedIterator);
 	
 	// Matching notification must be "primed" by iterating over the
@@ -184,7 +183,7 @@ static void tbDeviceRemoved(void *refCon, io_iterator_t iterator) {
 	static NSImage *_icon = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		_icon = [[NSImage imageNamed:@"HWGPrefsThunderbolt"] retain];
+		_icon = [NSImage imageNamed:@"HWGPrefsThunderbolt"];
 	});
 	return _icon;
 }

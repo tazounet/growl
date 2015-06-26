@@ -10,7 +10,7 @@
 
 @interface GrowlNotificationSettingsCellView : NSTableCellView
 
-@property (nonatomic, assign) IBOutlet NSButton *enableCheckBox;
+@property (nonatomic, weak) IBOutlet NSButton *enableCheckBox;
 
 -(IBAction)toggleEnabled:(id)sender;
 

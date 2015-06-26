@@ -26,14 +26,14 @@
 
 @interface GNTPServer ()
 
-@property (nonatomic, retain) GCDAsyncSocket *server;
-@property (nonatomic, retain) NSString *interfaceString;
-@property (nonatomic, retain) GrowlDispatchMutableDictionary *socketsByGUID;
-@property (nonatomic, retain) GrowlDispatchMutableDictionary *packetsByGUID;
-@property (nonatomic, retain) GrowlDispatchMutableDictionary *timeoutsByGUID;
-@property (nonatomic, assign) dispatch_source_t timeoutTimer;
+@property (nonatomic, strong) GCDAsyncSocket *server;
+@property (nonatomic, strong) NSString *interfaceString;
+@property (nonatomic, strong) GrowlDispatchMutableDictionary *socketsByGUID;
+@property (nonatomic, strong) GrowlDispatchMutableDictionary *packetsByGUID;
+@property (nonatomic, strong) GrowlDispatchMutableDictionary *timeoutsByGUID;
+@property (nonatomic, strong) dispatch_source_t timeoutTimer;
 
-@property (nonatomic, assign) dispatch_queue_t parsingQueue;
+@property (nonatomic, strong) dispatch_queue_t parsingQueue;
 
 @end
 
@@ -60,7 +60,6 @@
 		self.packetsByGUID = [GrowlDispatchMutableDictionary dictionaryWithQueue:dispatchQueue];
 		self.timeoutsByGUID = [GrowlDispatchMutableDictionary dictionaryWithQueue:dispatchQueue];
 		//retained in the dictionaries
-		dispatch_release(dispatchQueue);
 		self.interfaceString = interface;
 		[self startTimeoutTimer];
 	}
@@ -69,17 +68,12 @@
 
 -(void)dealloc {
 	[self stopServer];
-	[_socketsByGUID release]; _socketsByGUID = nil;
-	[_packetsByGUID release]; _socketsByGUID = nil;
-	[_timeoutsByGUID release]; _socketsByGUID = nil;
 	
 #ifndef MULTITHREADED_GNTP_SERVER
-	dispatch_release(_parsingQueue);
 	_parsingQueue = NULL;
 #endif
 	dispatch_source_cancel(self.timeoutTimer);
 	
-	[super dealloc];
 }
 
 -(void)startTimeoutTimer {
@@ -89,10 +83,8 @@
 		dispatch_source_set_event_handler(self.timeoutTimer, ^{ @autoreleasepool {
 			[self doTimeoutCheck];
 		}});
-		
-		dispatch_source_t theTimeoutTimer = self.timeoutTimer;
+
 		dispatch_source_set_cancel_handler(self.timeoutTimer, ^{
-			dispatch_release(theTimeoutTimer);
 			self.timeoutTimer = NULL;
 		});
 		
@@ -108,8 +100,8 @@
 	if(self.server)
 		return YES;
 	
-	self.server = [[[GCDAsyncSocket alloc] initWithDelegate:self 
-															delegateQueue:_parsingQueue] autorelease];
+	self.server = [[GCDAsyncSocket alloc] initWithDelegate:self 
+															delegateQueue:_parsingQueue];
 	NSError *error = nil;
 	if(![self.server acceptOnInterface:self.interfaceString
 														port:GROWL_TCP_PORT 
@@ -171,9 +163,8 @@
 
 - (void)dumpSocket:(GCDAsyncSocket*)sock fromDisconnect:(BOOL)isDisconnected
 {
-	NSString *guid = [[sock userData] retain];
+	NSString *guid = [sock userData];
 	[self dumpSocketByGUID:guid fromDisconnect:isDisconnected];
-	[guid release];
 }
 
 - (void)dumpSocket:(GCDAsyncSocket*)sock
@@ -272,7 +263,7 @@
 	long writeToTag = 1;
 	if(tag == 0){
 		//Parse our first 4 bytes
-		NSString *initialString = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+		NSString *initialString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 		
 		if([initialString caseInsensitiveCompare:@"GNTP"] == NSOrderedSame){
 			//Read the security header for testing it
@@ -282,12 +273,12 @@
 			static NSData *_flashResponse = nil;
 			static dispatch_once_t onceToken;
 			dispatch_once(&onceToken, ^{
-				NSMutableData *mutableResponse = [[[@"<?xml version=\"1.0\"?>"
+				NSMutableData *mutableResponse = [[@"<?xml version=\"1.0\"?>"
 																"<!DOCTYPE cross-domain-policy SYSTEM \"/xml/dtds/cross-domain-policy.dtd\">"
 																"<cross-domain-policy> "
 																"<site-control permitted-cross-domain-policies=\"master-only\"/>"
 																"<allow-access-from domain=\"*\" to-ports=\"*\" />"
-																"</cross-domain-policy>" dataUsingEncoding:NSUTF8StringEncoding] mutableCopy] autorelease];
+																"</cross-domain-policy>" dataUsingEncoding:NSUTF8StringEncoding] mutableCopy];
 				[mutableResponse appendData:[GCDAsyncSocket ZeroData]];
 				_flashResponse = [mutableResponse copy];
 			});
@@ -298,7 +289,7 @@
 			//The only good way to handle this is to proxy all our read/writes through a separate class
 			//This is UGLY, but since GCDAsyncSocket isn't something I want to mess with subclassing, a proxy object is the only thing I can think of
 #if GROWLHELPERAPP
-			GrowlWebSocketProxy *proxySocket = [[[GrowlWebSocketProxy alloc] initWithSocket:sock] autorelease];
+			GrowlWebSocketProxy *proxySocket = [[GrowlWebSocketProxy alloc] initWithSocket:sock];
 			[self.socketsByGUID setObject:proxySocket forKey:guid];
 			sock = (GCDAsyncSocket*)proxySocket;
 
@@ -317,7 +308,7 @@
 		}
 	}else if(tag == 1){
 		NSData *trimmedData = [NSData dataWithBytes:[data bytes] length:[data length] - 2];
-		NSString *identifierLine = [[[NSString alloc] initWithBytes:[trimmedData bytes] length:[trimmedData length] encoding:NSUTF8StringEncoding] autorelease];
+		NSString *identifierLine = [[NSString alloc] initWithBytes:[trimmedData bytes] length:[trimmedData length] encoding:NSUTF8StringEncoding];
 		//NSLog(@"ID line: %@", identifierLine);
 		NSArray *items = [identifierLine componentsSeparatedByString:@" "];
 		NSString *action = nil;
@@ -370,11 +361,11 @@
 				//Build a packet for each specific type
 				//Replace each of these with GNTPNotificationPacket, GNTPRegistrationPacket GNTPSubscriptionPacket
 				if([action caseInsensitiveCompare:GrowlGNTPNotificationMessageType] == NSOrderedSame){
-					packet = [[[GNTPNotifyPacket alloc] init] autorelease];
+					packet = [[GNTPNotifyPacket alloc] init];
 				}else if([action caseInsensitiveCompare:GrowlGNTPRegisterMessageType] == NSOrderedSame){
-					packet = [[[GNTPRegisterPacket alloc] init] autorelease];					
+					packet = [[GNTPRegisterPacket alloc] init];					
 				}else if([action caseInsensitiveCompare:GrowlGNTPSubscribeMessageType] == NSOrderedSame){
-					packet = [[[GNTPSubscribePacket alloc] init] autorelease];
+					packet = [[GNTPSubscribePacket alloc] init];
 				}else{
 					[self dumpSocket:sock
 							actionType:action
@@ -406,7 +397,7 @@
 		}
 	}else if(tag == 2){
 		//Pass the data to the packet and get our next read data/tag/length
-		GNTPPacket *packet = [[self.packetsByGUID objectForKey:guid] retain];
+		GNTPPacket *packet = [self.packetsByGUID objectForKey:guid];
 		//All our data in here is a double clrf trailed
 		NSData *trimmedData = [NSData dataWithBytes:[data bytes] length:[data length] - [[GNTPUtilities doubleCRLF] length]];
 		NSInteger result = [packet parsePossiblyEncryptedDataBlock:trimmedData];
@@ -489,7 +480,6 @@
 				errorDescription:@"Unable to validate packet"];
 			}
 		}
-		[packet release];
 	}else if(tag == 99){
 		//We are reading in the end of a packet, and setting up to read the next
 		//Dont care about the data read, just that we read it

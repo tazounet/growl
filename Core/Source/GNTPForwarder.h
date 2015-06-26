@@ -14,8 +14,8 @@
 
 @interface GNTPForwarder : NSObject <GrowlCommunicationAttemptDelegate>
 
-@property (nonatomic, assign) GrowlPreferencesController *preferences;
-@property (nonatomic, retain) NSMutableArray *destinations;
+@property (nonatomic, weak) GrowlPreferencesController *preferences;
+@property (nonatomic, strong) NSMutableArray *destinations;
 @property (nonatomic) BOOL alreadyBrowsing;
 
 + (GNTPForwarder*)sharedController;

@@ -18,9 +18,9 @@
     xpc_connection_t connection;
 }
 
-@property (nonatomic, retain) NSDictionary *sendingDetails;
-@property (nonatomic, retain) NSDictionary *responseDict;
-@property (nonatomic, retain) xpc_connection_t connection NS_AVAILABLE(10_7, 5_0) __attribute__((NSObject));
+@property (nonatomic, strong) NSDictionary *sendingDetails;
+@property (nonatomic, strong) NSDictionary *responseDict;
+@property (nonatomic) xpc_connection_t connection;
 
 + (BOOL)canCreateConnection;
 + (void)shutdownXPC;
@@ -31,7 +31,7 @@
 - (BOOL) establishConnection;
 
 // Reply handler
-- (void) handleReply:(xpc_object_t)reply NS_AVAILABLE(10_7, 5_0);
+- (void) handleReply:(xpc_object_t)reply;
 
 // This generates an XPC message for the communication dictionary, but
 // will never wait for a reply.

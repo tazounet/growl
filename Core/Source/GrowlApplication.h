@@ -13,65 +13,65 @@
 	NSTimer *autoreleasePoolRefreshTimer;
 }
 
-@property (nonatomic, retain) NSString *appMenuLabel;
-@property (nonatomic, retain) NSString *aboutAppLabel;
-@property (nonatomic, retain) NSString *preferencesLabel;
-@property (nonatomic, retain) NSString *servicesMenuLabel;
-@property (nonatomic, retain) NSString *hideAppLabel;
-@property (nonatomic, retain) NSString *hideOthersLabel;
-@property (nonatomic, retain) NSString *showAllLabel;
-@property (nonatomic, retain) NSString *quitAppLabel;
+@property (nonatomic, strong) NSString *appMenuLabel;
+@property (nonatomic, strong) NSString *aboutAppLabel;
+@property (nonatomic, strong) NSString *preferencesLabel;
+@property (nonatomic, strong) NSString *servicesMenuLabel;
+@property (nonatomic, strong) NSString *hideAppLabel;
+@property (nonatomic, strong) NSString *hideOthersLabel;
+@property (nonatomic, strong) NSString *showAllLabel;
+@property (nonatomic, strong) NSString *quitAppLabel;
 
-@property (nonatomic, retain) NSString *editMenuLabel;
-@property (nonatomic, retain) NSString *undoLabel;
-@property (nonatomic, retain) NSString *redoLabel;
-@property (nonatomic, retain) NSString *cutLabel;
-@property (nonatomic, retain) NSString *theCopyLabel;
-@property (nonatomic, retain) NSString *pasteLabel;
-@property (nonatomic, retain) NSString *pasteAndMatchLabel;
-@property (nonatomic, retain) NSString *deleteLabel;
-@property (nonatomic, retain) NSString *selectAllLabel;
+@property (nonatomic, strong) NSString *editMenuLabel;
+@property (nonatomic, strong) NSString *undoLabel;
+@property (nonatomic, strong) NSString *redoLabel;
+@property (nonatomic, strong) NSString *cutLabel;
+@property (nonatomic, strong) NSString *theCopyLabel;
+@property (nonatomic, strong) NSString *pasteLabel;
+@property (nonatomic, strong) NSString *pasteAndMatchLabel;
+@property (nonatomic, strong) NSString *deleteLabel;
+@property (nonatomic, strong) NSString *selectAllLabel;
 
-@property (nonatomic, retain) NSString *findMenuLabel;
-@property (nonatomic, retain) NSString *findLabel;
-@property (nonatomic, retain) NSString *findAndReplaceLabel;
-@property (nonatomic, retain) NSString *findNextLabel;
-@property (nonatomic, retain) NSString *findPreviousLabel;
-@property (nonatomic, retain) NSString *useSelectionForFindLabel;
-@property (nonatomic, retain) NSString *jumpToSelectionLabel;
+@property (nonatomic, strong) NSString *findMenuLabel;
+@property (nonatomic, strong) NSString *findLabel;
+@property (nonatomic, strong) NSString *findAndReplaceLabel;
+@property (nonatomic, strong) NSString *findNextLabel;
+@property (nonatomic, strong) NSString *findPreviousLabel;
+@property (nonatomic, strong) NSString *useSelectionForFindLabel;
+@property (nonatomic, strong) NSString *jumpToSelectionLabel;
 
-@property (nonatomic, retain) NSString *spellingGrammarMenuLabel;
-@property (nonatomic, retain) NSString *showSpellingGrammarLabel;
-@property (nonatomic, retain) NSString *checkDocumentNowLabel;
-@property (nonatomic, retain) NSString *checkSpellingWhileTypingLabel;
-@property (nonatomic, retain) NSString *checkGrammarWithSpelling;
-@property (nonatomic, retain) NSString *correctSpellingAutomatically;
+@property (nonatomic, strong) NSString *spellingGrammarMenuLabel;
+@property (nonatomic, strong) NSString *showSpellingGrammarLabel;
+@property (nonatomic, strong) NSString *checkDocumentNowLabel;
+@property (nonatomic, strong) NSString *checkSpellingWhileTypingLabel;
+@property (nonatomic, strong) NSString *checkGrammarWithSpelling;
+@property (nonatomic, strong) NSString *correctSpellingAutomatically;
 
-@property (nonatomic, retain) NSString *substitutionsMenuLabel;
-@property (nonatomic, retain) NSString *showSubstitutionsLabel;
-@property (nonatomic, retain) NSString *smartCopyPasteLabel;
-@property (nonatomic, retain) NSString *smartQuotesLabel;
-@property (nonatomic, retain) NSString *smartDashesLabel;
-@property (nonatomic, retain) NSString *smartLinksLabel;
-@property (nonatomic, retain) NSString *dataDetectorsLabel;
-@property (nonatomic, retain) NSString *textReplacementLabel;
+@property (nonatomic, strong) NSString *substitutionsMenuLabel;
+@property (nonatomic, strong) NSString *showSubstitutionsLabel;
+@property (nonatomic, strong) NSString *smartCopyPasteLabel;
+@property (nonatomic, strong) NSString *smartQuotesLabel;
+@property (nonatomic, strong) NSString *smartDashesLabel;
+@property (nonatomic, strong) NSString *smartLinksLabel;
+@property (nonatomic, strong) NSString *dataDetectorsLabel;
+@property (nonatomic, strong) NSString *textReplacementLabel;
 
-@property (nonatomic, retain) NSString *transformationsMenuLabel;
-@property (nonatomic, retain) NSString *makeUpperCaseLabel;
-@property (nonatomic, retain) NSString *makeLowerCaseLabel;
-@property (nonatomic, retain) NSString *capitalizeLabel;
+@property (nonatomic, strong) NSString *transformationsMenuLabel;
+@property (nonatomic, strong) NSString *makeUpperCaseLabel;
+@property (nonatomic, strong) NSString *makeLowerCaseLabel;
+@property (nonatomic, strong) NSString *capitalizeLabel;
 
-@property (nonatomic, retain) NSString *speechMenuLabel;
-@property (nonatomic, retain) NSString *startSpeaking;
-@property (nonatomic, retain) NSString *stopSpeaking;
+@property (nonatomic, strong) NSString *speechMenuLabel;
+@property (nonatomic, strong) NSString *startSpeaking;
+@property (nonatomic, strong) NSString *stopSpeaking;
 
-@property (nonatomic, retain) NSString *windowMenuLabel;
-@property (nonatomic, retain) NSString *minimizeLabel;
-@property (nonatomic, retain) NSString *zoomLabel;
-@property (nonatomic, retain) NSString *closeLabel;
-@property (nonatomic, retain) NSString *bringAllToFrontLabel;
+@property (nonatomic, strong) NSString *windowMenuLabel;
+@property (nonatomic, strong) NSString *minimizeLabel;
+@property (nonatomic, strong) NSString *zoomLabel;
+@property (nonatomic, strong) NSString *closeLabel;
+@property (nonatomic, strong) NSString *bringAllToFrontLabel;
 
-@property (nonatomic, retain) NSString *helpMenuLabel;
-@property (nonatomic, retain) NSString *appHelpLabel;
+@property (nonatomic, strong) NSString *helpMenuLabel;
+@property (nonatomic, strong) NSString *appHelpLabel;
 
 @end

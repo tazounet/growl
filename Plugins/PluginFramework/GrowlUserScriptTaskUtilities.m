@@ -26,11 +26,11 @@ static NSURL *baseScriptDirURL = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         NSError *urlError = nil;
-        baseScriptDirURL = [[[NSFileManager defaultManager] URLForDirectory:NSApplicationScriptsDirectory
+        baseScriptDirURL = [[NSFileManager defaultManager] URLForDirectory:NSApplicationScriptsDirectory
                                                                    inDomain:NSUserDomainMask
                                                           appropriateForURL:nil
                                                                      create:YES
-                                                                      error:&urlError] retain];
+                                                                      error:&urlError];
         if(urlError)
         {
             NSLog(@"Error retrieving Application Scripts directoy, %@", urlError);
@@ -88,7 +88,7 @@ static NSURL *baseScriptDirURL = nil;
          }
       }
    }
-   return [result autorelease];
+   return result;
 }
 
 +(NSUserAppleScriptTask*)rulesScriptTask {

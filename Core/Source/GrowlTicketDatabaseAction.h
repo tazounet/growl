@@ -14,8 +14,8 @@
 
 @interface GrowlTicketDatabaseAction : GrowlTicketDatabasePlugin
 
-@property (nonatomic, retain) NSSet *tickets;
-@property (nonatomic, retain) NSSet *compounds;
+@property (nonatomic, strong) NSSet *tickets;
+@property (nonatomic, strong) NSSet *compounds;
 @end
 
 @interface GrowlTicketDatabaseAction (CoreDataGeneratedAccessors)

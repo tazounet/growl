@@ -19,11 +19,11 @@
 - (IBAction) previewVoice:(id)sender;
 - (IBAction) voiceClicked:(id)sender;
 
-@property (nonatomic, assign) IBOutlet SRRecorderControl *pauseShortcut;
-@property (nonatomic, assign) IBOutlet SRRecorderControl *skipShortcut;
-@property (nonatomic, assign) IBOutlet SRRecorderControl *clickShortcut;
+@property (nonatomic, weak) IBOutlet SRRecorderControl *pauseShortcut;
+@property (nonatomic, weak) IBOutlet SRRecorderControl *skipShortcut;
+@property (nonatomic, weak) IBOutlet SRRecorderControl *clickShortcut;
 
-@property (nonatomic, retain) NSArray *voices;
+@property (nonatomic, strong) NSArray *voices;
 
 @property (nonatomic, assign) BOOL useLimit;
 @property (nonatomic, assign) NSUInteger characterLimit;

@@ -63,7 +63,6 @@
 	[panel setHasShadow:YES];
 	[panel setCanHide:NO];
 	[panel setOneShot:YES];
-	[panel useOptimizedDrawing:YES];
 	[panel setMovableByWindowBackground:NO];
 
 	// Create the content view...
@@ -71,7 +70,6 @@
 	[view setTarget:self];
 	[view setAction:@selector(notificationClicked:)];
 	[panel setContentView:view];
-	[view release];
 
 	panelFrame = [view frame];
 	[panel setFrame:panelFrame display:NO];
@@ -83,9 +81,7 @@
 		[self setStartPercentage:0 endPercentage:100 forTransition:fader];
 		[fader setAutoReverses:YES];
 		[self addTransition:fader];
-		[fader release];
 	}
-	[panel release];
 
 	return self;
 }

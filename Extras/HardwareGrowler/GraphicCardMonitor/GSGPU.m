@@ -75,11 +75,6 @@ static void _displayReconfigurationCallback(CGDirectDisplayID display, CGDisplay
 
 #pragma mark - GSGPU API
 
-- (void)dealloc
-{
-    [_cachedGPUs release];
-    [super dealloc];
-}
 
 
 + (NSArray *)getGPUNames
@@ -118,11 +113,10 @@ static void _displayReconfigurationCallback(CGDirectDisplayID display, CGDisplay
                 if (CFGetTypeID(ioName) == CFStringGetTypeID() && CFStringCompare(ioName, CFSTR(kDisplayKey), kCFCompareCaseInsensitive) == kCFCompareEqualTo) {
                     const void *model = CFDictionaryGetValue(serviceDictionary, @kModelKey);
                     
-                    NSString *gpuName = [[NSString alloc] initWithData:(NSData *)model
+                    NSString *gpuName = [[NSString alloc] initWithData:(__bridge NSData *)model
                                                           encoding:NSASCIIStringEncoding];
-                    
+
                     [_cachedGPUs addObject:gpuName];
-                    [gpuName release];
                 }
             }
             

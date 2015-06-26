@@ -56,7 +56,7 @@ static void scCallback(SCDynamicStoreRef store, CFArrayRef changedKeys, void *in
    if(dynStore != NULL)
       return;
    
-   SCDynamicStoreContext context = {0, self, NULL, NULL, NULL};
+   SCDynamicStoreContext context = {0, (__bridge void *)(self), NULL, NULL, NULL};
    
 	dynStore = SCDynamicStoreCreate(kCFAllocatorDefault,
                                    CFBundleGetIdentifier(CFBundleGetMainBundle()),
@@ -146,7 +146,7 @@ static void scCallback(SCDynamicStoreRef store, CFArrayRef changedKeys, void *in
 }
 
 static void scCallback(SCDynamicStoreRef store, CFArrayRef changedKeys, void *info) {
-	GrowlNetworkObserver *observer = info;
+	GrowlNetworkObserver *observer = (__bridge GrowlNetworkObserver *)(info);
 	CFIndex count = CFArrayGetCount(changedKeys);
 	for (CFIndex i=0; i<count; ++i) {
 		CFStringRef key = CFArrayGetValueAtIndex(changedKeys, i);

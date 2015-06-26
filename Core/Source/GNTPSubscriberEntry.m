@@ -108,11 +108,11 @@
       [self addObserver:self 
              forKeyPath:@"use" 
                 options:NSKeyValueObservingOptionNew 
-                context:self];
+                context:(__bridge void *)(self)];
       [self addObserver:self 
              forKeyPath:@"computerName" 
                 options:NSKeyValueObservingOptionNew 
-                context:self];
+                context:(__bridge void *)(self)];
    }
    return self;
 }
@@ -250,19 +250,7 @@
    [self removeObserver:self forKeyPath:@"use"];
    [self removeObserver:self forKeyPath:@"computerName"];
    [[NSNotificationCenter defaultCenter] removeObserver:self];
-   [_computerName release];
-   [_addressString release];
-   [_domain release];
-   [_lastKnownAddress release];
-   [_password release];
-   [_subscriberID release];
-   [_uuid release];
-   [_key release];
    [_resubscribeTimer invalidate];
-   [_resubscribeTimer release];
-   self.resubscribeTimer = nil;
-   [_initialTime release];
-   [super dealloc];
 }
 
 -(void)setActive:(BOOL)flag {
@@ -303,9 +291,7 @@
 
 -(void)setComputerName:(NSString *)name
 {
-   if(_computerName)
-      [_computerName release];
-   _computerName = [name retain];
+   _computerName = name;
 
    self.lastKnownAddress = nil;
    
@@ -318,12 +304,10 @@
    if(pass == _password || [pass isEqualToString:self.password]) {
       return;
    }
-   if(_password)
-      [_password release];
    _password = [pass copy];
    NSString *type = self.remote ? @"GrowlRemoteSubscriber" : @"GrowlLocalSubscriber";
    [GrowlKeychainUtilities setPassword:self.password forService:type accountName:self.uuid];
-   self.key = [[[GNTPKey alloc] initWithPassword:self.password hashAlgorithm:GNTPSHA512 encryptionAlgorithm:GNTPNone] autorelease];
+   self.key = [[GNTPKey alloc] initWithPassword:self.password hashAlgorithm:GNTPSHA512 encryptionAlgorithm:GNTPNone];
    
    //We should try subscribing
    [self subscribe];
@@ -334,9 +318,7 @@
    //Unlike forwarding, we do have a situation where we must have address data stored, subscribed machines we must know their address data to send
    if(!self.remote && ![[GrowlPreferencesController sharedController] boolForKey:@"AddressCachingEnabled"] && address)
       address = nil;
-   if(_lastKnownAddress)
-      [_lastKnownAddress release];
-   _lastKnownAddress = [address retain];
+   _lastKnownAddress = address;
 }
 
 -(void)subscribe {
@@ -377,17 +359,17 @@
    /*
     * Send out a subscription packet
     */
-   __block GNTPSubscriberEntry *blockSelf = self;
+   __weak GNTPSubscriberEntry *weakSelf = self;
    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-      NSData *destAddress = nil;//[[GrowlPreferencesController sharedController] boolForKey:@"AddressCachingEnabled"] ? blockSelf.lastKnownAddress : nil;
+      NSData *destAddress = nil;//[[GrowlPreferencesController sharedController] boolForKey:@"AddressCachingEnabled"] ? weakSelf.lastKnownAddress : nil;
       if(!destAddress){
-         destAddress = [GrowlNetworkUtilities addressDataForGrowlServerOfType:@"_gntp._tcp." withName:[blockSelf computerName] withDomain:[blockSelf domain]];
+         destAddress = [GrowlNetworkUtilities addressDataForGrowlServerOfType:@"_gntp._tcp." withName:[weakSelf computerName] withDomain:[weakSelf domain]];
          self.lastKnownAddress = destAddress;
       }
 		if(destAddress){
-			NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:[blockSelf subscriberID], GrowlGNTPSubscriberID,
+			NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:[weakSelf subscriberID], GrowlGNTPSubscriberID,
 										 [GrowlNetworkUtilities localHostName], GrowlGNTPSubscriberName, nil];
-			self.subscriptionAttempt = [[[GrowlGNTPSubscriptionAttempt alloc] initWithDictionary:dict] autorelease];
+			self.subscriptionAttempt = [[GrowlGNTPSubscriptionAttempt alloc] initWithDictionary:dict];
 			[self.subscriptionAttempt setPassword:self.password];
 			[self.subscriptionAttempt setAddressData:destAddress];
 			[self.subscriptionAttempt setDelegate:self];
@@ -434,7 +416,7 @@
    [buildDict setValue:[NSNumber numberWithBool:self.manual] forKey:@"manual"];   
    [buildDict setValue:[NSNumber numberWithInteger:self.timeToLive] forKey:@"timeToLive"];
    [buildDict setValue:[NSNumber numberWithInteger:self.subscriberPort] forKey:@"subscriberPort"];   
-   return [[buildDict copy] autorelease];
+   return [buildDict copy];
 }
 
 -(BOOL)validateValue:(id *)ioValue forKey:(NSString *)inKey error:(NSError **)outError
@@ -460,26 +442,26 @@
    NSDictionary *eDict = [NSDictionary dictionaryWithObject:description
                                                      forKey:NSLocalizedDescriptionKey];
    if(outError != NULL)
-      *outError = [[[NSError alloc] initWithDomain:@"GrowlNetworking" code:2 userInfo:eDict] autorelease];
+      *outError = [[NSError alloc] initWithDomain:@"GrowlNetworking" code:2 userInfo:eDict];
    return NO;
 }
 
 #pragma mark GrowlCommunicationAttemptDelegate
 
 - (void) attemptDidSucceed:(GrowlCommunicationAttempt *)attempt {
-	__block GNTPSubscriberEntry *blockSubscriber = self;
+	__weak GNTPSubscriberEntry *blockSubscriber = self;
 	dispatch_async(dispatch_get_main_queue(), ^{
 		[blockSubscriber updateLocalWithPacket:(GrowlGNTPSubscriptionAttempt*)attempt error:NO];
 	});
 }
 - (void) attemptDidFail:(GrowlCommunicationAttempt *)attempt {
-	__block GNTPSubscriberEntry *blockSubscriber = self;
+	__weak GNTPSubscriberEntry *blockSubscriber = self;
 	dispatch_async(dispatch_get_main_queue(), ^{
 		[blockSubscriber updateLocalWithPacket:(GrowlGNTPSubscriptionAttempt*)attempt error:YES];
 	});
 }
 - (void) finishedWithAttempt:(GrowlCommunicationAttempt *)attempt {
-	__block GNTPSubscriberEntry *blockSubscriber = self;
+	__weak GNTPSubscriberEntry *blockSubscriber = self;
 	dispatch_async(dispatch_get_main_queue(), ^{
 		blockSubscriber.subscriptionAttempt = nil;
 	});

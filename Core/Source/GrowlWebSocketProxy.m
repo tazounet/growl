@@ -84,17 +84,17 @@
 		else characters[length++] = '=';
 	}
 	
-	return [[[NSString alloc] initWithBytesNoCopy:characters
+	return [[NSString alloc] initWithBytesNoCopy:characters
 														length:length
 													 encoding:NSASCIIStringEncoding
-												freeWhenDone:YES] autorelease];
+												freeWhenDone:YES];
 }
 
 @end
 
 @interface GrowlWebSocketRead : NSObject
 
-@property (nonatomic, retain) NSData *readToData;
+@property (nonatomic, strong) NSData *readToData;
 @property (nonatomic, assign) NSUInteger readToLength;
 @property (nonatomic, assign) long tag;
 
@@ -102,23 +102,18 @@
 
 @implementation GrowlWebSocketRead
 
--(void)dealloc {
-	[_readToData release];
-	_readToData = nil;
-	[super dealloc];
-}
 
 @end
 
 @interface GrowlWebSocketProxy ()
 
-@property (nonatomic, retain) NSDictionary *startHeaders;
-@property (nonatomic, retain) NSMutableArray *scheduledReads;
-@property (nonatomic, retain) NSMutableData *dataBuffer;
+@property (nonatomic, strong) NSDictionary *startHeaders;
+@property (nonatomic, strong) NSMutableArray *scheduledReads;
+@property (nonatomic, strong) NSMutableData *dataBuffer;
 
 @property (nonatomic, assign) BOOL masked;
 @property (nonatomic, assign) NSInteger remainingPayload;
-@property (nonatomic, retain) NSData *mask;
+@property (nonatomic, strong) NSData *mask;
 
 @end
 
@@ -154,50 +149,39 @@ static dispatch_queue_t bufferQueue = NULL;
 - (void)dealloc {
 	[_socket synchronouslySetDelegate:nil];
 	[_socket disconnect];
-	[_socket release];
-	_socket = nil;
 	_delegate = nil;
-	[_mask release];
-	_mask = nil;
-	[_startHeaders release];
-	_startHeaders = nil;
-	[_scheduledReads release];
-	_scheduledReads = nil;
-	[_dataBuffer release];
-	_dataBuffer = nil;
-	[super dealloc];
 }
 
 -(void)maybeDequeueRead {
-	__block GrowlWebSocketProxy *blockSelf = self;
+	__weak GrowlWebSocketProxy *weakSelf = self;
 	__block NSArray *reads = nil;
-	reads = [[[blockSelf scheduledReads] copy] autorelease];
+	reads = [[weakSelf scheduledReads] copy];
 	[reads enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 		if([obj isKindOfClass:[GrowlWebSocketRead class]]){
 			NSData *readData = nil;
 			if([obj readToLength] > 0){
-				if([[blockSelf dataBuffer] length] > [obj readToLength]){
+				if([[weakSelf dataBuffer] length] > [obj readToLength]){
 					NSRange byteRange = NSMakeRange(0, [obj readToLength]);
-					readData = [[blockSelf dataBuffer] subdataWithRange:byteRange];
-					[[blockSelf dataBuffer] replaceBytesInRange:byteRange withBytes:NULL length:0];
+					readData = [[weakSelf dataBuffer] subdataWithRange:byteRange];
+					[[weakSelf dataBuffer] replaceBytesInRange:byteRange withBytes:NULL length:0];
 				}else
 					*stop = YES;
 			}else {
-				NSRange findRange = [[blockSelf dataBuffer] rangeOfData:[obj readToData] options:0 range:NSMakeRange(0, [[blockSelf dataBuffer] length])];
+				NSRange findRange = [[weakSelf dataBuffer] rangeOfData:[obj readToData] options:0 range:NSMakeRange(0, [[weakSelf dataBuffer] length])];
 				if(findRange.location != NSNotFound){
 					NSRange byteRange = NSMakeRange(0, findRange.location + findRange.length);
-					readData = [[blockSelf dataBuffer] subdataWithRange:byteRange];
-					[[blockSelf dataBuffer] replaceBytesInRange:byteRange withBytes:NULL length:0];
+					readData = [[weakSelf dataBuffer] subdataWithRange:byteRange];
+					[[weakSelf dataBuffer] replaceBytesInRange:byteRange withBytes:NULL length:0];
 				}else
 					*stop = YES;
 			}
 			if(readData){
-				[[blockSelf scheduledReads] removeObject:obj];
+				[[weakSelf scheduledReads] removeObject:obj];
 				//NSLog(@"Passing read data to delegate:\n%@", [[[NSString alloc] initWithData:readData encoding:NSUTF8StringEncoding] autorelease]);
-				if([[blockSelf delegate] respondsToSelector:@selector(socket:didReadData:withTag:)]){
-					dispatch_async([[blockSelf socket] delegateQueue], ^{
+				if([[weakSelf delegate] respondsToSelector:@selector(socket:didReadData:withTag:)]){
+					dispatch_async([[weakSelf socket] delegateQueue], ^{
 						@autoreleasepool {
-							[[blockSelf delegate] socket:(GCDAsyncSocket*)blockSelf didReadData:readData withTag:[obj tag]];
+							[[weakSelf delegate] socket:(GCDAsyncSocket*)weakSelf didReadData:readData withTag:[obj tag]];
 						}
 					});
 				}
@@ -236,7 +220,7 @@ static dispatch_queue_t bufferQueue = NULL;
 		return;
 	}
 	//Build a read, queue it, then fire the dequeue check
-	GrowlWebSocketRead *read = [[[GrowlWebSocketRead alloc] init] autorelease];
+	GrowlWebSocketRead *read = [[GrowlWebSocketRead alloc] init];
 	[read setReadToData:data];
 	[read setReadToLength:length];
 	[read setTag:tag];
@@ -289,7 +273,7 @@ static dispatch_queue_t bufferQueue = NULL;
 - (void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag {
 	if(tag == PARSE_HTTP_TAG){
 		//Parse the HTTP headers, build our response, and send it, or disconnect the socket if we dont conform to what it sends
-		NSString *string = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+		NSString *string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 		//NSLog(@"read websocket headers:\n%@", string);
 		NSMutableDictionary *headerDict = [NSMutableDictionary dictionary];
 		[GNTPUtilities enumerateHeaders:string
@@ -315,21 +299,18 @@ static dispatch_queue_t bufferQueue = NULL;
 				NSArray *protocols = [protocolList componentsSeparatedByString:@", "];
 				[protocols enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 					if([obj caseInsensitiveCompare:@"GNTP"] == NSOrderedSame){
-						if(protocolToUse)
-							[protocolToUse release];
-						protocolToUse = [obj retain];
+						protocolToUse = obj;
 						found = YES;
 						*stop = YES;
 					}else if([obj caseInsensitiveCompare:@"chat"] == NSOrderedSame){
 						fallbackFound = YES;
-						protocolToUse = [obj retain];
+						protocolToUse = obj;
 					}
 				}];
 			}
 			NSMutableString *responseString = [NSMutableString stringWithFormat:@"HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Version: 13\r\nSec-WebSocket-Accept: %@\r\n", returnKeyEncoded];
 			if(protocolToUse){
 				[responseString appendFormat:@"Sec-WebSocket-Protocol: %@\r\n", protocolToUse];
-				[protocolToUse release];
 			}
 			[responseString appendString:@"\r\n"];
 			//NSLog(@"Writing reply:\n%@", responseString);

@@ -21,7 +21,7 @@
 -(void)setImage:(NSData*)data andHash:(NSString*)hash
 {
    self.ImageData = data;
-   [self setPrimitiveValue:[[[NSImage alloc]initWithData:data] autorelease] forKey:@"Image"];
+   [self setPrimitiveValue:[[NSImage alloc]initWithData:data] forKey:@"Image"];
    self.Checksum = hash;
 }
 
@@ -36,7 +36,7 @@
       NSData *imageData = [self ImageData];
       if (imageData != nil)
       {
-         image = [[[NSImage alloc] initWithData:imageData] autorelease];
+         image = [[NSImage alloc] initWithData:imageData];
          [self setPrimitiveValue:image forKey:@"Image"];
       }
    }
@@ -51,8 +51,7 @@
    
    if(!thumb)
    {
-      thumb = [[[self Image] copyWithZone:nil] autorelease];
-      [thumb setScalesWhenResized:YES];
+      thumb = [[self Image] copyWithZone:nil];
       [thumb setSize:NSMakeSize(32, 32)];
       [self setPrimitiveValue:thumb forKey:@"Thumbnail"];
    }

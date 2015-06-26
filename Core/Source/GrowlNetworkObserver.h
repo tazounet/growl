@@ -13,9 +13,9 @@
 
 @interface GrowlNetworkObserver : NSObject
 
-@property (nonatomic, retain) NSString *primaryIP;
-@property (nonatomic, retain) NSArray *routableArray;
-@property (nonatomic, retain) NSString *routableCombined;
+@property (nonatomic, strong) NSString *primaryIP;
+@property (nonatomic, strong) NSArray *routableArray;
+@property (nonatomic, strong) NSString *routableCombined;
 
 +(GrowlNetworkObserver*)sharedObserver;
 

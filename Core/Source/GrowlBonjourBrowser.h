@@ -16,8 +16,8 @@
 
 @interface GrowlBonjourBrowser : NSObject <NSNetServiceBrowserDelegate>
 
-@property (nonatomic, retain) NSNetServiceBrowser *browser;
-@property (nonatomic, retain) NSMutableArray *services;
+@property (nonatomic, strong) NSNetServiceBrowser *browser;
+@property (nonatomic, strong) NSMutableArray *services;
 
 @property (nonatomic) NSUInteger browseCount;
 

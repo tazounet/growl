@@ -94,20 +94,20 @@
 }
 
 -(void)registerWithDictionary:(NSDictionary *)regDict {
-	__block GrowlTicketDatabaseApplication *blockSelf = self;
+	__weak GrowlTicketDatabaseApplication *weakSelf = self;
    void (^regBlock)(void) = ^{
 		
 		id icon = [regDict objectForKey:GROWL_APP_ICON_DATA];
 		if(icon && [icon isKindOfClass:[NSImage class]])
 			icon = [(NSImage*)icon TIFFRepresentation];
 		if(icon && [icon isKindOfClass:[NSData class]])
-			blockSelf.iconData = icon;
+			weakSelf.iconData = icon;
 		
-		blockSelf.name = [regDict objectForKey:GROWL_APP_NAME];
-		blockSelf.appID = [regDict objectForKey:GROWL_APP_ID];
-		blockSelf.positionType = [NSNumber numberWithInteger:0];	
-		blockSelf.selectedPosition = [NSNumber numberWithInteger:0];
-		blockSelf.appPath = [GrowlTicketDatabaseApplication fullPathForRegDictApp:regDict];
+		weakSelf.name = [regDict objectForKey:GROWL_APP_NAME];
+		weakSelf.appID = [regDict objectForKey:GROWL_APP_ID];
+		weakSelf.positionType = [NSNumber numberWithInteger:0];	
+		weakSelf.selectedPosition = [NSNumber numberWithInteger:0];
+		weakSelf.appPath = [GrowlTicketDatabaseApplication fullPathForRegDictApp:regDict];
 		
 		NSDictionary *humanReadableNames = [regDict objectForKey:GROWL_NOTIFICATIONS_HUMAN_READABLE_NAMES];
 		NSDictionary *notificationDescriptions = [regDict objectForKey:GROWL_NOTIFICATIONS_DESCRIPTIONS];
@@ -126,9 +126,9 @@
 				return;
 			
 			GrowlTicketDatabaseNotification *note = [NSEntityDescription insertNewObjectForEntityForName:@"GrowlNotificationTicket"
-																										 inManagedObjectContext:[blockSelf managedObjectContext]];
+																										 inManagedObjectContext:[weakSelf managedObjectContext]];
 			
-			[note setParent:blockSelf];
+			[note setParent:weakSelf];
 			
 			NSString *name = obj;
 			note.name = name;
@@ -160,11 +160,11 @@
 }
 
 -(void)reregisterWithDictionary:(NSDictionary *)regDict {
-	__block GrowlTicketDatabaseApplication *blockSelf = self;
+	__weak GrowlTicketDatabaseApplication *weakSelf = self;
    void (^regBlock)(void) = ^{
-		blockSelf.iconData = [regDict objectForKey:GROWL_APP_ICON_DATA];
-		blockSelf.appID = [regDict objectForKey:GROWL_APP_ID];
-		blockSelf.appPath = [GrowlTicketDatabaseApplication fullPathForRegDictApp:regDict];
+		weakSelf.iconData = [regDict objectForKey:GROWL_APP_ICON_DATA];
+		weakSelf.appID = [regDict objectForKey:GROWL_APP_ID];
+		weakSelf.appPath = [GrowlTicketDatabaseApplication fullPathForRegDictApp:regDict];
 		
 		NSDictionary *humanReadableNames = [regDict objectForKey:GROWL_NOTIFICATIONS_HUMAN_READABLE_NAMES];
 		NSDictionary *notificationDescriptions = [regDict objectForKey:GROWL_NOTIFICATIONS_DESCRIPTIONS];
@@ -183,11 +183,11 @@
 			if(![obj isKindOfClass:[NSString class]])
 				return;
 			
-			GrowlTicketDatabaseNotification *note = [blockSelf notificationTicketForName:obj];
+			GrowlTicketDatabaseNotification *note = [weakSelf notificationTicketForName:obj];
 			if(!note){
 				note = [NSEntityDescription insertNewObjectForEntityForName:@"GrowlNotificationTicket"
-																 inManagedObjectContext:[blockSelf managedObjectContext]];
-				[note setParent:blockSelf];
+																 inManagedObjectContext:[weakSelf managedObjectContext]];
+				[note setParent:weakSelf];
 				
 				NSString *name = obj;
 				note.name = name;
@@ -229,14 +229,14 @@
 		}];
 		
 		NSMutableArray *toRemove = [NSMutableArray array];
-		[blockSelf.children enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
+		[weakSelf.children enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
 			if(![newNotesArray containsObject:obj])
 				[toRemove addObject:obj];
 		}];
 
 		//NSLog(@"During reregistration, added: %lu notes, removed: %lu notes", added, [toRemove count]);
 		[toRemove enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-			[[blockSelf managedObjectContext] deleteObject:obj];
+			[[weakSelf managedObjectContext] deleteObject:obj];
 		}];
 	};
 	if([NSThread isMainThread])
@@ -246,16 +246,16 @@
 }
 
 - (NSDictionary*)registrationFormatDictionary {
-	__block GrowlTicketDatabaseApplication *blockSelf = self;
+	__weak GrowlTicketDatabaseApplication *weakSelf = self;
 	__block NSMutableDictionary *regDict = nil;
    void (^regDictBlock)(void) = ^{
-		NSUInteger noteCount = [blockSelf.children count];
-		__block NSMutableArray *allNotificationNames = [NSMutableArray arrayWithCapacity:noteCount];
-		__block NSMutableArray *defaultNotifications = [NSMutableArray arrayWithCapacity:noteCount];
-		__block NSMutableDictionary *humanReadableNames = [NSMutableDictionary dictionaryWithCapacity:noteCount];
-		__block NSMutableDictionary *notificationDescriptions = [NSMutableDictionary dictionaryWithCapacity:noteCount];
+		NSUInteger noteCount = [weakSelf.children count];
+		__weak NSMutableArray *allNotificationNames = [NSMutableArray arrayWithCapacity:noteCount];
+		__weak NSMutableArray *defaultNotifications = [NSMutableArray arrayWithCapacity:noteCount];
+		__weak NSMutableDictionary *humanReadableNames = [NSMutableDictionary dictionaryWithCapacity:noteCount];
+		__weak NSMutableDictionary *notificationDescriptions = [NSMutableDictionary dictionaryWithCapacity:noteCount];
 		
-		[blockSelf.children enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
+		[weakSelf.children enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
 			NSString *noteName = [obj name];
 			[allNotificationNames addObject:noteName];
 			[humanReadableNames setObject:[obj humanReadableName] forKey:noteName];
@@ -265,20 +265,20 @@
 				[notificationDescriptions setObject:[obj ticketDescription] forKey:noteName];
 		}];
 		
-		regDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:blockSelf.name, GROWL_APP_NAME,
+		regDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:weakSelf.name, GROWL_APP_NAME,
 					  allNotificationNames, GROWL_NOTIFICATIONS_ALL,
 					  defaultNotifications, GROWL_NOTIFICATIONS_DEFAULT,
 					  humanReadableNames, GROWL_NOTIFICATIONS_HUMAN_READABLE_NAMES,
-					  blockSelf.iconData, GROWL_APP_ICON_DATA, nil];
+					  weakSelf.iconData, GROWL_APP_ICON_DATA, nil];
 		
-		if ([blockSelf.parent name] && ![[blockSelf.parent name] isLocalHost])
-			[regDict setObject:[blockSelf.parent name] forKey:GROWL_NOTIFICATION_GNTP_SENT_BY];
+		if ([weakSelf.parent name] && ![[weakSelf.parent name] isLocalHost])
+			[regDict setObject:[weakSelf.parent name] forKey:GROWL_NOTIFICATION_GNTP_SENT_BY];
       
 		if (notificationDescriptions && [notificationDescriptions count] > 0)
 			[regDict setObject:notificationDescriptions forKey:GROWL_NOTIFICATIONS_DESCRIPTIONS];
 		
-		if (blockSelf.appID)
-			[regDict setObject:blockSelf.appID forKey:GROWL_APP_ID];
+		if (weakSelf.appID)
+			[regDict setObject:weakSelf.appID forKey:GROWL_APP_ID];
 	};
 	
    if([NSThread isMainThread])
@@ -291,9 +291,9 @@
 
 -(GrowlTicketDatabaseNotification*)notificationTicketForName:(NSString*)noteName {
    __block GrowlTicketDatabaseNotification* note = nil;
-	__block GrowlTicketDatabaseApplication *blockSelf = self;
+	__weak GrowlTicketDatabaseApplication *weakSelf = self;
    void (^noteBlock)(void) = ^{
-		[blockSelf.children enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
+		[weakSelf.children enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
 			if([[obj name] isEqualToString:noteName]){
 				note = obj;
 				*stop = YES;
@@ -310,19 +310,19 @@
 
 - (NSComparisonResult) caseInsensitiveCompare:(GrowlTicketDatabaseApplication *)aTicket {
 	__block NSComparisonResult result = NSOrderedSame;
-	__block GrowlTicketDatabaseApplication *blockSelf = self;
+	__weak GrowlTicketDatabaseApplication *weakSelf = self;
    void (^compareBlock)(void) = ^{
-		NSString *selfHost = blockSelf.parent.name;
+		NSString *selfHost = weakSelf.parent.name;
 		NSString *aTicketHost = aTicket.parent.name;
 		if(!selfHost && !aTicketHost){
-			result = [[blockSelf name] caseInsensitiveCompare:[aTicket name]];
+			result = [[weakSelf name] caseInsensitiveCompare:[aTicket name]];
 		}else if(selfHost && !aTicketHost){
 			result = NSOrderedDescending;
 		}else if(!selfHost && aTicketHost){
 			result = NSOrderedAscending;
 		}else { // if(selfHost && aTicketHost){
 			if([selfHost caseInsensitiveCompare:aTicketHost] == NSOrderedSame)
-				result = [[blockSelf name] caseInsensitiveCompare:[aTicket name]];
+				result = [[weakSelf name] caseInsensitiveCompare:[aTicket name]];
 			else
 				result = [selfHost caseInsensitiveCompare:aTicketHost];
 		}

@@ -25,4 +25,6 @@
 + (void)setCachedImage:(NSData*)image forKey:(NSString*)key;
 + (void)removeCachedImageForKey:(NSString*)key;
 
+- (void) clickedCloseBox;
+
 @end

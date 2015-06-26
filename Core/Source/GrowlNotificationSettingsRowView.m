@@ -25,13 +25,13 @@
 }
 
 -(NSGradient*)lightGradient{
-   return [[[NSGradient alloc] initWithColors:[NSArray arrayWithObjects:[NSColor lightGrayColor],
-                                                                        [NSColor grayColor], nil]] autorelease];
+   return [[NSGradient alloc] initWithColors:[NSArray arrayWithObjects:[NSColor lightGrayColor],
+                                                                        [NSColor grayColor], nil]];
 }
 
 -(NSGradient*)darkGradient{
-   return [[[NSGradient alloc] initWithColors:[NSArray arrayWithObjects:[NSColor grayColor], 
-                                                                        [NSColor darkGrayColor], nil]] autorelease];
+   return [[NSGradient alloc] initWithColors:[NSArray arrayWithObjects:[NSColor grayColor], 
+                                                                        [NSColor darkGrayColor], nil]];
 }
 
 -(void)drawBackgroundInRect:(NSRect)dirtyRect
@@ -69,7 +69,6 @@
    else
       [[NSColor grayColor] setStroke];
    [path stroke];
-   [path release];
 }
 
 -(void)drawSeparatorInRect:(NSRect)dirtyRect

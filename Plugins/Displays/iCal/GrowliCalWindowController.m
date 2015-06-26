@@ -59,7 +59,6 @@
 	[panel setHasShadow:YES];
 	[panel setCanHide:NO];
 	[panel setOneShot:YES];
-	[panel useOptimizedDrawing:YES];
 	[panel setMovableByWindowBackground:NO];
 
 	// Create the content view...
@@ -67,7 +66,6 @@
 	[view setTarget:self];
 	[view setAction:@selector(notificationClicked:)];
 	[panel setContentView:view];
-	[view release];
 
 	// call super so everything else is set up...
 	if ((self = [super initWithWindow:panel andPlugin:aPlugin])) {
@@ -76,10 +74,8 @@
 		[self addTransition:fader];
 		[self setStartPercentage:0 endPercentage:100 forTransition:fader];
 		[fader setAutoReverses:YES];
-		[fader release];
 	}
 	
-	[panel release];
 
 	return self;
 }

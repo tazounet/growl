@@ -55,7 +55,7 @@ typedef void(^GrowlNoteStatusUpdateBlock)(GrowlNoteStatus status, GrowlNote *not
    
    NSDictionary *_otherKeysDict;
    
-   id<GrowlNoteDelegate> _delegate;
+   id<GrowlNoteDelegate> __strong _delegate;
    GrowlNoteStatusUpdateBlock _statusUpdateBlock;
    
    @private
@@ -74,7 +74,7 @@ typedef void(^GrowlNoteStatusUpdateBlock)(GrowlNoteStatus status, GrowlNote *not
  *  This or the statusUpdateBlock will only be called once per note
  *  Called on the main thread/queue
  */
-@property (nonatomic, assign) id<GrowlNoteDelegate> delegate;
+@property (nonatomic, strong) id<GrowlNoteDelegate> delegate;
 /*!
  * @property nonatomic, assign, statusUpdateBlock
  * @discussion A block for informing you of the final status of a notification
@@ -102,13 +102,13 @@ typedef void(^GrowlNoteStatusUpdateBlock)(GrowlNoteStatus status, GrowlNote *not
  * @property (nonatomic, assign) BOOL sticky;
  * @property (nonatomic, assign) NSInteger priority;
  */
-@property (nonatomic, retain) NSString *noteName;
-@property (nonatomic, retain) NSString *title;
-@property (nonatomic, retain) NSString *description;
-@property (nonatomic, retain) NSData *iconData;
-@property (nonatomic, retain) id clickContext;
-@property (nonatomic, retain) NSURL *clickCallbackURL;
-@property (nonatomic, retain) NSString *overwriteIdentifier;
+@property (nonatomic, strong) NSString *noteName;
+@property (nonatomic, strong) NSString *title;
+@property (nonatomic, strong) NSString *description;
+@property (nonatomic, strong) NSData *iconData;
+@property (nonatomic, strong) id clickContext;
+@property (nonatomic, strong) NSURL *clickCallbackURL;
+@property (nonatomic, strong) NSString *overwriteIdentifier;
 @property (nonatomic, assign) BOOL sticky;
 @property (nonatomic, assign) NSInteger priority;
 

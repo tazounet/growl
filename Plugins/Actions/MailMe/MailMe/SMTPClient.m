@@ -21,11 +21,11 @@ NSString* const SMTPMessageKey = @"SMTPMessage";
 
 @interface SMTPClient ()
 
-@property(readwrite,retain) NSString* address;
-@property(readwrite,retain) NSArray* ports;
+@property(readwrite,strong) NSString* address;
+@property(readwrite,strong) NSArray* ports;
 @property(readwrite,assign) SMTPClientTLSMode tlsMode;
-@property(readwrite,retain) NSString* username;
-@property(readwrite,retain) NSString* password;
+@property(readwrite,strong) NSString* username;
+@property(readwrite,strong) NSString* password;
 
 @end
 
@@ -56,12 +56,12 @@ NSString* const SMTPMessageKey = @"SMTPMessage";
 	BOOL _success;
 }
 
-@property(retain) SMTPClient* client;
-@property(retain) NSString* message;
-@property(retain) NSString* subject;
-@property(retain) NSString* from;
-@property(retain) NSString* fromDescription;
-@property(retain) NSArray* to;
+@property(strong) SMTPClient* client;
+@property(strong) NSString* message;
+@property(strong) NSString* subject;
+@property(strong) NSString* from;
+@property(strong) NSString* fromDescription;
+@property(strong) NSArray* to;
 
 -(void)start;
 
@@ -122,11 +122,11 @@ NSString* const SMTPMessageKey = @"SMTPMessage";
 									  username:(NSString*)authUsername 
 									  password:(NSString*)authPassword 
 {
-	return [[[[self class] alloc] initWithServerAddress:address 
+	return [[[self class] alloc] initWithServerAddress:address 
 																 ports:ports 
 															  tlsMode:tlsMode 
 															 username:authUsername 
-															 password:authPassword] autorelease];
+															 password:authPassword];
 }
 
 -(id)initWithServerAddress:(NSString*)address 
@@ -154,14 +154,6 @@ NSString* const SMTPMessageKey = @"SMTPMessage";
 	return self;
 }
 
--(void)dealloc {
-	//  NSLog(@"SMTPClient dealloc");
-	self.address = nil;
-	self.ports = nil;
-	self.username = nil;
-	self.password = nil;
-	[super dealloc];
-}
 
 +(void)splitAddress:(NSString*)address 
 			 intoEmail:(NSString**)email 
@@ -207,7 +199,7 @@ NSString* const SMTPMessageKey = @"SMTPMessage";
 	}
 	//NSAssert(host != nil, @"Invalid server address");
 	
-	_SMTPConnector* connector = [[_SMTPConnector new] autorelease]; // TODO: release
+	_SMTPConnector* connector = [_SMTPConnector new]; // TODO: release
 	connector.client = self;
 	connector.message = message;
 	connector.subject = subject;
@@ -220,7 +212,7 @@ NSString* const SMTPMessageKey = @"SMTPMessage";
 	connector.fromDescription = tempLabel;
 	
 	NSMutableArray* to = [NSMutableArray array];
-	for (NSString* ito in [toAddresses componentsSeparatedByString:@","]) {
+	for (__strong NSString* ito in [toAddresses componentsSeparatedByString:@","]) {
 		ito = [ito stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceCharacterSet];
 		[[self class] splitAddress:ito intoEmail:&tempAddress description:&tempLabel];
 		[to addObject:[NSArray arrayWithObjects: tempAddress, tempLabel, nil]];
@@ -246,17 +238,17 @@ NSString* const SMTPMessageKey = @"SMTPMessage";
 
 @interface _SMTPConnector ()
 
-@property(retain) NSInputStream* istream;
-@property(retain) NSOutputStream* ostream;
+@property(strong) NSInputStream* istream;
+@property(strong) NSOutputStream* ostream;
 @property NSInteger connectionStatus;
 
 @property(nonatomic) NSInteger smtpStatus;
 @property NSInteger smtpSubstatus;
-@property(retain) NSArray* authModes;
+@property(strong) NSArray* authModes;
 @property BOOL canStartTLS;
 @property NSInteger rcptToCount;
-@property(retain) NSTimer* dataTimeoutTimer;
-@property(retain) NSTimer* openTimeoutTimer;
+@property(strong) NSTimer* dataTimeoutTimer;
+@property(strong) NSTimer* openTimeoutTimer;
 
 +(NSString*)CramMD5:(NSString*)challengeString key:(NSString*)secretString;
 
@@ -309,23 +301,29 @@ enum {
 		[self reset];
 		
 		self.connectionStatus = ConnectionStatusConnecting;
+        
+        NSInputStream __autoreleasing *localInputStream = nil;
+        NSOutputStream __autoreleasing *localOutputStream = nil;
+
 		[NSStream getStreamsToHost:[NSHost hostWithName:self.client.address] 
 									 port:port.integerValue 
-							inputStream:&_istream 
-						  outputStream:&_ostream];
-		[_istream retain];
-		[_ostream retain];
+							inputStream:&localInputStream
+						  outputStream:&localOutputStream];
+
+        _istream = localInputStream;
+        _ostream = localOutputStream;
+
 		[_istream setDelegate:self];
 		[_ostream setDelegate:self];
 		[_istream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
 		[_ostream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
 		
-		self.openTimeoutTimer = [[[NSTimer alloc] initWithFireDate:[NSDate dateWithTimeIntervalSinceNow:10] 
+		self.openTimeoutTimer = [[NSTimer alloc] initWithFireDate:[NSDate dateWithTimeIntervalSinceNow:10] 
 																		  interval:0 
 																			 target:self 
 																		  selector:@selector(_openTimeoutCallback:) 
 																		  userInfo:nil 
-																			repeats:NO] autorelease];
+																			repeats:NO];
 		[[NSRunLoop currentRunLoop] addTimer:self.openTimeoutTimer forMode:NSDefaultRunLoopMode];
 		
 		[_istream open];
@@ -372,12 +370,12 @@ enum {
 			
 			self.connectionStatus = ConnectionStatusOk;
 			
-			self.dataTimeoutTimer = [[[NSTimer alloc] initWithFireDate:[NSDate dateWithTimeIntervalSinceNow:1] 
+			self.dataTimeoutTimer = [[NSTimer alloc] initWithFireDate:[NSDate dateWithTimeIntervalSinceNow:1] 
 																			  interval:0 
 																				 target:self 
 																			  selector:@selector(_dataTimeoutCallback:) 
 																			  userInfo:nil 
-																				repeats:NO] autorelease];
+																				repeats:NO];
 			[[NSRunLoop currentRunLoop] addTimer:self.dataTimeoutTimer forMode:NSDefaultRunLoopMode];
 		}
 	
@@ -443,7 +441,6 @@ enum {
 																		 encoding:NSUTF8StringEncoding 
 																	freeWhenDone:NO];
 			[self handleLine:line];
-			[line release];
 		}
 		
 		l += 2;
@@ -479,16 +476,7 @@ enum {
 	
 	[self reset];
 	
-	self.client = nil;
-	self.message = nil;
-	self.subject = nil;
-	self.from = nil;
-	self.fromDescription = nil;
-	self.to = nil;
 	
-	[_ibuffer release];
-	[_obuffer release];
-	[super dealloc];
 }
 
 #pragma mark SMTP
@@ -573,7 +561,7 @@ CramMD5AUTH
 	if ([line isKindOfClass:[NSString class]])
 		line = [line dataUsingEncoding:NSUTF8StringEncoding];
 	
-	NSMutableData* data = [[line mutableCopy] autorelease];
+	NSMutableData* data = [line mutableCopy];
 	[data appendBytes:"\r\n" length:2];
 	
 	[self writeData:data];
@@ -690,7 +678,7 @@ CramMD5AUTH
 				case LoginAUTH:
 					switch (code) {
 						case 334:
-							message = [[[NSString alloc] initWithData:[NSData dataWithBase64:message] encoding:NSUTF8StringEncoding] autorelease];
+							message = [[NSString alloc] initWithData:[NSData dataWithBase64:message] encoding:NSUTF8StringEncoding];
 							if ([message isEqualToString:@"Username:"]) {
 								[self writeLine:[[self.client.username dataUsingEncoding:NSUTF8StringEncoding] base64]];
 								return;
@@ -705,7 +693,7 @@ CramMD5AUTH
 				case CramMD5AUTH:
 					switch (code) {
 						case 334: {
-							message = [[[NSString alloc] initWithData:[NSData dataWithBase64:message] encoding:NSUTF8StringEncoding] autorelease];
+							message = [[NSString alloc] initWithData:[NSData dataWithBase64:message] encoding:NSUTF8StringEncoding];
 							NSString* temp = [NSString stringWithFormat:@"%@ %@", self.client.username, [[self class] CramMD5:message key:self.client.password]];
 							[self writeLine:[[temp dataUsingEncoding:NSUTF8StringEncoding] base64]];
 							return;
@@ -871,7 +859,7 @@ CramMD5AUTH
 	const unsigned char* dataBuffer = (unsigned char*)[self bytes];
 	for (NSUInteger i = 0; i < [self length]; ++i)
 		[stringBuffer appendFormat:@"%02lX", (unsigned long)dataBuffer[i]];
-	return [[stringBuffer copy] autorelease];
+	return [stringBuffer copy];
 }
 
 static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -904,20 +892,20 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 		else characters[length++] = '=';	
 	}
 	
-	return [[[NSString alloc] initWithBytesNoCopy:characters 
+	return [[NSString alloc] initWithBytesNoCopy:characters 
 														length:length 
 													 encoding:NSASCIIStringEncoding 
-												freeWhenDone:YES] autorelease];	
+												freeWhenDone:YES];	
 }
 
 +(NSData*)dataWithBase64:(NSString*)base64 {
 	if (!base64) return NULL;
-	return [[[NSData alloc] initWithBase64:base64] autorelease];
+	return [[NSData alloc] initWithBase64:base64];
 }
 
 -(NSData*)initWithBase64:(NSString*)base64 {
 	if ([base64 length] == 0)
-		return [[NSData data] retain];
+		return [NSData data];
 	
 	static char *decodingTable = NULL;
 	if (decodingTable == NULL)

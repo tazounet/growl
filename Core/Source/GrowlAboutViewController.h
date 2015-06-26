@@ -11,12 +11,12 @@
 
 @interface GrowlAboutViewController : GrowlPrefsViewController
 
-@property (nonatomic, assign) IBOutlet NSTextField *aboutVersionString;
+@property (nonatomic, weak) IBOutlet NSTextField *aboutVersionString;
 //@property (nonatomic, assign) IBOutlet NSTextView *aboutBoxTextView;
-@property (nonatomic, assign) IBOutlet WebView *aboutWebView;
+@property (nonatomic, weak) IBOutlet WebView *aboutWebView;
 
-@property (nonatomic, retain) NSString *bugSubmissionLabel;
-@property (nonatomic, retain) NSString *growlWebsiteLabel;
+@property (nonatomic, strong) NSString *bugSubmissionLabel;
+@property (nonatomic, strong) NSString *growlWebsiteLabel;
 
 - (void) setupAboutTab;
 - (IBAction) openGrowlWebSite:(id)sender;

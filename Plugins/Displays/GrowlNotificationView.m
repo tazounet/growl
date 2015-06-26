@@ -8,6 +8,7 @@
 
 #import <GrowlPlugins/GrowlNotificationView.h>
 #import "GrowlDefinesInternal.h"
+#import "NSViewAdditions.h"
 
 @implementation GrowlNotificationView
 
@@ -137,7 +138,6 @@ static NSButton *gCloseButton = nil;
 			[button setImage:image ? image : [NSImage imageNamed:@"closebox"]];
 			[button setAlternateImage:pressed ? pressed : [NSImage imageNamed:@"closebox_pressed"]];
 			[self setButton:button forKey:key];
-			[button release];
 		}
 	}
 }
@@ -192,7 +192,7 @@ static NSButton *gCloseButton = nil;
 {
 	if(!initialDisplayTest) {
 		initialDisplayTest = YES;
-		if([self showsCloseBox] && NSPointInRect([[self window] convertScreenToBase:[NSEvent mouseLocation]], [self frame]))
+		if([self showsCloseBox] && NSPointInRect([self convertPointFromScreen:[NSEvent mouseLocation]], [self frame]))
 			[self mouseEntered:nil];
 	}
 	[super drawRect:rect];
@@ -217,6 +217,18 @@ static NSButton *gCloseButton = nil;
 
 -(NSString*)buttonKey {
 	return [[NSBundle bundleForClass:[self class]] bundleIdentifier];
+}
+
+- (void) mouseEnteredNotificationView:(GrowlNotificationView *)notificationView {
+}
+
+- (void) mouseExitedNotificationView:(GrowlNotificationView *)notificationView {
+}
+
+- (void) stopDisplay {
+}
+
+- (void) clickedCloseBox {
 }
 
 @end

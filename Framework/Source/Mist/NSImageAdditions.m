@@ -26,7 +26,7 @@
     [self drawInRect:l_target fromRect:l_target operation:NSCompositeCopy fraction:1.0f];
     [l_result unlockFocus];
     
-    return [l_result autorelease];
+    return l_result;
 }
 
 - (NSImage *) imageSizedToDimension:(int)dimension
@@ -55,7 +55,7 @@
 		imageSize.width = (CGFloat)(dimension * ratio);				
 	}
 	
-	NSImage *result = [[[NSImage alloc] initWithSize:imageSize] autorelease];
+	NSImage *result = [[NSImage alloc] initWithSize:imageSize];
 	[result lockFocus];
 	[[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationHigh];
 	
@@ -89,7 +89,7 @@
 	
 	NSSize finalSize = NSMakeSize(dimension, dimension);
 	
-	NSImage *result = [[[NSImage alloc] initWithSize:finalSize] autorelease];
+	NSImage *result = [[NSImage alloc] initWithSize:finalSize];
 	[result lockFocus];
 	[[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationHigh];
 	

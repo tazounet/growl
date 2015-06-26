@@ -18,11 +18,6 @@
 @synthesize bugSubmissionLabel;
 @synthesize growlWebsiteLabel;
 
-- (void)dealloc {
-   [bugSubmissionLabel release];
-   [growlWebsiteLabel release];
-   [super dealloc];
-}
 
 - (void) awakeFromNib {
    self.bugSubmissionLabel = NSLocalizedString(@"Growl Bug Submission", @"Button to open http://growl.info/reportabug.php");
@@ -45,7 +40,7 @@
 			if (vcsRevisionUTF8) {
 				version.development = (u_int32_t)strtoul(vcsRevisionUTF8, /*next*/ NULL, 10);
             
-				versionStringWithVCSVersion = [NSMakeCollectable(createVersionDescription(version)) autorelease];
+				versionStringWithVCSVersion = createVersionDescription(version);
 			}
 		}
 		if (versionStringWithVCSVersion)

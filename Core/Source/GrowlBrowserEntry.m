@@ -25,9 +25,9 @@
 - (id) init {
 	
 	if ((self = [super init])) {
-		[self addObserver:self forKeyPath:@"use" options:NSKeyValueObservingOptionNew context:self];
-		[self addObserver:self forKeyPath:@"active" options:NSKeyValueObservingOptionNew context:self];
-		[self addObserver:self forKeyPath:@"computerName" options:NSKeyValueObservingOptionNew context:self];
+		[self addObserver:self forKeyPath:@"use" options:NSKeyValueObservingOptionNew context:(__bridge void *)(self)];
+		[self addObserver:self forKeyPath:@"active" options:NSKeyValueObservingOptionNew context:(__bridge void *)(self)];
+		[self addObserver:self forKeyPath:@"computerName" options:NSKeyValueObservingOptionNew context:(__bridge void *)(self)];
       [self setUuid:[[NSProcessInfo processInfo] globallyUniqueString]];
       didPasswordLookup = NO;
       
@@ -72,7 +72,7 @@
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
 	if(([keyPath isEqualToString:@"use"] || 
 		[keyPath isEqualToString:@"active"] || 
-		[keyPath isEqualToString:@"computerName"]) && context == self) 
+		[keyPath isEqualToString:@"computerName"]) && context == (__bridge void *)(self)) 
 	{
 		[owner writeForwardDestinations];
 	}
@@ -80,14 +80,14 @@
 
 - (void)updateKey {
    if(![self password] || [[self password] isEqualToString:@""])
-      self.key = [[[GNTPKey alloc] initWithPassword:@"" hashAlgorithm:GNTPNoHash encryptionAlgorithm:GNTPNone] autorelease];
+      self.key = [[GNTPKey alloc] initWithPassword:@"" hashAlgorithm:GNTPNoHash encryptionAlgorithm:GNTPNone];
    else
-      self.key = [[[GNTPKey alloc] initWithPassword:[self password] hashAlgorithm:GNTPSHA512 encryptionAlgorithm:GNTPNone] autorelease];
+      self.key = [[GNTPKey alloc] initWithPassword:[self password] hashAlgorithm:GNTPSHA512 encryptionAlgorithm:GNTPNone];
 }
 
 - (NSString *) password {
 	if (!didPasswordLookup && [self uuid]) {
-      password = [[GrowlKeychainUtilities passwordForServiceName:GrowlOutgoingNetworkPassword accountName:[self uuid]] retain];
+      password = [GrowlKeychainUtilities passwordForServiceName:GrowlOutgoingNetworkPassword accountName:[self uuid]];
 		
 		didPasswordLookup = YES;
 	}
@@ -96,7 +96,6 @@
 
 - (void) setPassword:(NSString *)inPassword {
 	if (password != inPassword) {
-		[password release];
 		password = [inPassword copy];
 	}else{
       //No need to write out forward destinations or reset password if its the same string as already;
@@ -111,9 +110,7 @@
 
 -(void)setComputerName:(NSString *)name
 {
-   if(_name)
-      [_name release];
-   _name = [name retain];
+   _name = name;
    
    self.lastKnownAddress = nil;
 }
@@ -126,9 +123,7 @@
    //If someone is trying to set the address data and we aren't allowed to do caching at the moment, nil it
    if(![[GrowlPreferencesController sharedController] boolForKey:@"AddressCachingEnabled"] && address)
       address = nil;
-   if(_lastKnownAddress)
-      [_lastKnownAddress release];
-   _lastKnownAddress = [address retain];
+   _lastKnownAddress = address;
 }
 
 - (void)setActive:(BOOL)active {
@@ -179,7 +174,7 @@
     NSDictionary *eDict = [NSDictionary dictionaryWithObject:description
                                                       forKey:NSLocalizedDescriptionKey];
     if(outError != NULL)
-        *outError = [[[NSError alloc] initWithDomain:@"GrowlNetworking" code:2 userInfo:eDict] autorelease];
+        *outError = [[NSError alloc] initWithDomain:@"GrowlNetworking" code:2 userInfo:eDict];
     return NO;
 }
 
@@ -188,13 +183,7 @@
 	[self removeObserver:self forKeyPath:@"active"];
 	[self removeObserver:self forKeyPath:@"computerName"];
 	
-	[password release];
-	[_name release];
-	[_uuid release];
-   [_key release];
-   [_domain release];
 	
-	[super dealloc];
 }
 
 @end

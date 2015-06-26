@@ -12,7 +12,7 @@
 + (void)load
 {
 	if (self == [GrowlAppNameClickNotificationTransformer class]) {
-		[self setValueTransformer:[[[self alloc] init] autorelease]
+		[self setValueTransformer:[[self alloc] init]
 						  forName:@"GrowlAppNameClickNotificationTransformer"];
 	}
 }

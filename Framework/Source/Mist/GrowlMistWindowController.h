@@ -27,16 +27,16 @@
 	BOOL						 sticky;
 	BOOL						 visible;
 	BOOL						 selected;
-	id							 delegate;
+	id							 __strong delegate;
 }
 
-@property (nonatomic,readwrite,retain) NSViewAnimation *fadeAnimation;
-@property (nonatomic,readwrite,retain) NSTimer *lifetime;
+@property (nonatomic,readwrite,strong) NSViewAnimation *fadeAnimation;
+@property (nonatomic,readwrite,strong) NSTimer *lifetime;
 @property (nonatomic,readonly) BOOL sticky;
 @property (nonatomic,readonly) BOOL visible;
 @property (nonatomic,readonly) BOOL selected;
 @property (nonatomic,readonly) NSString *uuid;
-@property (nonatomic,assign) id delegate;
+@property (nonatomic,strong) id delegate;
 
 - (id)initWithNotificationTitle:(NSString *)title
                            text:(NSString *)text

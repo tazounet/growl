@@ -30,9 +30,6 @@
 
 -(void)dealloc {
 	dispatch_release(sound_queue);
-	[queuedSounds release];
-	[audioDeviceId release];
-	[super dealloc];
 }
 
 + (NSString*)getAudioDevice
@@ -46,15 +43,14 @@
 		AudioObjectID deviceID;
 		if(AudioObjectGetPropertyData(kAudioObjectSystemObject, &propertyAddress, 0, NULL, &propertySize, &deviceID) == noErr)
 		{
-			NSString *UID = nil;
+			CFStringRef UID = NULL;
 			propertySize = sizeof(UID);
 			propertyAddress.mSelector = kAudioDevicePropertyDeviceUID;
 			propertyAddress.mScope = kAudioObjectPropertyScopeGlobal;
 			propertyAddress.mElement = kAudioObjectPropertyElementMaster;
 			if (AudioObjectGetPropertyData(deviceID, &propertyAddress, 0, NULL, &propertySize, &UID) == noErr)
 			{
-				result = [NSString stringWithString:UID];
-				CFRelease(UID);
+				result = (__bridge NSString *)UID;
 			}
 		}
 	}
@@ -80,13 +76,13 @@
 		
 		[soundToPlay setVolume:((CGFloat)volume / 100.0f)];
 		
-		__block GrowlSoundAction *blockSelf = self;
+		__weak GrowlSoundAction *weakSelf = self;
 		dispatch_async(sound_queue, ^{
-			if(!blockSelf.currentSound){
-				blockSelf.currentSound = soundToPlay;
+			if(!weakSelf.currentSound){
+				weakSelf.currentSound = soundToPlay;
 				[soundToPlay play];
 			}else {
-				[blockSelf.queuedSounds addObject:soundToPlay];
+				[weakSelf.queuedSounds addObject:soundToPlay];
 			}
 		});
 	}else{
@@ -95,20 +91,20 @@
 }
 
 - (GrowlPluginPreferencePane *) preferencePane {
-	if (!preferencePane)
-		preferencePane = [[GrowlSoundActionPreferencePane alloc] initWithBundle:[NSBundle bundleForClass:[self class]]];
+	if (!_preferencePane)
+		_preferencePane = [[GrowlSoundActionPreferencePane alloc] initWithBundle:[NSBundle bundleForClass:[self class]]];
 	
-	return preferencePane;
+	return _preferencePane;
 }
 
 -(void)sound:(NSSound *)sound didFinishPlaying:(BOOL)aBool {
-	__block GrowlSoundAction *blockSelf = self;
+	__weak GrowlSoundAction *weakSelf = self;
 	dispatch_async(sound_queue, ^{
-		blockSelf.currentSound = nil;
-		if([blockSelf.queuedSounds count] > 0){
-			NSSound *newSound = [blockSelf.queuedSounds objectAtIndex:0U];
-			blockSelf.currentSound = newSound;
-			[blockSelf.queuedSounds removeObjectAtIndex:0U];
+		weakSelf.currentSound = nil;
+		if([weakSelf.queuedSounds count] > 0){
+			NSSound *newSound = [weakSelf.queuedSounds objectAtIndex:0U];
+			weakSelf.currentSound = newSound;
+			[weakSelf.queuedSounds removeObjectAtIndex:0U];
 			[newSound play];
 		}
 	});

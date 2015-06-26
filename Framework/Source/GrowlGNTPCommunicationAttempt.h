@@ -27,15 +27,15 @@
 	NSString *password;
 	
 	//For the XPC version
-	xpc_connection_t connection;
+	xpc_connection_t _connection;
 }
 
-@property (nonatomic, retain) NSString *host;
-@property (nonatomic, retain) NSString *password;
-@property (nonatomic, retain) xpc_connection_t connection NS_AVAILABLE(10_7, 5_0) __attribute__((NSObject));
-@property (nonatomic, retain) NSMutableDictionary *callbackHeaderItems;
-@property (nonatomic, retain) GNTPKey *key;
-@property (nonatomic, retain) NSData *addressData;
+@property (nonatomic, strong) NSString *host;
+@property (nonatomic, strong) NSString *password;
+@property (nonatomic, strong) xpc_connection_t connection;
+@property (nonatomic, strong) NSMutableDictionary *callbackHeaderItems;
+@property (nonatomic, strong) GNTPKey *key;
+@property (nonatomic, strong) NSData *addressData;
 
 //Lazily constructs the packet for self.dictionary.
 -(NSData*)outgoingData;

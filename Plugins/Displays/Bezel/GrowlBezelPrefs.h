@@ -49,15 +49,15 @@
 	IBOutlet NSSlider		*slider_opacity;
 }
 
-@property (nonatomic, retain) NSString *styleLabel;
-@property (nonatomic, retain) NSString *positionLabel;
-@property (nonatomic, retain) NSString *shrinkLabel;
-@property (nonatomic, retain) NSString *flipLabel;
+@property (nonatomic, strong) NSString *styleLabel;
+@property (nonatomic, strong) NSString *positionLabel;
+@property (nonatomic, strong) NSString *shrinkLabel;
+@property (nonatomic, strong) NSString *flipLabel;
 
-@property (nonatomic, retain) NSString *styleDefault;
-@property (nonatomic, retain) NSString *styleCharcoal;
+@property (nonatomic, strong) NSString *styleDefault;
+@property (nonatomic, strong) NSString *styleCharcoal;
 
-@property (nonatomic, retain) NSArray *positionStrings;
+@property (nonatomic, strong) NSArray *positionStrings;
 
 - (CGFloat) duration;
 - (void) setDuration:(CGFloat)value;

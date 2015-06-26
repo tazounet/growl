@@ -13,7 +13,7 @@
 
 @interface HWGrowlGraphicCardMonitor ()
 
-@property (nonatomic, assign) id<HWGrowlPluginControllerProtocol> delegate;
+@property (nonatomic, unsafe_unretained) id<HWGrowlPluginControllerProtocol> delegate;
 
 @end
 
@@ -115,7 +115,7 @@
 	static NSImage *_icon = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		_icon = [[NSImage imageNamed:@"HWGPrefsDefault"] retain];
+		_icon = [NSImage imageNamed:@"HWGPrefsDefault"];
 	});
 	return _icon;
 }

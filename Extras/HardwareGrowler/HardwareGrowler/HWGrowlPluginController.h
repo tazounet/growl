@@ -16,7 +16,7 @@
 	NSMutableArray *monitors;
 }
 
-@property (nonatomic, retain) NSMutableArray *plugins;
+@property (nonatomic, strong) NSMutableArray *plugins;
 
 -(void)loadPlugins;
 

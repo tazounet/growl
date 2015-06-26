@@ -26,7 +26,7 @@
 @property (nonatomic, assign) HGPowerSource powerType;
 @property (nonatomic, assign) NSInteger remainingTime;
 
-@property (nonatomic, retain) NSString *typeString;
+@property (nonatomic, strong) NSString *typeString;
 
 -(id)initWithPowerSourceDescription:(CFDictionaryRef)description;
 
@@ -35,7 +35,7 @@
 @implementation GrowlPowerSourceDescription
 
 +(GrowlPowerSourceDescription*)descriptionWithDescription:(CFDictionaryRef)description {
-	return [[[GrowlPowerSourceDescription alloc] initWithPowerSourceDescription:description] autorelease];
+	return [[GrowlPowerSourceDescription alloc] initWithPowerSourceDescription:description];
 }
 
 -(id)initWithPowerSourceDescription:(CFDictionaryRef)description {
@@ -105,11 +105,6 @@
 	return self;
 }
 
--(void)dealloc {
-	[_typeString release];
-	_typeString = nil;
-	[super dealloc];
-}
 
 -(NSString*)notificationDescriptionForCurrentSource:(HGPowerSource)currentSource {
 	NSMutableString *description = nil;
@@ -160,19 +155,19 @@
 
 @interface HWGrowlPowerMonitor ()
 
-@property (nonatomic, assign) id<HWGrowlPluginControllerProtocol> delegate;
+@property (nonatomic, unsafe_unretained) id<HWGrowlPluginControllerProtocol> delegate;
 @property (nonatomic, assign)	CFRunLoopSourceRef notificationRunLoopSource;
 
 @property (nonatomic, assign) HGPowerSource lastPowerSource;
 @property (nonatomic, assign) NSTimeInterval lastKnownTime;
 
-@property (nonatomic, retain) NSTimer *refireTimer;
+@property (nonatomic, strong) NSTimer *refireTimer;
 @property (nonatomic, assign) BOOL lastWarnState;
 
-@property (nonatomic, retain) NSString *refireBatteryStatusLabel;
-@property (nonatomic, retain) NSString *refireEveryLabel;
-@property (nonatomic, retain) NSString *minutesLabel;
-@property (nonatomic, retain) NSString *refireOnlyOnBatteryLabel;
+@property (nonatomic, strong) NSString *refireBatteryStatusLabel;
+@property (nonatomic, strong) NSString *refireEveryLabel;
+@property (nonatomic, strong) NSString *minutesLabel;
+@property (nonatomic, strong) NSString *refireOnlyOnBatteryLabel;
 
 @end
 
@@ -188,7 +183,7 @@
 
 -(id)init {
 	if((self = [super init])){
-		self.notificationRunLoopSource = IOPSNotificationCreateRunLoopSource(powerSourceChanged, self);
+		self.notificationRunLoopSource = IOPSNotificationCreateRunLoopSource(powerSourceChanged, (__bridge void *)(self));
 		
 		if (notificationRunLoopSource)
 			CFRunLoopAddSource(CFRunLoopGetCurrent(), notificationRunLoopSource, kCFRunLoopDefaultMode);
@@ -208,21 +203,11 @@
 	CFRunLoopRemoveSource(CFRunLoopGetCurrent(), notificationRunLoopSource, kCFRunLoopDefaultMode);
 	CFRelease(notificationRunLoopSource);
 	[refireTimer invalidate];
-	[refireTimer release];
 	
-	[_refireBatteryStatusLabel release];
-    _refireBatteryStatusLabel = nil;
 	
-	[_refireEveryLabel release];
-    _refireEveryLabel = nil;
 	
-    [_minutesLabel release];
-	_minutesLabel = nil;
 	
-    [_refireOnlyOnBatteryLabel release];
-	_refireOnlyOnBatteryLabel = nil;
     
-	[super dealloc];
 }
 
 -(void)fireOnLaunchNotes {
@@ -320,7 +305,7 @@
 	CFTypeRef sourcesBlob = IOPSCopyPowerSourcesInfo();
 	if(sourcesBlob)
 	{
-		NSString *source = (NSString*)IOPSGetProvidingPowerSourceType(sourcesBlob);
+		NSString *source = (__bridge NSString*)IOPSGetProvidingPowerSourceType(sourcesBlob);
 		
 		HGPowerSource currentSource;
 		if([source compare:@"AC Power"] == NSOrderedSame) {
@@ -471,13 +456,13 @@
 		NSString *sourceString = [obj notificationDescriptionForCurrentSource:currentSource];
 		if(sourceString){
 			if(!description)
-				description = [[NSMutableString string] retain];
+				description = [NSMutableString string];
 			else
 				[description appendString:@"\n"];
 			[description appendString:sourceString];
 		}
 	}];
-	return [description autorelease];
+	return description;
 }
 
 +(NSInteger)batteryPercentageForPowerSourceDescription:(CFDictionaryRef)description {
@@ -521,7 +506,7 @@
 }
 
 static void powerSourceChanged(void *context) {
-	HWGrowlPowerMonitor *monitor = (HWGrowlPowerMonitor*)context;
+	HWGrowlPowerMonitor *monitor = (__bridge HWGrowlPowerMonitor*)context;
 	[monitor powerSourceChanged:NO];
 	[monitor checkTimer];
 }
@@ -541,14 +526,15 @@ static void powerSourceChanged(void *context) {
 	static NSImage *_icon = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		_icon = [[NSImage imageNamed:@"HWGPrefsPower"] retain];
+		_icon = [NSImage imageNamed:@"HWGPrefsPower"];
 	});
 	return _icon;
 }
 -(NSView*)preferencePane {
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		[NSBundle loadNibNamed:@"PowerMonitorPrefs" owner:self];
+        NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+        [bundle loadNibNamed:@"PowerMonitorPrefs" owner:self topLevelObjects:nil];
 	});
 	return prefsView;
 }

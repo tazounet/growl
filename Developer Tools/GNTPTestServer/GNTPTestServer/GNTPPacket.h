@@ -28,14 +28,14 @@
 	BOOL _incomingDataHeaderRead;
 }
 
-@property (nonatomic, retain) GNTPKey *key;
-@property (nonatomic, retain) NSString *connectedHost;
-@property (nonatomic, retain) NSData *connectedAddress;
-@property (nonatomic, retain) NSString *guid;
-@property (nonatomic, retain) NSString *action;
-@property (nonatomic, retain) NSDictionary *growlDict;
-@property (nonatomic, retain) NSMutableDictionary *gntpDictionary;
-@property (nonatomic, retain) NSMutableArray *dataBlockIdentifiers;
+@property (nonatomic, strong) GNTPKey *key;
+@property (nonatomic, strong) NSString *connectedHost;
+@property (nonatomic, strong) NSData *connectedAddress;
+@property (nonatomic, strong) NSString *guid;
+@property (nonatomic, strong) NSString *action;
+@property (nonatomic, strong) NSDictionary *growlDict;
+@property (nonatomic, strong) NSMutableDictionary *gntpDictionary;
+@property (nonatomic, strong) NSMutableArray *dataBlockIdentifiers;
 @property (nonatomic, assign) NSInteger state;
 @property (nonatomic, assign) BOOL keepAlive;
 

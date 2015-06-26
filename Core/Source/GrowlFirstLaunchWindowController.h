@@ -12,19 +12,19 @@
 
 @interface GrowlFirstLaunchWindowController : NSWindowController <NSWindowDelegate>
 
-@property (nonatomic, retain) NSString *windowTitle;
-@property (nonatomic, retain) NSString *textBoxString;
-@property (nonatomic, assign) IBOutlet WebView *webView;
-@property (nonatomic, retain) NSString *actionButtonTitle;
-@property (nonatomic, retain) NSString *continueButtonTitle;
+@property (nonatomic, strong) NSString *windowTitle;
+@property (nonatomic, strong) NSString *textBoxString;
+@property (nonatomic, weak) IBOutlet WebView *webView;
+@property (nonatomic, strong) NSString *actionButtonTitle;
+@property (nonatomic, strong) NSString *continueButtonTitle;
 
 @property (nonatomic) BOOL actionEnabled;
 
 @property (nonatomic) NSUInteger current;
 
-@property (nonatomic, retain) NSArray *launchViews;
-@property (assign) IBOutlet NSProgressIndicator *progressIndicator;
-@property (nonatomic, retain) NSString *progressLabel;
+@property (nonatomic, strong) NSArray *launchViews;
+@property (weak) IBOutlet NSProgressIndicator *progressIndicator;
+@property (nonatomic, strong) NSString *progressLabel;
 
 +(BOOL)shouldRunFirstLaunch;
 

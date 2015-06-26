@@ -3,10 +3,10 @@
 
 @interface PRGenerator()
 @property (nonatomic, copy, readwrite) NSString *providerKey;
-@property (nonatomic, assign, readwrite) id<PRGeneratorDelegate> delegate;
+@property (nonatomic, unsafe_unretained, readwrite) id<PRGeneratorDelegate> delegate;
 @property (nonatomic, copy, readwrite) NSString *token;
 @property (nonatomic, copy, readwrite) NSString *tokenURL;
-@property (nonatomic, retain, readwrite) PRAPIKey *apiKey;
+@property (nonatomic, strong, readwrite) PRAPIKey *apiKey;
 @end
 
 @implementation PRGenerator
@@ -27,31 +27,23 @@
 	return self;
 }
 
-- (void)dealloc
-{
-    [_providerKey release];
-	[_token release];
-	[_tokenURL release];
-	[_apiKey release];
-    [super dealloc];
-}
 
 - (NSString *)encodedStringForString:(NSString *)string
 {
-	NSString *encodedString = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL,
+	NSString *encodedString = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL,
 																				  (CFStringRef)string, 
 																				  NULL,
 																				  (CFStringRef)@";/?:@&=+$",
-																				  kCFStringEncodingUTF8);
+																				  kCFStringEncodingUTF8));
 	
-	return [encodedString autorelease];
+	return encodedString;
 }
 
 - (NSXMLElement *)retrieveElementFromData:(NSData *)data error:(NSError **)error
 {
 	NSXMLElement *retrieveElement = nil;
 	NSError *xmlError = nil;
-	NSXMLDocument *document = [[[NSXMLDocument alloc] initWithData:data options:0 error:&xmlError] autorelease];
+	NSXMLDocument *document = [[NSXMLDocument alloc] initWithData:data options:0 error:&xmlError];
 	if(document) {
 		NSArray *retrieveElements = [document.rootElement elementsForName:@"retrieve"];
 		if(!retrieveElements.count) {
@@ -129,14 +121,14 @@
 							   
 							   NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
 							   
-							   NSLog(@"Got back XML: %@", [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease]);
+							   NSLog(@"Got back XML: %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
 							   
 							   if(statusCode == 200) {
 								   NSXMLElement *retrieveElement = [self retrieveElementFromData:data error:&error];
 								   if(retrieveElement) {
 									   NSXMLNode *apikeyNode = [retrieveElement attributeForName:@"apikey"];
 									   
-									   self.apiKey = [[[PRAPIKey alloc] init] autorelease];
+									   self.apiKey = [[PRAPIKey alloc] init];
 									   self.apiKey.enabled = YES;
 									   self.apiKey.apiKey = apikeyNode.stringValue;
 									   self.apiKey.validated = YES; // after so the change doesn't reset it

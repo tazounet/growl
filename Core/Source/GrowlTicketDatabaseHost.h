@@ -13,6 +13,6 @@
 
 @interface GrowlTicketDatabaseHost : GrowlTicketDatabaseTicket
 
-@property (nonatomic, retain) NSNumber * localhost;
+@property (nonatomic, strong) NSNumber * localhost;
 
 @end

@@ -24,8 +24,8 @@
    int returnCode;
 }
 
-@property (nonatomic, retain) GrowlGNTPRegistrationAttempt *registrationAttempt;
-@property (nonatomic, retain) GrowlGNTPNotificationAttempt *notificationAttempt;
+@property (nonatomic, strong) GrowlGNTPRegistrationAttempt *registrationAttempt;
+@property (nonatomic, strong) GrowlGNTPNotificationAttempt *notificationAttempt;
 
 - (id)initWithRegistrationDict:(NSDictionary*)regDict 
               notificationDict:(NSDictionary*)noteDict

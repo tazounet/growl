@@ -15,8 +15,8 @@
 	dispatch_queue_t speech_dispatch_queue;
 }
 
-@property (retain) NSMutableArray *speech_queue;
-@property (retain) NSSpeechSynthesizer *syn;
+@property (strong) NSMutableArray *speech_queue;
+@property (strong) NSSpeechSynthesizer *syn;
 @property (nonatomic, assign) BOOL paused;
 
 - (void)speakNotification:(NSString*)notificationToSpeak withConfiguration:(NSDictionary*)config;

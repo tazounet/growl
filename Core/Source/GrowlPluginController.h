@@ -198,7 +198,7 @@ extern NSString *GrowlPluginInfoKeyInstance;        //Description dicts only
 	FSEventStreamRef pluginsDirectoryEventStream;
 }
 
-@property (nonatomic, retain) NSMutableDictionary *pluginsByBundleIdentifier;
+@property (nonatomic, strong) NSMutableDictionary *pluginsByBundleIdentifier;
 
 + (GrowlPluginController *) sharedController;
 
@@ -303,6 +303,7 @@ extern NSString *GrowlPluginInfoKeyInstance;        //Description dicts only
 //Installs plug-in to a plug-ins folder. Used by GHA for installing plug-ins that are Opened (e.g. double-clicked) by the user.
 - (void) installPluginFromPath:(NSString *)path;
 
+- (void)loadPlugins;
 
 - (NSArray *) allPluginHandlers;
 

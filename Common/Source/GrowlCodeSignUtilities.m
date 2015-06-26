@@ -41,7 +41,7 @@
 	if (status == errSecSuccess)
     {    
         NSString *requirementString = [NSString stringWithFormat:@"entitlement[\"%@\"] exists", entitlement];
-        status = SecRequirementCreateWithStringAndErrors((CFStringRef)requirementString, kSecCSDefaultFlags, &errors, &requirement);
+        status = SecRequirementCreateWithStringAndErrors((__bridge CFStringRef)requirementString, kSecCSDefaultFlags, &errors, &requirement);
         if (status == errSecSuccess)
         {
             status = SecCodeCheckValidity(code, kSecCSDefaultFlags, requirement);
@@ -62,7 +62,8 @@
     if(errors)
     {
         CFDictionaryRef errDict = CFErrorCopyUserInfo(errors);
-        NSLog(@"SecRequirementCreateWithStringAndErrors failure: %@", (NSDictionary*)CFBridgingRelease(errDict));
+        NSLog(@"SecRequirementCreateWithStringAndErrors failure: %@", (__bridge NSDictionary*)errDict);
+        CFRelease(errDict), errDict = NULL;
         CFRelease(errors), errors = NULL;
     }
     if(!result)

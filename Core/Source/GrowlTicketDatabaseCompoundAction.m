@@ -23,7 +23,7 @@
 }
 
 -(NSSet*)resolvedActionConfigSet {
-	return [[self.actions copy] autorelease];
+	return [self.actions copy];
 }
 
 @end

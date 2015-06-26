@@ -26,7 +26,7 @@ typedef enum {
 } GrowlDisplayStatus;
 
 @interface GrowlDisplayWindowController : NSWindowController <NSWindowDelegate, NSAnimationDelegate> {
-	GrowlDisplayPlugin   *plugin;
+	GrowlDisplayPlugin   *__weak plugin;
 	GrowlNotification    *notification;	/* not sure if this will be needed since binding may work without */
 
 	SEL					             action;
@@ -125,7 +125,9 @@ typedef enum {
 
 - (id) clickContext;
 
+- (void) notificationClosed:(NSNotification*)notification;
 - (void) notificationClicked:(id) sender;
+- (void) clickedCloseBox;
 
 - (void) addNotificationObserver:(id) observer;
 - (void) removeNotificationObserver:(id) observer;
@@ -135,6 +137,8 @@ typedef enum {
 
 - (NSNumber *) clickHandlerEnabled __attribute__((deprecated));
 - (void) setClickHandlerEnabled:(NSNumber *)flag __attribute__((deprecated));
+
+- (void) mouseEnteredNotificationView:(GrowlNotificationView *)notificationView;
 
 - (NSDictionary*)configurationDict;
 
@@ -148,11 +152,11 @@ typedef enum {
 @property (nonatomic, assign) BOOL finished;
 @property (nonatomic, assign) BOOL ignoresOtherNotifications;
 @property (nonatomic, assign) SEL action;
-@property (nonatomic, retain) id target;
+@property (nonatomic, strong) id target;
 @property (nonatomic, assign) BOOL screenshotModeEnabled __attribute__((deprecated));
 @property (nonatomic, assign) CFTimeInterval displayDuration;
 @property (nonatomic, assign) CFTimeInterval transitionDuration;
-@property (nonatomic, assign) GrowlDisplayPlugin *plugin;
+@property (nonatomic, weak) GrowlDisplayPlugin *plugin;
 @property (nonatomic, assign) CGRect occupiedRect;
 @end
 
@@ -177,7 +181,7 @@ typedef enum {
 - (void) displayWindowControllerDidDisplayWindow:(NSNotification *)notification;
 
 /*!
- * @method displayWindowControllerWillTakeDownWindow:
+ * @method displayWindowControllerWillTakeWindowDown:
  * @abstract Called right before the notification's window is hidden.
  * @param notification A notification containing the GrowlDisplayWindowController which sent the notification.
  */

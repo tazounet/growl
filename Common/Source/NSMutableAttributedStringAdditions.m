@@ -17,13 +17,12 @@
 - (void) addDefaultAttributes:(NSDictionary *)defaultAttributes {
 	NSRange range;
 	for (NSUInteger i=0U, length = [self length]; i<length; i += range.length) {
-		NSDictionary *currentAttributes = [[self attributesAtIndex:i effectiveRange:&range] retain];
+		NSDictionary *currentAttributes = [self attributesAtIndex:i effectiveRange:&range];
 		for (NSString *attributeName in defaultAttributes)
 			if (![currentAttributes objectForKey:attributeName])
 				[self addAttribute:attributeName
 							 value:[defaultAttributes objectForKey:attributeName]
 							 range:range];
-		[currentAttributes release];
 	}
 }
 

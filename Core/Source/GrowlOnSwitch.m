@@ -36,9 +36,6 @@
 - (void)dealloc
 {
     [self removeObserver:self forKeyPath:@"state"];
-    [_onLabel release];
-    [_offLabel release];
-    [super dealloc];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context

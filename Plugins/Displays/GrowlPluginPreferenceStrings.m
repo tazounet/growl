@@ -69,33 +69,5 @@
    return self;
 }
 
--(void)dealloc {
-   [growlDisplayOpacity release];
-   
-   [growlDisplayDuration release];
-   
-   [growlDisplayPriority release];
-	self.growlDisplayPriorityVeryLow = nil;
-	self.growlDisplayPriorityModerate = nil;
-	self.growlDisplayPriorityNormal = nil;
-	self.growlDisplayPriorityHigh = nil;
-	self.growlDisplayPriorityEmergency = nil;
-	
-   [growlDisplayTextColor release];
-   [growlDisplayBackgroundColor release];
-   
-   [growlDisplayLimitLines release];
-   [growlDisplayScreen release];
-   [growlDisplaySize release];
-   [growlDisplaySizeNormal release];
-   [growlDisplaySizeLarge release];
-   [growlDisplaySizeSmall release];
-   
-   [growlDisplayFloatingIcon release];
-   
-   [effectLabel release];
-   [fadeEffect release];
-   [super dealloc];
-}
 
 @end

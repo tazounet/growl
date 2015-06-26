@@ -13,10 +13,10 @@
 @class GrowlNotificationDatabase, GroupedArrayController;
 
 @interface GrowlNotificationHistoryWindow : NSWindowController <NSTableViewDelegate, NSTableViewDataSource, GroupedArrayControllerDelegate> {
-   IBOutlet NSTableView *historyTable;
-   IBOutlet NSTextField *countLabel;
-   IBOutlet NSTableColumn *notificationColumn;
-   GrowlNotificationDatabase *_notificationDatabase;
+   IBOutlet NSTableView *__weak historyTable;
+   IBOutlet NSTextField *__weak countLabel;
+   IBOutlet NSTableColumn *__weak notificationColumn;
+   GrowlNotificationDatabase *__weak _notificationDatabase;
 
    GroupedArrayController *groupController;
 
@@ -24,12 +24,12 @@
 }
 -(id)initWithNotificationDatabase:(GrowlNotificationDatabase *)notificationDatabase;
 
-@property (nonatomic, assign) IBOutlet NSTableView *historyTable;
-@property (nonatomic, assign) IBOutlet NSTextField *countLabel;
-@property (nonatomic, assign) IBOutlet NSTableColumn *notificationColumn;
-@property (nonatomic, assign, readwrite)  GrowlNotificationDatabase* notificationDatabase;
-@property (nonatomic, retain) NSString *windowTitle;
-@property (nonatomic, retain) GroupedArrayController *groupController;
+@property (nonatomic, weak) IBOutlet NSTableView *historyTable;
+@property (nonatomic, weak) IBOutlet NSTextField *countLabel;
+@property (nonatomic, weak) IBOutlet NSTableColumn *notificationColumn;
+@property (nonatomic, weak, readwrite)  GrowlNotificationDatabase* notificationDatabase;
+@property (nonatomic, strong) NSString *windowTitle;
+@property (nonatomic, strong) GroupedArrayController *groupController;
 
 -(void)updateCount;
 -(void)resetArray;

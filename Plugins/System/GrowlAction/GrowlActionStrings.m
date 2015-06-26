@@ -26,18 +26,5 @@
 	return self;
 }
 
--(void)dealloc {
-	self.titleLabel = nil;
-	self.descriptionLabel = nil;
-	self.priorityLabel = nil;
-	self.stickyLabel = nil;
-	
-	self.veryLowPriority = nil;
-	self.moderatePriority = nil;
-	self.normalPriority = nil;
-	self.highPriority = nil;
-	self.emergencyPriority = nil;
-	[super dealloc];
-}
 
 @end

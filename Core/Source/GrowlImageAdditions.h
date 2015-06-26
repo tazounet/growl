@@ -12,9 +12,23 @@
 
 @interface NSImage (GrowlImageAdditions)
 
-- (void) drawScaledInRect:(NSRect)targetRect operation:(NSCompositingOperation)operation fraction:(CGFloat)f;
+- (void) drawScaledInRect:(NSRect)targetRect operation:(NSCompositingOperation)operation fraction:(CGFloat)f neverFlipped:(BOOL)neverFlipped;
 - (NSSize) adjustSizeToDrawAtSize:(NSSize)theSize;
 - (NSImageRep *) bestRepresentationForSize:(NSSize)theSize;
 - (NSImageRep *) representationOfSize:(NSSize)theSize;
 - (NSData *) PNGRepresentation;
+
+// Copyright (c) 2010 The Chromium Authors. All rights reserved.
+// Works like |-drawInRect:fromRect:operation:fraction:|, except that
+// if |neverFlipped| is |YES|, and the context is flipped, the a
+// transform is applied to flip it again before drawing the image.
+//
+// Compare to the 10.6 method
+// |-drawInRect:fromRect:operation:fraction:respectFlipped:hints:|.
+- (void) drawInRect:(NSRect)dstRect
+         fromRect:(NSRect)srcRect
+         operation:(NSCompositingOperation)op
+         fraction:(CGFloat)requestedAlpha
+         neverFlipped:(BOOL)neverFlipped;
+
 @end

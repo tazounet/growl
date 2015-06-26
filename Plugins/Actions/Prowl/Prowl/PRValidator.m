@@ -2,8 +2,8 @@
 #import "PRServerError.h"
 
 @interface PRValidator()
-@property (nonatomic, assign, readwrite) id<PRValidatorDelegate> delegate;
-@property (nonatomic, retain) NSMutableSet *validatingApiKeys;
+@property (nonatomic, unsafe_unretained, readwrite) id<PRValidatorDelegate> delegate;
+@property (nonatomic, strong) NSMutableSet *validatingApiKeys;
 @end
 
 @implementation PRValidator
@@ -20,21 +20,16 @@
 	return self;
 }
 
-- (void)dealloc
-{
-	[_validatingApiKeys release];
-    [super dealloc];
-}
 
 - (NSString *)encodedStringForString:(NSString *)string
 {
-	NSString *encodedString = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL,
+	NSString *encodedString = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL,
 																				  (CFStringRef)string, 
 																				  NULL,
 																				  (CFStringRef)@";/?:@&=+$",
-																				  kCFStringEncodingUTF8);
+																				  kCFStringEncodingUTF8));
 	
-	return [encodedString autorelease];
+	return encodedString;
 }
 
 - (BOOL)isValidatingApiKey:(PRAPIKey *)apiKey
@@ -73,7 +68,7 @@
 							   
 							   //NSLog(@"Got back XML: %@", [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease]);
 							   
-							   NSXMLDocument *document = [[[NSXMLDocument alloc] initWithData:data options:0 error:&error] autorelease];
+							   NSXMLDocument *document = [[NSXMLDocument alloc] initWithData:data options:0 error:&error];
 							   
 							   if(!document) {
 								   [self.delegate validator:self

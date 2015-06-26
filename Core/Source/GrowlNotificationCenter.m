@@ -15,11 +15,6 @@
 	}
 	return self;
 }
-- (void) dealloc {
-	[observers release];
-
-	[super dealloc];
-}
 
 - (oneway void) addObserver:(byref id<GrowlNotificationObserver>)observer {
 	[observers addObject:observer];

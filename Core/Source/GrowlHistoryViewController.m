@@ -75,14 +75,6 @@
 {
    [historyOnOffSwitch removeObserver:self forKeyPath:@"state"];
    
-   [enableHistoryLabel release];
-   [keepAmountLabel release];
-   [keepDaysLabel release];
-   [applicationColumnLabel release];
-   [titleColumnLabel release];
-   [timeColumnLabel release];
-   [clearAllHistoryButtonTitle release];
-   [super dealloc];
 }
 
 - (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context

@@ -27,17 +27,17 @@
 
 @interface GrowlScriptActionPreferencePane ()
 
-@property (nonatomic, assign) IBOutlet NSTableView	*actionsTableView;
-@property (nonatomic, assign) IBOutlet NSTokenField *tokenField;
-@property (nonatomic, retain) NSArray *actions;
+@property (nonatomic, weak) IBOutlet NSTableView	*actionsTableView;
+@property (nonatomic, weak) IBOutlet NSTokenField *tokenField;
+@property (nonatomic, strong) NSArray *actions;
 
-@property (nonatomic, retain) NSString *scriptListTitle;
-@property (nonatomic, retain) NSString *unixArgumentLabel;
+@property (nonatomic, strong) NSString *scriptListTitle;
+@property (nonatomic, strong) NSString *unixArgumentLabel;
 
 -(void)setActionName:(NSString *)actionName;
 -(NSString*)actionName;
 
-@property (nonatomic, retain) NSString *previousUnixTestName;
+@property (nonatomic, strong) NSString *previousUnixTestName;
 @property (nonatomic) BOOL isUnixTask;
 
 @end
@@ -56,12 +56,6 @@
 
 -(void)dealloc {
    self.actionName = nil;
-	self.actions = nil;
-	[_scriptListTitle release];
-	_scriptListTitle = nil;
-	[_unixArgumentLabel release];
-	_unixArgumentLabel = nil;
-	[super dealloc];
 }
 
 -(NSString*)mainNibName {
@@ -76,7 +70,7 @@
 	static NSSet *keys = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		keys = [[NSSet setWithObjects:@"actions", @"actionName", @"isUnixTask", nil] retain];
+		keys = [NSSet setWithObjects:@"actions", @"actionName", @"isUnixTask", nil];
 	});
 	return keys;
 }
@@ -160,14 +154,14 @@
 	static NSArray *_arguments = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		_arguments = [@[@"GNTP Notification Sent-By",
+		_arguments = @[@"GNTP Notification Sent-By",
 						  GROWL_APP_NAME,
 						  GROWL_NOTIFICATION_NAME,
 						  GROWL_NOTIFICATION_TITLE,
 						  GROWL_NOTIFICATION_DESCRIPTION,
 						  GROWL_NOTIFICATION_PRIORITY,
 						  GROWL_NOTIFICATION_STICKY/*,
-						  GROWL_NOTIFICATION_ICON_DATA*/] retain];
+						  GROWL_NOTIFICATION_ICON_DATA*/];
 	});
 	return _arguments;
 }
@@ -176,7 +170,7 @@
 	static NSDictionary *_dict = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		_dict = [@{@"GNTP Notification Sent-By" : GrowlScriptActionLocalizedString(@"Host", @"Token display string for host"),
+		_dict = @{@"GNTP Notification Sent-By" : GrowlScriptActionLocalizedString(@"Host", @"Token display string for host"),
 					GROWL_APP_NAME : GrowlScriptActionLocalizedString(@"Application", @"Token display string for application name"),
 					GROWL_NOTIFICATION_NAME : GrowlScriptActionLocalizedString(@"Name", @"Token display string for notification name"),
 					GROWL_NOTIFICATION_TITLE : GrowlScriptActionLocalizedString(@"Title", @"Token display string for notification title"),
@@ -184,7 +178,7 @@
 					GROWL_NOTIFICATION_PRIORITY : GrowlScriptActionLocalizedString(@"Priority", @"Token display string for notification priority"),
 					GROWL_NOTIFICATION_STICKY : GrowlScriptActionLocalizedString(@"Sticky", @"Token display string for notification sticky")/*,
 					GROWL_NOTIFICATION_ICON_DATA : GrowlScriptActionLocalizedString(@"Icon Data", @"Token display string for icon data")*/
-					} retain];
+					};
 	});
 	return _dict;
 }
@@ -193,10 +187,10 @@
 	__block NSString *result = nil;
 	[[self keysToTokenDisplayStrings] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
 		if([obj caseInsensitiveCompare:editingString] == NSOrderedSame){
-			result = [key retain];
+			result = key;
 		}
 	}];
-	return [result autorelease];
+	return result;
 }
 
 - (NSArray *)tokenField:(NSTokenField *)tokenField

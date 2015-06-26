@@ -12,9 +12,9 @@
 
 @interface GroupController : NSObject
 
-@property (nonatomic, assign) GroupedArrayController *owner;
-@property (nonatomic, retain) NSString *groupID;
-@property (nonatomic, retain) NSArrayController *groupArray;
+@property (nonatomic, weak) GroupedArrayController *owner;
+@property (nonatomic, strong) NSString *groupID;
+@property (nonatomic, strong) NSArrayController *groupArray;
 @property (nonatomic) BOOL showGroup;
 
 -(id)initWithGroupID:(NSString*)newID arrayController:(NSArrayController*)controller;

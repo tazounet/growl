@@ -49,8 +49,6 @@
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[[NSDistributedNotificationCenter defaultCenter] removeObserver:self];
    
-   [settingsWindowTitle release];
-	[super dealloc];
 }
 
 - (id)initWithWindowNibName:(NSString *)windowNibName {
@@ -218,7 +216,6 @@
                                                   bundle:nil 
                                              forPrefPane:self];
       [prefViewControllers setValue:nextController forKey:nibName];
-      [nextController release];
    }
    
    NSWindow *aWindow = [self window];
@@ -237,7 +234,7 @@
    frame.origin.y -= (newSize.height - oldSize.height);
     frame.origin.x -= (newSize.width - oldSize.width)/2.0f;
    [oldController viewWillUnload];
-   [aWindow setContentView:[[[NSView alloc] initWithFrame:NSZeroRect] autorelease]];
+   [aWindow setContentView:[[NSView alloc] initWithFrame:NSZeroRect]];
    [oldController viewDidUnload];
     
    self.currentViewController = nextController;

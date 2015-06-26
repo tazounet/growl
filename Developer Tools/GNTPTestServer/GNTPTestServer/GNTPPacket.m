@@ -29,7 +29,7 @@
 
 @interface GNTPPacket ()
 
-@property (nonatomic, retain) NSString *incomingDataIdentifier;
+@property (nonatomic, strong) NSString *incomingDataIdentifier;
 @property (nonatomic, assign) NSUInteger incomingDataLength;
 @property (nonatomic, assign) BOOL incomingDataHeaderRead;
 
@@ -56,9 +56,9 @@
 +(BOOL)isValidKey:(GNTPKey*)key
 		forPassword:(NSString*)password
 {
-   GNTPKey *remoteKey = [[[GNTPKey alloc] initWithPassword:password
+   GNTPKey *remoteKey = [[GNTPKey alloc] initWithPassword:password
 															hashAlgorithm:[key hashAlgorithm]
-													encryptionAlgorithm:[key encryptionAlgorithm]] autorelease];
+													encryptionAlgorithm:[key encryptionAlgorithm]];
    [remoteKey setSalt:[key salt]];
    NSData *IV = [key IV];
    [remoteKey generateKey];
@@ -183,7 +183,7 @@
 {
 	//NSLog(@"headers: %@", headers);
 	BOOL errorSet = NO;
-	GNTPKey *key = [[[GNTPKey alloc] init] autorelease];
+	GNTPKey *key = [[GNTPKey alloc] init];
 	
 	NSArray *encryptionSubstrings = [[headers objectAtIndex:2] componentsSeparatedByString:@":"];
 	NSString *packetEncryptionAlgorithm = [[encryptionSubstrings objectAtIndex:0] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
@@ -261,7 +261,7 @@
 	static NSDictionary *_matchingDict = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		_matchingDict = [[NSDictionary dictionaryWithObjectsAndKeys:GROWL_APP_NAME, GrowlGNTPApplicationNameHeader,
+		_matchingDict = [NSDictionary dictionaryWithObjectsAndKeys:GROWL_APP_NAME, GrowlGNTPApplicationNameHeader,
 								GROWL_APP_ICON_DATA, GrowlGNTPApplicationIconHeader,
 								GROWL_NOTIFICATION_ICON_DATA, GrowlGNTPNotificationIcon,
 								GROWL_NOTIFICATION_IDENTIFIER, @"Notification-Coalescing-ID",
@@ -282,7 +282,7 @@
 								GROWL_GNTP_ORIGIN_SOFTWARE_NAME, GrowlGNTPOriginSoftwareName,
 								GROWL_GNTP_ORIGIN_SOFTWARE_VERSION, GrowlGNTPOriginSoftwareVersion,
 								GROWL_GNTP_ORIGIN_PLATFORM_NAME, GrowlGNTPOriginPlatformName,
-								GROWL_GNTP_ORIGIN_PLATFORM_VERSION, GrowlGNTPOriginPlatformVersion, nil] retain];
+								GROWL_GNTP_ORIGIN_PLATFORM_VERSION, GrowlGNTPOriginPlatformVersion, nil];
 	});
 	return _matchingDict;
 }
@@ -332,7 +332,7 @@
 	static NSDictionary *_matchingDict = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		_matchingDict = [[NSDictionary dictionaryWithObjectsAndKeys:GrowlGNTPApplicationNameHeader, GROWL_APP_NAME,
+		_matchingDict = [NSDictionary dictionaryWithObjectsAndKeys:GrowlGNTPApplicationNameHeader, GROWL_APP_NAME,
 								GrowlGNTPApplicationIconHeader, GROWL_APP_ICON_DATA,
 								GrowlGNTPNotificationIcon, GROWL_NOTIFICATION_ICON_DATA,
 								@"Notification-Coalescing-ID", GROWL_NOTIFICATION_IDENTIFIER,
@@ -357,7 +357,7 @@
 								GrowlGNTPSubscriberName, GrowlGNTPSubscriberName,
 								GrowlGNTPSubscriberID, GrowlGNTPSubscriberID,
 								GrowlGNTPSubscriberPort, GrowlGNTPSubscriberPort,
-								@"Connection", @"Connection", nil] retain];
+								@"Connection", @"Connection", nil];
 	});
 	return _matchingDict;
 }
@@ -397,7 +397,7 @@
  * Connection type
  */
 +(NSDictionary*)growlDictFilledInForConversion:(NSDictionary*)growlDict {
-	NSMutableDictionary *dictCopy = [[growlDict mutableCopy] autorelease];
+	NSMutableDictionary *dictCopy = [growlDict mutableCopy];
 	if(![dictCopy objectForKey:GROWL_NOTIFICATION_INTERNAL_ID])
 		[dictCopy setObject:[[NSProcessInfo processInfo] globallyUniqueString] forKey:GROWL_NOTIFICATION_INTERNAL_ID];
 		
@@ -407,7 +407,7 @@
 	NSMutableArray *previousRecieved = [dictCopy valueForKey:GROWL_NOTIFICATION_GNTP_RECEIVED];
 	/* New received header */
 	if ([dictCopy valueForKey:GROWL_NOTIFICATION_GNTP_SENT_BY]) {
-		ISO8601DateFormatter *formatter = [[[ISO8601DateFormatter alloc] init] autorelease];
+		ISO8601DateFormatter *formatter = [[ISO8601DateFormatter alloc] init];
 		NSString *nowAsISO8601 = [formatter stringFromDate:[NSDate date]];
 		
 		/* Received: From <hostname> by <hostname> [with Growl] [id <identifier>]; <ISO 8601 date> */
@@ -537,7 +537,7 @@
 	return dictionary;
 }
 +(NSString*)headersForGNTPDictionary:(NSDictionary*)dict {
-	__block NSMutableString *headerBlock = [NSMutableString string];
+    NSMutableString *headerBlock = [NSMutableString string];
 	[dict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
 		if(![key isEqualToString:@"GNTPDATABLOCKS"]){
 			if([obj isKindOfClass:[NSString class]])
@@ -549,7 +549,7 @@
 			}
 		}
 	}];
-	return [[headerBlock copy] autorelease];
+	return [headerBlock copy];
 }
 +(NSData*)gntpDataFromGrowlDictionary:(NSDictionary*)growlDict 
 										 ofType:(NSString*)type
@@ -564,7 +564,7 @@
 	}
 	[packetString appendString:@"\r\n"];
 	
-	NSMutableData *packetData = [[[packetString dataUsingEncoding:NSUTF8StringEncoding] mutableCopy] autorelease];
+	NSMutableData *packetData = [[packetString dataUsingEncoding:NSUTF8StringEncoding] mutableCopy];
 	NSString *headers = [self headersForGNTPDictionary:gntpDict];
 	//Encrypt them if need be
 	NSData *headerData = [headers dataUsingEncoding:NSUTF8StringEncoding];
@@ -624,18 +624,6 @@
 	return self;
 }
 
--(void)dealloc {
-   self.action = nil;
-   self.guid = nil;
-   self.connectedHost = nil;
-   self.connectedAddress = nil;
-	self.growlDict = nil;
-	self.gntpDictionary = nil;
-	self.dataBlockIdentifiers = nil;
-	self.incomingDataIdentifier = nil;
-	self.key = nil;
-	[super dealloc];
-}
 
 -(NSInteger)parsePossiblyEncryptedDataBlock:(NSData*)data {
 	if([self.key encryptionAlgorithm] == GNTPNone)
@@ -648,9 +636,9 @@
 		case 0:
 		{
 			decryptedData = [self.key decrypt:data];
-			NSString *allHeaders = [[[NSString alloc] initWithData:decryptedData encoding:NSUTF8StringEncoding] autorelease];
+			NSString *allHeaders = [[NSString alloc] initWithData:decryptedData encoding:NSUTF8StringEncoding];
 			
-			NSMutableArray *portions = [[[allHeaders componentsSeparatedByString:@"\r\n\r\n"] mutableCopy] autorelease];
+			NSMutableArray *portions = [[allHeaders componentsSeparatedByString:@"\r\n\r\n"] mutableCopy];
 			if([portions count] > 0) {
 				do {
 					NSString *current = [portions objectAtIndex:0];
@@ -678,16 +666,16 @@
 
 -(NSInteger)parseDataBlock:(NSData*)data {
 	NSInteger result = 0;
-	__block GNTPPacket *blockSelf = self;
+	__weak GNTPPacket *weakSelf = self;
 	switch (_state) {
 		case 0:
 		{
 			//Our initial header block
-			NSString *headersString = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+			NSString *headersString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 			
 			[GNTPUtilities enumerateHeaders:headersString
 										 withBlock:^BOOL(NSString *headerKey, NSString *headerValue) {
-											 [blockSelf parseHeaderKey:headerKey value:headerValue];
+											 [weakSelf parseHeaderKey:headerKey value:headerValue];
 											 return NO;
 										 }];
 			result = [self.dataBlockIdentifiers count];
@@ -772,16 +760,16 @@
 }
 
 -(void)parseResourceDataHeader:(NSData*)data {
-	NSString *headersString = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+	NSString *headersString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 	
 	__block NSString *newId = nil;
 	__block NSString *newLength = nil;
 	[GNTPUtilities enumerateHeaders:headersString
 								 withBlock:^BOOL(NSString *headerKey, NSString *headerValue) {
 									 if([headerKey caseInsensitiveCompare:@"Identifier"] == NSOrderedSame){
-										 newId = [headerValue retain];
+										 newId = headerValue;
 									 }else if([headerKey caseInsensitiveCompare:@"Length"] == NSOrderedSame){
-										 newLength = [headerValue retain];
+										 newLength = headerValue;
 									 }else {
 										 //NSLog(@"No other headers we care about here");
 									 }
@@ -796,8 +784,6 @@
 		self.incomingDataIdentifier = newId;
 		self.incomingDataLength = [newLength integerValue];
 	}
-	[newId release];
-	[newLength release];
 }
 
 -(void)parseResourceDataBlock:(NSData*)data {
@@ -806,7 +792,7 @@
 }
 
 -(void)receivedResourceDataBlock:(NSData*)data forIdentifier:(NSString*)identifier {
-	__block NSMutableArray *keysToReplace = [NSMutableArray array];
+	NSMutableArray *keysToReplace = [NSMutableArray array];
 	[self.gntpDictionary enumerateKeysAndObjectsUsingBlock:^(id aKey, id obj, BOOL *stop) {
 		if([obj isKindOfClass:[NSString class]]){
 			NSRange resourceRange = [obj rangeOfString:@"x-growl-resource://"];

@@ -45,18 +45,9 @@ void addRoundedBottomToPath(CGContextRef context, CGRect rect, CGFloat radius) {
 }
 
 - (void) dealloc {
-	[titleAttributes release];
-	[textAttributes  release];
-	[backgroundColor release];
-	[textColor       release];
-	[icon            release];
-	[title           release];
-	[text            release];
-	[cache           release];
 	if (layer)
 		CGLayerRelease(layer);
 
-	[super dealloc];
 }
 
 - (void) drawRect:(NSRect)rect {
@@ -130,8 +121,7 @@ void addRoundedBottomToPath(CGContextRef context, CGRect rect, CGFloat radius) {
 		[title drawInRect:titleRect withAttributes:titleAttributes];
 
 		[text drawInRect:textRect withAttributes:textAttributes];
-		[icon setFlipped:NO];
-		[icon drawScaledInRect:iconRect operation:NSCompositeSourceOver fraction:1.0];
+		[icon drawScaledInRect:iconRect operation:NSCompositeSourceOver fraction:1.0 neverFlipped:NO];
 
 		/*if (CGLayerCreateWithContext)
 			[NSGraphicsContext setCurrentContext:context];
@@ -178,19 +168,16 @@ void addRoundedBottomToPath(CGContextRef context, CGRect rect, CGFloat radius) {
 }
 
 - (void) setIcon:(NSImage *)anIcon {
-	[icon autorelease];
-	icon = [anIcon retain];
+	icon = anIcon;
 	[self setNeedsDisplay:(needsDisplay = YES)];
 }
 
 - (void) setTitle:(NSString *)aTitle {
-	[title autorelease];
 	title = [aTitle copy];
 	[self setNeedsDisplay:(needsDisplay = YES)];
 }
 
 - (void) setText:(NSString *)aText {
-	[text autorelease];
 	text = [aText copy];
 	[self setNeedsDisplay:(needsDisplay = YES)];
 }
@@ -222,7 +209,6 @@ void addRoundedBottomToPath(CGContextRef context, CGRect rect, CGFloat radius) {
 			break;
 	}
 
-	[backgroundColor release];
 
 	CGFloat opacityPref = Nano_DEFAULT_OPACITY;
 	if([[self configurationDict] valueForKey:Nano_OPACITY_PREF]){
@@ -237,16 +223,14 @@ void addRoundedBottomToPath(CGContextRef context, CGRect rect, CGFloat radius) {
 		backgroundColor = [NSUnarchiver unarchiveObjectWithData:data];
 	else
 		backgroundColor = [NSColor blackColor];
-	backgroundColor = [[backgroundColor colorWithAlphaComponent:alpha] retain];
+	backgroundColor = [backgroundColor colorWithAlphaComponent:alpha];
 
-	[textColor release];
 	data = nil;
 	data = [[self configurationDict] valueForKey:textKey];
 	if (data && [data isKindOfClass:NSDataClass])
 		textColor = [NSUnarchiver unarchiveObjectWithData:data];
 	else
 		textColor = [NSColor whiteColor];
-	[textColor retain];
 
 	CGFloat titleFontSize;
 	CGFloat textFontSize;
@@ -273,26 +257,21 @@ void addRoundedBottomToPath(CGContextRef context, CGRect rect, CGFloat radius) {
 	NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
 	[paragraphStyle setAlignment:NSLeftTextAlignment];
 	[paragraphStyle setLineBreakMode:NSLineBreakByTruncatingTail];
-	[titleAttributes release];
 	titleAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:
 		textColor,                                   NSForegroundColorAttributeName,
 		paragraphStyle,                              NSParagraphStyleAttributeName,
 		[NSFont boldSystemFontOfSize:titleFontSize], NSFontAttributeName,
 		textShadow,                                  NSShadowAttributeName,
 		nil];
-	[paragraphStyle release];
 
 	paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
 	[paragraphStyle setAlignment:NSLeftTextAlignment];
-	[textAttributes release];
 	textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:
 		textColor,                               NSForegroundColorAttributeName,
 		paragraphStyle,                          NSParagraphStyleAttributeName,
 		[NSFont messageFontOfSize:textFontSize], NSFontAttributeName,
 		textShadow,                              NSShadowAttributeName,
 		nil];
-	[paragraphStyle release];
-	[textShadow release];
 }
 
 - (id) target {

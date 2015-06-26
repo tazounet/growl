@@ -28,7 +28,7 @@
    
 	NSString *passwordString = nil;
 	if (status == noErr && password != NULL) {
-		passwordString = [[[NSString alloc] initWithBytes:password length:passwordLength encoding:NSUTF8StringEncoding] autorelease];
+		passwordString = [[NSString alloc] initWithBytes:password length:passwordLength encoding:NSUTF8StringEncoding];
 		if(passwordString) {
 			SecKeychainItemFreeContent(NULL, password);
 		}
@@ -106,7 +106,7 @@
 		status = SecKeychainItemDelete(itemRef);
       if(status != noErr){
 			CFStringRef errorString = SecCopyErrorMessageString(status, NULL);
-         NSLog(@"Error deleting the password for service: %@ account: %@; %@", service, account, (NSString*)errorString);
+         NSLog(@"Error deleting the password for service: %@ account: %@; %@", service, account, (__bridge NSString*)errorString);
 			if(errorString)
 				CFRelease(errorString);
       }else{

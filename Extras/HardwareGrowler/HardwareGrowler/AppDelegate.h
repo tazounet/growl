@@ -18,11 +18,11 @@ typedef enum : NSInteger {
 } HWGrowlIconState;
 
 @interface AppDelegate : NSObject <NSApplicationDelegate, NSToolbarDelegate, NSTableViewDelegate, NSWindowDelegate> {
-	NSWindow *_window;
+	NSWindow *__weak _window;
 	NSStatusItem *statusItem;
 	IBOutlet NSMenu *statusMenu;
 	
-	IBOutlet NSPopUpButton *iconPopUp;
+	IBOutlet NSPopUpButton *__weak iconPopUp;
 	IBOutlet GrowlOnSwitch *onLoginSwitch;
 	
 	HWGrowlIconState oldIconValue;
@@ -30,16 +30,16 @@ typedef enum : NSInteger {
 	
 	HWGrowlPluginController *pluginController;
 		
-	NSToolbar *toolbar;
-	NSToolbarItem *generalItem;
-	NSToolbarItem *modulesItem;
-	NSTabView *tabView;
-	NSTableView *tableView;
-	NSTableColumn *moduleColumn;
-	NSView *containerView;
-	NSTextField *noPrefsLabel;
+	NSToolbar *__weak toolbar;
+	NSToolbarItem *__weak generalItem;
+	NSToolbarItem *__weak modulesItem;
+	NSTabView *__weak tabView;
+	NSTableView *__weak tableView;
+	NSTableColumn *__weak moduleColumn;
+	NSView *__weak containerView;
+	NSTextField *__weak noPrefsLabel;
 	NSView *placeholderView;
-	NSView *currentView;
+	NSView *__weak currentView;
 	
 	NSString *showDevices;
 	NSString *quitTitle;
@@ -58,33 +58,33 @@ typedef enum : NSInteger {
    ProcessSerialNumber previousPSN;
 }
 
-@property (nonatomic, retain) IBOutlet NSString *showDevices;
-@property (nonatomic, retain) IBOutlet NSString *quitTitle;
-@property (nonatomic, retain) IBOutlet NSString *preferencesTitle;
-@property (nonatomic, retain) IBOutlet NSString *openPreferencesTitle;
-@property (nonatomic, retain) IBOutlet NSString *iconTitle;
-@property (nonatomic, retain) IBOutlet NSString *startAtLoginTitle;
-@property (nonatomic, retain) IBOutlet NSString *noPluginPrefsTitle;
-@property (nonatomic, retain) IBOutlet NSString *moduleLabel;
+@property (nonatomic, strong) IBOutlet NSString *showDevices;
+@property (nonatomic, strong) IBOutlet NSString *quitTitle;
+@property (nonatomic, strong) IBOutlet NSString *preferencesTitle;
+@property (nonatomic, strong) IBOutlet NSString *openPreferencesTitle;
+@property (nonatomic, strong) IBOutlet NSString *iconTitle;
+@property (nonatomic, strong) IBOutlet NSString *startAtLoginTitle;
+@property (nonatomic, strong) IBOutlet NSString *noPluginPrefsTitle;
+@property (nonatomic, strong) IBOutlet NSString *moduleLabel;
 
-@property (nonatomic, retain) NSString *iconInMenu;
-@property (nonatomic, retain) NSString *iconInDock;
-@property (nonatomic, retain) NSString *iconInBoth;
-@property (nonatomic, retain) NSString *noIcon;
+@property (nonatomic, strong) NSString *iconInMenu;
+@property (nonatomic, strong) NSString *iconInDock;
+@property (nonatomic, strong) NSString *iconInBoth;
+@property (nonatomic, strong) NSString *noIcon;
 
-@property (assign) IBOutlet NSWindow *window;
-@property (nonatomic, assign) IBOutlet NSPopUpButton *iconPopUp;
-@property (nonatomic, retain) HWGrowlPluginController *pluginController;
+@property (weak) IBOutlet NSWindow *window;
+@property (nonatomic, weak) IBOutlet NSPopUpButton *iconPopUp;
+@property (nonatomic, strong) HWGrowlPluginController *pluginController;
 
-@property (nonatomic, assign) IBOutlet NSToolbar *toolbar;
-@property (nonatomic, assign) IBOutlet NSToolbarItem *generalItem;
-@property (nonatomic, assign) IBOutlet NSToolbarItem *modulesItem;
-@property (nonatomic, assign) IBOutlet NSTabView *tabView;
-@property (nonatomic, assign) IBOutlet NSTableColumn *moduleColumn;
-@property (nonatomic, assign) IBOutlet NSTableView *tableView;
-@property (nonatomic, assign) IBOutlet NSView *containerView;
-@property (nonatomic, assign) IBOutlet NSTextField *noPrefsLabel;
-@property (nonatomic, retain) IBOutlet NSView *placeholderView;
-@property (nonatomic, assign) IBOutlet NSView *currentView;
+@property (nonatomic, weak) IBOutlet NSToolbar *toolbar;
+@property (nonatomic, weak) IBOutlet NSToolbarItem *generalItem;
+@property (nonatomic, weak) IBOutlet NSToolbarItem *modulesItem;
+@property (nonatomic, weak) IBOutlet NSTabView *tabView;
+@property (nonatomic, weak) IBOutlet NSTableColumn *moduleColumn;
+@property (nonatomic, weak) IBOutlet NSTableView *tableView;
+@property (nonatomic, weak) IBOutlet NSView *containerView;
+@property (nonatomic, weak) IBOutlet NSTextField *noPrefsLabel;
+@property (nonatomic, strong) IBOutlet NSView *placeholderView;
+@property (nonatomic, weak) IBOutlet NSView *currentView;
 
 @end

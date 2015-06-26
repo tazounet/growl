@@ -83,7 +83,6 @@ typedef void(^GrowlFirstLaunchAction)(void);
                                                                                loginBlock, @"actionBlock", 
                                                                                FirstLaunchStartGrowlButton, @"actionTitle", nil];
           [views addObject:loginDict];
-          [loginBlock release];
        }
        if(![[GrowlPathUtilities runningHelperAppBundle] isEqual:[NSBundle mainBundle]]) {
           GrowlFirstLaunchAction oldBlock = [^{
@@ -94,10 +93,9 @@ typedef void(^GrowlFirstLaunchAction)(void);
                                                                              oldBlock, @"actionBlock",
                                                                              FirstLaunchOldGrowlButton, @"actionTitle", nil];
           [views addObject:oldDict];
-          [oldBlock release];
        }
        
-       self.launchViews = [[views copy] autorelease];
+       self.launchViews = [views copy];
     }
     
     return self;
@@ -109,17 +107,6 @@ typedef void(^GrowlFirstLaunchAction)(void);
    [self showCurrent];
 }
 
-- (void)dealloc
-{
-    [windowTitle release];
-    [textBoxString release];
-    [actionButtonTitle release];
-    [continueButtonTitle release];
-    [launchViews release];
-    [progressLabel release];
-
-    [super dealloc];
-}
 
 -(void)close
 {

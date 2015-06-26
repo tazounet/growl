@@ -60,15 +60,15 @@
 
 	BOOL				 selected;
 	
-    id                   delegate;
+    id                   __strong delegate;
 
 }
 
-@property (nonatomic,retain) NSString *notificationTitle;
-@property (nonatomic,retain) NSString *notificationText;
-@property (nonatomic,retain) NSImage *notificationImage;
+@property (nonatomic,strong) NSString *notificationTitle;
+@property (nonatomic,strong) NSString *notificationText;
+@property (nonatomic,strong) NSImage *notificationImage;
 
-@property (nonatomic,assign) id delegate;
+@property (nonatomic,strong) id delegate;
 
 - (void)sizeToFit;
 

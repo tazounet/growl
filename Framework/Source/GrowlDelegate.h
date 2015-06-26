@@ -21,7 +21,7 @@
 }
 - (id) initWithAllNotifications:(NSArray *)allNotifications defaultNotifications:(NSArray *)defaultNotifications;
 
-@property (retain) NSString *applicationNameForGrowl;
-@property (retain) NSData *applicationIconDataForGrowl;
-@property (retain) NSDictionary *registrationDictionaryForGrowl;
+@property (strong) NSString *applicationNameForGrowl;
+@property (strong) NSData *applicationIconDataForGrowl;
+@property (strong) NSDictionary *registrationDictionaryForGrowl;
 @end

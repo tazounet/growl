@@ -17,7 +17,7 @@ static void usbDeviceRemoved(void *refCon, io_iterator_t iterator);
 
 @interface HWGrowlUSBMonitor ()
 
-@property (nonatomic, assign) id<HWGrowlPluginControllerProtocol> delegate;
+@property (nonatomic, unsafe_unretained) id<HWGrowlPluginControllerProtocol> delegate;
 @property (nonatomic, assign) BOOL notificationsArePrimed;
 
 @property (nonatomic, assign) IONotificationPortRef ioKitNotificationPort;
@@ -37,7 +37,6 @@ static void usbDeviceRemoved(void *refCon, io_iterator_t iterator);
 		CFRunLoopRemoveSource(CFRunLoopGetCurrent(), self.notificationRunLoopSource, kCFRunLoopDefaultMode);
 		IONotificationPortDestroy(self.ioKitNotificationPort);
 	}
-	[super dealloc];
 }
 
 -(id)init {
@@ -76,7 +75,7 @@ static void usbDeviceRemoved(void *refCon, io_iterator_t iterator);
 																	  kIOFirstPublishNotification,
 																	  myMatchDictionary,
 																	  usbDeviceAdded,
-																	  self,
+																	  (__bridge void *)(self),
 																	  &addedIterator);
 	
 	if (matchingResult)
@@ -93,7 +92,7 @@ static void usbDeviceRemoved(void *refCon, io_iterator_t iterator);
 																		 kIOTerminatedNotification,
 																		 myMatchDictionary,
 																		 usbDeviceRemoved,
-																		 self,
+																		 (__bridge void *)(self),
 																		 &removedIterator);
 	
 	// Matching notification must be "primed" by iterating over the
@@ -163,7 +162,7 @@ static void usbDeviceRemoved(void *refCon, io_iterator_t iterator);
 }
 
 static void usbDeviceAdded(void *refCon, io_iterator_t iterator) {
-	HWGrowlUSBMonitor *monitor = (HWGrowlUSBMonitor*)refCon;
+	HWGrowlUSBMonitor *monitor = (__bridge HWGrowlUSBMonitor*)refCon;
 	[monitor usbDeviceAdded:iterator];
 }
 
@@ -203,7 +202,7 @@ static void usbDeviceAdded(void *refCon, io_iterator_t iterator) {
 }
 
 static void usbDeviceRemoved(void *refCon, io_iterator_t iterator) {
-	HWGrowlUSBMonitor *monitor = (HWGrowlUSBMonitor*)refCon;
+	HWGrowlUSBMonitor *monitor = (__bridge HWGrowlUSBMonitor*)refCon;
 	[monitor usbDeviceRemoved:iterator];
 }
 
@@ -236,7 +235,7 @@ static void usbDeviceRemoved(void *refCon, io_iterator_t iterator) {
 	static NSImage *_icon = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		_icon = [[NSImage imageNamed:@"HWGPrefsUSB"] retain];
+		_icon = [NSImage imageNamed:@"HWGPrefsUSB"];
 	});
 	return _icon;
 }

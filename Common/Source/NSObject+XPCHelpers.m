@@ -59,7 +59,7 @@
     else if (newType == XPC_TYPE_DATA) {
         const void *rawData = xpc_data_get_bytes_ptr(object);
         size_t dataLength = xpc_data_get_length(object);
-        nsValue = [[[NSData alloc] initWithBytes:rawData length:dataLength] autorelease];
+        nsValue = [[NSData alloc] initWithBytes:rawData length:dataLength];
     }
     
     return nsValue;
@@ -74,7 +74,6 @@
             xpc_object_t xpcObj = [obj newXPCObject];
             if(xpcObj != NULL){
                 xpc_dictionary_set_value(returnVal, [key UTF8String], xpcObj);
-                xpc_release(xpcObj);
             }
         }];
     }else if ([self isKindOfClass:[NSString class]]){
@@ -90,7 +89,6 @@
             xpc_object_t appendVal = [obj newXPCObject];
             if(appendVal != NULL){
                 xpc_array_set_value(returnVal, XPC_ARRAY_APPEND, appendVal);
-                xpc_release(appendVal);
             }
         }];
     }else if ([self isKindOfClass:[NSNumber class]]){

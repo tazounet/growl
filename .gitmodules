@@ -4,9 +4,6 @@
 [submodule "external_dependencies/shortcutrecorder"]
 	path = external_dependencies/shortcutrecorder
 	url = git://github.com/tazounet/ShortcutRecorder.git
-[submodule "external_dependencies/cocoalumberjack"]
-	path = external_dependencies/cocoalumberjack
-	url = git://github.com/growl/CocoaLumberjack.git
 [submodule "external_dependencies/SGHotKeysLib"]
 	path = external_dependencies/SGHotKeysLib
 	url = git://github.com/growl/SGHotKeysLib.git

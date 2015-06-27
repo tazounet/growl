@@ -165,15 +165,12 @@
 	[statusItem setMenu:statusMenu];
 	
 	NSString* icon_path = [[NSBundle mainBundle] pathForResource:@"menubarIcon_Normal" ofType:@"png"];
-	NSString* icon_path_selected = [[NSBundle mainBundle] pathForResource:@"menubarIcon_Selected" ofType:@"png"];    
 	NSImage *icon = [[NSImage alloc] initWithContentsOfFile:icon_path];
-	NSImage *icon_selected = [[NSImage alloc] initWithContentsOfFile:icon_path_selected];
-	
+    [icon setTemplate:YES];
+    
 	[statusItem setImage:icon];
-	[statusItem setAlternateImage:icon_selected];
-	
+
 	[statusItem setHighlightMode:YES];
-	
 }
 
 - (void) initTitles{

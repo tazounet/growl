@@ -115,7 +115,6 @@
 		BCB805FF155153330088C69A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BCB805FE155153330088C69A /* AppDelegate.m */; };
 		BCB8061D155154CA0088C69A /* HWGrowler.icns in Resources */ = {isa = PBXBuildFile; fileRef = BCB80611155154CA0088C69A /* HWGrowler.icns */; };
 		BCB8061E155154CA0088C69A /* menubarIcon_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = BCB80612155154CA0088C69A /* menubarIcon_Normal.png */; };
-		BCB8061F155154CA0088C69A /* menubarIcon_Selected.png in Resources */ = {isa = PBXBuildFile; fileRef = BCB80613155154CA0088C69A /* menubarIcon_Selected.png */; };
 		BCB806981551595A0088C69A /* Growl.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = BCB80673155158DA0088C69A /* Growl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		BCB806991551597C0088C69A /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCB80673155158DA0088C69A /* Growl.framework */; };
 		BCB806B015515C4E0088C69A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCB805EB155153330088C69A /* Cocoa.framework */; };
@@ -557,7 +556,6 @@
 		BCB805FE155153330088C69A /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		BCB80611155154CA0088C69A /* HWGrowler.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = HWGrowler.icns; path = Resources/HWGrowler.icns; sourceTree = SOURCE_ROOT; };
 		BCB80612155154CA0088C69A /* menubarIcon_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = menubarIcon_Normal.png; path = Resources/menubarIcon_Normal.png; sourceTree = SOURCE_ROOT; };
-		BCB80613155154CA0088C69A /* menubarIcon_Selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = menubarIcon_Selected.png; path = Resources/menubarIcon_Selected.png; sourceTree = SOURCE_ROOT; };
 		BCB8065B155158DA0088C69A /* Growl.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Growl.xcodeproj; path = ../../../Growl.xcodeproj; sourceTree = "<group>"; };
 		BCB806AE15515C4E0088C69A /* HardwareGrowlerLauncher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HardwareGrowlerLauncher.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCB806B315515C4E0088C69A /* HardwareGrowlerLauncher-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HardwareGrowlerLauncher-Info.plist"; sourceTree = "<group>"; };
@@ -1121,7 +1119,6 @@
 				BC9757A9156C2D2B0080CF24 /* BundleIcons */,
 				BCB80611155154CA0088C69A /* HWGrowler.icns */,
 				BCB80612155154CA0088C69A /* menubarIcon_Normal.png */,
-				BCB80613155154CA0088C69A /* menubarIcon_Selected.png */,
 			);
 			name = Images;
 			sourceTree = "<group>";
@@ -1825,7 +1822,6 @@
 				BCB805FC155153330088C69A /* Credits.rtf in Resources */,
 				BCB8061D155154CA0088C69A /* HWGrowler.icns in Resources */,
 				BCB8061E155154CA0088C69A /* menubarIcon_Normal.png in Resources */,
-				BCB8061F155154CA0088C69A /* menubarIcon_Selected.png in Resources */,
 				BC4FC623155C04B700EE65EC /* MainMenu.xib in Resources */,
 				BC006C3215AB004900643FA8 /* HWGPrefsBluetooth.tif in Resources */,
 				BC006C3315AB004900643FA8 /* HWGPrefsCapster.tif in Resources */,

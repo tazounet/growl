@@ -20,6 +20,7 @@
 @synthesize squelchImage;
 @synthesize mainLayer;
 @synthesize mouseDown;
+@synthesize darkModeOn;
 
 - (id)initWithFrame:(NSRect)frameRect
 {
@@ -49,9 +50,30 @@
         [self addObserver:self forKeyPath:@"mode" options:NSKeyValueObservingOptionNew context:&self];
         [self addObserver:self forKeyPath:@"mainImage" options:NSKeyValueObservingOptionNew context:&self];
         [self addObserver:self forKeyPath:@"mouseDown" options:NSKeyValueObservingOptionNew context:&self];
+        [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(darkModeChanged:) name:@"AppleInterfaceThemeChangedNotification" object:nil];
+        [self updateDarkMode];
     }
     
     return self;
+}
+
+-(void)updateDarkMode
+{
+    NSDictionary *dict = [[NSUserDefaults standardUserDefaults] persistentDomainForName:NSGlobalDomain];
+    id style = [dict objectForKey:@"AppleInterfaceStyle"];
+    
+    darkModeOn = (style && [style isKindOfClass:[NSString class]] && NSOrderedSame == [style caseInsensitiveCompare:@"dark"]);
+}
+
+-(void)darkModeChanged:(NSNotification *)notif
+{
+    [self updateDarkMode];
+
+    if(darkModeOn) {
+        mainLayer.contents = (id)alternateImage;
+    } else {
+        mainLayer.contents = (id)mainImage;
+    }
 }
 
 -(void)dealloc
@@ -59,8 +81,6 @@
     [self removeObserver:self forKeyPath:@"mode"];
     [self removeObserver:self forKeyPath:@"mainImage"];
     [self removeObserver:self forKeyPath:@"mouseDown"];
-
-    
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -91,7 +111,11 @@
         switch(mode)
         {
             case 1:
-                mainLayer.contents = (id)alternateImage;
+                if(darkModeOn) {
+                    mainLayer.contents = (id)mainImage;
+                } else {
+                    mainLayer.contents = (id)alternateImage;
+                }
                 break;
             case 2:
                 previousMode = self.mode;
@@ -100,7 +124,11 @@
             case 0:
             default:
                 previousMode = self.mode;
-                mainLayer.contents = (id)mainImage;
+                if(darkModeOn) {
+                    mainLayer.contents = (id)alternateImage;
+                } else {
+                    mainLayer.contents = (id)mainImage;
+                }
                 break;
         }
     }

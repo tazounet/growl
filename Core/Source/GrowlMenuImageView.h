@@ -21,16 +21,17 @@
     NSImage *squelchImage;
     
     BOOL mouseDown;
+    BOOL darkModeOn;
 }
 
 @property (nonatomic, assign) NSInteger mode;
 @property (nonatomic, weak) GrowlMenu* menuItem;
 @property (nonatomic, strong) CALayer *mainLayer;
 @property (nonatomic, assign) BOOL mouseDown;
+@property (nonatomic, assign) BOOL darkModeOn;
 @property (nonatomic, strong) NSImage *mainImage;
 @property (nonatomic, strong) NSImage *alternateImage;
 @property (nonatomic, strong) NSImage *squelchImage;
-
 
 - (void)startAnimation;
 - (void)stopAnimation;

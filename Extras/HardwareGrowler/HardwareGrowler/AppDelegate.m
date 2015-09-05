@@ -58,7 +58,6 @@
 @synthesize placeholderView;
 @synthesize currentView;
 
-@synthesize previousPSN;
 
 +(void)initialize
 {
@@ -119,45 +118,45 @@
 
 - (IBAction)showPreferences:(id)sender
 {
-	[NSApp activateIgnoringOtherApps:YES];
-   if(![self.window isVisible]){
-      [self.window center];
-      [self.window setFrameAutosaveName:@"HWGrowlerPrefsWindowFrame"];
-      [self.window setFrameUsingName:@"HWGrowlerPrefsWindowFrame" force:YES];
-   }
-    
-	[self.window makeKeyAndOrderFront:sender];
-	
+    // Tweak for menu bar
+    dispatch_async(dispatch_get_main_queue(), ^{
+        for (NSRunningApplication * app in [NSRunningApplication runningApplicationsWithBundleIdentifier:@"com.apple.dock"]) {
+            [app activateWithOptions:NSApplicationActivateIgnoringOtherApps];
+            break;
+        }
+        [self performSelector:@selector(showPreferencesStep2) withObject:nil afterDelay:0.1];
+    });
+}
+
+- (void)showPreferencesStep2
+{
     ProcessSerialNumber psn = { 0, kCurrentProcess };
     TransformProcessType(&psn, kProcessTransformToForegroundApplication);
-    NSNotificationCenter *nc = [[NSWorkspace sharedWorkspace] notificationCenter];
-    [nc addObserverForName:NSWorkspaceDidActivateApplicationNotification
-							 object:nil
-							  queue:[NSOperationQueue mainQueue]
-						usingBlock:^(NSNotification *note) {
-							ProcessSerialNumber newFrontPSN;
-							GetFrontProcess(&newFrontPSN);
-							ProcessSerialNumber growlPsn = { 0, kCurrentProcess };
-							Boolean result;
-							SameProcess(&newFrontPSN, &growlPsn, &result);
-							if(!result){
-								GetFrontProcess(&previousPSN);
-							}
-                    }];
+    
+    [self performSelector:@selector(showPreferencesStep3) withObject:nil afterDelay:0.1];
+}
+
+- (void)showPreferencesStep3
+{
+    [[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateIgnoringOtherApps];
+    if(![self.window isVisible]) {
+        [self.window center];
+        [self.window setFrameAutosaveName:@"HWGrowlerPrefsWindowFrame"];
+        [self.window setFrameUsingName:@"HWGrowlerPrefsWindowFrame" force:YES];
+    }
+    
+    [self.window makeKeyAndOrderFront:nil];
 }
 
 - (void)windowWillClose:(NSNotification *)notification {
-	if((BOOL)isgreaterequal(NSFoundationVersionNumber, NSFoundationVersionNumber10_7)) {
-		NSNumber *value = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"Visibility"];
-		HWGrowlIconState visibility = [value integerValue];
-		if(visibility == kDontShowIcon || visibility == kShowIconInMenu){
-			dispatch_async(dispatch_get_main_queue(), ^{
-				ProcessSerialNumber psn = { 0, kCurrentProcess };
-				TransformProcessType(&psn, kProcessTransformToUIElementApplication);
-				SetFrontProcess(&previousPSN);
-			});
-		}
-	}
+    NSNumber *value = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"Visibility"];
+    HWGrowlIconState visibility = [value integerValue];
+    if(visibility == kDontShowIcon || visibility == kShowIconInMenu){
+        dispatch_async(dispatch_get_main_queue(), ^{
+            ProcessSerialNumber psn = { 0, kCurrentProcess };
+            TransformProcessType(&psn, kProcessTransformToUIElementApplication);
+        });
+    }
 }
 
 - (void) initMenu{
@@ -228,10 +227,10 @@
 				{
 					[NSApp activateIgnoringOtherApps:YES];
 					NSAlert *alert = [NSAlert alertWithMessageText:NSLocalizedString(@"Warning! Enabling this option will cause HardwareGrowler to run in the background", nil)
-																defaultButton:NSLocalizedString(@"Ok", nil)
-															 alternateButton:NSLocalizedString(@"Cancel", nil)
-																  otherButton:nil
-												informativeTextWithFormat:NSLocalizedString(@"Enabling this option will cause HardwareGrowler to run without showing a dock icon or a menu item.\n\nTo access preferences, tap HardwareGrowler in Launchpad, or open HardwareGrowler in Finder.", nil)];
+                                                     defaultButton:NSLocalizedString(@"Ok", nil)
+                                                   alternateButton:NSLocalizedString(@"Cancel", nil)
+                                                       otherButton:nil
+                                         informativeTextWithFormat:NSLocalizedString(@"Enabling this option will cause HardwareGrowler to run without showing a dock icon or a menu item.\n\nTo access preferences, tap HardwareGrowler in Launchpad, or open HardwareGrowler in Finder.", nil)];
 					alert.showsSuppressionButton = YES;
 					NSInteger allow = [alert runModal];
 					if(allow == NSAlertDefaultReturn)
@@ -239,7 +238,6 @@
 						if([[alert suppressionButton] state] == NSOnState){
 							[[defaultController defaults] setBool:YES forKey:@"SuppressNoIconWarn"];
 						}
-						[self warnUserAboutIcons];
 						[[NSStatusBar systemStatusBar] removeStatusItem:statusItem];
 						statusItem = nil;
 					}
@@ -250,7 +248,6 @@
 						[iconPopUp selectItemAtIndex:oldIconValue];
 					}
 				}else{
-					[self warnUserAboutIcons];
 					[[NSStatusBar systemStatusBar] removeStatusItem:statusItem];
 					statusItem = nil;
 				}
@@ -269,8 +266,6 @@
 			default:
 				if(!statusItem)
 					[self initMenu];
-				if(oldIconValue == kShowIconInBoth || oldIconValue == kShowIconInDock)
-					[self warnUserAboutIcons];
 				break;
 		}
 		oldIconValue = index;
@@ -320,18 +315,9 @@
 	}
 }
 
-- (void)warnUserAboutIcons
-{
-	if((BOOL)isless(NSFoundationVersionNumber, NSFoundationVersionNumber10_7)) {
-		NSAlert *alert = [[NSAlert alloc] init];
-		[alert setMessageText:NSLocalizedString(@"This setting will take effect when Hardware Growler restarts",nil)];
-		[alert runModal];
-	}
-}
-
 - (void) setStartAtLogin:(BOOL)enabled {
    if(!SMLoginItemSetEnabled(CFSTR("com.growl.HardwareGrowlerLauncher"), enabled)){
-      //NSLog(@"Failure Setting HardwareGrowlLauncher to %@start at login", enabled ? @"" : @"not ");
+      NSLog(@"Failure Setting HardwareGrowlLauncher to %@start at login", enabled ? @"" : @"not ");
    }
 }
 

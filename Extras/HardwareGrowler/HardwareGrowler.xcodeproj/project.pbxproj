@@ -13,8 +13,23 @@
 		7718476A193CF716007F2009 /* GraphicCardMonitor.hwgrowlmonitor in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 777FCFB5193B8BFB004EA8E2 /* GraphicCardMonitor.hwgrowlmonitor */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		772266B11B1B48BD0024E99E /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCE3BC2815C9640600B0BFFB /* QuartzCore.framework */; };
 		77355B4F194340FB00080AA1 /* HWGPrefsDisplays.tif in Resources */ = {isa = PBXBuildFile; fileRef = 77355B4E194340FB00080AA1 /* HWGPrefsDisplays.tif */; };
+		775270281B94F8FE000CD27E /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCB805EE155153330088C69A /* AppKit.framework */; };
+		7752702A1B94F8FE000CD27E /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC523C3515556BE500548427 /* IOKit.framework */; };
+		775270351B94F9C2000CD27E /* HWGrowlAudioMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 775270331B94F9C2000CD27E /* HWGrowlAudioMonitor.m */; };
+		7752703B1B94FC12000CD27E /* AudioMonitor.hwgrowlmonitor in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 775270311B94F8FE000CD27E /* AudioMonitor.hwgrowlmonitor */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		7752703E1B94FC40000CD27E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7752703C1B94FC40000CD27E /* InfoPlist.strings */; };
+		776609411B9B1E1C00A30DB1 /* Audio-Speaker-On.tif in Resources */ = {isa = PBXBuildFile; fileRef = 7766093B1B9B1E1C00A30DB1 /* Audio-Speaker-On.tif */; };
+		776609421B9B1E1C00A30DB1 /* Audio-Speaker-Off.tif in Resources */ = {isa = PBXBuildFile; fileRef = 7766093C1B9B1E1C00A30DB1 /* Audio-Speaker-Off.tif */; };
+		776609431B9B1E1C00A30DB1 /* Audio-Microphone-On.tif in Resources */ = {isa = PBXBuildFile; fileRef = 7766093D1B9B1E1C00A30DB1 /* Audio-Microphone-On.tif */; };
+		776609441B9B1E1C00A30DB1 /* Audio-Microphone-Off.tif in Resources */ = {isa = PBXBuildFile; fileRef = 7766093E1B9B1E1C00A30DB1 /* Audio-Microphone-Off.tif */; };
+		776609451B9B1E1C00A30DB1 /* Audio-Headphones-On.tif in Resources */ = {isa = PBXBuildFile; fileRef = 7766093F1B9B1E1C00A30DB1 /* Audio-Headphones-On.tif */; };
+		776609461B9B1E1C00A30DB1 /* Audio-Headphones-Off.tif in Resources */ = {isa = PBXBuildFile; fileRef = 776609401B9B1E1C00A30DB1 /* Audio-Headphones-Off.tif */; };
+		776609471B9B1E8D00A30DB1 /* Audio-Speaker-On.tif in Resources */ = {isa = PBXBuildFile; fileRef = 7766093B1B9B1E1C00A30DB1 /* Audio-Speaker-On.tif */; };
+		776609481B9B1E8D00A30DB1 /* Audio-Microphone-On.tif in Resources */ = {isa = PBXBuildFile; fileRef = 7766093D1B9B1E1C00A30DB1 /* Audio-Microphone-On.tif */; };
+		776609491B9B1E8D00A30DB1 /* Audio-Headphones-On.tif in Resources */ = {isa = PBXBuildFile; fileRef = 7766093F1B9B1E1C00A30DB1 /* Audio-Headphones-On.tif */; };
 		777FCFBD193B8BFB004EA8E2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 777FCFBB193B8BFB004EA8E2 /* InfoPlist.strings */; };
 		777FCFD5193B8D5C004EA8E2 /* HWGrowlGraphicCardMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 777FCFD4193B8D5C004EA8E2 /* HWGrowlGraphicCardMonitor.m */; };
+		778CDDAD1B9763CC0058B3A1 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 778CDDAC1B9763CC0058B3A1 /* CoreAudio.framework */; };
 		77DD85F41B36E5830020C6F5 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCB805EE155153330088C69A /* AppKit.framework */; };
 		77DD85F61B36E5DB0020C6F5 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC523C3515556BE500548427 /* IOKit.framework */; };
 		77DD85FB1B36E6C40020C6F5 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77DD85FA1B36E6C30020C6F5 /* CoreGraphics.framework */; };
@@ -175,6 +190,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 777FCFB4193B8BFB004EA8E2;
 			remoteInfo = GraphicCardMonitor;
+		};
+		775270391B94FAD9000CD27E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BCB805DE155153330088C69A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 775270211B94F8FE000CD27E;
+			remoteInfo = AudioMonitor;
 		};
 		BC523C3215556B4500548427 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -382,6 +404,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				7752703B1B94FC12000CD27E /* AudioMonitor.hwgrowlmonitor in Copy Plugins */,
 				77184767193CF716007F2009 /* ThunderboltMonitor.hwgrowlmonitor in Copy Plugins */,
 				77184769193CF716007F2009 /* PhoneMonitor.hwgrowlmonitor in Copy Plugins */,
 				7718476A193CF716007F2009 /* GraphicCardMonitor.hwgrowlmonitor in Copy Plugins */,
@@ -402,6 +425,19 @@
 		770807C11B3567100043F0CA /* GSProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GSProcess.h; sourceTree = "<group>"; };
 		770807C21B3567100043F0CA /* GSProcess.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GSProcess.m; sourceTree = "<group>"; };
 		77355B4E194340FB00080AA1 /* HWGPrefsDisplays.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HWGPrefsDisplays.tif; path = ../Resources/MonitorIcons/HWGPrefsDisplays.tif; sourceTree = "<group>"; };
+		775270311B94F8FE000CD27E /* AudioMonitor.hwgrowlmonitor */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AudioMonitor.hwgrowlmonitor; sourceTree = BUILT_PRODUCTS_DIR; };
+		775270321B94F8FF000CD27E /* GraphicCardMonitor copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "GraphicCardMonitor copy-Info.plist"; path = "/Users/taz/testapp/growlGit/Extras/HardwareGrowler/GraphicCardMonitor copy-Info.plist"; sourceTree = "<absolute>"; };
+		775270331B94F9C2000CD27E /* HWGrowlAudioMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HWGrowlAudioMonitor.m; path = AudioMonitor/HWGrowlAudioMonitor.m; sourceTree = SOURCE_ROOT; };
+		775270341B94F9C2000CD27E /* HWGrowlAudioMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HWGrowlAudioMonitor.h; path = AudioMonitor/HWGrowlAudioMonitor.h; sourceTree = SOURCE_ROOT; };
+		775270361B94F9DF000CD27E /* AudioMonitor-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "AudioMonitor-Info.plist"; path = "AudioMonitor/AudioMonitor-Info.plist"; sourceTree = SOURCE_ROOT; };
+		775270371B94F9DF000CD27E /* AudioMonitor-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "AudioMonitor-Prefix.pch"; path = "AudioMonitor/AudioMonitor-Prefix.pch"; sourceTree = SOURCE_ROOT; };
+		7752703D1B94FC40000CD27E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = AudioMonitor/en.lproj/InfoPlist.strings; sourceTree = SOURCE_ROOT; };
+		7766093B1B9B1E1C00A30DB1 /* Audio-Speaker-On.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = "Audio-Speaker-On.tif"; path = "Resources/NotificationIcons/Audio/Audio-Speaker-On.tif"; sourceTree = SOURCE_ROOT; };
+		7766093C1B9B1E1C00A30DB1 /* Audio-Speaker-Off.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = "Audio-Speaker-Off.tif"; path = "Resources/NotificationIcons/Audio/Audio-Speaker-Off.tif"; sourceTree = SOURCE_ROOT; };
+		7766093D1B9B1E1C00A30DB1 /* Audio-Microphone-On.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = "Audio-Microphone-On.tif"; path = "Resources/NotificationIcons/Audio/Audio-Microphone-On.tif"; sourceTree = SOURCE_ROOT; };
+		7766093E1B9B1E1C00A30DB1 /* Audio-Microphone-Off.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = "Audio-Microphone-Off.tif"; path = "Resources/NotificationIcons/Audio/Audio-Microphone-Off.tif"; sourceTree = SOURCE_ROOT; };
+		7766093F1B9B1E1C00A30DB1 /* Audio-Headphones-On.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = "Audio-Headphones-On.tif"; path = "Resources/NotificationIcons/Audio/Audio-Headphones-On.tif"; sourceTree = SOURCE_ROOT; };
+		776609401B9B1E1C00A30DB1 /* Audio-Headphones-Off.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = "Audio-Headphones-Off.tif"; path = "Resources/NotificationIcons/Audio/Audio-Headphones-Off.tif"; sourceTree = SOURCE_ROOT; };
 		777FCFB5193B8BFB004EA8E2 /* GraphicCardMonitor.hwgrowlmonitor */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GraphicCardMonitor.hwgrowlmonitor; sourceTree = BUILT_PRODUCTS_DIR; };
 		777FCFB6193B8BFB004EA8E2 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		777FCFBA193B8BFB004EA8E2 /* GraphicCardMonitor-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GraphicCardMonitor-Info.plist"; sourceTree = "<group>"; };
@@ -409,6 +445,7 @@
 		777FCFBE193B8BFB004EA8E2 /* GraphicCardMonitor-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GraphicCardMonitor-Prefix.pch"; sourceTree = "<group>"; };
 		777FCFD3193B8D5C004EA8E2 /* HWGrowlGraphicCardMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HWGrowlGraphicCardMonitor.h; sourceTree = "<group>"; };
 		777FCFD4193B8D5C004EA8E2 /* HWGrowlGraphicCardMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HWGrowlGraphicCardMonitor.m; sourceTree = "<group>"; };
+		778CDDAC1B9763CC0058B3A1 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		77DD85F81B36E64F0020C6F5 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
 		77DD85FA1B36E6C30020C6F5 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		77F7378E193E6B94009D278E /* GSGPU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GSGPU.h; sourceTree = "<group>"; };
@@ -618,6 +655,16 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		775270271B94F8FE000CD27E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				778CDDAD1B9763CC0058B3A1 /* CoreAudio.framework in Frameworks */,
+				775270281B94F8FE000CD27E /* AppKit.framework in Frameworks */,
+				7752702A1B94F8FE000CD27E /* IOKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		777FCFB2193B8BFB004EA8E2 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -746,6 +793,29 @@
 			name = GraphicCard;
 			sourceTree = "<group>";
 		};
+		775270061B94F89F000CD27E /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				7752703C1B94FC40000CD27E /* InfoPlist.strings */,
+				775270361B94F9DF000CD27E /* AudioMonitor-Info.plist */,
+				775270371B94F9DF000CD27E /* AudioMonitor-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		7766093A1B9B1DFF00A30DB1 /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				7766093B1B9B1E1C00A30DB1 /* Audio-Speaker-On.tif */,
+				7766093C1B9B1E1C00A30DB1 /* Audio-Speaker-Off.tif */,
+				7766093D1B9B1E1C00A30DB1 /* Audio-Microphone-On.tif */,
+				7766093E1B9B1E1C00A30DB1 /* Audio-Microphone-Off.tif */,
+				7766093F1B9B1E1C00A30DB1 /* Audio-Headphones-On.tif */,
+				776609401B9B1E1C00A30DB1 /* Audio-Headphones-Off.tif */,
+			);
+			name = Audio;
+			sourceTree = "<group>";
+		};
 		777FCFB9193B8BFB004EA8E2 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
@@ -771,6 +841,16 @@
 			);
 			name = GraphicCardMonitor;
 			path = ../GraphicCardMonitor;
+			sourceTree = "<group>";
+		};
+		77A432A21B94F7EB00DF6505 /* AudioMonitor */ = {
+			isa = PBXGroup;
+			children = (
+				775270331B94F9C2000CD27E /* HWGrowlAudioMonitor.m */,
+				775270341B94F9C2000CD27E /* HWGrowlAudioMonitor.h */,
+				775270061B94F89F000CD27E /* Supporting Files */,
+			);
+			name = AudioMonitor;
 			sourceTree = "<group>";
 		};
 		BC006C6B15AB0C8500643FA8 /* Network */ = {
@@ -906,6 +986,7 @@
 		BC5BF80315754ABF0088443E /* NotificationIcons */ = {
 			isa = PBXGroup;
 			children = (
+				7766093A1B9B1DFF00A30DB1 /* Audio */,
 				BC006C3E15AB012400643FA8 /* DisksVolumes-Eject.tif */,
 				BC006C7A15AB0E0600643FA8 /* FireWire */,
 				BC006C7015AB0CCC00643FA8 /* USB */,
@@ -1031,6 +1112,7 @@
 				BCB8076C1551A78D0088C69A /* Plugins */,
 				BCB805EA155153330088C69A /* Frameworks */,
 				BCB805E8155153330088C69A /* Products */,
+				775270321B94F8FF000CD27E /* GraphicCardMonitor copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1050,6 +1132,7 @@
 				BC5BF7EB15752CEF0088443E /* KeyboardMonitor.hwgrowlmonitor */,
 				BCE83C6515804D2C005570DD /* PhoneMonitor.hwgrowlmonitor */,
 				777FCFB5193B8BFB004EA8E2 /* GraphicCardMonitor.hwgrowlmonitor */,
+				775270311B94F8FE000CD27E /* AudioMonitor.hwgrowlmonitor */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1057,6 +1140,7 @@
 		BCB805EA155153330088C69A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				778CDDAC1B9763CC0058B3A1 /* CoreAudio.framework */,
 				77DD85FA1B36E6C30020C6F5 /* CoreGraphics.framework */,
 				77DD85F81B36E64F0020C6F5 /* Quartz.framework */,
 				BCB805EB155153330088C69A /* Cocoa.framework */,
@@ -1219,6 +1303,7 @@
 				BC5BF7ED15752CEF0088443E /* KeyboardMonitor */,
 				BCE83C6715804D2C005570DD /* PhoneMonitor */,
 				777FCFD1193B8D13004EA8E2 /* GraphicCardMonitor */,
+				77A432A21B94F7EB00DF6505 /* AudioMonitor */,
 			);
 			name = Plugins;
 			path = NetworkMonitor;
@@ -1323,6 +1408,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		775270211B94F8FE000CD27E /* AudioMonitor */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7752702D1B94F8FE000CD27E /* Build configuration list for PBXNativeTarget "AudioMonitor" */;
+			buildPhases = (
+				775270221B94F8FE000CD27E /* Sources */,
+				775270271B94F8FE000CD27E /* Frameworks */,
+				7752702B1B94F8FE000CD27E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AudioMonitor;
+			productName = GraphicCardMonitor;
+			productReference = 775270311B94F8FE000CD27E /* AudioMonitor.hwgrowlmonitor */;
+			productType = "com.apple.product-type.bundle";
+		};
 		777FCFB4193B8BFB004EA8E2 /* GraphicCardMonitor */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 777FCFD0193B8BFB004EA8E2 /* Build configuration list for PBXNativeTarget "GraphicCardMonitor" */;
@@ -1459,6 +1561,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				7752703A1B94FAD9000CD27E /* PBXTargetDependency */,
 				7718476C193CF7DA007F2009 /* PBXTargetDependency */,
 				77184770193CF7DA007F2009 /* PBXTargetDependency */,
 				77184772193CF7DA007F2009 /* PBXTargetDependency */,
@@ -1569,9 +1672,16 @@
 		BCB805DE155153330088C69A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0630;
+				LastUpgradeCheck = 0640;
 				TargetAttributes = {
 					BCB805E6155153330088C69A = {
+						SystemCapabilities = {
+							com.apple.Sandbox = {
+								enabled = 1;
+							};
+						};
+					};
+					BCB806AD15515C4E0088C69A = {
 						SystemCapabilities = {
 							com.apple.Sandbox = {
 								enabled = 1;
@@ -1641,6 +1751,7 @@
 				BC5BF7EA15752CEF0088443E /* KeyboardMonitor */,
 				BCE83C6415804D2C005570DD /* PhoneMonitor */,
 				777FCFB4193B8BFB004EA8E2 /* GraphicCardMonitor */,
+				775270211B94F8FE000CD27E /* AudioMonitor */,
 			);
 		};
 /* End PBXProject section */
@@ -1754,6 +1865,20 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
+		7752702B1B94F8FE000CD27E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				776609461B9B1E1C00A30DB1 /* Audio-Headphones-Off.tif in Resources */,
+				776609441B9B1E1C00A30DB1 /* Audio-Microphone-Off.tif in Resources */,
+				7752703E1B94FC40000CD27E /* InfoPlist.strings in Resources */,
+				776609431B9B1E1C00A30DB1 /* Audio-Microphone-On.tif in Resources */,
+				776609411B9B1E1C00A30DB1 /* Audio-Speaker-On.tif in Resources */,
+				776609451B9B1E1C00A30DB1 /* Audio-Headphones-On.tif in Resources */,
+				776609421B9B1E1C00A30DB1 /* Audio-Speaker-Off.tif in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		777FCFB3193B8BFB004EA8E2 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1816,6 +1941,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				776609471B9B1E8D00A30DB1 /* Audio-Speaker-On.tif in Resources */,
+				776609481B9B1E8D00A30DB1 /* Audio-Microphone-On.tif in Resources */,
+				776609491B9B1E8D00A30DB1 /* Audio-Headphones-On.tif in Resources */,
 				77355B4F194340FB00080AA1 /* HWGPrefsDisplays.tif in Resources */,
 				BCE06FFC178CCBF500D7839A /* Localizable.strings in Resources */,
 				BCB805F6155153330088C69A /* InfoPlist.strings in Resources */,
@@ -1979,6 +2107,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		775270221B94F8FE000CD27E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				775270351B94F9C2000CD27E /* HWGrowlAudioMonitor.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		777FCFB1193B8BFB004EA8E2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2112,6 +2248,11 @@
 			target = 777FCFB4193B8BFB004EA8E2 /* GraphicCardMonitor */;
 			targetProxy = 77184771193CF7DA007F2009 /* PBXContainerItemProxy */;
 		};
+		7752703A1B94FAD9000CD27E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 775270211B94F8FE000CD27E /* AudioMonitor */;
+			targetProxy = 775270391B94FAD9000CD27E /* PBXContainerItemProxy */;
+		};
 		BC523C3315556B4500548427 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = BC523C211555686000548427 /* USBMonitor */;
@@ -2165,6 +2306,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		7752703C1B94FC40000CD27E /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				7752703D1B94FC40000CD27E /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
 		777FCFBB193B8BFB004EA8E2 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -2330,6 +2479,75 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		7752702E1B94F8FE000CD27E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC3530AF155C1402005D2EA2 /* Debug.xcconfig */;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "GraphicCardMonitor/GraphicCardMonitor-Prefix.pch";
+				INFOPLIST_FILE = "AudioMonitor/AudioMonitor-Info.plist";
+				INFOPLIST_PREFIX_HEADER = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_NAME = AudioMonitor;
+				WRAPPER_EXTENSION = hwgrowlmonitor;
+			};
+			name = Debug;
+		};
+		7752702F1B94F8FE000CD27E /* Localization */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC3530B0155C1402005D2EA2 /* Localization.xcconfig */;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "GraphicCardMonitor/GraphicCardMonitor-Prefix.pch";
+				INFOPLIST_FILE = "AudioMonitor/AudioMonitor-Info.plist";
+				INFOPLIST_PREFIX_HEADER = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_NAME = AudioMonitor;
+				WRAPPER_EXTENSION = hwgrowlmonitor;
+			};
+			name = Localization;
+		};
+		775270301B94F8FE000CD27E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC3530B1155C1402005D2EA2 /* Release.xcconfig */;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "GraphicCardMonitor/GraphicCardMonitor-Prefix.pch";
+				INFOPLIST_FILE = "AudioMonitor/AudioMonitor-Info.plist";
+				INFOPLIST_PREFIX_HEADER = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_NAME = AudioMonitor;
+				WRAPPER_EXTENSION = hwgrowlmonitor;
+			};
+			name = Release;
+		};
 		777FCFBF193B8BFB004EA8E2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC3530AF155C1402005D2EA2 /* Debug.xcconfig */;
@@ -2763,6 +2981,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 			};
 			name = Debug;
@@ -2801,6 +3020,8 @@
 			baseConfigurationReference = BC3530AF155C1402005D2EA2 /* Debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_ENTITLEMENTS = HardwareGrowler/HardwareGrowler.entitlements;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HardwareGrowler/HardwareGrowler-Prefix.pch";
@@ -2819,6 +3040,7 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = HardwareGrowler/HardwareGrowler.entitlements;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HardwareGrowler/HardwareGrowler-Prefix.pch";
@@ -2871,6 +3093,8 @@
 			baseConfigurationReference = BC3530B0155C1402005D2EA2 /* Localization.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_ENTITLEMENTS = HardwareGrowler/HardwareGrowler.entitlements;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HardwareGrowler/HardwareGrowler-Prefix.pch";
@@ -2888,6 +3112,8 @@
 			baseConfigurationReference = BC3530AF155C1402005D2EA2 /* Debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_ENTITLEMENTS = HardwareGrowlerLauncher/HardwareGrowlerLauncher.entitlements;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HardwareGrowlerLauncher/HardwareGrowlerLauncher-Prefix.pch";
@@ -2905,6 +3131,8 @@
 			baseConfigurationReference = BC3530B0155C1402005D2EA2 /* Localization.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_ENTITLEMENTS = HardwareGrowlerLauncher/HardwareGrowlerLauncher.entitlements;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HardwareGrowlerLauncher/HardwareGrowlerLauncher-Prefix.pch";
@@ -2923,6 +3151,7 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = HardwareGrowlerLauncher/HardwareGrowlerLauncher.entitlements;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HardwareGrowlerLauncher/HardwareGrowlerLauncher-Prefix.pch";
@@ -3142,6 +3371,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		7752702D1B94F8FE000CD27E /* Build configuration list for PBXNativeTarget "AudioMonitor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7752702E1B94F8FE000CD27E /* Debug */,
+				7752702F1B94F8FE000CD27E /* Localization */,
+				775270301B94F8FE000CD27E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		777FCFD0193B8BFB004EA8E2 /* Build configuration list for PBXNativeTarget "GraphicCardMonitor" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

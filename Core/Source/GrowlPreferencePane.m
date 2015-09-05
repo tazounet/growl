@@ -80,52 +80,63 @@
 
 - (void)showWindow:(id)sender
 {   
-   [toolbar setVisible:YES];
-	
-	[super showWindow:sender];
-   
-   if(!firstOpen){
-      if([currentViewController respondsToSelector:@selector(viewWillLoad)])
-         [currentViewController viewWillLoad];
-      if([currentViewController respondsToSelector:@selector(viewDidLoad)])
-         [currentViewController viewDidLoad];
-   }
-   firstOpen = NO;
-	
-	ProcessSerialNumber psn = { 0, kCurrentProcess };
-	TransformProcessType(&psn, kProcessTransformToForegroundApplication);
-	NSNotificationCenter *nc = [[NSWorkspace sharedWorkspace] notificationCenter];
-	[nc addObserverForName:NSWorkspaceDidActivateApplicationNotification
-						 object:nil
-						  queue:[NSOperationQueue mainQueue]
-					usingBlock:^(NSNotification *note) {
-						ProcessSerialNumber newFrontPSN;
-						GetFrontProcess(&newFrontPSN);
-						ProcessSerialNumber growlPsn = { 0, kCurrentProcess };
-						Boolean result;
-						SameProcess(&newFrontPSN, &growlPsn, &result);
-						if(!result){
-							GetFrontProcess(&previousPSN);
-						}
-					}];
+    [toolbar setVisible:YES];
+    
+    [super showWindow:sender];
+    
+    if(!firstOpen){
+        if([currentViewController respondsToSelector:@selector(viewWillLoad)])
+            [currentViewController viewWillLoad];
+        if([currentViewController respondsToSelector:@selector(viewDidLoad)])
+            [currentViewController viewDidLoad];
+    }
+    firstOpen = NO;
+    
+    // Tweak for menu bar
+    dispatch_async(dispatch_get_main_queue(), ^{
+        for (NSRunningApplication * app in [NSRunningApplication runningApplicationsWithBundleIdentifier:@"com.apple.dock"]) {
+            [app activateWithOptions:NSApplicationActivateIgnoringOtherApps];
+            break;
+        }
+        [self performSelector:@selector(showWindowStep2) withObject:nil afterDelay:0.1];
+    });
+}
+
+- (void)showWindowStep2
+{
+    ProcessSerialNumber psn = { 0, kCurrentProcess };
+    TransformProcessType(&psn, kProcessTransformToForegroundApplication);
+    
+    [self performSelector:@selector(showWindowStep3) withObject:nil afterDelay:0.1];
+}
+
+- (void)showWindowStep3
+{
+    [[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateIgnoringOtherApps];
+    if(![self.window isVisible]) {
+        [self.window center];
+        [self.window setFrameAutosaveName:@"HWGrowlerPrefsWindowFrame"];
+        [self.window setFrameUsingName:@"HWGrowlerPrefsWindowFrame" force:YES];
+    }
+    
+    [self.window makeKeyAndOrderFront:nil];
 }
 
 - (void)windowWillClose:(NSNotification *)notification
 {
-   if([currentViewController respondsToSelector:@selector(viewWillUnload)])
-      [currentViewController viewWillUnload];
-   
-   //This should be seperate when the window has actually closed, but eh
-   if([currentViewController respondsToSelector:@selector(viewDidUnload)])
-      [currentViewController viewDidUnload];
-	
-	if([preferencesController menuState] == GrowlNoMenu || [preferencesController menuState] == GrowlStatusMenu){
-		dispatch_async(dispatch_get_main_queue(), ^{
-			ProcessSerialNumber psn = { 0, kCurrentProcess };
-			TransformProcessType(&psn, kProcessTransformToUIElementApplication);
-			SetFrontProcess(&previousPSN);
-		});
-	}
+    if([currentViewController respondsToSelector:@selector(viewWillUnload)])
+        [currentViewController viewWillUnload];
+    
+    //This should be seperate when the window has actually closed, but eh
+    if([currentViewController respondsToSelector:@selector(viewDidUnload)])
+        [currentViewController viewDidUnload];
+    
+    if([preferencesController menuState] == GrowlNoMenu || [preferencesController menuState] == GrowlStatusMenu){
+        dispatch_async(dispatch_get_main_queue(), ^{
+            ProcessSerialNumber psn = { 0, kCurrentProcess };
+            TransformProcessType(&psn, kProcessTransformToUIElementApplication);
+        });
+    }
 }
 
 #pragma mark -

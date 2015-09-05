@@ -10,7 +10,6 @@
 
 @interface GrowlCodeSignUtilities : NSObject
 
-+ (BOOL) isLionOrGreater;
 + (BOOL) hasEntitlement:(NSString*)entitlement;
 + (BOOL) hasSandboxEntitlement;
 + (BOOL) hasNetworkClientEntitlement;

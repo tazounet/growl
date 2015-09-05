@@ -29,7 +29,7 @@
 -(id)init {
 	if((self = [super init])){
 		self.notificationsArePrimed = NO;
-		//#warning	kIOMasterPortDefault is only available on 10.2 and above...
+
 		self.ioKitNotificationPort = IONotificationPortCreate(kIOMasterPortDefault);
 		self.notificationRunLoopSource = IONotificationPortGetRunLoopSource(ioKitNotificationPort);
 		

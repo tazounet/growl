@@ -35,32 +35,7 @@
     
 }
 
-#ifndef NSFoundationVersionNumber10_7
-#define NSFoundationVersionNumber10_7   833.1
-#endif
-#ifndef NSFoundationVersionNumber10_7_3
-#define NSFoundationVersionNumber10_7_3 833.24
-#endif
 -(id)init {
-	if((BOOL)isless(NSFoundationVersionNumber, NSFoundationVersionNumber10_7_3))
-	{
-		NSLog(@"Phone Module does not work on 10.7-10.7.2, please upgrade to 10.7.3");
-		if(![[NSUserDefaults standardUserDefaults] boolForKey:@"SuppressPhoneModuleWarn"]){
-			NSAlert *alert = [NSAlert alertWithMessageText:NSLocalizedString(@"Phone Module requires OSX Lion 10.7.3 or above", @"")
-														defaultButton:NSLocalizedString(@"Ok", @"") 
-													 alternateButton:nil
-														  otherButton:nil
-										informativeTextWithFormat:NSLocalizedString(@"In order to receive notifications about Phone Devices, please upgrade to OSX Lion 10.7.3 or above", @"")];
-			alert.showsSuppressionButton = YES;
-			[[alert suppressionButton] bind:NSValueBinding
-										  toObject:[NSUserDefaultsController sharedUserDefaultsController]
-									  withKeyPath:@"values.SuppressPhoneModuleWarn"
-											options:nil];
-			[alert runModal];
-		}
-		return nil;
-	}
-	
 	if((self = [super init])){
 		NSString *path = [[NSBundle mainBundle] pathForResource:@"HandsFreeDeviceSDPRecord" ofType:@"plist"];
 		NSDictionary *serviceDict = [NSDictionary dictionaryWithContentsOfFile:path]; 

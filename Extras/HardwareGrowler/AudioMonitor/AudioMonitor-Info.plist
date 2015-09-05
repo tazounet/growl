@@ -25,6 +25,6 @@
 	<key>NSHumanReadableCopyright</key>
 	<string>${COPYRIGHT}</string>
 	<key>NSPrincipalClass</key>
-	<string>HWGrowlThunderboltMonitor</string>
+	<string>HWGrowlAudioMonitor</string>
 </dict>
 </plist>

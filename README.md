@@ -7,7 +7,11 @@ Lastest code from code.google.com/p/growl with
 - Add AudioMonitor plugin (output/input/jack notification)
 
 # build
-$ cd Release 
-$ rake setup 
-$ VERSION=x.x.x rake build:growl 
-$ HWG_VERSION=x.x.x rake build:hardwaregrowler 
+$ cd Release
+
+$ VERSION=x.x.x rake setup
+
+$ VERSION=x.x.x rake build:growl
+
+$ HWG_VERSION=x.x.x rake build:hardwaregrowler
+

@@ -7,10 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "GCDAsyncSocket.h"
 
 @class GCDAsyncSocket;
 
-@interface GrowlWebSocketProxy : NSObject
+@interface GrowlWebSocketProxy : NSObject <GCDAsyncSocketDelegate>
 
 @property (nonatomic, strong) GCDAsyncSocket *socket;
 @property (nonatomic, unsafe_unretained) id delegate;

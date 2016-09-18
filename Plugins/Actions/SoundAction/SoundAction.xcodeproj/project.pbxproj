@@ -109,13 +109,6 @@
 			remoteGlobalIDString = DD4939CC084BACA700D1CCCB;
 			remoteInfo = SMS;
 		};
-		BCAD79A2151265DB0052EB51 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BCAD7972151265DB0052EB51 /* Growl.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 31E184D61084628D0011C78B;
-			remoteInfo = "Unit tests";
-		};
 		BCAD79A4151265DB0052EB51 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BCAD7972151265DB0052EB51 /* Growl.xcodeproj */;
@@ -287,7 +280,6 @@
 				BCAD799B151265DB0052EB51 /* Nano.growlView */,
 				BCAD799F151265DB0052EB51 /* MusicVideo.growlView */,
 				BCAD79A1151265DB0052EB51 /* SMS.growlView */,
-				BCAD79A3151265DB0052EB51 /* Unit tests.octest */,
 				BCAD79A5151265DB0052EB51 /* com.company.application.GNTPClientService.xpc */,
 			);
 			name = Products;
@@ -321,7 +313,7 @@
 		BCAD7954151265C60052EB51 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0630;
+				LastUpgradeCheck = 0800;
 			};
 			buildConfigurationList = BCAD7957151265C60052EB51 /* Build configuration list for PBXProject "SoundAction" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -465,13 +457,6 @@
 			remoteRef = BCAD79A0151265DB0052EB51 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		BCAD79A3151265DB0052EB51 /* Unit tests.octest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "Unit tests.octest";
-			remoteRef = BCAD79A2151265DB0052EB51 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		BCAD79A5151265DB0052EB51 /* com.company.application.GNTPClientService.xpc */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
@@ -585,11 +570,14 @@
 			baseConfigurationReference = BC1FE6F115C0F04700E27306 /* Localization.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
@@ -623,6 +611,7 @@
 				INFOPLIST_FILE = "SoundAction/SoundAction-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = com.growl.soundaction;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = growlView;
 			};
@@ -633,15 +622,19 @@
 			baseConfigurationReference = BC1FE6F015C0F04700E27306 /* Debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -669,11 +662,14 @@
 			baseConfigurationReference = BC1FE6F215C0F04700E27306 /* Release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
@@ -707,6 +703,7 @@
 				INFOPLIST_FILE = "SoundAction/SoundAction-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = com.growl.soundaction;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = growlView;
 			};
@@ -726,6 +723,7 @@
 				INFOPLIST_FILE = "SoundAction/SoundAction-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = com.growl.soundaction;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = growlView;
 			};

@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>Nano</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.Growl.Nano</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -20,15 +20,15 @@
 	<string>GROWL_VERSION</string>
 	<key>CSResourcesFileMapped</key>
 	<string>yes</string>
+	<key>GrowlDisplayUsesQueue</key>
+	<true/>
 	<key>GrowlPluginAuthor</key>
 	<string>Rudy Richter</string>
 	<key>GrowlPluginDescription</key>
-	<string>Nano, we&apos;re evil like that</string>
-	<key>NSPrincipalClass</key>
-	<string>GrowlNanoDisplay</string>
-	<key>GrowlDisplayUsesQueue</key>
-	<true/>
+	<string>Nano, we're evil like that</string>
 	<key>GrowlPluginsFrameworkVersion</key>
 	<string>1.0</string>
+	<key>NSPrincipalClass</key>
+	<string>GrowlNanoDisplay</string>
 </dict>
 </plist>

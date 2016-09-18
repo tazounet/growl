@@ -69,7 +69,7 @@
 
 -(void)dealloc
 {
-    [groupController removeObserver:self forKeyPath:nil];
+    //TODO [groupController removeObserver:self forKeyPath:nil];
     
     historyTable = nil;
     groupController.delegate = nil;

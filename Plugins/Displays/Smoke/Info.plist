@@ -7,9 +7,11 @@
 	<key>CFBundleExecutable</key>
 	<string>Smoke</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.Growl.Smoke</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Smoke</string>
 	<key>CFBundlePackageType</key>
 	<string>DISP</string>
 	<key>CFBundleSignature</key>
@@ -18,19 +20,17 @@
 	<string>GROWL_VERSION</string>
 	<key>CSResourcesFileMapped</key>
 	<true/>
-	<key>NSPrincipalClass</key>
-	<string>GrowlSmokeDisplay</string>
-	<key>CFBundleName</key>
-	<string>Smoke</string>
+	<key>GrowlCloseButtonXOrigin</key>
+	<real>2</real>
+	<key>GrowlCloseButtonYOrigin</key>
+	<integer>3</integer>
 	<key>GrowlPluginAuthor</key>
 	<string>Matthew Walton</string>
 	<key>GrowlPluginDescription</key>
 	<string>Dark translucent notifications</string>
 	<key>GrowlPluginsFrameworkVersion</key>
 	<string>1.0</string>
-	<key>GrowlCloseButtonXOrigin</key>
-	<real>2</real>
-	<key>GrowlCloseButtonYOrigin</key>
-	<integer>3</integer>
+	<key>NSPrincipalClass</key>
+	<string>GrowlSmokeDisplay</string>
 </dict>
 </plist>

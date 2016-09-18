@@ -111,13 +111,6 @@
 			remoteGlobalIDString = DD4939CC084BACA700D1CCCB;
 			remoteInfo = SMS;
 		};
-		BCCB23C015372B0F0064FD1D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BCCB239315372B0F0064FD1D /* Growl.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 31E184D61084628D0011C78B;
-			remoteInfo = "Unit tests";
-		};
 		BCCB23C215372B0F0064FD1D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BCCB239315372B0F0064FD1D /* Growl.xcodeproj */;
@@ -278,7 +271,6 @@
 				BCCB23BB15372B0F0064FD1D /* Nano.growlView */,
 				BCCB23BD15372B0F0064FD1D /* MusicVideo.growlView */,
 				BCCB23BF15372B0F0064FD1D /* SMS.growlView */,
-				BCCB23C115372B0F0064FD1D /* Unit tests.octest */,
 				BCCB23C315372B0F0064FD1D /* com.company.application.GNTPClientService.xpc */,
 			);
 			name = Products;
@@ -312,7 +304,7 @@
 		BCCB236A15372ACB0064FD1D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0630;
+				LastUpgradeCheck = 0800;
 			};
 			buildConfigurationList = BCCB236D15372ACB0064FD1D /* Build configuration list for PBXProject "MailMe" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -454,13 +446,6 @@
 			remoteRef = BCCB23BE15372B0F0064FD1D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		BCCB23C115372B0F0064FD1D /* Unit tests.octest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "Unit tests.octest";
-			remoteRef = BCCB23C015372B0F0064FD1D /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		BCCB23C315372B0F0064FD1D /* com.company.application.GNTPClientService.xpc */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
@@ -573,11 +558,14 @@
 			baseConfigurationReference = BC1FE70C15C0F08B00E27306 /* Localization.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
@@ -594,7 +582,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_PREFIX_HEADER = "";
 				INFOPLIST_PREPROCESS = NO;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				SDKROOT = macosx;
 			};
 			name = Localization;
@@ -614,6 +602,7 @@
 				INFOPLIST_FILE = "MailMe/MailMe-Info.plist";
 				INFOPLIST_PREPROCESS = NO;
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Application Support/Growl/Plugins";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = growlView;
 			};
@@ -624,15 +613,19 @@
 			baseConfigurationReference = BC1FE70B15C0F08B00E27306 /* Debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -651,7 +644,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_PREFIX_HEADER = "";
 				INFOPLIST_PREPROCESS = NO;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
@@ -662,11 +655,14 @@
 			baseConfigurationReference = BC1FE70D15C0F08B00E27306 /* Release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
@@ -683,7 +679,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_PREFIX_HEADER = "";
 				INFOPLIST_PREPROCESS = NO;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -703,6 +699,7 @@
 				INFOPLIST_FILE = "MailMe/MailMe-Info.plist";
 				INFOPLIST_PREPROCESS = NO;
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Application Support/Growl/Plugins";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = growlView;
 			};
@@ -723,6 +720,7 @@
 				INFOPLIST_FILE = "MailMe/MailMe-Info.plist";
 				INFOPLIST_PREPROCESS = NO;
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Application Support/Growl/Plugins";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = growlView;
 			};

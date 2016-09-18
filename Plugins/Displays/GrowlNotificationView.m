@@ -9,6 +9,7 @@
 #import <GrowlPlugins/GrowlNotificationView.h>
 #import "GrowlDefinesInternal.h"
 #import "NSViewAdditions.h"
+#import "GrowlNotification.h"
 
 @implementation GrowlNotificationView
 
@@ -193,7 +194,7 @@ static NSButton *gCloseButton = nil;
 	if(!initialDisplayTest) {
 		initialDisplayTest = YES;
 		if([self showsCloseBox] && NSPointInRect([self convertPointFromScreen:[NSEvent mouseLocation]], [self frame]))
-			[self mouseEntered:nil];
+			[self mouseEntered:[[NSEvent alloc]init]];
 	}
 	[super drawRect:rect];
 }
@@ -211,7 +212,7 @@ static NSButton *gCloseButton = nil;
 
 -(NSDictionary*)configurationDict {
 	if([[[self window] windowController] respondsToSelector:@selector(configurationDict)])
-		return [[[self window] windowController] configurationDict];
+		return [[[self window] windowController] performSelector:@selector(configurationDict)];
 	return nil;
 }
 

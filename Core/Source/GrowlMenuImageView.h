@@ -10,7 +10,7 @@
 
 @class GrowlMenu;
 
-@interface GrowlMenuImageView : NSView {
+@interface GrowlMenuImageView : NSView <CALayerDelegate> {
    GrowlMenu *__weak menuItem;
    
     NSInteger mode;

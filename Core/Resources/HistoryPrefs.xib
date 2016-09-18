@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4514" systemVersion="14D136" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment version="1070" defaultVersion="1070" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4514"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9532"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="GrowlHistoryViewController">
@@ -22,7 +22,6 @@
             <subviews>
                 <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="15">
                     <rect key="frame" x="523" y="415" width="19" height="27"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <stepperCell key="cell" continuous="YES" alignment="left" minValue="1" maxValue="1000" doubleValue="1" id="30"/>
                     <connections>
                         <binding destination="-2" name="value" keyPath="preferencesController.growlHistoryDayLimit" id="101"/>
@@ -31,18 +30,13 @@
                 </stepper>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="14">
                     <rect key="frame" x="422" y="418" width="96" height="22"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="96" id="494"/>
                     </constraints>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="31">
-                        <numberFormatter key="formatter" formatterBehavior="default10_4" positiveFormat="#,##0.###" negativeFormat="#,##0.###" numberStyle="decimal" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" minimumFractionDigits="0" maximumFractionDigits="3" id="32">
-                            <real key="roundingIncrement" value="0.0"/>
+                        <numberFormatter key="formatter" formatterBehavior="default10_4" positiveFormat="#,##0.###" negativeFormat="#,##0.###" numberStyle="decimal" paddingCharacter="*" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" decimalSeparator="." groupingSeparator="," currencyDecimalSeparator="." plusSign="+" minusSign="-" notANumberSymbol="NaN" perMillSymbol="‰" percentSymbol="%" exponentSymbol="E" positivePrefix="" positiveSuffix="" negativePrefix="-" negativeSuffix="" id="32">
                             <real key="minimum" value="1"/>
                             <real key="maximum" value="1000"/>
-                            <metadata>
-                                <bool key="localizesFormat" value="YES"/>
-                            </metadata>
                         </numberFormatter>
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -54,43 +48,36 @@
                     </connections>
                 </textField>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="13">
-                    <rect key="frame" x="327" y="419" width="89" height="18"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <rect key="frame" x="330" y="420" width="86" height="18"/>
                     <buttonCell key="cell" type="check" title="Keep Days" bezelStyle="regularSquare" imagePosition="right" alignment="right" state="on" inset="2" id="33">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
                         <action selector="validateHistoryTrimSetting:" target="-2" id="97"/>
-                        <binding destination="-2" name="title" keyPath="self.keepDaysLabel" id="424"/>
                         <binding destination="-2" name="value" keyPath="preferencesController.growlHistoryTrimByDate" id="109"/>
+                        <binding destination="-2" name="title" keyPath="self.keepDaysLabel" id="424"/>
                         <outlet property="nextKeyView" destination="14" id="546"/>
                     </connections>
                 </button>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="12">
-                    <rect key="frame" x="310" y="451" width="106" height="20"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <rect key="frame" x="312" y="452" width="104" height="18"/>
                     <buttonCell key="cell" type="check" title="Keep Amount" bezelStyle="regularSquare" imagePosition="right" alignment="right" state="on" inset="2" id="34">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
                         <action selector="validateHistoryTrimSetting:" target="-2" id="96"/>
-                        <binding destination="-2" name="title" keyPath="self.keepAmountLabel" id="423"/>
                         <binding destination="-2" name="value" keyPath="preferencesController.growlHistoryTrimByCount" id="112"/>
+                        <binding destination="-2" name="title" keyPath="self.keepAmountLabel" id="423"/>
                         <outlet property="nextKeyView" destination="11" id="543"/>
                     </connections>
                 </button>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="11">
                     <rect key="frame" x="422" y="450" width="117" height="22"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="35">
-                        <numberFormatter key="formatter" formatterBehavior="default10_4" positiveFormat="#,##0.###" negativeFormat="#,##0.###" numberStyle="decimal" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" minimumFractionDigits="0" maximumFractionDigits="3" id="36">
-                            <real key="roundingIncrement" value="0.0"/>
+                        <numberFormatter key="formatter" formatterBehavior="default10_4" positiveFormat="#,##0.###" negativeFormat="#,##0.###" numberStyle="decimal" paddingCharacter="*" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" decimalSeparator="." groupingSeparator="," currencyDecimalSeparator="." plusSign="+" minusSign="-" notANumberSymbol="NaN" perMillSymbol="‰" percentSymbol="%" exponentSymbol="E" positivePrefix="" positiveSuffix="" negativePrefix="-" negativeSuffix="" id="36">
                             <real key="minimum" value="1"/>
-                            <metadata>
-                                <bool key="localizesFormat" value="YES"/>
-                            </metadata>
                         </numberFormatter>
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -103,16 +90,15 @@
                 </textField>
                 <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="16">
                     <rect key="frame" x="20" y="159" width="519" height="251"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <clipView key="contentView" id="e20-Od-fo3">
-                        <rect key="frame" x="1" y="17" width="517" height="233"/>
+                        <rect key="frame" x="1" y="0.0" width="517" height="250"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnSelection="YES" autosaveColumns="NO" headerView="17" id="18">
-                                <rect key="frame" x="0.0" y="0.0" width="517" height="233"/>
+                                <rect key="frame" x="0.0" y="0.0" width="517" height="227"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <size key="intercellSpacing" width="3" height="2"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                 <tableColumns>
                                     <tableColumn identifier="PrefHistoryIcon" editable="NO" width="20" minWidth="20" maxWidth="20" id="22">
@@ -140,8 +126,8 @@
                                         <sortDescriptor key="sortDescriptorPrototype" selector="compare:" sortKey="ApplicationName"/>
                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         <connections>
-                                            <binding destination="-2" name="headerTitle" keyPath="self.applicationColumnLabel" id="426"/>
                                             <binding destination="47" name="value" keyPath="arrangedObjects.ApplicationName" id="124"/>
+                                            <binding destination="-2" name="headerTitle" keyPath="self.applicationColumnLabel" id="426"/>
                                         </connections>
                                     </tableColumn>
                                     <tableColumn identifier="PrefHistoryTitle" editable="NO" width="192" minWidth="40" maxWidth="1000" id="23">
@@ -158,8 +144,8 @@
                                         <sortDescriptor key="sortDescriptorPrototype" selector="compare:" sortKey="Title"/>
                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         <connections>
-                                            <binding destination="-2" name="headerTitle" keyPath="self.titleColumnLabel" id="430"/>
                                             <binding destination="47" name="value" keyPath="arrangedObjects.Title" id="126"/>
+                                            <binding destination="-2" name="headerTitle" keyPath="self.titleColumnLabel" id="430"/>
                                         </connections>
                                     </tableColumn>
                                     <tableColumn identifier="PrefHistoryTime" editable="NO" width="155" minWidth="10" maxWidth="3.4028234663852886e+38" id="21">
@@ -177,8 +163,8 @@
                                         <sortDescriptor key="sortDescriptorPrototype" selector="compare:" sortKey="Time"/>
                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         <connections>
-                                            <binding destination="-2" name="headerTitle" keyPath="self.timeColumnLabel" id="433"/>
                                             <binding destination="47" name="value" keyPath="arrangedObjects.Time" id="128"/>
+                                            <binding destination="-2" name="headerTitle" keyPath="self.timeColumnLabel" id="433"/>
                                         </connections>
                                     </tableColumn>
                                 </tableColumns>
@@ -204,7 +190,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                     <tableHeaderView key="headerView" id="17">
-                        <rect key="frame" x="0.0" y="0.0" width="517" height="17"/>
+                        <rect key="frame" x="0.0" y="0.0" width="517" height="23"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </tableHeaderView>
                     <connections>
@@ -213,7 +199,6 @@
                 </scrollView>
                 <searchField wantsLayer="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4">
                     <rect key="frame" x="20" y="418" width="188" height="22"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="188" id="504"/>
                     </constraints>
@@ -518,7 +503,6 @@
                 </searchField>
                 <imageView translatesAutoresizingMaskIntoConstraints="NO" id="8">
                     <rect key="frame" x="17" y="85" width="48" height="48"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="42" id="302"/>
                         <constraint firstAttribute="height" constant="42" id="351"/>
@@ -530,7 +514,6 @@
                 </imageView>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="10">
                     <rect key="frame" x="20" y="137" width="21" height="23"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="21" id="490"/>
                     </constraints>
@@ -545,8 +528,7 @@
                     </connections>
                 </button>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9">
-                    <rect key="frame" x="41" y="137" width="106" height="23"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <rect key="frame" x="41" y="137" width="104" height="23"/>
                     <buttonCell key="cell" type="smallSquare" title="Clear All History" bezelStyle="smallSquare" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="38">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
@@ -557,8 +539,7 @@
                     </connections>
                 </button>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7">
-                    <rect key="frame" x="68" y="113" width="113" height="17"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <rect key="frame" x="68" y="113" width="112" height="17"/>
                     <textFieldCell key="cell" lineBreakMode="truncatingTail" selectable="YES" sendsActionOnEndEditing="YES" title="Application - Title" id="40">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -577,9 +558,8 @@
                         </binding>
                     </connections>
                 </textField>
-                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3">
+                <textField verticalHuggingPriority="750" preferredMaxLayoutWidth="469" translatesAutoresizingMaskIntoConstraints="NO" id="3">
                     <rect key="frame" x="68" y="20" width="473" height="85"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="469" id="332"/>
                         <constraint firstAttribute="height" constant="85" id="641"/>
@@ -592,26 +572,25 @@
                     <connections>
                         <binding destination="47" name="value" keyPath="selection.Description" id="539">
                             <dictionary key="options">
-                                <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
-                                <string key="NSNotApplicablePlaceholder" base64-UTF8="YES">
+                                <string key="NSMultipleValuesPlaceholder" base64-UTF8="YES">
 IA
 </string>
                                 <string key="NSNoSelectionPlaceholder" base64-UTF8="YES">
 IA
 </string>
-                                <string key="NSMultipleValuesPlaceholder" base64-UTF8="YES">
+                                <string key="NSNotApplicablePlaceholder" base64-UTF8="YES">
 IA
 </string>
                                 <string key="NSNullPlaceholder" base64-UTF8="YES">
 IA
 </string>
+                                <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
                             </dictionary>
                         </binding>
                     </connections>
                 </textField>
                 <customView translatesAutoresizingMaskIntoConstraints="NO" id="554" customClass="GrowlOnSwitch">
-                    <rect key="frame" x="70" y="454" width="93" height="28"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <rect key="frame" x="69" y="454" width="93" height="28"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="93" id="672"/>
                     </constraints>
@@ -622,8 +601,7 @@ IA
                     </connections>
                 </customView>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="555" customClass="GrowlOnSwitchLabel">
-                    <rect key="frame" x="25" y="457" width="39" height="22"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <rect key="frame" x="25" y="457" width="38" height="22"/>
                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="OFF" id="559">
                         <font key="font" metaFont="system" size="18"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -635,8 +613,7 @@ IA
                     </connections>
                 </textField>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="556" customClass="GrowlOnSwitchLabel">
-                    <rect key="frame" x="169" y="457" width="32" height="22"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <rect key="frame" x="168" y="457" width="31" height="22"/>
                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="ON" id="558">
                         <font key="font" metaFont="system" size="18"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -710,7 +687,7 @@ IA
             </connections>
         </arrayController>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customObject id="-3" userLabel="Application"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <menu id="523">
             <items>
                 <menuItem title="Configure application" id="524">

@@ -17,7 +17,8 @@
 	[self unlockFocus];
 
 	NSData *data = [bitmap representationUsingType:NSPNGFileType
-	                                    properties:nil];
+                                        properties:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat:2.0],
+                                                    NSImageCompressionFactor, nil]];
 
 	return data;
 }

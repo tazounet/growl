@@ -110,13 +110,6 @@
 			remoteGlobalIDString = DD4939CC084BACA700D1CCCB;
 			remoteInfo = SMS;
 		};
-		BC19A16615198CE300A0CA64 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BC19A13615198CE300A0CA64 /* Growl.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 31E184D61084628D0011C78B;
-			remoteInfo = "Unit tests";
-		};
 		BC19A16815198CE300A0CA64 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BC19A13615198CE300A0CA64 /* Growl.xcodeproj */;
@@ -211,7 +204,6 @@
 				BC19A15F15198CE300A0CA64 /* Nano.growlView */,
 				BC19A16315198CE300A0CA64 /* MusicVideo.growlView */,
 				BC19A16515198CE300A0CA64 /* SMS.growlView */,
-				BC19A16715198CE300A0CA64 /* Unit tests.octest */,
 				BC19A16915198CE300A0CA64 /* com.company.application.GNTPClientService.xpc */,
 			);
 			name = Products;
@@ -310,7 +302,7 @@
 		BCEA7ED51517CD4400E98B1F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0630;
+				LastUpgradeCheck = 0800;
 			};
 			buildConfigurationList = BCEA7ED81517CD4400E98B1F /* Build configuration list for PBXProject "Boxcar" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -453,13 +445,6 @@
 			remoteRef = BC19A16415198CE300A0CA64 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		BC19A16715198CE300A0CA64 /* Unit tests.octest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "Unit tests.octest";
-			remoteRef = BC19A16615198CE300A0CA64 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		BC19A16915198CE300A0CA64 /* com.company.application.GNTPClientService.xpc */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
@@ -572,11 +557,14 @@
 			baseConfigurationReference = BC1FE6D615C0F00200E27306 /* Localization.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
@@ -612,6 +600,7 @@
 				INFOPLIST_FILE = "Boxcar/Boxcar-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Application Support/Growl/Plugins";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.Growl.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = growlView;
 			};
@@ -622,15 +611,19 @@
 			baseConfigurationReference = BC1FE6D515C0F00200E27306 /* Debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -659,11 +652,14 @@
 			baseConfigurationReference = BC1FE6D715C0F00200E27306 /* Release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
@@ -699,6 +695,7 @@
 				INFOPLIST_FILE = "Boxcar/Boxcar-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Application Support/Growl/Plugins";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.Growl.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = growlView;
 			};
@@ -719,6 +716,7 @@
 				INFOPLIST_FILE = "Boxcar/Boxcar-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Application Support/Growl/Plugins";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.Growl.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = growlView;
 			};

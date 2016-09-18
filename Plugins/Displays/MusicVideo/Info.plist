@@ -7,9 +7,11 @@
 	<key>CFBundleExecutable</key>
 	<string>MusicVideo</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.Growl.MusicVideo</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Music Video</string>
 	<key>CFBundlePackageType</key>
 	<string>DISP</string>
 	<key>CFBundleSignature</key>
@@ -18,17 +20,15 @@
 	<string>GROWL_VERSION</string>
 	<key>CSResourcesFileMapped</key>
 	<string>yes</string>
-	<key>NSPrincipalClass</key>
-	<string>GrowlMusicVideoDisplay</string>
-	<key>CFBundleName</key>
-	<string>Music Video</string>
+	<key>GrowlDisplayUsesQueue</key>
+	<true/>
 	<key>GrowlPluginAuthor</key>
 	<string>Jorge Salvador Caffarena</string>
 	<key>GrowlPluginDescription</key>
 	<string>Music Video notifications, for your tunes</string>
-	<key>GrowlDisplayUsesQueue</key>
-	<true/>
 	<key>GrowlPluginsFrameworkVersion</key>
 	<string>1.0</string>
+	<key>NSPrincipalClass</key>
+	<string>GrowlMusicVideoDisplay</string>
 </dict>
 </plist>

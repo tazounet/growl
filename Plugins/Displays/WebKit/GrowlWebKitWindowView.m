@@ -16,6 +16,9 @@
 - (void) _updateMouseoverWithFakeEvent;
 @end
 
+@interface GrowlWebKitWindowView() <WebUIDelegate>
+@end
+
 @implementation GrowlWebKitWindowView
 @synthesize styleBundle;
 
@@ -164,7 +167,7 @@
 - (void)testInitialMouseLocation
 {
 	if(NSPointInRect([NSEvent mouseLocation], [[self window] frame]))
-			[self mouseEntered:nil];
+			[self mouseEntered:[[NSEvent alloc]init]];
 }
 
 - (BOOL) acceptsFirstMouse:(NSEvent *) event {

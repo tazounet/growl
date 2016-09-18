@@ -130,7 +130,7 @@ static void scCallback(SCDynamicStoreRef store, CFArrayRef changedKeys, void *in
          newPrimary = ipv4Primary;
       else
          newPrimary = ipv6Primary;
-      if(![self.primaryIP caseInsensitiveCompare:newPrimary] == NSOrderedSame){
+      if(!([self.primaryIP caseInsensitiveCompare:newPrimary] == NSOrderedSame)){
          //We have changed primary IP for some reason or another
          [[NSNotificationCenter defaultCenter] postNotificationName:PrimaryIPChangeNotification object:self];
          NSLog(@"Primary IP changed");

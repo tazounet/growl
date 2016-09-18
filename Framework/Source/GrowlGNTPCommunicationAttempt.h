@@ -7,12 +7,13 @@
 //
 
 #import "GrowlCommunicationAttempt.h"
+#import "GCDAsyncSocket.h"
 #import <xpc/xpc.h>
 
 @class GCDAsyncSocket;
 @class GNTPKey;
 
-@interface GrowlGNTPCommunicationAttempt : GrowlCommunicationAttempt
+@interface GrowlGNTPCommunicationAttempt : GrowlCommunicationAttempt <GCDAsyncSocketDelegate>
 {
 @private
 	GNTPKey *_key;

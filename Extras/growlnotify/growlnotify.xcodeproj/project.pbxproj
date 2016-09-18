@@ -54,8 +54,8 @@
 		BC8FD3DC15B12F1E0007CC12 /* GNTPUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GNTPUtilities.m; path = "../../Developer Tools/GNTPTestServer/GNTPTestServer/GNTPUtilities.m"; sourceTree = "<group>"; };
 		BC9EED4C141FE3B000BA137C /* GrowlImageAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GrowlImageAdditions.h; path = ../../Core/Source/GrowlImageAdditions.h; sourceTree = "<group>"; };
 		BC9EED4D141FE3B000BA137C /* GrowlImageAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GrowlImageAdditions.m; path = ../../Core/Source/GrowlImageAdditions.m; sourceTree = "<group>"; };
-		BCBC3CCD14201B240032BCA0 /* GCDAsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GCDAsyncSocket.h; path = ../../external_dependencies/cocoaasyncsocket/GCD/GCDAsyncSocket.h; sourceTree = "<group>"; };
-		BCBC3CCE14201B240032BCA0 /* GCDAsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GCDAsyncSocket.m; path = ../../external_dependencies/cocoaasyncsocket/GCD/GCDAsyncSocket.m; sourceTree = "<group>"; };
+		BCBC3CCD14201B240032BCA0 /* GCDAsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GCDAsyncSocket.h; path = ../../external_dependencies/cocoaasyncsocket/Source/GCD/GCDAsyncSocket.h; sourceTree = "<group>"; };
+		BCBC3CCE14201B240032BCA0 /* GCDAsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GCDAsyncSocket.m; path = ../../external_dependencies/cocoaasyncsocket/Source/GCD/GCDAsyncSocket.m; sourceTree = "<group>"; };
 		BCBC3CDF14201C2B0032BCA0 /* GrowlCommunicationAttempt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GrowlCommunicationAttempt.h; path = ../../Framework/Source/GrowlCommunicationAttempt.h; sourceTree = "<group>"; };
 		BCBC3CE014201C2B0032BCA0 /* GrowlCommunicationAttempt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GrowlCommunicationAttempt.m; path = ../../Framework/Source/GrowlCommunicationAttempt.m; sourceTree = "<group>"; };
 		BCBC3CE114201C2B0032BCA0 /* GrowlGNTPCommunicationAttempt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GrowlGNTPCommunicationAttempt.h; path = ../../Framework/Source/GrowlGNTPCommunicationAttempt.h; sourceTree = "<group>"; };
@@ -237,7 +237,7 @@
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0630;
+				LastUpgradeCheck = 0800;
 			};
 			buildConfigurationList = 95E4A2860855C0B7006B3F45 /* Build configuration list for PBXProject "growlnotify" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -385,11 +385,14 @@
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -422,7 +425,9 @@
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;

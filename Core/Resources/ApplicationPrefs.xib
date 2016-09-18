@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4514" systemVersion="14D136" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment version="1070" defaultVersion="1070" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4514"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9532"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="GrowlApplicationsViewController">
@@ -26,14 +26,13 @@
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customObject id="-3" userLabel="Application"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <view id="2">
             <rect key="frame" x="0.0" y="0.0" width="732" height="389"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="19">
                     <rect key="frame" x="57" y="16" width="96" height="32"/>
-                    <autoresizingMask key="autoresizingMask"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="84" id="8496"/>
                     </constraints>
@@ -52,13 +51,12 @@ CA
                 </button>
                 <scrollView autohidesScrollers="YES" horizontalLineScroll="38" horizontalPageScroll="0.0" verticalLineScroll="38" verticalPageScroll="0.0" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9">
                     <rect key="frame" x="0.0" y="20" width="200" height="339"/>
-                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     <clipView key="contentView" drawsBackground="NO" id="T1A-Vx-kLa">
                         <rect key="frame" x="1" y="1" width="198" height="337"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView focusRingType="none" appearanceType="userCustom" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="sourceList" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="36" rowSizeStyle="automatic" viewBased="YES" id="13" customClass="RRTableView">
-                                <rect key="frame" x="0.0" y="0.0" width="198" height="337"/>
+                            <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="sourceList" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="36" rowSizeStyle="automatic" viewBased="YES" id="13" customClass="RRTableView">
+                                <rect key="frame" x="0.0" y="0.0" width="198" height="0.0"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <size key="intercellSpacing" width="3" height="2"/>
                                 <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -83,7 +81,6 @@ CA
                                                 <subviews>
                                                     <imageView translatesAutoresizingMaskIntoConstraints="NO" id="1619">
                                                         <rect key="frame" x="10" y="2" width="30" height="30"/>
-                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="30" id="8155"/>
                                                             <constraint firstAttribute="width" constant="30" id="8566"/>
@@ -99,8 +96,7 @@ CA
                                                         </connections>
                                                     </imageView>
                                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1620">
-                                                        <rect key="frame" x="46" y="10" width="62" height="17"/>
-                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                                        <rect key="frame" x="46" y="10" width="60" height="17"/>
                                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="appname" id="1621">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -128,8 +124,7 @@ CA
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6582">
-                                                        <rect key="frame" x="61" y="2" width="73" height="17"/>
-                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                                        <rect key="frame" x="62" y="2" width="72" height="17"/>
                                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="HostName" id="6583">
                                                             <font key="font" metaFont="systemBold"/>
                                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -164,11 +159,11 @@ CA
                         </subviews>
                         <nil key="backgroundColor"/>
                     </clipView>
-                    <scroller key="horizontalScroller" hidden="YES" appearanceType="userCustom" verticalHuggingPriority="750" horizontal="YES" id="11">
+                    <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="11">
                         <rect key="frame" x="1" y="364" width="278" height="15"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
-                    <scroller key="verticalScroller" hidden="YES" appearanceType="userCustom" verticalHuggingPriority="750" horizontal="NO" id="12">
+                    <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="12">
                         <rect key="frame" x="-30" y="17" width="15" height="307"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
@@ -178,7 +173,6 @@ CA
                 </scrollView>
                 <tabView drawsBackground="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6998">
                     <rect key="frame" x="201" y="10" width="518" height="373"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <font key="font" metaFont="system"/>
                     <tabViewItems>
                         <tabViewItem label="Application" identifier="1" id="6999">
@@ -187,8 +181,7 @@ CA
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="88">
-                                        <rect key="frame" x="15" y="212" width="168" height="17"/>
-                                        <autoresizingMask key="autoresizingMask"/>
+                                        <rect key="frame" x="15" y="212" width="164" height="17"/>
                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="left" title="Application's Display Style" id="97">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -200,21 +193,20 @@ CA
                                     </textField>
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="89">
                                         <rect key="frame" x="15" y="180" width="220" height="26"/>
-                                        <autoresizingMask key="autoresizingMask"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="215" id="8404"/>
                                         </constraints>
-                                        <popUpButtonCell key="cell" type="push" title="Global Default" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="95" id="92">
+                                        <popUpButtonCell key="cell" type="push" title="No Default Display" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="95" id="92">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
+                                            <font key="font" metaFont="menu"/>
                                             <menu key="menu" title="OtherViews" id="93">
                                                 <items>
-                                                    <menuItem title="Global Default" state="on" id="94">
+                                                    <menuItem title="Global Default" id="94">
                                                         <connections>
                                                             <binding destination="-2" name="title" keyPath="self.globalDefaultTitle" id="8695"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="No Default Display" id="95">
+                                                    <menuItem title="No Default Display" state="on" id="95">
                                                         <connections>
                                                             <binding destination="-2" name="title" keyPath="self.noDefaultDisplayTitle" id="8697"/>
                                                         </connections>
@@ -238,17 +230,17 @@ CA
                                             </binding>
                                             <binding destination="-2" name="enabled2" keyPath="self.preferencesController.shouldUseAppleNotifications" previousBinding="8652" id="8669">
                                                 <dictionary key="options">
-                                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
-                                                    <integer key="NSNotApplicablePlaceholder" value="-1"/>
-                                                    <integer key="NSNoSelectionPlaceholder" value="-1"/>
                                                     <integer key="NSMultipleValuesPlaceholder" value="-1"/>
+                                                    <integer key="NSNoSelectionPlaceholder" value="-1"/>
+                                                    <integer key="NSNotApplicablePlaceholder" value="-1"/>
                                                     <integer key="NSNullPlaceholder" value="-1"/>
+                                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
                                                 </dictionary>
                                             </binding>
                                             <binding destination="-2" name="enabled" keyPath="self.ticketsArrayController.selection" id="8652">
                                                 <dictionary key="options">
-                                                    <integer key="NSNullPlaceholder" value="0"/>
                                                     <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                                    <integer key="NSNullPlaceholder" value="0"/>
                                                     <string key="NSValueTransformerName">NSIsNotNil</string>
                                                 </dictionary>
                                             </binding>
@@ -256,27 +248,25 @@ CA
                                         </connections>
                                     </popUpButton>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="84">
-                                        <rect key="frame" x="15" y="235" width="118" height="18"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <rect key="frame" x="15" y="235" width="116" height="18"/>
                                         <buttonCell key="cell" type="check" title="Enable Logging" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="102">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
+                                            <binding destination="-2" name="title" keyPath="self.enableLoggingLabel" id="6849"/>
                                             <binding destination="-2" name="enabled" keyPath="self.ticketsArrayController.selection" id="8625">
                                                 <dictionary key="options">
                                                     <integer key="NSNullPlaceholder" value="0"/>
                                                     <string key="NSValueTransformerName">NSIsNotNil</string>
                                                 </dictionary>
                                             </binding>
-                                            <binding destination="-2" name="title" keyPath="self.enableLoggingLabel" id="6849"/>
                                             <binding destination="-2" name="value" keyPath="self.ticketsArrayController.selection.loggingEnabled" id="8621"/>
                                             <outlet property="nextKeyView" destination="89" id="8113"/>
                                         </connections>
                                     </button>
                                     <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" autosizesCells="NO" translatesAutoresizingMaskIntoConstraints="NO" id="87">
                                         <rect key="frame" x="17" y="125" width="464" height="38"/>
-                                        <autoresizingMask key="autoresizingMask"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="38" id="8766"/>
                                         </constraints>
@@ -318,7 +308,6 @@ CA
                                     </matrix>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="85" customClass="GrowlPositionPicker">
                                         <rect key="frame" x="17" y="17" width="150" height="100"/>
-                                        <autoresizingMask key="autoresizingMask"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="100" id="7892"/>
                                             <constraint firstAttribute="width" constant="150" id="7903"/>
@@ -328,8 +317,7 @@ CA
                                         </connections>
                                     </customView>
                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7915">
-                                        <rect key="frame" x="15" y="307" width="126" height="17"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <rect key="frame" x="15" y="307" width="124" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Allow &lt;application&gt;" id="7916">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -341,13 +329,12 @@ CA
                                     </textField>
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8364">
                                         <rect key="frame" x="237" y="180" width="176" height="26"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="170" id="8415"/>
                                         </constraints>
                                         <popUpButtonCell key="cell" type="push" title="Actions" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" pullsDown="YES" selectedItem="8368" id="8365">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
+                                            <font key="font" metaFont="menu"/>
                                             <menu key="menu" title="OtherViews" id="8366">
                                                 <items>
                                                     <menuItem title="Actions" hidden="YES" id="8367">
@@ -386,16 +373,15 @@ CA
                                             </binding>
                                             <binding destination="-2" name="enabled" keyPath="self.ticketsArrayController.selection" id="8651">
                                                 <dictionary key="options">
-                                                    <integer key="NSNullPlaceholder" value="0"/>
                                                     <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                                    <integer key="NSNullPlaceholder" value="0"/>
                                                     <string key="NSValueTransformerName">NSIsNotNil</string>
                                                 </dictionary>
                                             </binding>
                                         </connections>
                                     </popUpButton>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="8593" customClass="GrowlOnSwitch">
-                                        <rect key="frame" x="60" y="271" width="93" height="28"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <rect key="frame" x="59" y="271" width="93" height="28"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="93" id="8683"/>
                                             <constraint firstAttribute="height" constant="28" id="8684"/>
@@ -407,8 +393,7 @@ CA
                                         </connections>
                                     </customView>
                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8594" customClass="GrowlOnSwitchLabel">
-                                        <rect key="frame" x="15" y="274" width="39" height="22"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <rect key="frame" x="15" y="274" width="38" height="22"/>
                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="OFF" id="8598">
                                             <font key="font" metaFont="system" size="18"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -420,8 +405,7 @@ CA
                                         </connections>
                                     </textField>
                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8595" customClass="GrowlOnSwitchLabel">
-                                        <rect key="frame" x="159" y="274" width="32" height="22"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <rect key="frame" x="158" y="274" width="31" height="22"/>
                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="ON" id="8597">
                                             <font key="font" metaFont="system" size="18"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -465,17 +449,16 @@ CA
                         <tabViewItem label="Notifications" identifier="2" id="7000">
                             <view key="view" id="7001">
                                 <rect key="frame" x="10" y="33" width="498" height="327"/>
-                                <autoresizingMask key="autoresizingMask"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
                                     <scrollView focusRingType="none" borderType="none" autohidesScrollers="YES" horizontalLineScroll="36" horizontalPageScroll="10" verticalLineScroll="36" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4752" customClass="GrowlNotificationSettingsScrollView">
                                         <rect key="frame" x="-3" y="0.0" width="267" height="324"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="fgv-LH-Y50">
                                             <rect key="frame" x="0.0" y="0.0" width="267" height="324"/>
-                                            <autoresizingMask key="autoresizingMask"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="34" rowSizeStyle="automatic" viewBased="YES" id="4753" customClass="GrowlNotificationSettingsTableView">
-                                                    <rect key="frame" x="0.0" y="0.0" width="267" height="324"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="267" height="0.0"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                     <color key="backgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -500,28 +483,26 @@ CA
                                                                     <subviews>
                                                                         <button translatesAutoresizingMaskIntoConstraints="NO" id="4777">
                                                                             <rect key="frame" x="13" y="8" width="18" height="18"/>
-                                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                             <buttonCell key="cell" type="check" title="NotificationName" bezelStyle="regularSquare" imagePosition="only" alignment="left" lineBreakMode="truncatingTail" state="on" inset="2" id="4778">
                                                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                                                 <font key="font" metaFont="system"/>
                                                                             </buttonCell>
                                                                             <connections>
                                                                                 <action selector="toggleEnabled:" target="4770" id="7865"/>
-                                                                                <binding destination="4770" name="toolTip" keyPath="objectValue.humanReadableName" id="7866"/>
                                                                                 <binding destination="4770" name="value" keyPath="objectValue.enabled" id="4790"/>
+                                                                                <binding destination="4770" name="toolTip" keyPath="objectValue.humanReadableName" id="7866"/>
                                                                             </connections>
                                                                         </button>
                                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="500" translatesAutoresizingMaskIntoConstraints="NO" id="7867">
-                                                                            <rect key="frame" x="35" y="10" width="38" height="17"/>
-                                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                            <rect key="frame" x="35" y="10" width="37" height="17"/>
                                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Label" id="7868">
                                                                                 <font key="font" metaFont="system"/>
                                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                             </textFieldCell>
                                                                             <connections>
-                                                                                <binding destination="4770" name="toolTip" keyPath="objectValue.humanReadableName" id="7881"/>
                                                                                 <binding destination="4770" name="value" keyPath="objectValue.humanReadableName" id="7875"/>
+                                                                                <binding destination="4770" name="toolTip" keyPath="objectValue.humanReadableName" id="7881"/>
                                                                             </connections>
                                                                         </textField>
                                                                     </subviews>
@@ -565,8 +546,7 @@ CA
                                         </connections>
                                     </scrollView>
                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="38">
-                                        <rect key="frame" x="270" y="177" width="105" height="17"/>
-                                        <autoresizingMask key="autoresizingMask"/>
+                                        <rect key="frame" x="270" y="177" width="102" height="17"/>
                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="right" title="Stay On Screen:" id="68">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -578,13 +558,12 @@ CA
                                     </textField>
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="39">
                                         <rect key="frame" x="270" y="145" width="185" height="26"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <popUpButtonCell key="cell" type="push" title="Never" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="65" id="63">
+                                        <popUpButtonCell key="cell" type="push" title="Application Decides" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="65" id="63">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
+                                            <font key="font" metaFont="menu"/>
                                             <menu key="menu" title="OtherViews" id="64">
                                                 <items>
-                                                    <menuItem title="Never" state="on" id="66">
+                                                    <menuItem title="Never" id="66">
                                                         <connections>
                                                             <binding destination="-2" name="title" keyPath="self.stayOnScreenNever" id="6913"/>
                                                         </connections>
@@ -608,21 +587,19 @@ CA
                                         </connections>
                                     </popUpButton>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="42">
-                                        <rect key="frame" x="270" y="308" width="118" height="18"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <rect key="frame" x="270" y="308" width="116" height="18"/>
                                         <buttonCell key="cell" type="check" title="Enable Logging" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="56">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <binding destination="-2" name="title" keyPath="self.enableLoggingLabel" id="6863"/>
                                             <binding destination="132" name="value" keyPath="selection.loggingEnabled" id="8270"/>
+                                            <binding destination="-2" name="title" keyPath="self.enableLoggingLabel" id="6863"/>
                                             <outlet property="nextKeyView" destination="41" id="8119"/>
                                         </connections>
                                     </button>
                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="34">
                                         <rect key="frame" x="270" y="123" width="52" height="17"/>
-                                        <autoresizingMask key="autoresizingMask"/>
                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="right" title="Priority:" id="82">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -633,8 +610,7 @@ CA
                                         </connections>
                                     </textField>
                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="40">
-                                        <rect key="frame" x="270" y="285" width="88" height="17"/>
-                                        <autoresizingMask key="autoresizingMask"/>
+                                        <rect key="frame" x="270" y="285" width="86" height="17"/>
                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="right" title="Display Style:" id="62">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -646,10 +622,9 @@ CA
                                     </textField>
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="35">
                                         <rect key="frame" x="270" y="91" width="185" height="26"/>
-                                        <autoresizingMask key="autoresizingMask"/>
                                         <popUpButtonCell key="cell" type="push" title="Application Decides" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1000" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="8745" id="75">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
+                                            <font key="font" metaFont="menu"/>
                                             <menu key="menu" title="OtherViews" id="76">
                                                 <items>
                                                     <menuItem title="Application Decides" state="on" tag="-1000" id="8745">
@@ -693,13 +668,12 @@ CA
                                     </popUpButton>
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="41">
                                         <rect key="frame" x="270" y="253" width="185" height="26"/>
-                                        <autoresizingMask key="autoresizingMask"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="180" id="8530"/>
                                         </constraints>
                                         <popUpButtonCell key="cell" type="push" title="No Default Display" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="8291" id="57">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
+                                            <font key="font" metaFont="menu"/>
                                             <menu key="menu" title="OtherViews" id="58">
                                                 <items>
                                                     <menuItem title="Application Default" id="61">
@@ -732,26 +706,25 @@ CA
                                             </binding>
                                             <binding destination="-2" name="enabled2" keyPath="self.preferencesController.shouldUseAppleNotifications" previousBinding="8655" id="8676">
                                                 <dictionary key="options">
-                                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
-                                                    <integer key="NSNotApplicablePlaceholder" value="-1"/>
-                                                    <integer key="NSNoSelectionPlaceholder" value="-1"/>
                                                     <integer key="NSMultipleValuesPlaceholder" value="-1"/>
+                                                    <integer key="NSNoSelectionPlaceholder" value="-1"/>
+                                                    <integer key="NSNotApplicablePlaceholder" value="-1"/>
                                                     <integer key="NSNullPlaceholder" value="-1"/>
+                                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
                                                 </dictionary>
                                             </binding>
                                             <binding destination="-2" name="enabled" keyPath="self.ticketsArrayController.selection" id="8655">
                                                 <dictionary key="options">
-                                                    <integer key="NSNullPlaceholder" value="0"/>
                                                     <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                                    <integer key="NSNullPlaceholder" value="0"/>
                                                     <string key="NSValueTransformerName">NSIsNotNil</string>
                                                 </dictionary>
                                             </binding>
                                             <outlet property="nextKeyView" destination="39" id="8120"/>
                                         </connections>
                                     </popUpButton>
-                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="7347">
+                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" preferredMaxLayoutWidth="200" translatesAutoresizingMaskIntoConstraints="NO" id="7347">
                                         <rect key="frame" x="270" y="32" width="204" height="54"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="200" id="8529"/>
                                             <constraint firstAttribute="height" constant="54" id="8755"/>
@@ -766,8 +739,7 @@ CA
                                         </connections>
                                     </textField>
                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8320">
-                                        <rect key="frame" x="270" y="231" width="55" height="17"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <rect key="frame" x="270" y="231" width="54" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Actions:" id="8321">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -779,10 +751,9 @@ CA
                                     </textField>
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8326">
                                         <rect key="frame" x="269" y="199" width="186" height="26"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <popUpButtonCell key="cell" type="push" title="Actions" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" pullsDown="YES" selectedItem="8329" id="8327">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
+                                            <font key="font" metaFont="menu"/>
                                             <menu key="menu" title="OtherViews" id="8328">
                                                 <items>
                                                     <menuItem title="Actions" hidden="YES" id="8363">
@@ -820,16 +791,15 @@ CA
                                             </binding>
                                             <binding destination="-2" name="enabled" keyPath="self.ticketsArrayController.selection" id="8659">
                                                 <dictionary key="options">
-                                                    <integer key="NSNullPlaceholder" value="0"/>
                                                     <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                                    <integer key="NSNullPlaceholder" value="0"/>
                                                     <string key="NSValueTransformerName">NSIsNotNil</string>
                                                 </dictionary>
                                             </binding>
                                         </connections>
                                     </popUpButton>
                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8716">
-                                        <rect key="frame" x="270" y="7" width="69" height="17"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <rect key="frame" x="270" y="7" width="68" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Rule Type:" id="8717">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -844,20 +814,19 @@ CA
                                         </connections>
                                     </textField>
                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8723">
-                                        <rect key="frame" x="343" y="7" width="38" height="17"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <rect key="frame" x="342" y="7" width="37" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" truncatesLastVisibleLine="YES" selectable="YES" sendsActionOnEndEditing="YES" title="Label" id="8724">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                         <connections>
+                                            <binding destination="132" name="value" keyPath="selection.name" id="8738"/>
                                             <binding destination="-2" name="hidden" keyPath="self.preferencesController.allowsRules" id="8736">
                                                 <dictionary key="options">
                                                     <string key="NSValueTransformerName">NSNegateBoolean</string>
                                                 </dictionary>
                                             </binding>
-                                            <binding destination="132" name="value" keyPath="selection.name" id="8738"/>
                                         </connections>
                                     </textField>
                                 </subviews>
@@ -905,7 +874,6 @@ CA
                 </tabView>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8006">
                     <rect key="frame" x="-9" y="-1" width="209" height="23"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="209" id="8495"/>
                     </constraints>
@@ -921,7 +889,6 @@ CA
                 </button>
                 <searchField wantsLayer="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8428">
                     <rect key="frame" x="2" y="363" width="198" height="22"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="198" id="8544"/>
                     </constraints>
@@ -933,8 +900,8 @@ CA
                     <connections>
                         <binding destination="-2" name="predicate" keyPath="self.ticketsArrayController.filterPredicate" id="8577">
                             <dictionary key="options">
-                                <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
                                 <string key="NSPredicateFormat">name CONTAINS[cd] $value OR parent.name CONTAINS[cd] $value</string>
+                                <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
                             </dictionary>
                         </binding>
                     </connections>
@@ -962,13 +929,13 @@ CA
         </view>
         <arrayController mode="entity" entityName="GrowlNotificationTicket" automaticallyPreparesContent="YES" selectsInsertedObjects="NO" automaticallyRearrangesObjects="YES" id="132" userLabel="Notifications">
             <connections>
+                <binding destination="-2" name="selectionIndexes" keyPath="selectedNotificationIndexes" id="138"/>
+                <binding destination="-2" name="managedObjectContext" keyPath="self.ticketDatabase.managedObjectContext" id="8268"/>
                 <binding destination="-2" name="contentSet" keyPath="self.ticketsArrayController.selection.children" id="8280">
                     <dictionary key="options">
                         <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
                     </dictionary>
                 </binding>
-                <binding destination="-2" name="managedObjectContext" keyPath="self.ticketDatabase.managedObjectContext" id="8268"/>
-                <binding destination="-2" name="selectionIndexes" keyPath="selectedNotificationIndexes" id="138"/>
             </connections>
         </arrayController>
         <arrayController mode="entity" entityName="GrowlDisplay" automaticallyPreparesContent="YES" id="8285" userLabel="Display Plugins">

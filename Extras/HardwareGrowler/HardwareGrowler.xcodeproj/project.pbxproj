@@ -324,13 +324,6 @@
 			remoteGlobalIDString = DD4939CC084BACA700D1CCCB;
 			remoteInfo = SMS;
 		};
-		BCB80688155158DA0088C69A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BCB8065B155158DA0088C69A /* Growl.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 31E184D61084628D0011C78B;
-			remoteInfo = "Unit tests";
-		};
 		BCB8068A155158DA0088C69A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BCB8065B155158DA0088C69A /* Growl.xcodeproj */;
@@ -426,7 +419,6 @@
 		770807C21B3567100043F0CA /* GSProcess.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GSProcess.m; sourceTree = "<group>"; };
 		77355B4E194340FB00080AA1 /* HWGPrefsDisplays.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HWGPrefsDisplays.tif; path = ../Resources/MonitorIcons/HWGPrefsDisplays.tif; sourceTree = "<group>"; };
 		775270311B94F8FE000CD27E /* AudioMonitor.hwgrowlmonitor */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AudioMonitor.hwgrowlmonitor; sourceTree = BUILT_PRODUCTS_DIR; };
-		775270321B94F8FF000CD27E /* GraphicCardMonitor copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "GraphicCardMonitor copy-Info.plist"; path = "/Users/taz/testapp/growlGit/Extras/HardwareGrowler/GraphicCardMonitor copy-Info.plist"; sourceTree = "<absolute>"; };
 		775270331B94F9C2000CD27E /* HWGrowlAudioMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HWGrowlAudioMonitor.m; path = AudioMonitor/HWGrowlAudioMonitor.m; sourceTree = SOURCE_ROOT; };
 		775270341B94F9C2000CD27E /* HWGrowlAudioMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HWGrowlAudioMonitor.h; path = AudioMonitor/HWGrowlAudioMonitor.h; sourceTree = SOURCE_ROOT; };
 		775270361B94F9DF000CD27E /* AudioMonitor-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "AudioMonitor-Info.plist"; path = "AudioMonitor/AudioMonitor-Info.plist"; sourceTree = SOURCE_ROOT; };
@@ -1112,7 +1104,6 @@
 				BCB8076C1551A78D0088C69A /* Plugins */,
 				BCB805EA155153330088C69A /* Frameworks */,
 				BCB805E8155153330088C69A /* Products */,
-				775270321B94F8FF000CD27E /* GraphicCardMonitor copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1223,7 +1214,6 @@
 				BCB80683155158DA0088C69A /* Nano.growlView */,
 				BCB80685155158DA0088C69A /* MusicVideo.growlView */,
 				BCB80687155158DA0088C69A /* SMS.growlView */,
-				BCB80689155158DA0088C69A /* Unit tests.octest */,
 				BCB8068B155158DA0088C69A /* com.company.application.GNTPClientService.xpc */,
 			);
 			name = Products;
@@ -1672,7 +1662,7 @@
 		BCB805DE155153330088C69A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0640;
+				LastUpgradeCheck = 0800;
 				TargetAttributes = {
 					BCB805E6155153330088C69A = {
 						SystemCapabilities = {
@@ -1846,13 +1836,6 @@
 			fileType = wrapper.cfbundle;
 			path = SMS.growlView;
 			remoteRef = BCB80686155158DA0088C69A /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		BCB80689155158DA0088C69A /* Unit tests.octest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "Unit tests.octest";
-			remoteRef = BCB80688155158DA0088C69A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		BCB8068B155158DA0088C69A /* com.company.application.GNTPClientService.xpc */ = {
@@ -2497,6 +2480,7 @@
 				INFOPLIST_FILE = "AudioMonitor/AudioMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = AudioMonitor;
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -2520,6 +2504,7 @@
 				INFOPLIST_FILE = "AudioMonitor/AudioMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = AudioMonitor;
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -2543,6 +2528,7 @@
 				INFOPLIST_FILE = "AudioMonitor/AudioMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = AudioMonitor;
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -2566,6 +2552,7 @@
 				INFOPLIST_FILE = "GraphicCardMonitor/GraphicCardMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -2589,6 +2576,7 @@
 				INFOPLIST_FILE = "GraphicCardMonitor/GraphicCardMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -2612,6 +2600,7 @@
 				INFOPLIST_FILE = "GraphicCardMonitor/GraphicCardMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -2628,6 +2617,7 @@
 				INFOPLIST_FILE = "USBMonitor/USBMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -2644,6 +2634,7 @@
 				INFOPLIST_FILE = "USBMonitor/USBMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -2660,6 +2651,7 @@
 				INFOPLIST_FILE = "USBMonitor/USBMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -2676,6 +2668,7 @@
 				INFOPLIST_FILE = "KeyboardMonitor/KeyboardMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -2692,6 +2685,7 @@
 				INFOPLIST_FILE = "KeyboardMonitor/KeyboardMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -2708,6 +2702,7 @@
 				INFOPLIST_FILE = "KeyboardMonitor/KeyboardMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -2724,6 +2719,7 @@
 				INFOPLIST_FILE = "ThunderboltMonitor/ThunderboltMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -2740,6 +2736,7 @@
 				INFOPLIST_FILE = "ThunderboltMonitor/ThunderboltMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -2756,6 +2753,7 @@
 				INFOPLIST_FILE = "ThunderboltMonitor/ThunderboltMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -2773,6 +2771,7 @@
 				INFOPLIST_FILE = "BluetoothMonitor/BluetoothMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -2790,6 +2789,7 @@
 				INFOPLIST_FILE = "BluetoothMonitor/BluetoothMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -2807,6 +2807,7 @@
 				INFOPLIST_FILE = "BluetoothMonitor/BluetoothMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -2823,6 +2824,7 @@
 				INFOPLIST_FILE = "FirewireMonitor/FirewireMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -2839,6 +2841,7 @@
 				INFOPLIST_FILE = "FirewireMonitor/FirewireMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -2855,6 +2858,7 @@
 				INFOPLIST_FILE = "FirewireMonitor/FirewireMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -2871,6 +2875,7 @@
 				INFOPLIST_FILE = "PowerMonitor/PowerMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WARNING_CFLAGS = (
 					"-Wall",
@@ -2901,6 +2906,7 @@
 				INFOPLIST_FILE = "PowerMonitor/PowerMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WARNING_CFLAGS = (
 					"-Wall",
@@ -2931,6 +2937,7 @@
 				INFOPLIST_FILE = "PowerMonitor/PowerMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WARNING_CFLAGS = (
 					"-Wall",
@@ -2954,15 +2961,19 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -2990,11 +3001,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
@@ -3021,13 +3035,14 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = HardwareGrowler/HardwareGrowler.entitlements;
-				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HardwareGrowler/HardwareGrowler-Prefix.pch";
 				INFOPLIST_FILE = "HardwareGrowler/HardwareGrowler-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_BUNDLE_IDENTIFIER = com.growl.hardwaregrowler;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
@@ -3040,13 +3055,14 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = HardwareGrowler/HardwareGrowler.entitlements;
-				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HardwareGrowler/HardwareGrowler-Prefix.pch";
 				INFOPLIST_FILE = "HardwareGrowler/HardwareGrowler-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_BUNDLE_IDENTIFIER = com.growl.hardwaregrowler;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
@@ -3057,11 +3073,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
@@ -3094,13 +3113,14 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = HardwareGrowler/HardwareGrowler.entitlements;
-				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HardwareGrowler/HardwareGrowler-Prefix.pch";
 				INFOPLIST_FILE = "HardwareGrowler/HardwareGrowler-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_BUNDLE_IDENTIFIER = com.growl.hardwaregrowler;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
@@ -3113,13 +3133,14 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = HardwareGrowlerLauncher/HardwareGrowlerLauncher.entitlements;
-				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HardwareGrowlerLauncher/HardwareGrowlerLauncher-Prefix.pch";
 				INFOPLIST_FILE = "HardwareGrowlerLauncher/HardwareGrowlerLauncher-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
@@ -3132,13 +3153,14 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = HardwareGrowlerLauncher/HardwareGrowlerLauncher.entitlements;
-				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HardwareGrowlerLauncher/HardwareGrowlerLauncher-Prefix.pch";
 				INFOPLIST_FILE = "HardwareGrowlerLauncher/HardwareGrowlerLauncher-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
@@ -3151,13 +3173,14 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = HardwareGrowlerLauncher/HardwareGrowlerLauncher.entitlements;
-				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HardwareGrowlerLauncher/HardwareGrowlerLauncher-Prefix.pch";
 				INFOPLIST_FILE = "HardwareGrowlerLauncher/HardwareGrowlerLauncher-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
@@ -3179,6 +3202,7 @@
 					"-framework",
 					Growl,
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -3199,6 +3223,7 @@
 					"-framework",
 					Growl,
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -3219,6 +3244,7 @@
 					"-framework",
 					Growl,
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -3236,6 +3262,7 @@
 				INFOPLIST_FILE = "PhoneMonitor/PhoneMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -3253,6 +3280,7 @@
 				INFOPLIST_FILE = "PhoneMonitor/PhoneMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -3270,6 +3298,7 @@
 				INFOPLIST_FILE = "PhoneMonitor/PhoneMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -3286,6 +3315,7 @@
 				INFOPLIST_FILE = "VolumeMonitor/VolumeMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -3302,6 +3332,7 @@
 				INFOPLIST_FILE = "VolumeMonitor/VolumeMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -3318,6 +3349,7 @@
 				INFOPLIST_FILE = "VolumeMonitor/VolumeMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -3333,6 +3365,7 @@
 				INFOPLIST_FILE = "TimeMachineMonitor/TimeMachineMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -3348,6 +3381,7 @@
 				INFOPLIST_FILE = "TimeMachineMonitor/TimeMachineMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};
@@ -3363,6 +3397,7 @@
 				INFOPLIST_FILE = "TimeMachineMonitor/TimeMachineMonitor-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.hardwaregrowler.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hwgrowlmonitor;
 			};

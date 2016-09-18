@@ -219,6 +219,7 @@
       appleNotification.informativeText = [dict objectForKey:GROWL_NOTIFICATION_DESCRIPTION];
       appleNotification.userInfo = notificationDict;
       appleNotification.hasActionButton = NO;
+      appleNotification.identifier = note.noteUUID;
 
       // Add notification icon
       if ([dict objectForKey:GROWL_NOTIFICATION_ICON_DATA]) {
@@ -235,11 +236,13 @@
             //appleNotification.contentImage = icon;
          //}
 
-         // iTunes style: private API (not supported if Mac App Store...)
+         // iTunes style icon: private API (not supported if Mac App Store...)
          [appleNotification setValue:icon forKey:@"_identityImage"];
       }
 
       if ([dict objectForKey:GROWL_NOTIFICATION_BUTTONTITLE_ACTION]) {
+         // iTunes style button: private API (not supported if Mac App Store...)
+         [appleNotification setValue:@YES forKey:@"_showsButtons"];
          appleNotification.hasActionButton = YES;
          appleNotification.actionButtonTitle = [dict objectForKey:GROWL_NOTIFICATION_BUTTONTITLE_ACTION];
       }

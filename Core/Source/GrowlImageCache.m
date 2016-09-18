@@ -8,7 +8,6 @@
 
 #import "GrowlImageCache.h"
 #import "GrowlImageAdditions.h"
-#import <openssl/md5.h>
 
 @implementation GrowlImageCache
 

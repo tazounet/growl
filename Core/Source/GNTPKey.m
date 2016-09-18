@@ -7,7 +7,7 @@
 //
 
 #import "GNTPKey.h"
-#import <openssl/evp.h>
+//#import <openssl/evp.h>
 #import <Security/SecRandom.h>
 #import <CommonCrypto/CommonCryptor.h>
 #import <CommonCrypto/CommonDigest.h>
@@ -209,12 +209,14 @@ NSData *ComputeHash(NSData *data, GrowlGNTPHashingAlgorithm algorithm)
 + (NSData *)generateSalt:(int)length
 {
     unsigned char *buffer;
+    int error;
     
     buffer = (unsigned char *)calloc(length, sizeof(unsigned char));
     NSAssert((buffer != NULL), @"Cannot calloc memory for buffer.");
     
-    SecRandomCopyBytes(kSecRandomDefault, length, buffer);
-    
+    error = SecRandomCopyBytes(kSecRandomDefault, length, buffer);
+    NSAssert((error != 0), @"SecRandomCopyBytes fails.");
+
     return [NSData dataWithBytesNoCopy:buffer length:length freeWhenDone:YES];;
 }
 
@@ -346,7 +348,7 @@ NSData *ComputeHash(NSData *data, GrowlGNTPHashingAlgorithm algorithm)
 	NSData *ivData = nil;
 
 	const 
-	EVP_CIPHER *cipher = nil;
+	//EVP_CIPHER *cipher = nil;
 	NSInteger blockSize = 0;
 	switch ([self encryptionAlgorithm])
 	{
@@ -359,12 +361,12 @@ NSData *ComputeHash(NSData *data, GrowlGNTPHashingAlgorithm algorithm)
 		if (iv) {
 			bzero(iv, blockSize * sizeof(unsigned char));
 			//unsigned char evpKey[EVP_MAX_KEY_LENGTH] = {"\0"};
-			if (cipher) {
+			//if (cipher) {
             /* TODO: Find replacement for EVP in OpenSSL*/
             
 				//Cast explanation: EVP_BytesToKey takes an int for the length, but NSData's length method returns NSUInteger. As long as encryption keys are created by hashing strings, they are not likely to ever be large enough for their lengths to exceed the range of an int.
 				//EVP_BytesToKey(cipher, EVP_md5(), NULL, (const unsigned char*)[[self encryptionKey] bytes], (int)[[self encryptionKey] length], 1, evpKey, iv);
-			}
+			//}
 			
 			ivData = [NSData dataWithBytesNoCopy:iv length:blockSize freeWhenDone:YES];
 		}

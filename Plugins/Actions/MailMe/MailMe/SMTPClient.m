@@ -962,8 +962,13 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 			bytes[length++] = (buffer[2] << 6) | buffer[3];
 	}
 	
-	realloc(bytes, length);
-	return [self initWithBytesNoCopy:bytes length:length];
+	char *bytes2 = realloc(bytes, length);
+    if (bytes2 == NULL)
+    {
+        free (bytes);
+        return nil;
+    }
+	return [self initWithBytesNoCopy:bytes2 length:length];
 }
 
 @end

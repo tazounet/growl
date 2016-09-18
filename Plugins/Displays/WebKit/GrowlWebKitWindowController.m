@@ -41,6 +41,12 @@
 - (void) viewIsReady:(GrowlWebKitWindowView *)view;
 @end
 
+@interface GrowlWebKitWindowController() <WebPolicyDelegate>
+@end
+
+@interface GrowlWebKitWindowController() <WebFrameLoadDelegate>
+@end
+
 @implementation GrowlWebKitWindowController
 
 #define GrowlWebKitDurationPrefDefault				5.0

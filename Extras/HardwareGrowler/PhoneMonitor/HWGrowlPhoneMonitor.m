@@ -164,8 +164,8 @@
 }
 
 -(void)fireOnLaunchNotes {
-	IOBluetoothDevice *device = [IOBluetoothDevice deviceWithAddressString:@"<insert device address here for testing>"];
-	[device openConnection];
+	//IOBluetoothDevice *device = [IOBluetoothDevice deviceWithAddressString:@"<insert device address here for testing>"];
+	//[device openConnection];
 }
 
 #pragma mark HWGrowlPluginNotifierProtocol

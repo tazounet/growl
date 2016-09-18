@@ -1,5 +1,5 @@
-#define accepted_major 6
-#define accepted_minor 1
+#define accepted_major 8
+#define accepted_minor 0
 #define accepted_patchfix 0
 
 #if defined(__clang_major__) && defined(__clang_minor__) && defined(__clang_patchlevel__)

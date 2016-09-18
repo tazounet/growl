@@ -7,9 +7,11 @@
 	<key>CFBundleExecutable</key>
 	<string>SMS</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.Growl.SMS</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>SMS</string>
 	<key>CFBundlePackageType</key>
 	<string>DISP</string>
 	<key>CFBundleSignature</key>
@@ -18,15 +20,13 @@
 	<string>GROWL_VERSION</string>
 	<key>CSResourcesFileMapped</key>
 	<string>yes</string>
-	<key>NSPrincipalClass</key>
-	<string>GrowlSMSDisplay</string>
-	<key>CFBundleName</key>
-	<string>SMS</string>
 	<key>GrowlPluginAuthor</key>
 	<string>Diggory Laycock</string>
 	<key>GrowlPluginDescription</key>
 	<string>Send notifications via SMS</string>
 	<key>GrowlPluginsFrameworkVersion</key>
 	<string>1.0</string>
+	<key>NSPrincipalClass</key>
+	<string>GrowlSMSDisplay</string>
 </dict>
 </plist>

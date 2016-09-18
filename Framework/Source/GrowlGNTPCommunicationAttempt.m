@@ -173,7 +173,7 @@ enum {
          [socket disconnect];
          return;
       }
-      if (![[components objectAtIndex:0] caseInsensitiveCompare:@"GNTP/1.0"] == NSOrderedSame){
+      if (!([[components objectAtIndex:0] caseInsensitiveCompare:@"GNTP/1.0"] == NSOrderedSame)){
          NSLog(@"Response from Growl or other notification system was patent nonsense");
          [self couldNotParseResponseWithReason:@"Response from Growl or other notification system was patent nonsense" responseString:readString];
          [socket disconnect];

@@ -1,6 +1,6 @@
 [submodule "external_dependencies/cocoaasyncsocket"]
 	path = external_dependencies/cocoaasyncsocket
-	url = git://github.com/robbiehanson/CocoaAsyncSocket.git
+	url = git://github.com/tazounet/CocoaAsyncSocket.git
 [submodule "external_dependencies/shortcutrecorder"]
 	path = external_dependencies/shortcutrecorder
 	url = git://github.com/tazounet/ShortcutRecorder.git

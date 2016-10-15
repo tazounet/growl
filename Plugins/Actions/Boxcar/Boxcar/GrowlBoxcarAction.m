@@ -28,7 +28,7 @@
 
 @synthesize connections;
 
--(id)init{
+-(instancetype)init{
 	if((self = [super init])){
 		self.prefDomain = BoxcarPrefDomain;
 		self.connections = [NSMutableArray array];
@@ -52,7 +52,7 @@
 	if(!email || [email isEqualToString:@""])
 		return;
    
-   NSString *event = [notification objectForKey:GROWL_NOTIFICATION_TITLE];
+   NSString *event = notification[GROWL_NOTIFICATION_TITLE];
 	NSString *application = [notification valueForKey:GROWL_APP_NAME];
    NSInteger priority = [[notification valueForKey:GROWL_NOTIFICATION_PRIORITY] intValue];
    BOOL isPreview = ([application isEqualToString:@"Growl"] && [event isEqualToString:@"Preview"]);
@@ -60,7 +60,7 @@
    if(!isPreview){
       if([configuration valueForKey:BoxcarPushIdle] &&
          [[configuration valueForKey:BoxcarPushIdle] boolValue] &&
-         ![[GrowlIdleStatusObserver sharedObserver] isIdle])
+         ![GrowlIdleStatusObserver sharedObserver].isIdle)
       {
          //NSLog(@"Not pushing because not idle");
          return;
@@ -75,12 +75,12 @@
       }
    }
 	
-	NSURL *baseURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://boxcar.io/devices/providers/%@/notifications", BoxcarProviderKey]];
+	NSURL *baseURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://boxcar.io/devices/providers/%@/notifications", BoxcarProviderKey]];
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:baseURL 
 																			 cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData 
 																		timeoutInterval:100];
 	
-	NSString *message = [NSString stringWithFormat:@"%@ - %@", [notification objectForKey:GROWL_NOTIFICATION_TITLE], [notification objectForKey:GROWL_NOTIFICATION_DESCRIPTION]];
+	NSString *message = [NSString stringWithFormat:@"%@ - %@", notification[GROWL_NOTIFICATION_TITLE], notification[GROWL_NOTIFICATION_DESCRIPTION]];
 	NSString *prefix = [configuration valueForKey:BoxcarPrefixString];
 	if([configuration valueForKey:BoxcarUsePrefix] && [[configuration valueForKey:BoxcarUsePrefix] boolValue]){
 		if(prefix && ![prefix isEqualToString:@""])
@@ -94,57 +94,51 @@
 	[dataString appendFormat:@"&notification[from_screen_name]=%@", app];
 	[dataString	appendFormat:@"&notification[message]=%@", message];
 	[dataString appendFormat:@"&notification[priority]=%ld", priority];
-	NSData *data = [NSData dataWithBytes:[dataString UTF8String] length:[dataString lengthOfBytesUsingEncoding:NSUTF8StringEncoding]];
-	[request setHTTPMethod:@"POST"];
-	[request setHTTPBody:data];
+	NSData *data = [NSData dataWithBytes:dataString.UTF8String length:[dataString lengthOfBytesUsingEncoding:NSUTF8StringEncoding]];
+	request.HTTPMethod = @"POST";
+	request.HTTPBody = data;
 	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
-	
-	NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request
-																					  delegate:self
-																			startImmediately:NO];
-	[connections addObject:connection];
-	[connection setDelegateQueue:[NSOperationQueue mainQueue]];
-	[connection start];
-}
 
-#pragma mark NSURLConnectionDelegate
-
--(void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
-	if([response respondsToSelector:@selector(statusCode)]){
-		NSInteger status = [(NSHTTPURLResponse*)response statusCode];
-		switch (status) {
-			case 200:
-				//SUCCESS!
-				//NSLog(@"Success notifiying");
-				break;
-			case 400:
-				//Silly boxcar
-				break;
-			case 401:
-				//Not added!
-				NSLog(@"This email has not added growl!");
-				break;
-			case 404:
-				//User unknown!
-				NSLog(@"This email is unknown to boxcar!");
-				break;
-			default:
-				//Unknown response
-				NSLog(@"Unknown response code from boxcar: %lu", status);
-				break;
-		}
-	}else{
-		NSLog(@"Error! Should be able to get a status code");
-	}
-}
-
--(void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-	NSLog(@"connection %@ failed with error %@", connection, error);
-	[connections removeObject:connection];
-}
-
--(void)connectionDidFinishLoading:(NSURLConnection *)connection {
-	[connections removeObject:connection];
+    NSURLSession *session = [NSURLSession sharedSession];
+    NSURLSessionDataTask *task = [session dataTaskWithRequest:request
+                                            completionHandler:^(NSData *rdata, NSURLResponse *response, NSError *error)
+    {
+        if (error == nil)
+        {
+            if([response respondsToSelector:@selector(statusCode)]){
+                NSInteger status = ((NSHTTPURLResponse*)response).statusCode;
+                switch (status) {
+                    case 200:
+                        //SUCCESS!
+                        //NSLog(@"Success notifiying");
+                        break;
+                    case 400:
+                        //Silly boxcar
+                        break;
+                    case 401:
+                        //Not added!
+                        NSLog(@"This email has not added growl!");
+                        break;
+                    case 404:
+                        //User unknown!
+                        NSLog(@"This email is unknown to boxcar!");
+                        break;
+                    default:
+                        //Unknown response
+                        NSLog(@"Unknown response code from boxcar: %lu", status);
+                        break;
+                }
+            }else{
+                NSLog(@"Error! Should be able to get a status code");
+            }
+        }
+        else
+        {
+            NSLog(@"connection failed with error %@", error);
+        }
+    }];
+    
+    [task resume];
 }
 
 #pragma mark -

@@ -12,12 +12,12 @@
 @implementation NSImage (GrowlImageAdditions)
 
 - (void) drawScaledInRect:(NSRect)targetRect operation:(NSCompositingOperation)operation fraction:(CGFloat)f neverFlipped:(BOOL)neverFlipped {
-	if (!NSEqualSizes([self size], targetRect.size))
+	if (!NSEqualSizes(self.size, targetRect.size))
 		[self adjustSizeToDrawAtSize:targetRect.size];
 	NSRect imageRect;
 	imageRect.origin.x = 0.0f;
 	imageRect.origin.y = 0.0f;
-	imageRect.size = [self size];
+	imageRect.size = self.size;
 	if (imageRect.size.width > targetRect.size.width || imageRect.size.height > targetRect.size.height) {
 		// make sure the icon isn't too large. If it is, scale it down
 		if (imageRect.size.width > imageRect.size.height) {
@@ -30,7 +30,7 @@
 			targetRect.origin.x = GrowlCGFloatFloor(targetRect.origin.x - (targetRect.size.width - oldWidth) * 0.5f);
 		}
 
-		[[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationHigh];
+		[NSGraphicsContext currentContext].imageInterpolation = NSImageInterpolationHigh;
 	} else {
 		// center image if it is too small
 		if (imageRect.size.width < targetRect.size.width)
@@ -45,8 +45,8 @@
 
 - (NSSize) adjustSizeToDrawAtSize:(NSSize)theSize {
 	NSImageRep *bestRep = [self bestRepresentationForSize:theSize];
-	NSSize size = [bestRep size];
-	[self setSize:size];
+	NSSize size = bestRep.size;
+	self.size = size;
 	return size;
 }
 
@@ -56,8 +56,8 @@
 		BOOL isFirst = YES;
 		CGFloat repDistance = 0.0f;
 
-		for (NSImageRep *thisRep in [self representations]) {
-			CGFloat thisDistance = theSize.width - [thisRep size].width;
+		for (NSImageRep *thisRep in self.representations) {
+			CGFloat thisDistance = theSize.width - thisRep.size.width;
 			if (repDistance < 0.0 && thisDistance > 0.0)
 				continue;
 			if (isFirst || GrowlCGFloatAbsoluteValue(thisDistance) < GrowlCGFloatAbsoluteValue(repDistance) || (thisDistance < 0.0 && repDistance > 0.0)) {
@@ -81,8 +81,8 @@
 
 - (NSImageRep *) representationOfSize:(NSSize)theSize {
 	NSImageRep *rep;
-	for (rep in [self representations])
-		if (NSEqualSizes([rep size], theSize))
+	for (rep in self.representations)
+		if (NSEqualSizes(rep.size, theSize))
 			break;
 	return rep;
 }
@@ -134,7 +134,7 @@
 
     // Flip drawing and adjust the origin to make the image come out
     // right.
-    if (neverFlipped && [[NSGraphicsContext currentContext] isFlipped])
+    if (neverFlipped && [NSGraphicsContext currentContext].flipped)
     {
         transform = [NSAffineTransform transform];
         [transform scaleXBy:1.0 yBy:-1.0];

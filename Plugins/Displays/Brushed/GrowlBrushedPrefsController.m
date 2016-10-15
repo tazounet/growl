@@ -14,7 +14,7 @@
 
 @synthesize useAquaLabel;
 
-- (id)initWithBundle:(NSBundle *)bundle {
+- (instancetype)initWithBundle:(NSBundle *)bundle {
    if((self = [super initWithBundle:bundle])){
       self.useAquaLabel = NSLocalizedStringFromTableInBundle(@"Use Aqua instead of brushed metal", @"Localizable", bundle, @"use aqua instead of brushed metal label");
    }
@@ -48,12 +48,12 @@
 #pragma mark -
 
 - (NSInteger) numberOfItemsInComboBox:(NSComboBox *)aComboBox {
-	return [[NSScreen screens] count];
+	return [NSScreen screens].count;
 }
 
 - (id) comboBox:(NSComboBox *)aComboBox objectValueForItemAtIndex:(NSInteger)idx {
 #ifdef __LP64__
-	return [NSNumber numberWithInteger:idx];
+	return @(idx);
 #else
 	return [NSNumber numberWithInt:idx];
 #endif
@@ -69,7 +69,7 @@
 }
 
 - (void) setDuration:(CGFloat)value {
-	[self setConfigurationValue:[NSNumber numberWithFloat:value] forKey:GrowlBrushedDurationPref];
+	[self setConfigurationValue:@(value) forKey:GrowlBrushedDurationPref];
 }
 
 #pragma mark priority color settings
@@ -135,7 +135,7 @@
 }
 
 - (void) setScreen:(int)value {
-	[self setConfigurationValue:[NSNumber numberWithInt:value] forKey:GrowlBrushedScreenPref];
+	[self setConfigurationValue:@(value) forKey:GrowlBrushedScreenPref];
 }
 
 #pragma mark -
@@ -149,7 +149,7 @@
 }
 
 - (void) setFloatingIcon:(BOOL)value {
-	[self setConfigurationValue:[NSNumber numberWithBool:value] forKey:GrowlBrushedFloatIconPref];
+	[self setConfigurationValue:@(value) forKey:GrowlBrushedFloatIconPref];
 }
 
 #pragma mark -
@@ -163,7 +163,7 @@
 }
 
 - (void) setLimit:(BOOL)value {
-	[self setConfigurationValue:[NSNumber numberWithBool:value] forKey:GrowlBrushedLimitPref];
+	[self setConfigurationValue:@(value) forKey:GrowlBrushedLimitPref];
 }
 
 #pragma mark -
@@ -177,7 +177,7 @@
 }
 
 - (void) setAqua:(BOOL)value {
-	[self setConfigurationValue:[NSNumber numberWithBool:value] forKey:GrowlBrushedAquaPref];
+	[self setConfigurationValue:@(value) forKey:GrowlBrushedAquaPref];
 }
 
 - (int) size {
@@ -189,7 +189,7 @@
 }
 
 - (void) setSize:(int)value {
-	[self setConfigurationValue:[NSNumber numberWithInt:value] forKey:GrowlBrushedSizePref];
+	[self setConfigurationValue:@(value) forKey:GrowlBrushedSizePref];
 }
 
 @end

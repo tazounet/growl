@@ -27,7 +27,7 @@
       while (current != NULL) {
          NSString *currentString = nil;
          
-         NSString *interface = [NSString stringWithUTF8String:current->ifa_name];
+         NSString *interface = @(current->ifa_name);
          
          if(![interface isEqualToString:@"lo0"] && ![interface isEqualToString:@"utun0"])
          {
@@ -43,7 +43,7 @@
                   currentString = [NSString stringWithFormat:@"%s", stringBuffer];
             }          
             
-            if(currentString && ![currentString isLocalHost]){
+            if(currentString && !currentString.isLocalHost){
 					if(!addresses)
 						addresses = [NSMutableArray array];
 					[addresses addObject:currentString];
@@ -66,7 +66,7 @@
    if (newValue) {
 		//Get a key to look up the actual IPv4 info in the dynStore
 		NSString *ipKey = [NSString stringWithFormat:@"State:/Network/Interface/%@/%@",
-								 [(__bridge NSDictionary*)newValue objectForKey:@"PrimaryInterface"], type];
+								 ((__bridge NSDictionary*)newValue)[@"PrimaryInterface"], type];
 		CFDictionaryRef ipInfo = SCDynamicStoreCopyValue(dynStore, (__bridge CFStringRef)ipKey);
 		if (ipInfo) {
 			CFArrayRef addrs = CFDictionaryGetValue(ipInfo, CFSTR("Addresses"));
@@ -90,7 +90,7 @@
       hostname = [(__bridge NSString*)cfHostName copy];
       CFRelease(cfHostName);
       if ([hostname hasSuffix:@".local"]) {
-         hostname = [hostname substringToIndex:([hostname length] - [@".local" length])];
+         hostname = [hostname substringToIndex:(hostname.length - (@".local").length)];
       }
    }
    return hostname;
@@ -98,13 +98,13 @@
 
 +(NSData*)addressData:(NSData*)original coercedToPort:(NSInteger)port {
    NSData *result = nil;
-	if ([original length] >= sizeof(struct sockaddr))
+	if (original.length >= sizeof(struct sockaddr))
 	{
-		struct sockaddr *addrX = (struct sockaddr *)[original bytes];
+		struct sockaddr *addrX = (struct sockaddr *)original.bytes;
 		
 		if (addrX->sa_family == AF_INET)
 		{
-			if ([original length] >= sizeof(struct sockaddr_in))
+			if (original.length >= sizeof(struct sockaddr_in))
 			{
             struct sockaddr_in *inAddr4 = (struct sockaddr_in *)addrX;
 				struct sockaddr_in addr4;
@@ -118,7 +118,7 @@
 		}
 		else if (addrX->sa_family == AF_INET6)
 		{
-			if ([original length] >= sizeof(struct sockaddr_in6))
+			if (original.length >= sizeof(struct sockaddr_in6))
 			{
 				struct sockaddr_in6 *inAddr6 = (struct sockaddr_in6 *)addrX;
 				struct sockaddr_in6 addr6;
@@ -138,17 +138,17 @@
 + (NSData *)addressDataForGrowlServerOfType:(NSString *)type withName:(NSString *)name withDomain:(NSString*)domain
 {
 	if ([name hasSuffix:@".local"])
-		name = [name substringWithRange:NSMakeRange(0, [name length] - [@".local" length])];
+		name = [name substringWithRange:NSMakeRange(0, name.length - (@".local").length)];
    
-	if ([name Growl_isLikelyDomainName]) {
+	if (name.Growl_isLikelyDomainName) {
 		CFHostRef host = CFHostCreateWithName(kCFAllocatorDefault, (__bridge CFStringRef)name);
 		CFStreamError error;
 		if (CFHostStartInfoResolution(host, kCFHostAddresses, &error)) {
 			NSArray *addresses = (__bridge NSArray *)CFHostGetAddressing(host, NULL);
 			
-			if ([addresses count]) {
+			if (addresses.count) {
 				/* DNS lookup success! Make a copy, as releasing host will deallocate it. */
-            NSData *result = [[addresses objectAtIndex:0] copy];
+            NSData *result = [addresses[0] copy];
             CFRelease(host);
             result = [[self addressData:result coercedToPort:GROWL_TCP_PORT] copy];
 				return result;
@@ -156,7 +156,7 @@
 		}
 		if (host) CFRelease(host);
 		
-	} else if ([name Growl_isLikelyIPAddress]) {
+	} else if (name.Growl_isLikelyIPAddress) {
       struct in_addr addr4;
       struct in6_addr addr6;
       
@@ -202,19 +202,19 @@
 	[service resolveWithTimeout:8.0];
 	CFAbsoluteTime deadline = CFAbsoluteTimeGetCurrent() + 8.0;
 	CFTimeInterval remaining;
-	while ((remaining = (deadline - CFAbsoluteTimeGetCurrent())) > 0 && [[service addresses] count] == 0) {
+	while ((remaining = (deadline - CFAbsoluteTimeGetCurrent())) > 0 && service.addresses.count == 0) {
       CFRunLoopRunInMode((CFStringRef)@"PrivateGrowlMode", remaining, TRUE);
 	}
 	[service stop];
 	
-	NSArray *addresses = [service addresses];
-	if (![addresses count]) {
+	NSArray *addresses = service.addresses;
+	if (!addresses.count) {
 		/* Lookup failed */
 		return nil;
 	}
 	
     /* Making a copy appears to be necessary, just like for CFNetServiceGetAddressing() */
-	return [[addresses objectAtIndex:0] copy];
+	return [addresses[0] copy];
 }
 
 @end

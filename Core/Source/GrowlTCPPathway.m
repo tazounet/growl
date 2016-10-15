@@ -25,12 +25,12 @@
 @synthesize remoteServer = _remoteServer;
 @synthesize netService = _netService;
 
-- (id)init
+- (instancetype)init
 {
 	if ((self = [super init])) {
 		self.localServer = [[GNTPServer alloc] initWithInterface:@"localhost"];
 		self.localServer.delegate = (id<GNTPServerDelegate>)self;
-		[self.localServer startServer];
+		[(self.localServer) startServer];
 		
 		self.remoteServer = [[GNTPServer alloc] initWithInterface:nil];
 		self.remoteServer.delegate = (id<GNTPServerDelegate>)self;
@@ -39,7 +39,7 @@
 																		  object:nil
 																			queue:[NSOperationQueue mainQueue]
 																	 usingBlock:^(NSNotification *note) {
-																		 GrowlNotification *growlNote = [note object];
+																		 GrowlNotification *growlNote = note.object;
 																		 NSDictionary *growlDict = [growlNote dictionaryRepresentation];
 																		 [self.localServer notificationClicked:growlDict];
 																		 [self.remoteServer notificationClicked:growlDict];
@@ -49,7 +49,7 @@
 																		  object:nil
 																			queue:[NSOperationQueue mainQueue]
 																	 usingBlock:^(NSNotification *note) {
-																		 GrowlNotification *growlNote = [note object];
+																		 GrowlNotification *growlNote = note.object;
 																		 NSDictionary *growlDict = [growlNote dictionaryRepresentation];
 																		 [self.localServer notificationClosed:growlDict];
 																		 [self.remoteServer notificationClosed:growlDict];
@@ -58,20 +58,20 @@
 																		  object:nil
 																			queue:[NSOperationQueue mainQueue]
 																	 usingBlock:^(NSNotification *note) {
-																		 GrowlNotification *growlNote = [note object];
+																		 GrowlNotification *growlNote = note.object;
 																		 NSDictionary *growlDict = [growlNote dictionaryRepresentation];
 																		 [self.localServer notificationTimedOut:growlDict];
 																		 [self.remoteServer notificationTimedOut:growlDict];
 																	 }];
 		
 		void(^noteBlock)(NSNotification*) = ^(NSNotification *note) {
-			if(![note object] || [[note object] isEqualToString:GrowlStartServerKey] ||
-				[[note object] isEqualToString:GrowlSubscriptionEnabledKey])
+			if(!note.object || [note.object isEqualToString:GrowlStartServerKey] ||
+				[note.object isEqualToString:GrowlSubscriptionEnabledKey])
 			{
-				if([[GrowlPreferencesController sharedController] isGrowlServerEnabled] ||
-					[[GrowlPreferencesController sharedController] isSubscriptionAllowed])
+				if([GrowlPreferencesController sharedController].isGrowlServerEnabled ||
+					[GrowlPreferencesController sharedController].isSubscriptionAllowed)
 				{
-					if([self.remoteServer startServer]){
+					if((self.remoteServer).startServer){
 						[self publish];
 					}
 				}else{
@@ -99,15 +99,15 @@
 {
    // we can only publish the service if we have a type to publish with
    if (!self.netService && 
-		 ([[GrowlPreferencesController sharedController] isGrowlServerEnabled] || 
-		  [[GrowlPreferencesController sharedController] isSubscriptionAllowed])) 
+		 ([GrowlPreferencesController sharedController].isGrowlServerEnabled || 
+		  [GrowlPreferencesController sharedController].isSubscriptionAllowed))
 	{
 		NSLog(@"publishing");
       NSString *publishingDomain = @"";
       NSString *publishingName = nil;
 		NSString *thisHostName = [GrowlNetworkUtilities localHostName];
 		if ([thisHostName hasSuffix:@".local"]) {
-			publishingName = [thisHostName substringToIndex:([thisHostName length] - 6)];
+			publishingName = [thisHostName substringToIndex:(thisHostName.length - 6)];
 		}else
 			publishingName = thisHostName;
       
@@ -115,7 +115,7 @@
 																			type:@"_gntp._tcp." 
 																			name:publishingName 
 																			port:GROWL_TCP_PORT];
-      NSDictionary * txtRecordDataDictionary = [NSDictionary dictionaryWithObjectsAndKeys: @"1.0", @"version", @"mac", @"platform", @"13", @"websocket", nil];
+      NSDictionary * txtRecordDataDictionary = @{@"version": @"1.0", @"platform": @"mac", @"websocket": @"13"};
       [self.netService setTXTRecordData:[NSNetService dataFromTXTRecordDictionary:txtRecordDataDictionary]];
       [self.netService publish];
    }
@@ -139,7 +139,7 @@
 
 - (GrowlNotificationResult)server:(GNTPServer*)server notifyWithDictionary:(NSDictionary *)dictionary {
    if([server isEqual:self.remoteServer]){
-      NSMutableArray *keys = [[dictionary allKeys] mutableCopy];
+      NSMutableArray *keys = [dictionary.allKeys mutableCopy];
       [keys removeObject:GROWL_NOTIFICATION_ALREADY_SHOWN];
       dictionary = [dictionary dictionaryWithValuesForKeys:keys];
    }
@@ -152,7 +152,7 @@
 }
 
 -(NSUInteger)totalSocketCount {
-	return [self.remoteServer socketCount] + [self.localServer socketCount];
+	return (self.remoteServer).socketCount + (self.localServer).socketCount;
 }
 
 @end

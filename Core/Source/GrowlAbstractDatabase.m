@@ -16,19 +16,18 @@
 @synthesize managedObjectModel;
 @synthesize persistentStoreCoordinator;
 
--(id)init
+-(instancetype)init
 {
    if((self = [super init]))
    {
-      [self managedObjectContext];
       [[NSNotificationCenter defaultCenter] addObserver:self
                                                selector:@selector(databaseDidSave:)
                                                    name:NSManagedObjectContextDidSaveNotification
-                                                 object:[self managedObjectContext]];
+                                                 object:self.managedObjectContext];
        [[NSNotificationCenter defaultCenter] addObserver:self
                                                 selector:@selector(databaseDidChange:)
                                                     name:NSManagedObjectContextObjectsDidChangeNotification
-                                                  object:[self managedObjectContext]];
+                                                  object:self.managedObjectContext];
    }
    return self;
 }
@@ -52,14 +51,14 @@
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:@"GrowlDatabaseSaved" 
                                                         object:self
-                                                      userInfo:[note userInfo]];
+                                                      userInfo:note.userInfo];
 }
 
 -(void)databaseDidChange:(NSNotification*)note
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:@"GrowlDatabaseUpdated" 
                                                         object:self
-                                                      userInfo:[note userInfo]];
+                                                      userInfo:note.userInfo];
 }
 
 
@@ -70,9 +69,9 @@
 {
     void (^saveBlock)(void) = ^{
         NSError *error = nil;
-        if([managedObjectContext hasChanges])
+        if(managedObjectContext.hasChanges)
             if(![managedObjectContext save:&error])
-                NSLog(@"Unresolved error %@, %@", error, [error userInfo]);       
+                NSLog(@"Unresolved error %@, %@", error, error.userInfo);       
     };
     if(doItNow)
         [managedObjectContext performBlockAndWait:saveBlock];
@@ -90,12 +89,12 @@
       return managedObjectContext;
    }
 	
-   NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
+   NSPersistentStoreCoordinator *coordinator = self.persistentStoreCoordinator;
    if (coordinator != nil) {
       managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
-      [managedObjectContext setPersistentStoreCoordinator:coordinator];
+      managedObjectContext.persistentStoreCoordinator = coordinator;
       [managedObjectContext setUndoManager:nil];
-      [managedObjectContext setMergePolicy:NSMergeByPropertyStoreTrumpMergePolicy];
+      managedObjectContext.mergePolicy = NSMergeByPropertyStoreTrumpMergePolicy;
    }
    return managedObjectContext;
 }
@@ -110,8 +109,8 @@
       return managedObjectModel;
    }
    //TODO: make this work better
-   NSString *modelName = [self modelName];
-   NSURL *url = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:[modelName stringByDeletingPathExtension] ofType:[modelName pathExtension]]];
+   NSString *modelName = self.modelName;
+   NSURL *url = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:modelName.stringByDeletingPathExtension ofType:modelName.pathExtension]];
    managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:url];
    return managedObjectModel;
 }
@@ -133,8 +132,8 @@
       return persistentStoreCoordinator;
    }
    
-   NSString *storeType = [self storeType];
-	NSString *storePath = [self storePath];
+   NSString *storeType = self.storeType;
+	NSString *storePath = self.storePath;
    if(!storePath)
       return nil;
 	
@@ -142,19 +141,22 @@
 	
 	NSError *error = nil;
    BOOL launchSuceeded = YES;
-   persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
+   persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:self.managedObjectModel];
    if (![persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeUrl options:nil error:&error]) {
 		// Handle error
       if([[NSFileManager defaultManager] fileExistsAtPath:storePath]) {
-         NSBeginCriticalAlertSheet([NSString stringWithFormat:NSLocalizedString(@"Error opening %@.", @"Alert when database has been corrupted"), storeType],
-                                   NSLocalizedString(@"Ok", @""),
-                                   nil, nil, nil, nil, NULL, NULL, NULL, 
-                                   [NSString stringWithFormat:NSLocalizedString(@"There was error opening the %@ file, it is possibly corrupted.\nGrowl will move the database aside, and create a fresh database.\nThis may have occured if Growl or the computer crashed.", @""), storeType]);
+          NSAlert *alert = [[NSAlert alloc] init];
+          alert.messageText = [NSString stringWithFormat:NSLocalizedString(@"Error opening %@.", @"Alert when database has been corrupted"), storeType];
+          [alert addButtonWithTitle:NSLocalizedString(@"Ok", nil)];
+          alert.informativeText = [NSString stringWithFormat:NSLocalizedString(@"There was error opening the %@ file, it is possibly corrupted.\nGrowl will move the database aside, and create a fresh database.\nThis may have occured if Growl or the computer crashed.", @""), storeType];
+          
+          alert.alertStyle = NSAlertStyleCritical;
+          [alert runModal];
          if([[NSFileManager defaultManager] moveItemAtPath:storePath toPath:[storePath stringByAppendingPathExtension:@"bak"] error:nil]){
             NSError *tryTwoError = nil;
             if(![persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeUrl options:nil error:&tryTwoError]){
                launchSuceeded = NO;
-               NSLog(@"Unresolved error after moving corrupt database aside\n%@, %@", tryTwoError, [tryTwoError userInfo]);
+               NSLog(@"Unresolved error after moving corrupt database aside\n%@, %@", tryTwoError, tryTwoError.userInfo);
             }
          }else{
             NSLog(@"Unable to move database file aside.");
@@ -162,7 +164,7 @@
          }
       }else{
          //If the database isn't there, and Growl couldn't create it, there is something seriously weird going on the users system. 
-         NSLog(@"Error creating persistent store\n%@, %@", error, [error userInfo]);
+         NSLog(@"Error creating persistent store\n%@, %@", error, error.userInfo);
          launchSuceeded = NO;
       }
    }
@@ -172,14 +174,15 @@
       
       NSError *memError = nil;
       if (![persistentStoreCoordinator addPersistentStoreWithType:NSInMemoryStoreType configuration:nil URL:nil options:nil error:&memError]) {
-         NSLog(@"Error Creating an in memory store for the purposes of this session\n%@, %@", memError, [memError userInfo]);
-         NSBeginCriticalAlertSheet(NSLocalizedString(@"Fatal Error", @"fatal alert"),
-                                   NSLocalizedString(@"Quit", @""), 
-                                   nil, nil, nil,
-                                   self,
-                                   @selector(fatalErrorAlert:returnCode:contextInfo:),
-                                   NULL, NULL, 
-                                   [NSString stringWithFormat:NSLocalizedString(@"Growl has encountered a fatal error trying to setup the %@, and will terminate upon closing this window.  Please contact us at support@growl.info.", @""), storeType]);
+         NSLog(@"Error Creating an in memory store for the purposes of this session\n%@, %@", memError, memError.userInfo);
+         NSAlert *alert = [[NSAlert alloc] init];
+         [alert setMessageText:NSLocalizedString(@"Fatal Error", @"fatal alert")];
+         [alert addButtonWithTitle:NSLocalizedString(@"Quit", nil)];
+         alert.informativeText = [NSString stringWithFormat:NSLocalizedString(@"Growl has encountered a fatal error trying to setup the %@, and will terminate upon closing this window.  Please contact us at support@growl.info.", @""), storeType];
+         alert.alertStyle = NSAlertStyleCritical;
+         [alert beginSheetModalForWindow:[NSApplication sharedApplication].keyWindow completionHandler:^(NSModalResponse returnCode) {
+              [self fatalErrorAlert:returnCode];
+         }];
       }else{
          return persistentStoreCoordinator;
       }
@@ -189,7 +192,7 @@
    return persistentStoreCoordinator;
 }
 
-- (void) fatalErrorAlert:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo {
+- (void) fatalErrorAlert:(NSModalResponse)returnCode {
    exit(-1);
 }
 

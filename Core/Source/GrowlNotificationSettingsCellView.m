@@ -13,7 +13,7 @@
 @synthesize enableCheckBox;
 
 -(IBAction)toggleEnabled:(id)sender {
-   [[self superview] setNeedsDisplay:YES];
+   [self.superview setNeedsDisplay:YES];
 }
 
 @end

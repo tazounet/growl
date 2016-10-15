@@ -111,7 +111,7 @@
 
 @synthesize networkAddressString;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil forPrefPane:(GrowlPreferencePane *)aPrefPane
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil forPrefPane:(GrowlPreferencePane *)aPrefPane
 {
    if((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil forPrefPane:aPrefPane])){
       self.listenForIncomingNoteLabel = NSLocalizedString(@"Listen for incoming notifications", @"Label for checkbox enabling incoming network notifications");
@@ -178,7 +178,7 @@
 - (void) reloadPrefs:(NSNotification *)notification {
 	// ignore notifications which are sent by ourselves
 	@autoreleasepool {
-        id object = [notification object];
+        id object = notification.object;
         if(!object || [object isEqualToString:GrowlStartServerKey])
             [self updateAddresses:nil];
 	}
@@ -186,7 +186,7 @@
 
 - (IBAction) removeSelectedForwardDestination:(id)sender
 {
-   [forwarder removeEntryAtIndex:[networkTableView selectedRow]];
+   [forwarder removeEntryAtIndex:networkTableView.selectedRow];
 }
 
 - (IBAction)newManualForwader:(id)sender {
@@ -200,13 +200,13 @@
 
 - (IBAction)removeSelectedSubscription:(id)sender
 {
-   [subscriptionController removeLocalSubscriptionAtIndex:[subscriptionsTableView selectedRow]];
+   [subscriptionController removeLocalSubscriptionAtIndex:subscriptionsTableView.selectedRow];
 }
 
 - (IBAction)removeSelectedSubscriber:(id)sender
 {
-   GNTPSubscriberEntry *entry = [[subscriberArrayController arrangedObjects] objectAtIndex:[subscriberTableView selectedRow]];
-   [subscriptionController removeRemoteSubscriptionForSubscriberID:[entry subscriberID]];
+   GNTPSubscriberEntry *entry = subscriberArrayController.arrangedObjects[subscriberTableView.selectedRow];
+   [subscriptionController removeRemoteSubscriptionForSubscriberID:entry.subscriberID];
 }
 
 - (void)showNetworkConnectionTab:(NSUInteger)tab
@@ -217,8 +217,8 @@
 
 -(void)updateAddresses:(NSNotification*)note
 {
-   if([[GrowlPreferencesController sharedController] isGrowlServerEnabled])
-      self.networkAddressString = [[GrowlNetworkObserver sharedObserver] routableCombined];
+   if([GrowlPreferencesController sharedController].isGrowlServerEnabled)
+      self.networkAddressString = [GrowlNetworkObserver sharedObserver].routableCombined;
    else
       self.networkAddressString = nil;
 }
@@ -227,23 +227,23 @@
 
 - (NSInteger) numberOfRowsInTableView:(NSTableView*)tableView {
 	if(tableView == networkTableView) {
-		return [[forwarder destinations] count];
+		return forwarder.destinations.count;
 	}
 	return 0;
 }
 
 - (void)tableView:(NSTableView *)aTableView setObjectValue:(id)anObject forTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
 	if(aTableColumn == servicePasswordColumn) {
-		[[[forwarder destinations] objectAtIndex:rowIndex] setPassword:anObject];
+		[forwarder.destinations[rowIndex] setPassword:anObject];
 	}
 }
 
 - (id) tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
 	// we check to make sure we have the image + text column and then set its image manually
    if (aTableView == networkTableView) {
-		return [[forwarder destinations] objectAtIndex:rowIndex];
-	} else if(aTableView == subscriptionsTableView && rowIndex < (NSInteger)[[subscriptionArrayController arrangedObjects] count]){
-      return [[subscriptionArrayController arrangedObjects] objectAtIndex:rowIndex];
+		return forwarder.destinations[rowIndex];
+	} else if(aTableView == subscriptionsTableView && rowIndex < (NSInteger)[subscriptionArrayController.arrangedObjects count]){
+      return subscriptionArrayController.arrangedObjects[rowIndex];
    }
 
 	return nil;

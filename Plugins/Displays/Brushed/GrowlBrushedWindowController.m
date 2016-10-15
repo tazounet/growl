@@ -19,26 +19,26 @@
 
 //static const double gAdditionalLinesDisplayTime = 0.5;
 
-- (id) initWithNotification:(GrowlNotification *)note plugin:(GrowlDisplayPlugin *)aPlugin {
+- (instancetype) initWithNotification:(GrowlNotification *)note plugin:(GrowlDisplayPlugin *)aPlugin {
 	// Read prefs...
 	screenNumber = 0U;
-	NSDictionary *configDict = [note configurationDict];
+	NSDictionary *configDict = note.configurationDict;
 	if([configDict valueForKey:GrowlBrushedScreenPref]){
 		screenNumber = [[configDict valueForKey:GrowlBrushedScreenPref] unsignedIntegerValue];
 	}
 	NSArray *screens = [NSScreen screens];
-	NSUInteger screensCount = [screens count];
+	NSUInteger screensCount = screens.count;
 	if (screensCount) {
-		[self setScreen:((screensCount >= (screenNumber + 1)) ? [screens objectAtIndex:screenNumber] : [screens objectAtIndex:0])];
+		self.screen = ((screensCount >= (screenNumber + 1)) ? screens[screenNumber] : screens[0]);
 	}
-	unsigned styleMask = NSBorderlessWindowMask | NSNonactivatingPanelMask;
+	unsigned styleMask = NSWindowStyleMaskBorderless | NSWindowStyleMaskNonactivatingPanel;
 
 	BOOL aquaPref = GrowlBrushedAquaPrefDefault;
 	if([configDict valueForKey:GrowlBrushedAquaPref]){
 		aquaPref = [[configDict valueForKey:GrowlBrushedAquaPref] boolValue];
 	}
 	if (!aquaPref) {
-		styleMask |= NSTexturedBackgroundWindowMask;
+		styleMask |= NSWindowStyleMaskTexturedBackground;
 	}
 
 	NSTimeInterval duration = GrowlBrushedDurationPrefDefault;
@@ -53,12 +53,12 @@
 												styleMask:styleMask
 												  backing:NSBackingStoreBuffered
 													defer:YES];
-	NSRect panelFrame = [panel frame];
+	NSRect panelFrame = panel.frame;
 	[panel setBecomesKeyOnlyIfNeeded:YES];
 	[panel setHidesOnDeactivate:NO];
 	[panel setLevel:GrowlVisualDisplayWindowLevel];
-	[panel setCollectionBehavior:NSWindowCollectionBehaviorCanJoinAllSpaces];
-	[panel setAlphaValue:0.0];
+	panel.collectionBehavior = NSWindowCollectionBehaviorCanJoinAllSpaces;
+	panel.alphaValue = 0.0;
 	[panel setOpaque:NO];
 	[panel setHasShadow:YES];
 	[panel setCanHide:NO];
@@ -67,11 +67,11 @@
 
 	// Create the content view...
 	GrowlBrushedWindowView *view = [[GrowlBrushedWindowView alloc] initWithFrame:panelFrame configurationDict:configDict];
-	[view setTarget:self];
-	[view setAction:@selector(notificationClicked:)];
-	[panel setContentView:view];
+	view.target = self;
+	view.action = @selector(notificationClicked:);
+	panel.contentView = view;
 
-	panelFrame = [view frame];
+	panelFrame = view.frame;
 	[panel setFrame:panelFrame display:NO];
 
 	// call super so everything else is set up...

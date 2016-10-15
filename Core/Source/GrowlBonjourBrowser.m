@@ -31,7 +31,7 @@
       NSLog(@"Starting browsing for _gntp._tcp.");
       self.services = [NSMutableArray array];
       browser = [[NSNetServiceBrowser alloc] init];
-      [browser setDelegate:self];
+      browser.delegate = self;
       [browser searchForServicesOfType:@"_gntp._tcp." inDomain:@""];
    }
    return YES;
@@ -81,8 +81,7 @@
    [services addObject:aNetService];
    [[NSNotificationCenter defaultCenter] postNotificationName:GNTPServiceFoundNotification 
                                                        object:self 
-                                                     userInfo:[NSDictionary dictionaryWithObject:aNetService 
-                                                                                          forKey:GNTPServiceKey]];
+                                                     userInfo:@{GNTPServiceKey: aNetService}];
 }
 
 -(void)netServiceBrowser:(NSNetServiceBrowser *)aNetServiceBrowser 
@@ -92,8 +91,7 @@
    [services removeObject:aNetService];
    [[NSNotificationCenter defaultCenter] postNotificationName:GNTPServiceRemovedNotification
                                                        object:self 
-                                                     userInfo:[NSDictionary dictionaryWithObject:aNetService 
-                                                                                          forKey:GNTPServiceKey]];
+                                                     userInfo:@{GNTPServiceKey: aNetService}];
 }
 
 @end

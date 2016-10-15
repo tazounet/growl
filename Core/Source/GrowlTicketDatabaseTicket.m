@@ -31,21 +31,21 @@
 
 -(BOOL)isTicketAllowed {
    if(self.parent)
-      return [self.enabled boolValue] && [self.parent isTicketAllowed];
+      return (self.enabled).boolValue && (self.parent).isTicketAllowed;
    else
-      return [self.enabled boolValue];
+      return (self.enabled).boolValue;
 }
 
 -(GrowlTicketDatabaseDisplay*)resolvedDisplayConfig {
-	if(![self.useDisplay boolValue])
+	if(!(self.useDisplay).boolValue)
 		return nil;
 	
 	GrowlTicketDatabaseDisplay *plugin = nil;
-	if(self.display && [self.display canFindInstance])
+	if(self.display && (self.display).canFindInstance)
 		plugin = self.display;
 	else {
 		if(self.parent)
-			plugin = [self.parent resolvedDisplayConfig];
+			plugin = (self.parent).resolvedDisplayConfig;
 		else {
 			plugin = [[GrowlTicketDatabase sharedInstance] defaultDisplayConfig];
 		}
@@ -54,17 +54,17 @@
 }
 -(NSSet*)resolvedActionConfigSet {
 	__weak NSMutableSet *buildSet = [NSMutableSet set];
-	if(self.actions && [self.actions count] > 0){
+	if(self.actions && (self.actions).count > 0){
 		[self.actions enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
 			if([[obj entityName] isEqualToString:@"GrowlCompoundAction"])
-				[buildSet unionSet:[(GrowlTicketDatabaseCompoundAction*)obj resolvedActionConfigSet]];
+				[buildSet unionSet:((GrowlTicketDatabaseCompoundAction*)obj).resolvedActionConfigSet];
 			else
 				[buildSet unionSet:[NSSet setWithObject:obj]];
 		}];
 	}
-	if([self.useParentActions boolValue]){
+	if((self.useParentActions).boolValue){
 		if(self.parent)
-			[buildSet unionSet:[self.parent resolvedActionConfigSet]];
+			[buildSet unionSet:(self.parent).resolvedActionConfigSet];
 		else {
 			[buildSet unionSet:[[GrowlTicketDatabase sharedInstance] defaultActionConfigSet]];
 		}
@@ -73,13 +73,13 @@
 }
 
 -(GrowlPositionOrigin)resolvedDisplayOrigin {
-	if([self.positionType intValue] == 1){
-		return [self.selectedPosition intValue];
+	if((self.positionType).intValue == 1){
+		return (self.selectedPosition).intValue;
 	}else{
 		if(self.parent)
-			return [self.parent resolvedDisplayOrigin];
+			return (self.parent).resolvedDisplayOrigin;
 		else
-			return (GrowlPositionOrigin)[[GrowlPreferencesController sharedController] selectedPosition];
+			return (GrowlPositionOrigin)[GrowlPreferencesController sharedController].selectedPosition;
 	}
 }
 
@@ -92,7 +92,7 @@
 	GrowlTicketDatabasePlugin *action = [[GrowlTicketDatabase sharedInstance] actionForName:name];
 	
 	if(!action){
-		action = [NSEntityDescription insertNewObjectForEntityForName:@"GrowlDisplay" inManagedObjectContext:[self managedObjectContext]];
+		action = [NSEntityDescription insertNewObjectForEntityForName:@"GrowlDisplay" inManagedObjectContext:self.managedObjectContext];
 		action.displayName = name;
 	}
 	self.display = (GrowlTicketDatabaseDisplay*)action;

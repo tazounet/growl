@@ -11,8 +11,12 @@
 @property (weak) IBOutlet WebView *webView;
 @property (weak) IBOutlet NSProgressIndicator *progressIndicator;
 
-- (id)initWithURL:(NSString *)retrieveURL
+- (instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
+- (instancetype)initWithWindow:(NSWindow *)window NS_UNAVAILABLE;
+
+- (instancetype)initWithURL:(NSString *)retrieveURL
 		 delegate:(id<PRWebViewWindowControllerDelegate>)delegate;
+
 @property (nonatomic, unsafe_unretained, readonly) id<PRWebViewWindowControllerDelegate> delegate;
 @property (nonatomic, strong, readonly) NSString *retrieveURL;
 

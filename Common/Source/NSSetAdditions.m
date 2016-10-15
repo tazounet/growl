@@ -11,7 +11,7 @@
 
 @implementation NSSet (NSSetAdditions)
 
-+ (id) setWithUnionOfSetsInArray:(NSArray *)array {
++ (instancetype) setWithUnionOfSetsInArray:(NSArray *)array {
 	NSMutableSet *unionSet = [[NSMutableSet alloc] init];
 
 	for (NSSet *setToAdd in array)

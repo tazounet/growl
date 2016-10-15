@@ -51,31 +51,31 @@ static NSMutableDictionary *existingInstances;
 	if (!existingInstances)
 		existingInstances = [[NSMutableDictionary alloc] init];
 
-	NSDictionary *classInstances = [existingInstances objectForKey:NSStringFromClass(self)];
+	NSDictionary *classInstances = existingInstances[NSStringFromClass(self)];
 	if (!classInstances) {
 		classInstances = [[NSMutableDictionary alloc] init];
-		[existingInstances setObject:classInstances forKey:NSStringFromClass(self)];
+		existingInstances[NSStringFromClass(self)] = classInstances;
 	}
 	[classInstances setValue:instance forKey:ident];
 }
 
 + (id) instanceWithIdentifier:(NSString *)ident {
-	NSMutableDictionary *classInstances = [existingInstances objectForKey:self];
+	NSMutableDictionary *classInstances = existingInstances[self];
 	if (classInstances)
-		return [classInstances objectForKey:ident];
+		return classInstances[ident];
 	else
 		return nil;
 }
 
 + (void) unregisterInstanceWithIdentifier:(NSString *)ident {
-	NSMutableDictionary *classInstances = [existingInstances objectForKey:self];
+	NSMutableDictionary *classInstances = existingInstances[self];
 	if (classInstances)
 		[classInstances removeObjectForKey:ident];
 }
 
 #pragma mark -
 
-- (id) initWithWindowNibName:(NSString *)windowNibName plugin:(GrowlDisplayPlugin *)aPlugin {
+- (instancetype) initWithWindowNibName:(NSString *)windowNibName plugin:(GrowlDisplayPlugin *)aPlugin {
 	// NOTE: for completeness we ought to offer the other nib related init methods with the plugin as a param
 	if ((self = [self initWithWindowNibName:windowNibName owner:aPlugin])) {
 		self.plugin = plugin;
@@ -83,7 +83,7 @@ static NSMutableDictionary *existingInstances;
 	return self;
 }
 
-- (id) initWithNotification:(GrowlNotification *)note plugin:(GrowlDisplayPlugin *)aPlugin {
+- (instancetype) initWithNotification:(GrowlNotification *)note plugin:(GrowlDisplayPlugin *)aPlugin {
 	/* Subclasses using this method should call initWithWindowNibName: from init */
 	if ((self = [self init])) {
 		self.plugin = plugin;
@@ -91,7 +91,7 @@ static NSMutableDictionary *existingInstances;
 	return self;
 }
 
-- (id) initWithWindow:(NSWindow *)window andPlugin:(GrowlDisplayPlugin*)aPlugin {
+- (instancetype) initWithWindow:(NSWindow *)window andPlugin:(GrowlDisplayPlugin*)aPlugin {
 	if ((self = [super initWithWindow:window])) {
 		self.finished = NO;
 		self.plugin = aPlugin;
@@ -143,13 +143,13 @@ static NSMutableDictionary *existingInstances;
 	
 	[self willDisplayNotification];
 	
-	[[self window] orderFront:nil];
+	[self.window orderFront:nil];
 	
-	if ([self startAllTransitions]) {
+	if (self.startAllTransitions) {
 		[self performSelector:@selector(didFinishTransitionsBeforeDisplay)
 					  withObject:nil
 					  afterDelay:transitionDuration
-						  inModes:[NSArray arrayWithObjects:NSRunLoopCommonModes, NSEventTrackingRunLoopMode, nil]];
+						  inModes:@[NSRunLoopCommonModes, NSEventTrackingRunLoopMode]];
 	} else {
 		[self didFinishTransitionsBeforeDisplay];
 	}
@@ -167,7 +167,7 @@ static NSMutableDictionary *existingInstances;
 }
 
 - (void) stopDisplay {	
-	id contentView = [[self window] contentView];
+	id contentView = self.window.contentView;
 	if ([contentView respondsToSelector:@selector(mouseOver)] &&
 		[contentView mouseOver] &&
 		!userRequestedClose) {
@@ -181,7 +181,7 @@ static NSMutableDictionary *existingInstances;
 			[self cancelDisplayDelayedPerforms];
 			[self willTakeDownNotification];
             [self setAllTransitionsToDirection:GrowlReverseTransition];
-			if ([self startAllTransitions]) {
+			if (self.startAllTransitions) {
             /* This should happen automatically, with animationDidEnd */
 				/*[self performSelector:@selector(didFinishTransitionsAfterDisplay) 
 						   withObject:nil
@@ -196,7 +196,7 @@ static NSMutableDictionary *existingInstances;
 - (void) clickedCloseBox {
    didClick = YES;
    [[NSNotificationCenter defaultCenter] postNotificationName:@"GROWL_NOTIFICATION_CLOSED"
-                                                       object:[self notification]];
+                                                       object:self.notification];
    
    [self clickedClose];
 }
@@ -235,12 +235,12 @@ static NSMutableDictionary *existingInstances;
 - (void) didFinishTransitionsBeforeDisplay {
 	[self cancelDisplayDelayedPerforms];
 
-	if (![[[notification auxiliaryDictionary] valueForKey:GROWL_NOTIFICATION_STICKY] boolValue] ||
+	if (![[notification.auxiliaryDictionary valueForKey:GROWL_NOTIFICATION_STICKY] boolValue] ||
 		![self supportsStickyNotifications]) {
 		[self performSelector:@selector(stopDisplay)
 					  withObject:nil
 					  afterDelay:(displayDuration+transitionDuration)
-						  inModes:[NSArray arrayWithObjects:NSRunLoopCommonModes, NSEventTrackingRunLoopMode, nil]];		
+						  inModes:@[NSRunLoopCommonModes, NSEventTrackingRunLoopMode]];		
 	}
 	
 	displayStatus = GrowlDisplayOnScreenStatus;
@@ -257,7 +257,7 @@ static NSMutableDictionary *existingInstances;
 	[self cancelDisplayDelayedPerforms];
 	
 	//Clear the rect we reserved...
-	NSWindow *window = [self window];
+	NSWindow *window = self.window;
 	[window orderOut:nil];
 	
 	//Release all window transitions immediately; they may have retained our window.
@@ -288,7 +288,7 @@ static NSMutableDictionary *existingInstances;
 - (void) didTakeDownNotification {
 	NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
 	if (!didClick) {
-		[nc postNotificationName:GROWL_NOTIFICATION_TIMED_OUT object:[self notification]];
+		[nc postNotificationName:GROWL_NOTIFICATION_TIMED_OUT object:self.notification];
 	}
 	[nc postNotificationName:GrowlDisplayWindowControllerDidTakeWindowDownNotification object:self];
 }
@@ -301,7 +301,7 @@ static NSMutableDictionary *existingInstances;
 
 	if (!didClick) {
 		[[NSNotificationCenter defaultCenter] postNotificationName:GROWL_NOTIFICATION_CLICKED
-															object:[self notification]
+															object:self.notification
 														  userInfo:nil];
 		didClick = YES;
 	}
@@ -317,11 +317,11 @@ static NSMutableDictionary *existingInstances;
 #pragma mark Window Transitions
 
 - (BOOL) addTransition:(GrowlWindowTransition *)transition {
-	[transition setWindow:[self window]];
-	[transition setDelegate:self];
+	transition.window = self.window;
+	transition.delegate = self;
    NSString *classString = NSStringFromClass([transition class]);
-	if (![windowTransitions objectForKey:classString]) {
-		[windowTransitions setObject:transition forKey:classString];
+	if (!windowTransitions[classString]) {
+		windowTransitions[classString] = transition;
 		return TRUE;
 	}
 	return FALSE;
@@ -342,25 +342,25 @@ static NSMutableDictionary *existingInstances;
 			  @"The end parameter was invalid for the transition: %@",
 			  transition);
 
-	[startTimes setObject:[NSNumber numberWithUnsignedInteger:start] forKey:transition ];
-	[endTimes setObject:[NSNumber numberWithUnsignedInteger:end] forKey:transition ];
+	[startTimes setObject:@(start) forKey:transition ];
+	[endTimes setObject:@(end) forKey:transition ];
 }
 
 #pragma mark-
 
 - (NSArray *) allTransitions {
-	return [windowTransitions allValues];
+	return windowTransitions.allValues;
 }
 
 - (NSArray *) activeTransitions {
-	NSUInteger count = [windowTransitions count];
+	NSUInteger count = windowTransitions.count;
 	NSMutableArray *result = [NSMutableArray arrayWithCapacity:count];
-	NSArray *transitionArray = [windowTransitions allValues];
+	NSArray *transitionArray = windowTransitions.allValues;
 
 	NSUInteger i;
 	for (i=0; i<count; ++i) {
-		GrowlWindowTransition *transition = [transitionArray objectAtIndex:i];
-		if ([transition isAnimating])
+		GrowlWindowTransition *transition = transitionArray[i];
+		if (transition.animating)
 			[result addObject:transition];
 	}
 
@@ -368,14 +368,14 @@ static NSMutableDictionary *existingInstances;
 }
 
 - (NSArray *) inactiveTransitions {
-	NSUInteger count = [windowTransitions count];
+	NSUInteger count = windowTransitions.count;
 	NSMutableArray *result = [NSMutableArray arrayWithCapacity:count];
-	NSArray *transitionArray = [windowTransitions allValues];
+	NSArray *transitionArray = windowTransitions.allValues;
 
 	NSUInteger i;
 	for (i=0; i<count; ++i) {
-		GrowlWindowTransition *transition = [transitionArray objectAtIndex:i];
-		if (![transition isAnimating])
+		GrowlWindowTransition *transition = transitionArray[i];
+		if (!transition.animating)
 			[result addObject:transition];
 	}
 
@@ -386,7 +386,7 @@ static NSMutableDictionary *existingInstances;
 	BOOL result = NO;
 	GrowlWindowTransition *transition;
 
-    for (transition in [windowTransitions allValues])
+    for (transition in windowTransitions.allValues)
 		if ([self startTransition:transition])
 			result = YES;
 	return result;
@@ -395,8 +395,8 @@ static NSMutableDictionary *existingInstances;
 - (BOOL) startTransition:(GrowlWindowTransition *)transition {
     NSNumber *start = [startTimes objectForKey:transition];
     NSNumber *end = [endTimes objectForKey:transition];
-	NSUInteger startPercentage = [start unsignedIntegerValue];
-	NSUInteger endPercentage   = [end unsignedIntegerValue];
+	NSUInteger startPercentage = start.unsignedIntegerValue;
+	NSUInteger endPercentage   = end.unsignedIntegerValue;
 
 	// If there were no times set up then the end time would be NULL (0)...
 	if (endPercentage == 0)
@@ -407,24 +407,24 @@ static NSMutableDictionary *existingInstances;
 	CFTimeInterval endTime = (float)endPercentage * ((float)transitionDuration * 0.01);
 
 	// Set up this transition...
-	[transition setDuration: (endTime - startTime)];
+	transition.duration = (endTime - startTime);
 	[transition performSelector:@selector(startAnimation) 
 						  withObject:nil
 						  afterDelay:startTime
-							  inModes:[NSArray arrayWithObjects:NSRunLoopCommonModes, NSEventTrackingRunLoopMode, nil]];
+							  inModes:@[NSRunLoopCommonModes, NSEventTrackingRunLoopMode]];
 
 	return YES;
 }
 
 - (BOOL) startTransitionOfKind:(Class)transitionClass {
-	GrowlWindowTransition *transition = [windowTransitions objectForKey:NSStringFromClass(transitionClass)];
+	GrowlWindowTransition *transition = windowTransitions[NSStringFromClass(transitionClass)];
 	if (transition)
 		return [self startTransition:transition];
 	return NO;
 }
 
 - (void) stopAllTransitions {
-	for (GrowlWindowTransition *transition in [windowTransitions allValues]) {
+	for (GrowlWindowTransition *transition in windowTransitions.allValues) {
 		[self stopTransition:transition];
     }
 }
@@ -440,7 +440,7 @@ static NSMutableDictionary *existingInstances;
 }
 
 - (void) stopTransitionOfKind:(Class)transitionClass {
-	GrowlWindowTransition *transition = [windowTransitions objectForKey:NSStringFromClass(transitionClass)];
+	GrowlWindowTransition *transition = windowTransitions[NSStringFromClass(transitionClass)];
 	if (transition)
 		[self stopTransition:transition];
 }
@@ -448,8 +448,8 @@ static NSMutableDictionary *existingInstances;
 - (void) animationDidEnd:(NSAnimation *)animation
 {
 	if ([animation isKindOfClass:[GrowlWindowTransition class]] &&
-		([(GrowlWindowTransition *)animation window] == [self window]) &&
-		([(GrowlWindowTransition *)animation direction] == GrowlReverseTransition)) {
+		(((GrowlWindowTransition *)animation).window == self.window) &&
+		(((GrowlWindowTransition *)animation).direction == GrowlReverseTransition)) {
 		//A fade out nonrepeating animation finished. We don't need to wait on our timeout; we know we finished displaying a notification.
 		[self didFinishTransitionsAfterDisplay];
 	}
@@ -457,13 +457,13 @@ static NSMutableDictionary *existingInstances;
 
 - (void) reverseAllTransitions
 {
-	[[windowTransitions allValues] makeObjectsPerformSelector:@selector(reverse)];
+	[windowTransitions.allValues makeObjectsPerformSelector:@selector(reverse)];
 }
 
 - (void) setAllTransitionsToDirection:(GrowlTransitionDirection)direction
 {
-	for (GrowlWindowTransition *transition in [windowTransitions allValues]){
-        [transition setDirection:direction];
+	for (GrowlWindowTransition *transition in windowTransitions.allValues){
+        transition.direction = direction;
     }
 
 }
@@ -500,27 +500,27 @@ static NSMutableDictionary *existingInstances;
 	if (notification != theNotification) {
 		[[NSNotificationCenter defaultCenter] removeObserver:self
 																		name:GROWL_CLOSE_NOTIFICATION
-																	 object:[[notification dictionaryRepresentation] objectForKey:GROWL_NOTIFICATION_INTERNAL_ID]];
+																	 object:[notification dictionaryRepresentation][GROWL_NOTIFICATION_INTERNAL_ID]];
       [[NSDistributedNotificationCenter defaultCenter] removeObserver:self];
 		notification = theNotification;
 	}
 	
 	NSDictionary *noteDict = [theNotification dictionaryRepresentation];
 		
-	NSView *view = [[self window] contentView];
+	NSView *view = self.window.contentView;
 	if ([view isKindOfClass:[GrowlNotificationView class]]) {
 		GrowlNotificationView *notificationView = (GrowlNotificationView *)view;
 		
 		NSImage *icon;	
-		NSData *iconData = [noteDict objectForKey:GROWL_NOTIFICATION_ICON_DATA];
+		NSData *iconData = noteDict[GROWL_NOTIFICATION_ICON_DATA];
 		if ([iconData isKindOfClass:[NSImage class]])
 			icon = (NSImage *)iconData;
 		else
 			icon = (iconData ? [[NSImage alloc] initWithData:iconData] : nil);
 		
-		[notificationView setPriority:[[noteDict objectForKey:GROWL_NOTIFICATION_PRIORITY] intValue]];
-		[notificationView setTitle:[notification title]];
-		[notificationView setText:[notification notificationDescription]];
+		[notificationView setPriority:[noteDict[GROWL_NOTIFICATION_PRIORITY] intValue]];
+		[notificationView setTitle:notification.title];
+		[notificationView setText:notification.notificationDescription];
 		[notificationView setIcon:icon];
 		[notificationView sizeToFit];
 	}
@@ -529,21 +529,21 @@ static NSMutableDictionary *existingInstances;
 	[[NSNotificationCenter defaultCenter] addObserver:self
 														  selector:@selector(stopDisplay)
 																name:GROWL_CLOSE_NOTIFICATION
-															 object:[noteDict objectForKey:GROWL_NOTIFICATION_INTERNAL_ID]];
+															 object:noteDict[GROWL_NOTIFICATION_INTERNAL_ID]];
    [[NSDistributedNotificationCenter defaultCenter] addObserver:self
                                                        selector:@selector(stopDisplay)
                                                            name:GROWL3_NOTIFICATION_CANCEL_REQUESTED
-                                                         object:[noteDict objectForKey:GROWL_NOTIFICATION_INTERNAL_ID]
+                                                         object:noteDict[GROWL_NOTIFICATION_INTERNAL_ID]
                                              suspensionBehavior:NSNotificationSuspensionBehaviorDeliverImmediately];
 }
 
 - (void) updateToNotification:(GrowlNotification *)theNotification {
 	[[NSNotificationCenter defaultCenter] postNotificationName:GROWL_NOTIFICATION_TIMED_OUT 
-																		 object:[self notification]
+																		 object:self.notification
 																	  userInfo:nil];
-	CGSize start = [self requiredSize];
-	[self setNotification:theNotification];
-	CGSize end = [self requiredSize];
+	CGSize start = self.requiredSize;
+	self.notification = theNotification;
+	CGSize end = self.requiredSize;
 	
 	BOOL resize = !CGSizeEqualToSize(start, end);
 	
@@ -568,7 +568,7 @@ static NSMutableDictionary *existingInstances;
 
 			break;
 	}
-	if(resize && [[self window] isVisible])
+	if(resize && self.window.visible)
 		[[GrowlDisplayBridgeController sharedController] displayWindow:self reposition:YES];
 }
 
@@ -576,8 +576,8 @@ static NSMutableDictionary *existingInstances;
 
 - (NSScreen *) screen {
 	NSArray *screens = [NSScreen screens];
-	if (screenNumber < [screens count])
-		return [screens objectAtIndex:screenNumber];
+	if (screenNumber < screens.count)
+		return screens[screenNumber];
 	else
 		return [NSScreen mainScreen];
 }
@@ -586,7 +586,7 @@ static NSMutableDictionary *existingInstances;
 	NSUInteger newScreenNumber = [[NSScreen screens] indexOfObjectIdenticalTo:newScreen];
 	if (newScreenNumber == NSNotFound)
 		[NSException raise:NSInternalInconsistencyException format:@"Tried to set %@ %p to a screen %p that isn't in the screen list", [self class], self, newScreen];
-	[self setScreenNumber:newScreenNumber];
+	self.screenNumber = newScreenNumber;
 }
 
 - (NSUInteger) screenNumber {
@@ -601,13 +601,13 @@ static NSMutableDictionary *existingInstances;
 
 - (BOOL)supportsStickyNotifications
 {
-	return ![[self window] ignoresMouseEvents];
+	return !self.window.ignoresMouseEvents;
 }
 
 #pragma mark -
 
 - (id) clickContext {
-	return [[[self notification] dictionaryRepresentation] objectForKey:GROWL_NOTIFICATION_CLICK_CONTEXT];
+	return [self.notification dictionaryRepresentation][GROWL_NOTIFICATION_CLICK_CONTEXT];
 }
 
 #pragma mark -
@@ -678,23 +678,23 @@ static NSMutableDictionary *existingInstances;
 }
 
 - (NSDictionary*)configurationDict {
-	return [notification configurationDict];
+	return notification.configurationDict;
 }
 
 - (CGSize) requiredSize {
-	CGSize size = [[self window] frame].size;
-	size.width += [self requiredDistanceFromExistingDisplays];
-	size.height += [self requiredDistanceFromExistingDisplays];
+	CGSize size = self.window.frame.size;
+	size.width += self.requiredDistanceFromExistingDisplays;
+	size.height += self.requiredDistanceFromExistingDisplays;
 	return size;
 }
 
 -(CGPoint)idealOriginInRect:(CGRect)rect {
-	NSRect viewFrame = [[[self window] contentView] frame];
-	NSDictionary *configDict = [[self notification] configurationDict];
+	NSRect viewFrame = self.window.contentView.frame;
+	NSDictionary *configDict = self.notification.configurationDict;
 	GrowlPositionOrigin	position = configDict ? [[configDict valueForKey:@"com.growl.positioncontroller.selectedposition"] intValue] : GrowlTopRightCorner;
 	CGPoint idealOrigin;
 	
-	CGFloat padding = [self requiredDistanceFromExistingDisplays];
+	CGFloat padding = self.requiredDistanceFromExistingDisplays;
 		
 	switch(position){
 		case GrowlNoOrigin:
@@ -720,9 +720,9 @@ static NSMutableDictionary *existingInstances;
 }
 
 - (void) positionInRect:(CGRect)rect {
-	CGRect frame = [[self window] frame];
+	CGRect frame = self.window.frame;
 	frame.origin = [self idealOriginInRect:rect];
-	[[self window] setFrame:frame display:YES];
+	[self.window setFrame:frame display:YES];
 }
 - (void)setOccupiedRect:(CGRect)rect {
 	occupiedRect = rect;

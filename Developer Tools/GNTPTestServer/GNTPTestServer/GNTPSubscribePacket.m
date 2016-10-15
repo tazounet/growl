@@ -25,7 +25,7 @@
 	return converted;
 }
 
--(id)init {
+-(instancetype)init {
 	if((self = [super init])){
 		self.ttl = 3600;
 	}
@@ -35,13 +35,13 @@
 -(NSString*)responseString {
 	NSMutableString *returnHeaders = [NSMutableString string];
 	[returnHeaders appendFormat:@"%@: %lu\r\n", GrowlGNTPResponseSubscriptionTTL, self.ttl];
-	return [[super responseString] stringByAppendingString:returnHeaders];
+	return [super.responseString stringByAppendingString:returnHeaders];
 }
 
 -(BOOL)validate {
-	return [super validate] && 
-	[self.gntpDictionary objectForKey:GrowlGNTPSubscriberID] &&
-	[self.gntpDictionary objectForKey:GrowlGNTPSubscriberName];
+	return super.validate && 
+	(self.gntpDictionary)[GrowlGNTPSubscriberID] &&
+	(self.gntpDictionary)[GrowlGNTPSubscriberName];
 }
 
 @end

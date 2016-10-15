@@ -24,7 +24,7 @@
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
 		NSString *endString = @"GNTP/1.0 END\r\n\r\n";
-		_gntpEndData = [NSData dataWithBytes:[endString UTF8String] length:[endString length]];
+		_gntpEndData = [NSData dataWithBytes:endString.UTF8String length:endString.length];
 	});
 	return _gntpEndData;
 }

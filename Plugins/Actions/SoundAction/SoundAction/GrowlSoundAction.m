@@ -18,7 +18,7 @@
 @synthesize currentSound;
 @synthesize queuedSounds;
 
-- (id)init
+- (instancetype)init
 {
 	if ((self = [super init])) {
 		self.audioDeviceId = nil;
@@ -26,10 +26,6 @@
 		self.queuedSounds = [NSMutableArray array];
 	}
 	return self;
-}
-
--(void)dealloc {
-	dispatch_release(sound_queue);
 }
 
 + (NSString*)getAudioDevice
@@ -67,14 +63,14 @@
 		}
 		if(!audioDeviceId)
 			self.audioDeviceId = [GrowlSoundAction getAudioDevice];
-		[soundToPlay setPlaybackDeviceIdentifier:audioDeviceId];
-		[soundToPlay setDelegate:self];
+		soundToPlay.playbackDeviceIdentifier = audioDeviceId;
+		soundToPlay.delegate = self;
 		
 		NSUInteger volume = SoundVolumeDefault;
 		if([configuration valueForKey:SoundVolumePref])
 			volume = [[configuration valueForKey:SoundVolumePref] unsignedIntegerValue];
 		
-		[soundToPlay setVolume:((CGFloat)volume / 100.0f)];
+		soundToPlay.volume = ((CGFloat)volume / 100.0f);
 		
 		__weak GrowlSoundAction *weakSelf = self;
 		dispatch_async(sound_queue, ^{
@@ -101,8 +97,8 @@
 	__weak GrowlSoundAction *weakSelf = self;
 	dispatch_async(sound_queue, ^{
 		weakSelf.currentSound = nil;
-		if([weakSelf.queuedSounds count] > 0){
-			NSSound *newSound = [weakSelf.queuedSounds objectAtIndex:0U];
+		if((weakSelf.queuedSounds).count > 0){
+			NSSound *newSound = (weakSelf.queuedSounds)[0U];
 			weakSelf.currentSound = newSound;
 			[weakSelf.queuedSounds removeObjectAtIndex:0U];
 			[newSound play];

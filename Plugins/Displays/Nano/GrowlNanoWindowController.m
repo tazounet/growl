@@ -19,8 +19,8 @@
 
 @implementation GrowlNanoWindowController
 
-- (id) initWithNotification:(GrowlNotification *)note plugin:(GrowlDisplayPlugin *)aPlugin {
-	NSDictionary *configDict = [note configurationDict];
+- (instancetype) initWithNotification:(GrowlNotification *)note plugin:(GrowlDisplayPlugin *)aPlugin {
+	NSDictionary *configDict = note.configurationDict;
 	//define our duration
 	
 	NSTimeInterval duration = GrowlNanoDurationPrefDefault;
@@ -34,13 +34,13 @@
 		screenNumber = [[configDict valueForKey:Nano_SCREEN_PREF] unsignedIntValue];
 	}
 	NSArray *screens = [NSScreen screens];
-	NSUInteger screensCount = [screens count];
+	NSUInteger screensCount = screens.count;
 	if (screensCount) {
-		[self setScreen:((screensCount >= (screenNumber + 1)) ? [screens objectAtIndex:screenNumber] : [screens objectAtIndex:0])];
+		self.screen = ((screensCount >= (screenNumber + 1)) ? screens[screenNumber] : screens[0]);
 	}
 				 
 	NSRect sizeRect;
-	NSRect screen = [[self screen] frame];
+	NSRect screen = self.screen.frame;
 	int sizePref = Nano_SIZE_NORMAL;
 	if([configDict valueForKey:Nano_SIZE_PREF]){
 		sizePref = [[configDict valueForKey:Nano_SIZE_PREF] intValue];
@@ -56,28 +56,28 @@
 	frameHeight = sizeRect.size.height;
 
 	NSPanel *panel = [[NSPanel alloc] initWithContentRect:sizeRect
-												styleMask:NSBorderlessWindowMask
+												styleMask:NSWindowStyleMaskBorderless
 												  backing:NSBackingStoreBuffered
 													defer:YES];
-	NSRect panelFrame = [panel frame];
+	NSRect panelFrame = panel.frame;
 	[panel setBecomesKeyOnlyIfNeeded:YES];
 	[panel setHidesOnDeactivate:NO];
-	[panel setBackgroundColor:[NSColor clearColor]];
+	panel.backgroundColor = [NSColor clearColor];
 	[panel setLevel:NSFloatingWindowLevel];
 	[panel setIgnoresMouseEvents:YES];
-	[panel setCollectionBehavior:NSWindowCollectionBehaviorCanJoinAllSpaces];
+	panel.collectionBehavior = NSWindowCollectionBehaviorCanJoinAllSpaces;
 	[panel setOpaque:NO];
 	[panel setHasShadow:NO];
 	[panel setCanHide:NO];
 	[panel setOneShot:YES];
-	[panel setDelegate:self];
+	panel.delegate = self;
 
 	GrowlNanoWindowView *view = [[GrowlNanoWindowView alloc] initWithFrame:panelFrame];
 
-	[view setTarget:self];
-	[view setAction:@selector(notificationClicked:)]; // Not used for now
+	view.target = self;
+	view.action = @selector(notificationClicked:); // Not used for now
 
-	[panel setContentView:view]; // retains subview
+	panel.contentView = view; // retains subview
 
 	// call super so everything else is set up...
 	if ((self = [super initWithWindow:panel andPlugin:aPlugin])) {
@@ -143,36 +143,36 @@
 
 -(CGPoint)idealOriginInRect:(CGRect)rect {
 	NanoPosition position = Nano_POSITION_DEFAULT;
-	if([[self configurationDict] valueForKey:Nano_POSITION_PREF]){
-		position = (unsigned int)[[[self configurationDict] valueForKey:Nano_POSITION_PREF] unsignedIntegerValue];
+	if([self.configurationDict valueForKey:Nano_POSITION_PREF]){
+		position = (unsigned int)[[self.configurationDict valueForKey:Nano_POSITION_PREF] unsignedIntegerValue];
 	}
 
 	CGFloat xPosition;
 	switch (position) {
 		case Nano_POSITION_RIGHT:
-			xPosition = NSMaxX(rect) - ([self window].frame.size.width + 50.0f);
+			xPosition = NSMaxX(rect) - (self.window.frame.size.width + 50.0f);
 			break;
 		case Nano_POSITION_LEFT:
 			xPosition = NSMinX(rect) + 50.0f;
 			break;
 		case Nano_POSITION_CENTER:
-			xPosition = NSMinX(rect) + (rect.size.width / 2.0f) - ([self window].frame.size.width / 2.0);
+			xPosition = NSMinX(rect) + (rect.size.width / 2.0f) - (self.window.frame.size.width / 2.0);
 			break;
 	} 
 	CGFloat yPosition = NSMaxY(rect);
 	
-	if([self screen] == [NSScreen mainScreen] && [NSMenu menuBarVisible])
-		yPosition -= [[NSApp mainMenu] menuBarHeight];
+	if(self.screen == [NSScreen mainScreen] && [NSMenu menuBarVisible])
+		yPosition -= NSApp.mainMenu.menuBarHeight;
 	
 	return CGPointMake(xPosition, yPosition);
 }
 
 -(NSString*)displayQueueKey {
 	NanoPosition position = Nano_POSITION_DEFAULT;
-	if([[self configurationDict] valueForKey:Nano_POSITION_PREF]){
-		position = (unsigned int)[[[self configurationDict] valueForKey:Nano_POSITION_PREF] unsignedIntegerValue];
+	if([self.configurationDict valueForKey:Nano_POSITION_PREF]){
+		position = (unsigned int)[[self.configurationDict valueForKey:Nano_POSITION_PREF] unsignedIntegerValue];
 	}
-	return [NSString stringWithFormat:@"nano-%@-%u", [[self screen] screenIDString], position];
+	return [NSString stringWithFormat:@"nano-%@-%ld", self.screen.screenIDString, (long)position];
 }
 
 @end

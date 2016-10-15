@@ -15,7 +15,7 @@
 
 @implementation GrowlBrushedDisplay
 
-- (id) init {
+- (instancetype) init {
 	if ((self = [super init])) {
 		windowControllerClass = NSClassFromString(@"GrowlBrushedWindowController");
 		self.prefDomain = GrowlBrushedPrefDomain;

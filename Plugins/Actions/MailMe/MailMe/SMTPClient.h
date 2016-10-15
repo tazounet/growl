@@ -19,12 +19,11 @@ extern NSString* const SMTPToKey;
 extern NSString* const SMTPSubjectKey;
 extern NSString* const SMTPMessageKey;
 
-enum {
+typedef NS_ENUM(NSInteger, SMTPClientTLSMode) {
 	SMTPClientTLSModeNone = 0,
 	SMTPClientTLSModeTLSIfPossible = 1,
 	SMTPClientTLSModeTLSOrClose = 2
 };
-typedef NSInteger SMTPClientTLSMode;
 
 @interface SMTPClient : NSObject {
 	NSString* _address;
@@ -46,7 +45,8 @@ typedef NSInteger SMTPClientTLSMode;
 
 +(void)splitAddress:(NSString*)address intoEmail:(NSString**)email description:(NSString**)desc;
 
--(id)initWithServerAddress:(NSString*)address ports:(NSArray*)ports tlsMode:(SMTPClientTLSMode)tlsMode username:(NSString*)authUsername password:(NSString*)authPassword;
+- (instancetype)init NS_UNAVAILABLE;
+-(instancetype)initWithServerAddress:(NSString*)address ports:(NSArray*)ports tlsMode:(SMTPClientTLSMode)tlsMode username:(NSString*)authUsername password:(NSString*)authPassword NS_DESIGNATED_INITIALIZER;
 
 -(void)sendMessage:(NSString*)message withSubject:(NSString*)subject from:(NSString*)from to:(NSString*)to;
 

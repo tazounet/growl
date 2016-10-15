@@ -13,7 +13,7 @@
 
 @implementation GrowlWebKitPrefsController
 
-- (id) initWithStyle:(NSString *)styleName {
+- (instancetype) initWithStyle:(NSString *)styleName {
 	if ((self = [self initWithBundle:[NSBundle bundleForClass:[self class]]])) {
 		style = styleName;
 		prefDomain = [[NSString alloc] initWithFormat:@"%@.%@", GrowlWebKitPrefDomain, style];
@@ -27,7 +27,7 @@
 }
 
 - (void) mainViewDidLoad {
-	[slider_opacity setAltIncrementValue:0.05];
+	slider_opacity.altIncrementValue = 0.05;
 }
 
 - (NSSet*)bindingKeys {
@@ -53,7 +53,7 @@
 }
 
 - (void) setLimit:(BOOL)value {
-	[self setConfigurationValue:[NSNumber numberWithBool:value] forKey:GrowlWebKitLimitPref];
+	[self setConfigurationValue:@(value) forKey:GrowlWebKitLimitPref];
 }
 
 #pragma mark -
@@ -67,7 +67,7 @@
 }
 
 - (void) setOpacity:(CGFloat)value {
-	[self setConfigurationValue:[NSNumber numberWithFloat:value] forKey:GrowlWebKitOpacityPref];
+	[self setConfigurationValue:@(value) forKey:GrowlWebKitOpacityPref];
 }
 
 #pragma mark -
@@ -81,18 +81,18 @@
 }
 
 - (void) setDuration:(CGFloat)value {
-	[self setConfigurationValue:[NSNumber numberWithFloat:value] forKey:GrowlWebKitDurationPref];
+	[self setConfigurationValue:@(value) forKey:GrowlWebKitDurationPref];
 }
 
 #pragma mark -
 
 - (NSInteger) numberOfItemsInComboBox:(NSComboBox *)aComboBox {
-	return [[NSScreen screens] count];
+	return [NSScreen screens].count;
 }
 
 - (id) comboBox:(NSComboBox *)aComboBox objectValueForItemAtIndex:(NSInteger)idx {
 #ifdef __LP64__
-	return [NSNumber numberWithInteger:idx];
+	return @(idx);
 #else
 	return [NSNumber numberWithInt:idx];
 #endif
@@ -107,6 +107,6 @@
 }
 
 - (void) setScreen:(int)value {
-	[self setConfigurationValue:[NSNumber numberWithInt:value] forKey:GrowlWebKitScreenPref];
+	[self setConfigurationValue:@(value) forKey:GrowlWebKitScreenPref];
 }
 @end

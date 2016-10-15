@@ -29,6 +29,7 @@
 + (GrowlNotificationTicket *) notificationWithName:(NSString *)name;
 + (GrowlNotificationTicket *) notificationWithDictionary:(NSDictionary *)dict;
 
+- (instancetype)init NS_UNAVAILABLE;
 - (GrowlNotificationTicket *) initWithName:(NSString *)name;
 - (GrowlNotificationTicket *) initWithDictionary:(NSDictionary *)dict;
 - (GrowlNotificationTicket *) initWithName:(NSString *)inName
@@ -39,7 +40,7 @@
                         logEnabled:(BOOL)inLogEnabled
 									sticky:(int)inSticky
 						 displayPluginName:(NSString *)display
-									 sound:(NSString *)sound;
+									 sound:(NSString *)sound NS_DESIGNATED_INITIALIZER;
 
 #pragma mark -
 

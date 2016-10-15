@@ -10,7 +10,7 @@
 
 @implementation GrowlActionStrings
 
--(id)init {
+-(instancetype)init {
 	if((self = [super init])){
 		self.titleLabel = NSLocalizedString(@"Title:", @"Automator action title label");
 		self.descriptionLabel = NSLocalizedString(@"Description: (if blank, uses input)", @"Automator action description label");

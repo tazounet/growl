@@ -22,7 +22,7 @@
 
 //When a connection dies, release our reference to its proxy
 - (void) connectionDidDie:(NSNotification *)notification {
-	if ([notification object] == growlConnection) {
+	if (notification.object == growlConnection) {
 		[[NSNotificationCenter defaultCenter] removeObserver:self
 														name:NSConnectionDidDieNotification
 													  object:growlConnection];
@@ -41,7 +41,7 @@
 													   object:connection];
 			
 			@try {
-				NSDistantObject *theProxy = [connection rootProxy];
+				NSDistantObject *theProxy = connection.rootProxy;
 				if ([theProxy respondsToSelector:@selector(registerApplicationWithDictionary:)]) {
 					[theProxy setProtocolForProxy:@protocol(GrowlNotificationProtocol)];
 					growlProxy = (NSProxy<GrowlNotificationProtocol> *)theProxy;

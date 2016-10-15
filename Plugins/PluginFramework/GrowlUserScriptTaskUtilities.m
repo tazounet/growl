@@ -59,13 +59,12 @@ static NSURL *baseScriptDirURL = nil;
 			return YES;
 		return NO;
 	}];
-	result = [found count] > 0;
+	result = found.count > 0;
 	if(result != _hasScript){
 		_hasScript = result;
 		[[NSNotificationCenter defaultCenter] postNotificationName:@"GrowlRuleScriptStatusChange"
 																			 object:nil
-																		  userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:_hasScript]
-																															forKey:@"hasRules"]];
+																		  userInfo:@{@"hasRules": @(_hasScript)}];
 	}
 	return result;
 }
@@ -101,7 +100,7 @@ static NSURL *baseScriptDirURL = nil;
 
 +(NSAppleEventDescriptor*)appleEventDescriptorForNotification:(NSDictionary*)dict {
 	NSString *host = [dict valueForKey:GROWL_NOTIFICATION_GNTP_SENT_BY];
-   if(!host || [host isLocalHost])
+   if(!host || host.isLocalHost)
       host = @"localhost";
    
    id icon = [dict valueForKey:GROWL_NOTIFICATION_ICON_DATA];
@@ -147,14 +146,14 @@ static NSURL *baseScriptDirURL = nil;
 
 +(BOOL)isAppleEventDescriptorBoolean:(NSAppleEventDescriptor*)event {
 	BOOL result = NO;
-	DescType type = [event descriptorType];
+	DescType type = event.descriptorType;
 	if(type == typeBoolean ||
 		type == typeFalse ||
 		type == typeTrue)
 	{
 		result = YES;
 	}else if(type == typeEnumerated){
-		OSType enumValue = [event enumCodeValue];
+		OSType enumValue = event.enumCodeValue;
 		if(enumValue == kAENo || enumValue == kAEYes){
 			result = YES;
 		}

@@ -47,18 +47,18 @@
 
 @synthesize subscriptionAttempt;
 
--(id)initWithName:(NSString*)name
-    addressString:(NSString*)addrString
-           domain:(NSString*)aDomain
-          address:(NSData*)addrData
-             uuid:(NSString*)aUUID
-     subscriberID:(NSString*)subID
-           remote:(BOOL)isRemote
-           manual:(BOOL)isManual
-              use:(BOOL)shouldUse
-      initialTime:(NSDate*)date
-       timeToLive:(NSInteger)ttl
-             port:(NSInteger)port
+-(instancetype)initWithName:(NSString*)name
+              addressString:(NSString*)addrString
+                     domain:(NSString*)aDomain
+                    address:(NSData*)addrData
+                       uuid:(NSString*)aUUID
+               subscriberID:(NSString*)subID
+                     remote:(BOOL)isRemote
+                     manual:(BOOL)isManual
+                        use:(BOOL)shouldUse
+                initialTime:(NSDate*)date
+                 timeToLive:(NSInteger)ttl
+                       port:(NSInteger)port
 {
    if((self = [super init])){
       self.alreadyBrowsing = NO;
@@ -71,7 +71,7 @@
       self.lastKnownAddress = addrData;
       
       if(!aUUID || [aUUID isEqualToString:@""])
-         self.uuid = [[NSProcessInfo processInfo] globallyUniqueString];
+         self.uuid = [NSProcessInfo processInfo].globallyUniqueString;
       else
          self.uuid = aUUID;
       
@@ -79,7 +79,7 @@
          if(isRemote)
             self.subscriberID = self.uuid;
          else
-            self.subscriberID = [[GrowlPreferencesController sharedController] GNTPSubscriberID];
+            self.subscriberID = [GrowlPreferencesController sharedController].GNTPSubscriberID;
       }else
          self.subscriberID = subID;
       
@@ -117,7 +117,7 @@
    return self;
 }
 
--(id)initWithDictionary:(NSDictionary*)dict {
+-(instancetype)initWithDictionary:(NSDictionary*)dict {
    if((self = [self initWithName:[dict valueForKey:@"computerName"]
                    addressString:[dict valueForKey:@"addressString"]
                           domain:[dict valueForKey:@"domain"]
@@ -137,19 +137,19 @@
    return self;
 }
 
--(id)initWithPacket:(GNTPSubscribePacket*)packet {
-   if((self = [self initWithName:[[packet gntpDictionary] objectForKey:GrowlGNTPSubscriberName]
-                   addressString:[packet connectedHost]
+-(instancetype)initWithPacket:(GNTPSubscribePacket*)packet {
+   if((self = [self initWithName:packet.gntpDictionary[GrowlGNTPSubscriberName]
+                   addressString:packet.connectedHost
                           domain:@"local."
-                         address:[packet connectedAddress]
-                            uuid:[[NSProcessInfo processInfo] globallyUniqueString]
-                    subscriberID:[[packet gntpDictionary] objectForKey:GrowlGNTPSubscriberID]
+                         address:packet.connectedAddress
+                            uuid:[NSProcessInfo processInfo].globallyUniqueString
+                    subscriberID:packet.gntpDictionary[GrowlGNTPSubscriberID]
                           remote:YES
                           manual:NO
                              use:YES
                      initialTime:[NSDate date] 
-                      timeToLive:[packet ttl]
-                            port:[[[packet gntpDictionary] objectForKey:GrowlGNTPSubscriberPort] integerValue]]))
+                      timeToLive:packet.ttl
+                            port:[packet.gntpDictionary[GrowlGNTPSubscriberPort] integerValue]]))
    {
       /*
        * Setup time out time out timer
@@ -174,7 +174,7 @@
 -(void)primaryIPChanged:(NSNotification*)note
 {
    self.lastKnownAddress = nil;
-   if([[GrowlNetworkObserver sharedObserver] primaryIP]){
+   if([GrowlNetworkObserver sharedObserver].primaryIP){
       //If we have a primary IP, we need to try resubscribing
       [self subscribe];
    }else{
@@ -205,10 +205,10 @@
       return;
    
    self.initialTime = [NSDate date];
-   self.timeToLive = [packet ttl];
+   self.timeToLive = packet.ttl;
    self.validTime = [self.initialTime dateByAddingTimeInterval:self.timeToLive];
-   self.lastKnownAddress = [packet connectedAddress];
-   self.subscriberPort = [[packet gntpDictionary] objectForKey:GrowlGNTPSubscriberPort] ? [[[packet gntpDictionary] objectForKey:GrowlGNTPSubscriberPort] integerValue] : GROWL_TCP_PORT;
+   self.lastKnownAddress = packet.connectedAddress;
+   self.subscriberPort = packet.gntpDictionary[GrowlGNTPSubscriberPort] ? [packet.gntpDictionary[GrowlGNTPSubscriberPort] integerValue] : GROWL_TCP_PORT;
    self.active = YES;
    [self save];
 }
@@ -217,12 +217,12 @@
    if(self.remote)
       return;
 
-	NSDictionary *dict = [packet callbackHeaderItems];
+	NSDictionary *dict = packet.callbackHeaderItems;
    self.attemptingToSubscribe = NO;
    if(!wasError){
-      self.addressString = [GCDAsyncSocket hostFromAddress:[packet addressData]];
+      self.addressString = [GCDAsyncSocket hostFromAddress:packet.addressData];
       self.initialTime = [NSDate date];
-		NSInteger time = [dict objectForKey:GrowlGNTPResponseSubscriptionTTL] ? [[dict objectForKey:GrowlGNTPResponseSubscriptionTTL] integerValue] : 100;
+		NSInteger time = dict[GrowlGNTPResponseSubscriptionTTL] ? [dict[GrowlGNTPResponseSubscriptionTTL] integerValue] : 100;
       self.timeToLive = time;
       self.validTime = [self.initialTime dateByAddingTimeInterval:self.timeToLive];
       self.subscriptionError = NO;
@@ -233,8 +233,8 @@
       self.initialTime = [NSDate distantPast];
       self.timeToLive = 0;
       self.subscriptionError = YES;
-		GrowlGNTPErrorCode reason = (GrowlGNTPErrorCode)[[dict objectForKey:@"Error-Code"] integerValue];
-		NSString *description = [dict objectForKey:@"Error-Description"];
+		GrowlGNTPErrorCode reason = (GrowlGNTPErrorCode)[dict[@"Error-Code"] integerValue];
+		NSString *description = dict[@"Error-Description"];
       self.subscriptionErrorDescription = [NSString stringWithFormat:NSLocalizedString(@"There was an error subscribing to the remote machine:\ncode: %d\ndescription: %@", 
                                                                                        @"Error description format for subscription error returned display"),
 																													reason, 
@@ -363,16 +363,16 @@
    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
       NSData *destAddress = nil;//[[GrowlPreferencesController sharedController] boolForKey:@"AddressCachingEnabled"] ? weakSelf.lastKnownAddress : nil;
       if(!destAddress){
-         destAddress = [GrowlNetworkUtilities addressDataForGrowlServerOfType:@"_gntp._tcp." withName:[weakSelf computerName] withDomain:[weakSelf domain]];
+         destAddress = [GrowlNetworkUtilities addressDataForGrowlServerOfType:@"_gntp._tcp." withName:weakSelf.computerName withDomain:weakSelf.domain];
          self.lastKnownAddress = destAddress;
       }
 		if(destAddress){
-			NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:[weakSelf subscriberID], GrowlGNTPSubscriberID,
-										 [GrowlNetworkUtilities localHostName], GrowlGNTPSubscriberName, nil];
+			NSDictionary *dict = @{GrowlGNTPSubscriberID: weakSelf.subscriberID,
+										 GrowlGNTPSubscriberName: [GrowlNetworkUtilities localHostName]};
 			self.subscriptionAttempt = [[GrowlGNTPSubscriptionAttempt alloc] initWithDictionary:dict];
-			[self.subscriptionAttempt setPassword:self.password];
-			[self.subscriptionAttempt setAddressData:destAddress];
-			[self.subscriptionAttempt setDelegate:self];
+			(self.subscriptionAttempt).password = self.password;
+			(self.subscriptionAttempt).addressData = destAddress;
+			(self.subscriptionAttempt).delegate = self;
 			
 			self.addressString = [GCDAsyncSocket hostFromAddress:destAddress];
 			
@@ -411,11 +411,11 @@
    if(self.initialTime)      [buildDict setValue:self.initialTime forKey:@"initialTime"];
    //We only need last known address if this is a remote host, local entries can redo lookup
    if(self.lastKnownAddress && self.remote) [buildDict setValue:self.lastKnownAddress forKey:@"address"];
-   [buildDict setValue:[NSNumber numberWithBool:self.use] forKey:@"use"];
-   [buildDict setValue:[NSNumber numberWithBool:self.remote] forKey:@"remote"];
-   [buildDict setValue:[NSNumber numberWithBool:self.manual] forKey:@"manual"];   
-   [buildDict setValue:[NSNumber numberWithInteger:self.timeToLive] forKey:@"timeToLive"];
-   [buildDict setValue:[NSNumber numberWithInteger:self.subscriberPort] forKey:@"subscriberPort"];   
+   [buildDict setValue:@(self.use) forKey:@"use"];
+   [buildDict setValue:@(self.remote) forKey:@"remote"];
+   [buildDict setValue:@(self.manual) forKey:@"manual"];   
+   [buildDict setValue:@(self.timeToLive) forKey:@"timeToLive"];
+   [buildDict setValue:@(self.subscriberPort) forKey:@"subscriberPort"];   
    return [buildDict copy];
 }
 
@@ -425,13 +425,13 @@
       return [super validateValue:ioValue forKey:inKey error:outError];
    
    NSString *newString = (NSString*)*ioValue;
-   if(([newString Growl_isLikelyIPAddress] || [newString Growl_isLikelyDomainName]) && 
-      ![newString isLocalHost]){
+   if((newString.Growl_isLikelyIPAddress || newString.Growl_isLikelyDomainName) && 
+      !newString.isLocalHost){
       return YES;
    }
    
    NSString *description;
-   if([newString isLocalHost]){
+   if(newString.isLocalHost){
       NSLog(@"Error, don't enter localhost in any of its forms");
       description = NSLocalizedString(@"Please do not enter localhost, Growl does not support subscribing to itself.", @"Localhost in a subscription destination is not allowed");
    }else{
@@ -439,8 +439,7 @@
       description = NSLocalizedString(@"Please enter a valid IPv4 or IPv6 address, or a valid domain name", @"A valid IP or domain is needed to subscribe to");
    }
    
-   NSDictionary *eDict = [NSDictionary dictionaryWithObject:description
-                                                     forKey:NSLocalizedDescriptionKey];
+   NSDictionary *eDict = @{NSLocalizedDescriptionKey: description};
    if(outError != NULL)
       *outError = [[NSError alloc] initWithDomain:@"GrowlNetworking" code:2 userInfo:eDict];
    return NO;

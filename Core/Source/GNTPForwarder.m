@@ -48,7 +48,7 @@
    return instance;
 }
 
-- (id)init {
+- (instancetype)init {
    if((self = [super init])) {
       self.alreadyBrowsing = NO;
       self.preferences = [GrowlPreferencesController sharedController];
@@ -65,7 +65,7 @@
          [entry setOwner:blockFowarder];
          [theServices addObject:entry];
       }];
-      [self setDestinations:theServices];
+      self.destinations = theServices;
       
       NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
       [center addObserver:self
@@ -104,12 +104,12 @@
 }
 
 - (void)preferencesChanged:(NSNotification*)note {
-   id object = [note object];
+   id object = note.object;
    if(!object || [object isEqualToString:GrowlEnableForwardKey]){
-      if([preferences isForwardingEnabled] && !alreadyBrowsing){
+      if(preferences.isForwardingEnabled && !alreadyBrowsing){
          [[GrowlBonjourBrowser sharedBrowser] startBrowsing];
          self.alreadyBrowsing = YES;
-      }else if(![preferences isForwardingEnabled] && alreadyBrowsing){
+      }else if(!preferences.isForwardingEnabled && alreadyBrowsing){
          [[GrowlBonjourBrowser sharedBrowser] stopBrowsing];
          self.alreadyBrowsing = NO;
       }
@@ -140,14 +140,14 @@
 }
 
 - (void)removeEntryAtIndex:(NSUInteger)index {
-    if(index >= [destinations count])
+    if(index >= destinations.count)
         return;
    
-    GrowlBrowserEntry *toRemove = [destinations objectAtIndex:index];
+    GrowlBrowserEntry *toRemove = destinations[index];
     
-    if([toRemove password])
-        if(![GrowlKeychainUtilities removePasswordForService:GrowlOutgoingNetworkPassword accountName:[toRemove uuid]])
-            NSLog(@"Error removing password from keychain for %@", [toRemove computerName]);
+    if(toRemove.password)
+        if(![GrowlKeychainUtilities removePasswordForService:GrowlOutgoingNetworkPassword accountName:toRemove.uuid])
+            NSLog(@"Error removing password from keychain for %@", toRemove.computerName);
 
     [self willChangeValueForKey:@"destinations"];
     [destinations removeObjectAtIndex:index];
@@ -157,7 +157,7 @@
 
 - (void)writeForwardDestinations {
    NSArray *currentNames = [[self.preferences objectForKey:GrowlForwardDestinationsKey] valueForKey:@"computer"];
-	NSMutableArray *newDestinations = [[NSMutableArray alloc] initWithCapacity:[destinations count]];
+	NSMutableArray *newDestinations = [[NSMutableArray alloc] initWithCapacity:destinations.count];
    
    [destinations enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
       if([obj use] || [obj password] || [obj manualEntry] || [currentNames containsObject:[obj computerName]])
@@ -174,7 +174,7 @@
       if(![obj isKindOfClass:[GrowlBrowserEntry class]])
          return;
       //If we are using it, and either its a manual, and if we are browsing, we should know if its active
-		if ([obj use] && ([obj manualEntry] || (![[GrowlBonjourBrowser sharedBrowser] browser] || [obj active]))) {
+		if ([obj use] && ([obj manualEntry] || (![GrowlBonjourBrowser sharedBrowser].browser || [obj active]))) {
          [enabledArray addObject:obj];
       }
    }];
@@ -186,7 +186,7 @@
    [destinations enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
       if(![obj isKindOfClass:[GrowlBrowserEntry class]])
          return;
-      if([entryIDs containsObject:[obj uuid]] && ([obj manualEntry] || (![[GrowlBonjourBrowser sharedBrowser] browser] || [obj active]))){
+      if([entryIDs containsObject:[obj uuid]] && ([obj manualEntry] || (![GrowlBonjourBrowser sharedBrowser].browser || [obj active]))){
          [entriesArray addObject:obj];
       }
    }];
@@ -201,7 +201,7 @@
          if(![obj isKindOfClass:[GrowlBrowserEntry class]])
             return;
          //If we are using it, and either its a manual, and if we are browsing, we should know if its active
-         if ([obj use] && ([obj manualEntry] || (![[GrowlBonjourBrowser sharedBrowser] browser] || [obj active]))) {
+         if ([obj use] && ([obj manualEntry] || (![GrowlBonjourBrowser sharedBrowser].browser || [obj active]))) {
             //NSLog(@"Looking up address for %@", [entry computerName]);
             NSData *destAddress = nil;//[preferences boolForKey:@"AddressCachingEnabled"] ? [obj lastKnownAddress] : nil;
             if(!destAddress){
@@ -215,9 +215,9 @@
             }
             
             NSMutableDictionary *sendingDetails = [NSMutableDictionary dictionary];
-            [sendingDetails setObject:destAddress forKey:@"GNTPAddressData"];
+            sendingDetails[@"GNTPAddressData"] = destAddress;
             if([obj password])
-               [sendingDetails setObject:[obj password] forKey:@"GNTPPassword"];
+               sendingDetails[@"GNTPPassword"] = [obj password];
             [hostResults addObject:sendingDetails];
          }
       }];
@@ -228,13 +228,13 @@
 - (void)forwardDictionary:(NSDictionary*)dict isRegistration:(BOOL)registration toEntryIDs:(NSArray*)entryIDs {
    __weak GNTPForwarder *blockForwarder = self;
    if(!registration){
-      NSMutableArray *keys = [[dict allKeys] mutableCopy];
+      NSMutableArray *keys = [dict.allKeys mutableCopy];
       [keys removeObject:GROWL_NOTIFICATION_ALREADY_SHOWN];
       dict = [dict dictionaryWithValuesForKeys:keys];
    }
    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
       NSArray *sendingDetails = nil;
-      if(!entryIDs || [entryIDs count] == 0){
+      if(!entryIDs || entryIDs.count == 0){
          sendingDetails = [self sendingDetaulsForEnabledHosts];
       }else{
          sendingDetails = [self sendingDetailsForBrowserEntryIDs:entryIDs];
@@ -246,11 +246,11 @@
          }else{
             attempt = [[GrowlXPCNotificationAttempt alloc] initWithDictionary:dict];
          }
-         [attempt setSendingDetails:obj];
-         [attempt setDelegate:blockForwarder];
+         attempt.sendingDetails = obj;
+         attempt.delegate = blockForwarder;
          dispatch_async(dispatch_get_main_queue(), ^{
 				//send note
-				[[blockForwarder attemptArray] addObject:attempt];
+				[blockForwarder.attemptArray addObject:attempt];
 				[attempt begin];
          });
       }];
@@ -259,19 +259,19 @@
 
 - (void)forwardNotification:(NSDictionary *)dict
 {
-   if([preferences isForwardingEnabled])
+   if(preferences.isForwardingEnabled)
       [self forwardDictionary:dict isRegistration:NO toEntryIDs:nil];
 }
 
 - (void)appRegistered:(NSNotification*)dict 
 {
-   if([preferences isForwardingEnabled])
-      [self forwardRegistration:[dict userInfo]];
+   if(preferences.isForwardingEnabled)
+      [self forwardRegistration:dict.userInfo];
 }
 
 - (void)forwardRegistration:(NSDictionary *)dict
 {
-   if([preferences isForwardingEnabled])
+   if(preferences.isForwardingEnabled)
       [self forwardDictionary:dict isRegistration:YES toEntryIDs:nil];
 }
 
@@ -296,7 +296,7 @@
       if(![obj use] && ![obj password] && ![currentNames containsObject:[obj computerName]])
          [toRemove addObject:obj];
    }];
-   if([toRemove count] > 0){
+   if(toRemove.count > 0){
       [self willChangeValueForKey:@"destinations"];
       [destinations removeObjectsInArray:toRemove];
       [self didChangeValueForKey:@"destinations"];
@@ -307,8 +307,8 @@
 -(void)serviceFound:(NSNotification*)note
 {
 	// check if a computer with this name has already been added
-   NSNetService *aNetService = [[note userInfo] valueForKey:GNTPServiceKey];
-	NSString *name = [aNetService name];
+   NSNetService *aNetService = [note.userInfo valueForKey:GNTPServiceKey];
+	NSString *name = aNetService.name;
 	__block GrowlBrowserEntry *entry = nil;
    [destinations enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
       if(![obj isKindOfClass:[GrowlBrowserEntry class]])
@@ -324,12 +324,12 @@
       return;
    
 	// don't add the local machine    
-   if([name isLocalHost])
+   if(name.isLocalHost)
       return;
    
 	// add a new entry at the end
 	entry = [[GrowlBrowserEntry alloc] initWithComputerName:name];
-   [entry setDomain:[aNetService domain]];
+   entry.domain = aNetService.domain;
    [entry setOwner:self];
    
    [self willChangeValueForKey:@"destinations"];
@@ -339,10 +339,10 @@
 
 -(void)serviceRemoved:(NSNotification*)note
 {
-   NSNetService *aNetService = [[note userInfo] valueForKey:GNTPServiceKey];
+   NSNetService *aNetService = [note.userInfo valueForKey:GNTPServiceKey];
    NSArray *destinationNames = [[self.preferences objectForKey:GrowlForwardDestinationsKey] valueForKey:@"computer"];
 	__block GrowlBrowserEntry *toRemove = nil;
-	NSString *name = [aNetService name];
+	NSString *name = aNetService.name;
    [destinations enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
       if(![obj isKindOfClass:[GrowlBrowserEntry class]])
          return;
@@ -369,11 +369,11 @@
 
 - (void) attemptDidSucceed:(GrowlCommunicationAttempt *)attempt {
 	__weak GNTPForwarder *blockForwarder = self;
-	if([attempt attemptType] == GrowlCommunicationAttemptTypeRegister){
+	if(attempt.attemptType == GrowlCommunicationAttemptTypeRegister){
 		//Not the most efficient way to do this, we could probably add in checks about whether the succesfull registration had anything to do with the queued notes
 		dispatch_async(dispatch_get_main_queue(), ^{
-			if([blockForwarder attemptQueue]){
-				[[blockForwarder attemptQueue] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+			if(blockForwarder.attemptQueue){
+				[blockForwarder.attemptQueue enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 					if([obj isKindOfClass:[NSDictionary class]])
 						[blockForwarder forwardNotification:obj];
 				}];
@@ -384,11 +384,11 @@
 }
 - (void) attemptDidFail:(GrowlCommunicationAttempt *)attempt {
 	__weak GNTPForwarder *blockForwarder = self;
-	if([attempt attemptType] == GrowlCommunicationAttemptTypeRegister){
+	if(attempt.attemptType == GrowlCommunicationAttemptTypeRegister){
 		//Not the most efficient way to do this, we could probably add in checks about whether the succesfull registration had anything to do with the queued notes
 		dispatch_async(dispatch_get_main_queue(), ^{
-			if([blockForwarder attemptQueue]){
-				NSLog(@"Failed to register with %lu notes in the queue", [[blockForwarder attemptQueue] count]);
+			if(blockForwarder.attemptQueue){
+				NSLog(@"Failed to register with %lu notes in the queue", blockForwarder.attemptQueue.count);
 				[blockForwarder setAttemptQueue:nil];
 			}
 		});
@@ -397,23 +397,23 @@
 - (void) finishedWithAttempt:(GrowlCommunicationAttempt *)attempt {
 	__weak GNTPForwarder *blockForwarder = self;
 	dispatch_async(dispatch_get_main_queue(), ^{
-		[[blockForwarder attemptArray] removeObject:attempt];
+		[blockForwarder.attemptArray removeObject:attempt];
 	});
 }
 - (void) queueAndReregister:(GrowlCommunicationAttempt *)attempt {
 	__weak GNTPForwarder *blockForwarder = self;
 	dispatch_async(dispatch_get_main_queue(), ^{
-		NSString *appName = [[attempt dictionary] valueForKey:GROWL_APP_NAME];
+		NSString *appName = [attempt.dictionary valueForKey:GROWL_APP_NAME];
 		GrowlTicketDatabaseApplication *ticket = [[GrowlTicketDatabase sharedInstance] ticketForApplicationName:appName hostName:nil];
-		NSDictionary *dictionary = [ticket registrationFormatDictionary];
+		NSDictionary *dictionary = ticket.registrationFormatDictionary;
 		//We should have a dictionary, but just to be safe
 		if(dictionary){
 			[self forwardRegistration:dictionary];
-			if(![blockForwarder attemptQueue]){
-				[blockForwarder setAttemptQueue:[NSMutableArray array]];
+			if(!blockForwarder.attemptQueue){
+				blockForwarder.attemptQueue = [NSMutableArray array];
 			}
-			[[blockForwarder attemptQueue] addObject:[attempt dictionary]];
-			[[blockForwarder attemptArray] removeObject:attempt];
+			[blockForwarder.attemptQueue addObject:attempt.dictionary];
+			[blockForwarder.attemptArray removeObject:attempt];
 		}
 	});
 }

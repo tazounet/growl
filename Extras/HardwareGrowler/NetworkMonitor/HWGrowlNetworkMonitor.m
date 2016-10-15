@@ -25,10 +25,10 @@
 static struct ifmedia_description ifm_subtype_ethernet_descriptions[] = IFM_SUBTYPE_ETHERNET_DESCRIPTIONS;
 static struct ifmedia_description ifm_shared_option_descriptions[] = IFM_SHARED_OPTION_DESCRIPTIONS;
 
-typedef enum {
+typedef NS_ENUM (NSInteger, NetworkInterfaceType) {
 	HWGAirPortInterface,
 	HWGEthernetInterface,
-} NetworkInterfaceType;
+};
 
 @interface HWGrowlNetworkInterfaceStatus : NSObject;
 
@@ -36,7 +36,9 @@ typedef enum {
 @property (nonatomic, strong) NSDictionary *status;
 @property (nonatomic, assign) NetworkInterfaceType type;
 
--(id)initForInterface:(NSString*)anInterface ofType:(NetworkInterfaceType)aType withStatus:(NSDictionary*)theStatus;
+-(instancetype)init NS_UNAVAILABLE;
+
+-(instancetype)initForInterface:(NSString*)anInterface ofType:(NetworkInterfaceType)aType withStatus:(NSDictionary*)theStatus NS_DESIGNATED_INITIALIZER;
 
 @end
 
@@ -46,7 +48,7 @@ typedef enum {
 @synthesize status;
 @synthesize type;
 
--(id)initForInterface:(NSString *)anInterface 
+-(instancetype)initForInterface:(NSString *)anInterface 
 					ofType:(NetworkInterfaceType)aType 
 			  withStatus:(NSDictionary *)theStatus 
 {
@@ -81,7 +83,7 @@ typedef enum {
 @synthesize networkInterfaceStates;
 @synthesize previousIPCombined;
 
--(id)init {
+-(instancetype)init {
 	if((self = [super init])){
 		self.previousIPCombined = nil;
 		self.networkInterfaceStates = [NSMutableDictionary dictionary];
@@ -129,7 +131,7 @@ typedef enum {
 {
    [self setupDynamicStore];
 	
-    NSArray *watchedKeys = [NSArray arrayWithObjects:@"State:/Network/Interface/.*/Link", @"State:/Network/Interface/.*/AirPort", @"State:/Network/Global/IPv4", @"State:/Network/Global/IPv6", nil];
+    NSArray *watchedKeys = @[@"State:/Network/Interface/.*/Link", @"State:/Network/Interface/.*/AirPort", @"State:/Network/Global/IPv4", @"State:/Network/Global/IPv6"];
 	if (!SCDynamicStoreSetNotificationKeys(dynStore,
                                           NULL,
                                           (__bridge CFArrayRef)watchedKeys))
@@ -149,45 +151,45 @@ typedef enum {
 	else if(type == HWGEthernetInterface)
 		[self updateLinkWithInterface:new];
 	
-	[networkInterfaceStates setObject:new forKey:interface];
+	networkInterfaceStates[interface] = new;
 }
 
 -(void)updateAirportWithInterface:(HWGrowlNetworkInterfaceStatus*)interface {
-	NSString *interfaceString = [interface interface];
-	NSDictionary *newValue = [interface status];
-	NSDictionary *existing = [(HWGrowlNetworkInterfaceStatus*)[networkInterfaceStates objectForKey:interfaceString] status];
+	NSString *interfaceString = interface.interface;
+	NSDictionary *newValue = interface.status;
+	NSDictionary *existing = ((HWGrowlNetworkInterfaceStatus*)networkInterfaceStates[interfaceString]).status;
 	//	NSLog(CFSTR("AirPort event"));
 	
 	NSData *newBSSID = nil;
 	if (newValue)
-		newBSSID = [newValue objectForKey:@"BSSID"];
+		newBSSID = newValue[@"BSSID"];
 	
 	NSData *oldBSSID = nil;
 	if (existing)
-		oldBSSID = [existing objectForKey:@"BSSID"];
+		oldBSSID = existing[@"BSSID"];
 		
 	if (newValue && ![oldBSSID isEqualToData:newBSSID] && !(newBSSID && oldBSSID && CFEqual((__bridge CFTypeRef)(oldBSSID), (__bridge CFTypeRef)(newBSSID)))) {
-		NSNumber *linkStatus = [newValue objectForKey:@"Link Status"];
-		NSNumber *powerStatus = [newValue objectForKey:@"Power Status"];
+		NSNumber *linkStatus = newValue[@"Link Status"];
+		NSNumber *powerStatus = newValue[@"Power Status"];
 		if (linkStatus || powerStatus) {
 			int status = 0;
 			if (linkStatus) {
-				status = [linkStatus intValue];
+				status = linkStatus.intValue;
 			} else if (powerStatus) {
-				status = [powerStatus intValue];
+				status = powerStatus.intValue;
 				status = !status;
 			}
 			NSString *networkName = nil;
 			if (status == AIRPORT_DISCONNECTED) {
-				networkName = [existing objectForKey:@"SSID_STR"];
+				networkName = existing[@"SSID_STR"];
 				if (!networkName)
-					networkName = [existing objectForKey:@"SSID"];
+					networkName = existing[@"SSID"];
 				if(networkName)
                     [self airportDisconnected:networkName];
 			} else {
-				networkName = [newValue objectForKey:@"SSID_STR"];
+				networkName = newValue[@"SSID_STR"];
 				if (!networkName)
-					networkName = [newValue objectForKey:@"SSID"];
+					networkName = newValue[@"SSID"];
 				if(networkName && newBSSID){
 					[self airportConnected:networkName bssid:newBSSID];
 				}
@@ -209,7 +211,7 @@ typedef enum {
 }
 
 -(void)airportConnected:(NSString*)name bssid:(NSData*)data {
-	const unsigned char *bssidBytes = [data bytes];
+	const unsigned char *bssidBytes = data.bytes;
 	
 	NSString *bssid = [NSString stringWithFormat:@"%02X:%02X:%02X:%02X:%02X:%02X",
 							 bssidBytes[0],
@@ -236,11 +238,11 @@ typedef enum {
 }
 
 -(void)updateLinkWithInterface:(HWGrowlNetworkInterfaceStatus*)interface {
-	NSString *interfaceString = [interface interface];
-	NSDictionary *newValue = [interface status];
-	NSDictionary *existing = [(HWGrowlNetworkInterfaceStatus*)[networkInterfaceStates objectForKey:interfaceString] status];
-	int newActive = [[newValue objectForKey:@"Active"] intValue];
-	int oldActive = [[existing objectForKey:@"Active"] intValue];
+	NSString *interfaceString = interface.interface;
+	NSDictionary *newValue = interface.status;
+	NSDictionary *existing = ((HWGrowlNetworkInterfaceStatus*)networkInterfaceStates[interfaceString]).status;
+	int newActive = [newValue[@"Active"] intValue];
+	int oldActive = [existing[@"Active"] intValue];
 	
 	NSString *noteName = nil;
 	NSString *noteTitle = nil;
@@ -281,7 +283,7 @@ typedef enum {
 	// There's no pretty way to get media stuff; I've stripped it down to the essentials
 	// for what I'm doing.
 	
-	const char *interface = [interfaceString UTF8String];
+	const char *interface = interfaceString.UTF8String;
 	size_t length = strlen(interface);
 	if (length >= IFNAMSIZ)
 		NSLog(@"Interface name too long");
@@ -337,7 +339,7 @@ typedef enum {
 					type,
 					options];
 	} else {
-		media = [NSString stringWithUTF8String:type];
+		media = @(type);
 	}
 	
 	return media;
@@ -375,7 +377,7 @@ typedef enum {
     __weak NSMutableArray *keys = [NSMutableArray array];
     //process the currently standing interfaces and fire off notifications for those
     CFDictionaryRef interfaces = SCDynamicStoreCopyValue(dynStore, CFSTR("State:/Network/Interface"));
-    NSArray *interfaceNames = [(__bridge NSDictionary*)interfaces objectForKey:@"Interfaces"];
+    NSArray *interfaceNames = ((__bridge NSDictionary*)interfaces)[@"Interfaces"];
 
     [interfaceNames enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         if (![obj hasPrefix:@"en"] || [obj length] < 3 || !isdigit([obj characterAtIndex:2])) {
@@ -421,7 +423,7 @@ static void scCallback(SCDynamicStoreRef store, CFArrayRef changedKeys, void *in
             else if([key hasPrefix:@"State:/Network/Interface"])
             {
                 NSArray *notification = [key componentsSeparatedByString:@"/"];
-                NSString *interface = [notification objectAtIndex:[notification count]-2];
+                NSString *interface = notification[notification.count-2];
                 
                     if([key hasSuffix:@"AirPort"])  //Check against airport first
                     {
@@ -479,24 +481,24 @@ static void scCallback(SCDynamicStoreRef store, CFArrayRef changedKeys, void *in
 #pragma mark HWGrowlPluginNotifierProtocol
 
 -(NSArray*)noteNames {
-	return [NSArray arrayWithObjects:@"IPAddressChange", @"NetworkLinkUp", @"NetworkLinkDown", @"AirportConnected", @"AirportDisconnected", nil];
+	return @[@"IPAddressChange", @"NetworkLinkUp", @"NetworkLinkDown", @"AirportConnected", @"AirportDisconnected"];
 }
 -(NSDictionary*)localizedNames {
-	return [NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"IP Address Changed", @""), @"IPAddressChange",
-			  NSLocalizedString(@"Network Link Up", @""), @"NetworkLinkUp",
-			  NSLocalizedString(@"Network Link Down", @""), @"NetworkLinkDown", 
-			  NSLocalizedString(@"AirPort Connected", @""), @"AirportConnected", 
-			  NSLocalizedString(@"AirPort Disconnected", @""), @"AirportDisconnected", nil];
+	return @{@"IPAddressChange": NSLocalizedString(@"IP Address Changed", @""),
+			  @"NetworkLinkUp": NSLocalizedString(@"Network Link Up", @""),
+			  @"NetworkLinkDown": NSLocalizedString(@"Network Link Down", @""), 
+			  @"AirportConnected": NSLocalizedString(@"AirPort Connected", @""), 
+			  @"AirportDisconnected": NSLocalizedString(@"AirPort Disconnected", @"")};
 }
 -(NSDictionary*)noteDescriptions {
-	return [NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"Sent when the systems IP address changes", @""), @"IPAddressChange", 
-			  NSLocalizedString(@"Sent when an Ethernet link starts", @""), @"NetworkLinkUp",
-			  NSLocalizedString(@"Sent when an Ethernet link goes down", @""), @"NetworkLinkDown", 
-			  NSLocalizedString(@"Sent when AirPort connects to a network", @""), @"AirportConnected", 
-			  NSLocalizedString(@"Sent when AirPort disconnects from a network", @""), @"AirportDisconnected", nil];
+	return @{@"IPAddressChange": NSLocalizedString(@"Sent when the systems IP address changes", @""), 
+			  @"NetworkLinkUp": NSLocalizedString(@"Sent when an Ethernet link starts", @""),
+			  @"NetworkLinkDown": NSLocalizedString(@"Sent when an Ethernet link goes down", @""), 
+			  @"AirportConnected": NSLocalizedString(@"Sent when AirPort connects to a network", @""), 
+			  @"AirportDisconnected": NSLocalizedString(@"Sent when AirPort disconnects from a network", @"")};
 }
 -(NSArray*)defaultNotifications {
-	return [NSArray arrayWithObjects:@"IPAddressChange", @"NetworkLinkUp", @"NetworkLinkDown", @"AirportConnected", @"AirportDisconnected", nil];
+	return @[@"IPAddressChange", @"NetworkLinkUp", @"NetworkLinkDown", @"AirportConnected", @"AirportDisconnected"];
 }
 
 @end

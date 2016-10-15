@@ -11,6 +11,8 @@
 @interface GrowlBezelDisplay : GrowlDisplayPlugin {
 }
 
-- (id) init;
+- (instancetype) initWithName:(NSString *)name author:(NSString *)author version:(NSString *)version pathname:(NSString *)pathname NS_UNAVAILABLE;
+
+- (instancetype) init;
 
 @end

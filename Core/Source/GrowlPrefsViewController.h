@@ -17,9 +17,13 @@
 @property (nonatomic, weak) GrowlPreferencesController *preferencesController;
 @property (nonatomic, strong) NSTimer *releaseTimer;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil 
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil
+                         bundle:(NSBundle *)nibBundleOrNil NS_UNAVAILABLE;
+- (instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
+
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil 
                bundle:(NSBundle *)nibBundleOrNil
-          forPrefPane:(GrowlPreferencePane*)aPrefPane;
+          forPrefPane:(GrowlPreferencePane*)aPrefPane NS_DESIGNATED_INITIALIZER;
 
 + (NSString*)nibName;
 

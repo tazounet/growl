@@ -11,11 +11,11 @@
 @implementation NSScreen (GrowlScreenAdditions)
 
 -(NSUInteger)screenID {
-	return [[[self deviceDescription] valueForKey:@"NSScreenNumber"] unsignedIntegerValue];
+	return [[self.deviceDescription valueForKey:@"NSScreenNumber"] unsignedIntegerValue];
 }
 
 -(NSString*)screenIDString {
-	return [NSString stringWithFormat:@"%lu", [self screenID]];
+	return [NSString stringWithFormat:@"%lu", self.screenID];
 }
 
 @end

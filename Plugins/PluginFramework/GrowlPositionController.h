@@ -30,7 +30,8 @@
 @property (nonatomic) CGRect newFrame;
 @property (nonatomic) NSUInteger deviceID;
 
--(id)initWithScreenFrame:(CGRect)frame;
+-(instancetype)init NS_UNAVAILABLE;
+-(instancetype)initWithScreenFrame:(CGRect)frame NS_DESIGNATED_INITIALIZER;
 -(BOOL)isFrameFree:(CGRect)frame;
 -(CGRect)canFindSpotForSize:(CGSize)size 
 			startingInPosition:(GrowlPositionOrigin)start;

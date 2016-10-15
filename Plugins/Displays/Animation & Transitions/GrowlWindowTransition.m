@@ -10,15 +10,15 @@
 
 @implementation GrowlWindowTransition
 
-- (id) initWithWindow:(NSWindow *)inWindow {
+- (instancetype) initWithWindow:(NSWindow *)inWindow {
 	return [self initWithWindow:inWindow direction:GrowlForwardTransition];
 }
 
-- (id) initWithWindow:(NSWindow *)inWindow direction:(GrowlTransitionDirection)theDirection {
+- (instancetype) initWithWindow:(NSWindow *)inWindow direction:(GrowlTransitionDirection)theDirection {
 	if ((self = [super init])) {
-		[self setWindow:inWindow];
-		[self setDirection:theDirection];
-		[self setAnimationBlockingMode:NSAnimationNonblocking];
+		self.window = inWindow;
+		self.direction = theDirection;
+		self.animationBlockingMode = NSAnimationNonblocking;
 	}
 
 	return self;
@@ -52,7 +52,7 @@
 }
 
 - (void)reverse {
-	[self setDirection:(([self direction] == GrowlForwardTransition) ? GrowlReverseTransition : GrowlForwardTransition)];
+	self.direction = ((self.direction == GrowlForwardTransition) ? GrowlReverseTransition : GrowlForwardTransition);
 }
 
 - (BOOL) didAutoReverse {
@@ -80,7 +80,7 @@
 
 - (void)animationDidEnd
 {
-	if (![self isAnimating] && [self autoReverses]) {
+	if (!self.animating && self.autoReverses) {
 		[self reverse];
 		[self setDidAutoReverse:![self didAutoReverse]];
 	}
@@ -89,7 +89,7 @@
 - (void) setCurrentProgress:(NSAnimationProgress)progress {
 	[self drawTransitionWithWindow:window progress:progress];
 	
-	[super setCurrentProgress:progress];
+	super.currentProgress = progress;
 
 	if (progress >= 1.0) {
 		/* NSAnimation will notify the delegate in the next run loop; we want to trigger our own didEnd after that happens
@@ -98,7 +98,7 @@
 		[self performSelector:@selector(animationDidEnd)
 					  withObject:nil
 					  afterDelay:0
-						  inModes:[NSArray arrayWithObjects:NSRunLoopCommonModes, NSEventTrackingRunLoopMode, nil]];
+						  inModes:@[NSRunLoopCommonModes, NSEventTrackingRunLoopMode]];
 	}
 }
 

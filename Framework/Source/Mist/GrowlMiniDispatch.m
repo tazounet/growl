@@ -37,23 +37,23 @@
       self.windowDictionary = [NSMutableDictionary dictionary];
       
       if(NSClassFromString(@"NSUserNotificationCenter")){
-         [[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:self];
+         [NSUserNotificationCenter defaultUserNotificationCenter].delegate = self;
       }else{
-         GrowlPositionController *controller = [[GrowlPositionController alloc] initWithScreenFrame:[[NSScreen mainScreen] visibleFrame]];
+         GrowlPositionController *controller = [[GrowlPositionController alloc] initWithScreenFrame:[NSScreen mainScreen].visibleFrame];
          self.positionController = controller;
       }
 	
 		__weak GrowlMiniDispatch *weakSelf = self;
 		void (^screenChangeBlock)(NSNotification*) = ^(NSNotification *note){
-			CGRect newRect = [[NSScreen mainScreen] visibleFrame];
-			CGRect currentRect = [weakSelf.positionController screenFrame];
+			CGRect newRect = [NSScreen mainScreen].visibleFrame;
+			CGRect currentRect = (weakSelf.positionController).screenFrame;
 			if(!CGRectEqualToRect(newRect, currentRect))
 			{
-				if([weakSelf.positionController isFrameFree:[weakSelf.positionController screenFrame]])
-					[weakSelf.positionController setScreenFrame:newRect];
+				if([weakSelf.positionController isFrameFree:(weakSelf.positionController).screenFrame])
+					(weakSelf.positionController).screenFrame = newRect;
 				else{
 					[weakSelf.positionController setUpdateFrame:YES];
-					[weakSelf.positionController setNewFrame:newRect];
+					(weakSelf.positionController).newFrame = newRect;
 				}
 			}
 		};
@@ -79,15 +79,15 @@
 
 - (BOOL)insertWindow:(GrowlMistWindowController*)newWindow
 {	
-	CGSize displaySize = [newWindow window].frame.size;
+	CGSize displaySize = newWindow.window.frame.size;
 	displaySize.width += 10.0f;
 	displaySize.height += 10.0f;
 	CGRect found = [positionController canFindSpotForSize:displaySize
 												  startingInPosition:GrowlTopRightCorner];
 	if(!CGRectEqualToRect(found, CGRectZero)){
 		[positionController occupyRect:found];
-		[[newWindow window] setFrameOrigin:found.origin];
-		[windowDictionary setObject:newWindow forKey:[newWindow uuid]];
+		[newWindow.window setFrameOrigin:found.origin];
+		windowDictionary[newWindow.uuid] = newWindow;
 		[newWindow fadeIn];
 		return YES;
 	}else{
@@ -111,10 +111,10 @@
 	}];
 	
 	//Mutable arrays don't like being mutated while being enumerated
-	if([toRemove count] > 0)
+	if(toRemove.count > 0)
 		[queuedWindows removeObjectsInArray:toRemove];
 	
-	if([queuedWindows count] == 0){
+	if(queuedWindows.count == 0){
 		queuedWindows = nil;
 	}
 }
@@ -124,21 +124,21 @@
    BOOL alwaysCopyNC = NO;
    
    // Do we have notification center disabled?  (Only valid if it hasn't been turned on directly in Growl.)
-   if (![[GrowlApplicationBridge sharedBridge] useNotificationCenterAlways]) {
+   if (![GrowlApplicationBridge sharedBridge].useNotificationCenterAlways) {
       if (useNotificationCenter && [[NSUserDefaults standardUserDefaults] valueForKey:GROWL_FRAMEWORK_NOTIFICATIONCENTER_ENABLE])
          useNotificationCenter = [[NSUserDefaults standardUserDefaults] boolForKey:GROWL_FRAMEWORK_NOTIFICATIONCENTER_ENABLE];
    }
    
    // If we have notification center set to always-on, we must send.
-   if (useNotificationCenter && ([[GrowlApplicationBridge sharedBridge] useNotificationCenterAlways]
+   if (useNotificationCenter && ([GrowlApplicationBridge sharedBridge].useNotificationCenterAlways
                                  || [[NSUserDefaults standardUserDefaults] valueForKey:GROWL_FRAMEWORK_NOTIFICATIONCENTER_ALWAYS])) {
-      alwaysCopyNC = ([[GrowlApplicationBridge sharedBridge] useNotificationCenterAlways] ||
+      alwaysCopyNC = ([GrowlApplicationBridge sharedBridge].useNotificationCenterAlways ||
                       ![[NSUserDefaults standardUserDefaults] boolForKey:GROWL_FRAMEWORK_NOTIFICATIONCENTER_ALWAYS]);
    }
    return alwaysCopyNC;
 }
 - (BOOL)displayNotification:(GrowlNote *)note force:(BOOL)force {
-   BOOL result = [windowDictionary objectForKey:note.noteUUID] != nil;
+   BOOL result = windowDictionary[note.noteUUID] != nil;
    if(!result && NSClassFromString(@"NSUserNotificationCenter") != nil){
       result = [self sendNoteToApple:note force:force];
    }
@@ -149,7 +149,7 @@
 }
 
 - (BOOL)sendNoteToMist:(GrowlNote*)note force:(BOOL)force {
-   NSDictionary *noteDict = [note noteDictionary];
+   NSDictionary *noteDict = note.noteDictionary;
    
    if(!force){
       BOOL defaultOnly = YES;
@@ -161,17 +161,17 @@
    }
    
    dispatch_async(dispatch_get_main_queue(), ^{
-      NSString *title = [noteDict objectForKey:GROWL_NOTIFICATION_TITLE];
-      NSString *text = [noteDict objectForKey:GROWL_NOTIFICATION_DESCRIPTION];
-      BOOL sticky = [[noteDict objectForKey:GROWL_NOTIFICATION_STICKY] boolValue];
+      NSString *title = noteDict[GROWL_NOTIFICATION_TITLE];
+      NSString *text = noteDict[GROWL_NOTIFICATION_DESCRIPTION];
+      BOOL sticky = [noteDict[GROWL_NOTIFICATION_STICKY] boolValue];
       NSImage *image = nil;
       
-      NSData	*iconData = [noteDict objectForKey:GROWL_NOTIFICATION_ICON_DATA];
+      NSData	*iconData = noteDict[GROWL_NOTIFICATION_ICON_DATA];
       if (!iconData)
-         iconData = [noteDict objectForKey:GROWL_NOTIFICATION_APP_ICON_DATA];
+         iconData = noteDict[GROWL_NOTIFICATION_APP_ICON_DATA];
       
       if (!iconData) {
-         image = [NSApp applicationIconImage];
+         image = NSApp.applicationIconImage;
       }
       else if ([iconData isKindOfClass:[NSImage class]]) {
          image = (NSImage *)iconData;
@@ -184,7 +184,7 @@
                                                                                                       text:text
                                                                                                      image:image
                                                                                                     sticky:sticky
-                                                                                                      uuid:[note noteUUID]
+                                                                                                      uuid:note.noteUUID
                                                                                                   delegate:self];
       
       if(![self insertWindow:mistWindow])
@@ -211,20 +211,20 @@
    
    dispatch_async(dispatch_get_main_queue(), ^{
       NSMutableDictionary *notificationDict = [@{GROWL_NOTIFICATION_INTERNAL_ID: note.noteUUID} mutableCopy];
-      if ([dict objectForKey:GROWL_NOTIFICATION_CLICK_CONTEXT])
-         [notificationDict setObject:[dict objectForKey:GROWL_NOTIFICATION_CLICK_CONTEXT] forKey:GROWL_NOTIFICATION_CLICK_CONTEXT];
+      if (dict[GROWL_NOTIFICATION_CLICK_CONTEXT])
+         notificationDict[GROWL_NOTIFICATION_CLICK_CONTEXT] = dict[GROWL_NOTIFICATION_CLICK_CONTEXT];
       
       NSUserNotification *appleNotification = [[NSUserNotification alloc] init];
-      appleNotification.title = [dict objectForKey:GROWL_NOTIFICATION_TITLE];
-      appleNotification.informativeText = [dict objectForKey:GROWL_NOTIFICATION_DESCRIPTION];
+      appleNotification.title = dict[GROWL_NOTIFICATION_TITLE];
+      appleNotification.informativeText = dict[GROWL_NOTIFICATION_DESCRIPTION];
       appleNotification.userInfo = notificationDict;
       appleNotification.hasActionButton = NO;
       appleNotification.identifier = note.noteUUID;
 
       // Add notification icon
-      if ([dict objectForKey:GROWL_NOTIFICATION_ICON_DATA]) {
+      if (dict[GROWL_NOTIFICATION_ICON_DATA]) {
          NSImage *icon;
-         NSData *iconData = [dict objectForKey:GROWL_NOTIFICATION_ICON_DATA];
+         NSData *iconData = dict[GROWL_NOTIFICATION_ICON_DATA];
 
          if ([iconData isKindOfClass:[NSImage class]]) {
             icon = (NSImage *)iconData;
@@ -240,18 +240,18 @@
          [appleNotification setValue:icon forKey:@"_identityImage"];
       }
 
-      if ([dict objectForKey:GROWL_NOTIFICATION_BUTTONTITLE_ACTION]) {
+      if (dict[GROWL_NOTIFICATION_BUTTONTITLE_ACTION]) {
          // iTunes style button: private API (not supported if Mac App Store...)
          [appleNotification setValue:@YES forKey:@"_showsButtons"];
          appleNotification.hasActionButton = YES;
-         appleNotification.actionButtonTitle = [dict objectForKey:GROWL_NOTIFICATION_BUTTONTITLE_ACTION];
+         appleNotification.actionButtonTitle = dict[GROWL_NOTIFICATION_BUTTONTITLE_ACTION];
       }
       
-      if ([dict objectForKey:GROWL_NOTIFICATION_BUTTONTITLE_CANCEL])
-         appleNotification.otherButtonTitle = [dict objectForKey:GROWL_NOTIFICATION_BUTTONTITLE_CANCEL];
+      if (dict[GROWL_NOTIFICATION_BUTTONTITLE_CANCEL])
+         appleNotification.otherButtonTitle = dict[GROWL_NOTIFICATION_BUTTONTITLE_CANCEL];
       
       [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:appleNotification];
-      [windowDictionary setObject:appleNotification forKey:note.noteUUID];
+      windowDictionary[note.noteUUID] = appleNotification;
       
    });
    
@@ -260,7 +260,7 @@
 
 - (void)cancelNotification:(GrowlNote*)note {
    dispatch_async(dispatch_get_main_queue(), ^{
-      id toCancel = [windowDictionary objectForKey:note.noteUUID];
+      id toCancel = windowDictionary[note.noteUUID];
       if([toCancel isKindOfClass:[NSUserNotification class]]){
          NSUserNotification *notification = (NSUserNotification*)toCancel;
          [[NSUserNotificationCenter defaultUserNotificationCenter] removeDeliveredNotification:notification];
@@ -273,24 +273,24 @@
 }
 
 - (void)clearWindowFrame:(GrowlMistWindowController*)window {
-	CGRect padded = [window window].frame;
+	CGRect padded = window.window.frame;
 	padded.size.width += 10.0f;
 	padded.size.height += 10.0f;
 	[positionController vacateRect:padded];
 	
-	if([positionController updateFrame] && [positionController isFrameFree:[positionController screenFrame]]){
+	if(positionController.updateFrame && [positionController isFrameFree:positionController.screenFrame]){
 		[positionController setUpdateFrame:NO];
-		[positionController setScreenFrame:[positionController newFrame]];
+		positionController.screenFrame = positionController.newFrame;
 	}
 }
 
 - (void)mistWindow:(GrowlMistWindowController*)window statusUpdate:(GrowlNoteStatus)status {
-	[windowDictionary removeObjectForKey:[window uuid]];
+	[windowDictionary removeObjectForKey:window.uuid];
 	[self clearWindowFrame:window];
 	
 	[self dequeueWindows];
 	
-   GrowlNote *note = [[GrowlApplicationBridge sharedBridge] noteForUUID:[window uuid]];
+   GrowlNote *note = [[GrowlApplicationBridge sharedBridge] noteForUUID:window.uuid];
    [note handleStatusUpdate:status];
 }
 - (void)mistNotificationDismissed:(GrowlMistWindowController *)window
@@ -328,13 +328,13 @@
       status = GrowlNoteTimedOut;
    }
    
-   NSString *uuid = [[notification userInfo] objectForKey:GROWL_NOTIFICATION_INTERNAL_ID];
+   NSString *uuid = notification.userInfo[GROWL_NOTIFICATION_INTERNAL_ID];
    GrowlNote *note = [[GrowlApplicationBridge sharedBridge] noteForUUID:uuid];
    [windowDictionary removeObjectForKey:uuid];
    if(note){
       [note handleStatusUpdate:status];
    }else{
-      id context = [[notification userInfo] objectForKey:GROWL_NOTIFICATION_CLICK_CONTEXT];
+      id context = notification.userInfo[GROWL_NOTIFICATION_CLICK_CONTEXT];
       [[GrowlApplicationBridge sharedBridge] context:context statusUpdate:status];
    }
    
@@ -344,10 +344,10 @@
 
 - (void)expireNotification:(NSDictionary *)dict
 {
-   NSUserNotification *notification = [dict objectForKey:@"notification"];
-   NSUserNotificationCenter *center = [dict objectForKey:@"center"];
+   NSUserNotification *notification = dict[@"notification"];
+   NSUserNotificationCenter *center = dict[@"center"];
    
-   NSString *uuid = [[notification userInfo] objectForKey:GROWL_NOTIFICATION_INTERNAL_ID];
+   NSString *uuid = notification.userInfo[GROWL_NOTIFICATION_INTERNAL_ID];
    GrowlNote *note = [[GrowlApplicationBridge sharedBridge] noteForUUID:uuid];
    [center removeDeliveredNotification:notification];
    
@@ -358,11 +358,11 @@
 - (void)userNotificationCenter:(NSUserNotificationCenter *)center didDeliverNotification:(NSUserNotification *)notification
 {
    // If we're not sticky, let's wait about 60 seconds and then remove the notification.
-   if (![[[notification userInfo] objectForKey:GROWL_NOTIFICATION_STICKY] boolValue]) {
+   if (![notification.userInfo[GROWL_NOTIFICATION_STICKY] boolValue]) {
       // (This should probably be made nicer down the road, but right now this works for a first testing cut.)
       
       // Make sure we're using the same center, though this should always be the default.
-      NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:notification,@"notification",center,@"center",nil];
+      NSDictionary *dict = @{@"notification": notification,@"center": center};
       
       NSInteger lifetime = 120;
       if ([[NSUserDefaults standardUserDefaults] valueForKey:GROWL_FRAMEWORK_NOTIFICATIONCENTER_DURATION]) {

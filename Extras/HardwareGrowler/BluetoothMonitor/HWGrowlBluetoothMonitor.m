@@ -30,7 +30,7 @@
 	connectionNotification = nil;
 }
 
--(id)init {	
+-(instancetype)init {	
 	if((self = [super init])){
 		
 	}
@@ -63,7 +63,7 @@
 -(void)bluetoothDisconnection:(IOBluetoothUserNotification*)note 
 							  device:(IOBluetoothDevice*)device
 {
-	[self bluetoothName:[device name] connected:NO];
+	[self bluetoothName:device.name connected:NO];
 	[note unregister];
 	
 }
@@ -71,8 +71,8 @@
 -(void)bluetoothConnection:(IOBluetoothUserNotification*)note 
 						  device:(IOBluetoothDevice*)device 
 {
-	if (!starting || [delegate onLaunchEnabled])
-		[self bluetoothName:[device name] connected:YES];
+	if (!starting || delegate.onLaunchEnabled)
+		[self bluetoothName:device.name connected:YES];
 	
 	[device registerForDisconnectNotification:self selector:@selector(bluetoothDisconnection:device:)];
 }
@@ -103,18 +103,18 @@
 #pragma mark HWGrowlPluginNotifierProtocol
 
 -(NSArray*)noteNames {
-	return [NSArray arrayWithObjects:@"BluetoothConnected", @"BluetoothDisconnected", nil];
+	return @[@"BluetoothConnected", @"BluetoothDisconnected"];
 }
 -(NSDictionary*)localizedNames {
-	return [NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"Bluetooth Connected", @""), @"BluetoothConnected",
-			  NSLocalizedString(@"Bluetooth Disconnected", @""), @"BluetoothDisconnected", nil];
+	return @{@"BluetoothConnected": NSLocalizedString(@"Bluetooth Connected", @""),
+			  @"BluetoothDisconnected": NSLocalizedString(@"Bluetooth Disconnected", @"")};
 }
 -(NSDictionary*)noteDescriptions {
-	return [NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"Sent when a Bluetooth Device is connected", @""), @"BluetoothConnected",
-			  NSLocalizedString(@"Sent when a Bluetooth Device is disconnected", @""), @"BluetoothDisconnected", nil];
+	return @{@"BluetoothConnected": NSLocalizedString(@"Sent when a Bluetooth Device is connected", @""),
+			  @"BluetoothDisconnected": NSLocalizedString(@"Sent when a Bluetooth Device is disconnected", @"")};
 }
 -(NSArray*)defaultNotifications {
-	return [NSArray arrayWithObjects:@"BluetoothConnected", @"BluetoothDisconnected", nil];
+	return @[@"BluetoothConnected", @"BluetoothDisconnected"];
 }
 
 @end

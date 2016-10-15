@@ -48,14 +48,14 @@
  * @param pathname The pathname of the plugin.
  * @result An initialized GrowlPlugin object.
  */
-- (id) initWithName:(NSString *)name author:(NSString *)author version:(NSString *)version pathname:(NSString *)pathname;
+- (instancetype) initWithName:(NSString *)name author:(NSString *)author version:(NSString *)version pathname:(NSString *)pathname NS_DESIGNATED_INITIALIZER NS_DESIGNATED_INITIALIZER;
 
 /*!
  * @method initWithBundle:
  * @abstract Initializer for plug-ins in bundles. The name, author, version, and pathname will be obtained from the bundle.
  * @result An initialized GrowlPlugin object.
  */
-- (id) initWithBundle:(NSBundle *)bundle;
+- (instancetype) initWithBundle:(NSBundle *)bundle;
 
 /*!
  * @method name

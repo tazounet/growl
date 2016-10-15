@@ -14,7 +14,7 @@ NSString *const PRPreferenceKeyPrefixEnabled = @"PRPreferenceKeyPrefixEnabled";
 
 @implementation PRAction
 
-- (id)init
+- (instancetype)init
 {
     self = [super init];
     if (self) {
@@ -25,29 +25,25 @@ NSString *const PRPreferenceKeyPrefixEnabled = @"PRPreferenceKeyPrefixEnabled";
 
 - (NSDictionary *)upgradeConfigDict:(NSDictionary *)original toConfigID:(NSString *)configID
 {	
-	NSArray *originalNames = [NSArray arrayWithObjects:
-							  @"SendWithPriority",
+	NSArray *originalNames = @[@"SendWithPriority",
 							  @"MinimumPriority",
 							  @"OnlyWhenIdle",
 							  @"UsePrefix",
-							  @"NotificationPrefix",
-							  nil];
+							  @"NotificationPrefix"];
 	
-	NSArray *updatedNames = [NSArray arrayWithObjects:
-							 PRPreferenceKeyMinimumPriorityEnabled,
+	NSArray *updatedNames = @[PRPreferenceKeyMinimumPriorityEnabled,
 							 PRPreferenceKeyMinimumPriority,
 							 PRPreferenceKeyOnlyWhenIdle,
 							 PRPreferenceKeyPrefixEnabled,
-							 PRPreferenceKeyPrefix,
-							 nil];
+							 PRPreferenceKeyPrefix];
 	
 	NSMutableDictionary *config = [NSMutableDictionary dictionary];
 	
 	NSDictionary *translation = [NSDictionary dictionaryWithObjects:originalNames forKeys:updatedNames];
 	[translation enumerateKeysAndObjectsUsingBlock:^(id updatedKey, id originalKey, BOOL *stop) {
-		id originalValue = [original objectForKey:originalKey];
+		id originalValue = original[originalKey];
 		if(originalValue) {
-			[config setObject:originalValue forKey:updatedKey];
+			config[updatedKey] = originalValue;
 		}
 	}];
 	
@@ -69,9 +65,9 @@ NSString *const PRPreferenceKeyPrefixEnabled = @"PRPreferenceKeyPrefixEnabled";
 - (void)dispatchNotification:(NSDictionary *)notification
 		   withConfiguration:(NSDictionary *)configuration
 {
-	NSString *event = [notification objectForKey:GROWL_NOTIFICATION_TITLE];
+	NSString *event = notification[GROWL_NOTIFICATION_TITLE];
 	NSString *application = [notification valueForKey:GROWL_APP_NAME];
-	NSString *description = [notification objectForKey:GROWL_NOTIFICATION_DESCRIPTION];
+	NSString *description = notification[GROWL_NOTIFICATION_DESCRIPTION];
 	NSInteger priority = [[notification valueForKey:GROWL_NOTIFICATION_PRIORITY] intValue];
 	NSString *clickURL = [notification valueForKey:@"NotificationCallbackURLTarget"];  //This should maybe be defined in a public header
 	BOOL isPreview = ([application isEqualToString:@"Growl"] && [event isEqualToString:@"Preview"]);
@@ -86,7 +82,7 @@ NSString *const PRPreferenceKeyPrefixEnabled = @"PRPreferenceKeyPrefixEnabled";
 			return;
 		}
 		
-		if(onlyWhenIdle && ![[GrowlIdleStatusObserver sharedObserver] isIdle]) {
+		if(onlyWhenIdle && ![GrowlIdleStatusObserver sharedObserver].isIdle) {
 			return;
 		}
 	}
@@ -122,39 +118,40 @@ NSString *const PRPreferenceKeyPrefixEnabled = @"PRPreferenceKeyPrefixEnabled";
 										  description:description
 											  priority:priority
 											  clickURL:clickURL];
-	
-	[NSURLConnection sendAsynchronousRequest:request
-									   queue:[NSOperationQueue mainQueue]
-						   completionHandler:^(NSURLResponse *response,
-											   NSData *data,
-											   NSError *error) {
-							   if(!data && error) {
-								   NSLog(@"Got error: %@", error);
-								   return;
-							   }
-							   
-							   //NSLog(@"Got data: %@", [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease]);
-							   
-							   NSInteger statusCode = 0;
-							   if([response respondsToSelector:@selector(statusCode)]) {
-								   statusCode = [(id)response statusCode];
-							   }
-							   
-							   if(statusCode == 200) {
-								   //NSLog(@"Posted notification!");
-							   } else {
-								   NSLog(@"Error response: %@ %@", response, [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-							   }
-						   }];
+
+    NSURLSession *session = [NSURLSession sharedSession];
+    NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request
+                                                completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+    {
+        if(!data && error) {
+            NSLog(@"Got error: %@", error);
+            return;
+        }
+        
+        //NSLog(@"Got data: %@", [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease]);
+        
+        NSInteger statusCode = 0;
+        if([response respondsToSelector:@selector(statusCode)]) {
+            statusCode = [(id)response statusCode];
+        }
+        
+        if(statusCode == 200) {
+            //NSLog(@"Posted notification!");
+        } else {
+            NSLog(@"Error response: %@ %@", response, [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+        }
+    }];
+    
+    [dataTask resume];
 }
 
 - (NSString *)encodedStringForString:(NSString *)string
 {
-	NSString *encodedString = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL,
-																				  (CFStringRef)string, 
-																				  NULL,
-																				  (CFStringRef)@";/?:@&=+$",
-																				  kCFStringEncodingUTF8));
+    NSCharacterSet *queryKVSet = [NSCharacterSet
+                                  characterSetWithCharactersInString:@";/?:@&=+$"
+                                  ].invertedSet;
+    
+    NSString *encodedString = [string stringByAddingPercentEncodingWithAllowedCharacters:queryKVSet];
 	
 	return encodedString;
 }

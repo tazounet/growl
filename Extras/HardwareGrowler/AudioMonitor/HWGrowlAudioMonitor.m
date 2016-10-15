@@ -227,25 +227,23 @@
 #pragma mark HWGrowlPluginNotifierProtocol
 
 -(NSArray*)noteNames {
-    return [NSArray arrayWithObjects:@"InputChanged", @"OutputChanged", @"OutputSourceChanged", nil];
+    return @[@"InputChanged", @"OutputChanged", @"OutputSourceChanged"];
 }
 
 -(NSDictionary*)localizedNames {
-    return [NSDictionary dictionaryWithObjectsAndKeys:
-            NSLocalizedString(@"Audio input change", @""), @"InputChanged",
-            NSLocalizedString(@"Audio output change", @""), @"OutputChanged",
-            NSLocalizedString(@"Audio output source change", @""), @"OutputSourceChanged",nil];
+    return @{@"InputChanged": NSLocalizedString(@"Audio input change", @""),
+            @"OutputChanged": NSLocalizedString(@"Audio output change", @""),
+            @"OutputSourceChanged": NSLocalizedString(@"Audio output source change", @"")};
 }
 
 -(NSDictionary*)noteDescriptions {
-    return [NSDictionary dictionaryWithObjectsAndKeys:
-            NSLocalizedString(@"Sent when the audio input change", @""), @"InputChanged",
-            NSLocalizedString(@"Sent when the audio output change", @""), @"OutputChanged",
-            NSLocalizedString(@"Sent when the audio output source change", @""), @"OutputSourceChanged",nil];
+    return @{@"InputChanged": NSLocalizedString(@"Sent when the audio input change", @""),
+            @"OutputChanged": NSLocalizedString(@"Sent when the audio output change", @""),
+            @"OutputSourceChanged": NSLocalizedString(@"Sent when the audio output source change", @"")};
 }
 
 -(NSArray*)defaultNotifications {
-    return [NSArray arrayWithObjects:@"InputChanged", @"OutputChanged", @"OutputSourceChanged", nil];
+    return @[@"InputChanged", @"OutputChanged", @"OutputSourceChanged"];
 }
 
 @end

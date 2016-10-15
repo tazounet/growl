@@ -20,14 +20,7 @@
 @synthesize delegate;
 @synthesize error;
 
-- (id) init {
-	Class class = [self class];
-#pragma unused(class)
-	NSAssert1(NO, @"-init is not a valid way to instantiate a GrowlCommunicationAttempt (sent to instance of %@", class);
-	return nil;
-}
-
-- (id) initWithDictionary:(NSDictionary *)dict {
+- (instancetype) initWithDictionary:(NSDictionary *)dict {
 	if ((self = [super init])) {
 		dictionary = dict;
 		attemptType = [[self class] attemptType];
@@ -64,11 +57,11 @@
     [self finished];
 }
 - (void) stopAttempts {
-    GrowlCommunicationAttempt *next = [self nextAttempt];
+    GrowlCommunicationAttempt *next = self.nextAttempt;
     while(next != nil){
         GrowlCommunicationAttempt __attribute__((unused)) *temp = next;
         [next finished];
-        next = [next nextAttempt];
+        next = next.nextAttempt;
     }
     
     if(delegate && [delegate respondsToSelector:@selector(stoppedAttempts:)])

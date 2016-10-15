@@ -22,7 +22,7 @@
 
 @synthesize actionsColumnTitle;
 
--(id)initWithBundle:(NSBundle *)bundle {
+-(instancetype)initWithBundle:(NSBundle *)bundle {
 	if((self = [super initWithBundle:bundle])){
 		self.actionsColumnTitle = NSLocalizedString(@"Actions:", @"Actions column title");
 	}
@@ -35,11 +35,10 @@
 }
 
 -(IBAction)showAddView:(id)sender {
-	[[NSApplication sharedApplication] beginSheet:addWindow
-											 modalForWindow:[sender window]
-											  modalDelegate:self
-											 didEndSelector:@selector(sheetDidEnd:returnCode:contextInfo:)
-												 contextInfo:nil];
+    [[sender window] beginSheet:addWindow
+              completionHandler:^(NSModalResponse returnCode) {
+                  [self sheetDidEnd:returnCode];
+              }];
 }
 
 -(IBAction)addActions:(id)sender {
@@ -52,11 +51,11 @@
 	[addWindow orderOut:self];
 }
 	 
-- (void)sheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+- (void)sheetDidEnd:(NSModalResponse)returnCode {
 	if(returnCode == 0){
-		NSArray *selectedObjetcs = [availableArrayController selectedObjects];
+		NSArray *selectedObjetcs = availableArrayController.selectedObjects;
 		//NSLog(@"selected objects: %@", [selectedObjetcs valueForKey:@"displayName"]);
-		if(selectedObjetcs && [selectedObjetcs count] > 0 &&  [[self valueForKey:@"pluginConfiguration"] respondsToSelector:@selector(addActions:)])
+		if(selectedObjetcs && selectedObjetcs.count > 0 &&  [[self valueForKey:@"pluginConfiguration"] respondsToSelector:@selector(addActions:)])
 			[[self valueForKey:@"pluginConfiguration"] performSelector:@selector(addActions:) withObject:[NSSet setWithArray:selectedObjetcs]];
 	}
 }

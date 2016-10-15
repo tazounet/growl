@@ -28,12 +28,12 @@ void occupy_frame(QuadTreeNode *node, CGRect aRect);
 void vacate_frame(QuadTreeNode *node, CGRect aRect);
 BOOL is_frame_free(QuadTreeNode *node, CGRect aRect);
 
-typedef enum {
+typedef NS_ENUM(NSInteger, GrowlQuadTreeDirection) {
 	QuadLeft,
 	QuadRight,
 	QuadUp,
 	QuadDown
-} GrowlQuadTreeDirection;
+};
 
 @interface GrowlQuadTreeNode : NSObject {
 	NSInteger state;
@@ -44,7 +44,8 @@ typedef enum {
 	GrowlQuadTreeNode *bottomRight;
 }
 
--(id)initWithState:(NSInteger)newState forRect:(CGRect)aRect;
+-(instancetype)init NS_UNAVAILABLE;
+-(instancetype)initWithState:(NSInteger)newState forRect:(CGRect)aRect NS_DESIGNATED_INITIALIZER;
 
 -(BOOL)consolidate;
 -(void)occupyFrame:(CGRect)aRect;

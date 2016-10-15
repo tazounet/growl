@@ -12,7 +12,7 @@
 
 @implementation GrowlMusicVideoDisplay
 
-- (id) init {
+- (instancetype) init {
 	if ((self = [super init])) {
 		windowControllerClass = NSClassFromString(@"GrowlMusicVideoWindowController");
 		self.prefDomain = GrowlMusicVideoPrefDomain;

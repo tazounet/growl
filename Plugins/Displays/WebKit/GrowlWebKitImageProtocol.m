@@ -23,7 +23,7 @@
 
 + (BOOL)canInitWithRequest:(NSURLRequest *)theRequest
 {
-	NSString *theScheme = [[theRequest URL] scheme];
+	NSString *theScheme = theRequest.URL.scheme;
 	
 	return ([theScheme caseInsensitiveCompare:@"growlimage"] == NSOrderedSame);
 }
@@ -42,7 +42,7 @@
 	 * We use the thread safe accessors in GrowlWebKitWindowController for getting the icon
 	 */
    		
-   iconData = [GrowlWebKitWindowController cachedImageForKey:[self.request.URL absoluteString]];
+   iconData = [GrowlWebKitWindowController cachedImageForKey:(self.request.URL).absoluteString];
                
    /* In case it gets dropped from the cache before it is finished here.
     * (That probably means the view is gone too, but just in case).
@@ -61,7 +61,7 @@
 	
 	NSURLResponse *response = [[NSURLResponse alloc] initWithURL:self.request.URL
 														MIMEType:@"" // Probably TIFF, but it doesn't need to be.
-										   expectedContentLength:[iconData length]
+										   expectedContentLength:iconData.length
 												textEncodingName:nil];
 
 	/* No need to cache the image in WebKit. Even if the same URL is used again,

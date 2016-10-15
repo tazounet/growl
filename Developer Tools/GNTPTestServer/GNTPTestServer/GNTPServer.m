@@ -47,14 +47,14 @@
 @synthesize timeoutsByGUID = _timeoutsByGUID;
 @synthesize timeoutTimer = _timeoutTimer;
 
--(id)initWithInterface:(NSString *)interface {
+-(instancetype)initWithInterface:(NSString *)interface {
 	if((self = [super init])){
 		NSString *dispatchQueueID = [NSString stringWithFormat:@"com.growl.GNTPServer.%@.", interface != nil ? interface : @"remote"];
-		dispatch_queue_t dispatchQueue = dispatch_queue_create([[dispatchQueueID stringByAppendingString:@"dictionaryQueue"] UTF8String], DISPATCH_QUEUE_CONCURRENT);
+		dispatch_queue_t dispatchQueue = dispatch_queue_create([dispatchQueueID stringByAppendingString:@"dictionaryQueue"].UTF8String, DISPATCH_QUEUE_CONCURRENT);
 #ifdef MULTITHREADED_GNTP_SERVER
 		self.parsingQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
 #else
-		self.parsingQueue = dispatch_queue_create([[dispatchQueueID stringByAppendingString:@"dictionaryQueue"] UTF8String], DISPATCH_QUEUE_SERIAL);
+		self.parsingQueue = dispatch_queue_create([dispatchQueueID stringByAppendingString:@"dictionaryQueue"].UTF8String, DISPATCH_QUEUE_SERIAL);
 #endif
 		self.socketsByGUID = [GrowlDispatchMutableDictionary dictionaryWithQueue:dispatchQueue];
 		self.packetsByGUID = [GrowlDispatchMutableDictionary dictionaryWithQueue:dispatchQueue];
@@ -123,7 +123,7 @@
 		[self.server disconnect];
 		self.server = nil;
 		[self.packetsByGUID removeAllObjects];
-		[[self.socketsByGUID allValues] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+		[(self.socketsByGUID).allValues enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 			[obj disconnect];
 		}];
 		[self.socketsByGUID removeAllObjects];
@@ -148,7 +148,7 @@
 }
 
 - (NSUInteger)socketCount {
-	return [self.socketsByGUID objectCount];
+	return (self.socketsByGUID).objectCount;
 }
 
 - (void)dumpSocketByGUID:(NSString*)guid fromDisconnect:(BOOL)isDisconnected
@@ -163,7 +163,7 @@
 
 - (void)dumpSocket:(GCDAsyncSocket*)sock fromDisconnect:(BOOL)isDisconnected
 {
-	NSString *guid = [sock userData];
+	NSString *guid = sock.userData;
 	[self dumpSocketByGUID:guid fromDisconnect:isDisconnected];
 }
 
@@ -177,7 +177,7 @@
 		[errorString appendFormat:@"Response-Action: %@\r\n", action];
 	[errorString appendString:@"\r\n\r\n"];
 	//NSLog(@"Write: %@", errorString);
-	NSData *errorData = [NSData dataWithBytes:[errorString UTF8String] length:[errorString length]];
+	NSData *errorData = [NSData dataWithBytes:errorString.UTF8String length:errorString.length];
 	[sock writeData:errorData withTimeout:5.0 tag:-2];
 }
 
@@ -192,7 +192,7 @@
 		//The note might have been a different server instance
 		if(socket){
 			NSData *feedbackData = [GNTPNotifyPacket feedbackData:feedback forGrowlDictionary:dictionary];
-			BOOL keepAlive = [dictionary objectForKey:@"GNTP-Keep-Alive"] ? [[dictionary objectForKey:@"GNTP-Keep-Alive"] boolValue] : NO;
+			BOOL keepAlive = dictionary[@"GNTP-Keep-Alive"] ? [dictionary[@"GNTP-Keep-Alive"] boolValue] : NO;
 			if(feedbackData){
 				long writeTag = 0;
 				if(!keepAlive)
@@ -230,15 +230,15 @@
 - (void)socket:(GCDAsyncSocket *)sock didAcceptNewSocket:(GCDAsyncSocket *)newSocket {
 	BOOL accept = NO;
 	if([self.delegate respondsToSelector:@selector(totalSocketCount)]){
-		if([self.delegate totalSocketCount] < GNTP_SOCKET_COUNT_LIMIT)
+		if((self.delegate).totalSocketCount < GNTP_SOCKET_COUNT_LIMIT)
 			accept = YES;
-	}else if([self socketCount] < GNTP_SOCKET_COUNT_LIMIT){
+	}else if(self.socketCount < GNTP_SOCKET_COUNT_LIMIT){
 		accept = YES;
 	}
 	if(accept)
 	{
-		NSString *guid = [[NSProcessInfo processInfo] globallyUniqueString];
-		[newSocket setUserData:guid];
+		NSString *guid = [NSProcessInfo processInfo].globallyUniqueString;
+		newSocket.userData = guid;
 		[newSocket setAutoDisconnectOnClosedReadStream:NO];
 		[self.socketsByGUID setObject:newSocket forKey:guid];
 		[newSocket readDataToLength:4
@@ -258,7 +258,7 @@
 	NSData *responseData = nil;
 	NSUInteger readToLength = 0;
 	NSTimeInterval keepAliveFor = 5.0;
-	NSString *guid = [sock userData];
+	NSString *guid = sock.userData;
 	long readToTag = -1;
 	long writeToTag = 1;
 	if(tag == 0){
@@ -307,12 +307,12 @@
 			return;
 		}
 	}else if(tag == 1){
-		NSData *trimmedData = [NSData dataWithBytes:[data bytes] length:[data length] - 2];
-		NSString *identifierLine = [[NSString alloc] initWithBytes:[trimmedData bytes] length:[trimmedData length] encoding:NSUTF8StringEncoding];
+		NSData *trimmedData = [NSData dataWithBytes:data.bytes length:data.length - 2];
+		NSString *identifierLine = [[NSString alloc] initWithBytes:trimmedData.bytes length:trimmedData.length encoding:NSUTF8StringEncoding];
 		//NSLog(@"ID line: %@", identifierLine);
 		NSArray *items = [identifierLine componentsSeparatedByString:@" "];
 		NSString *action = nil;
-		if ([items count] < 3) {
+		if (items.count < 3) {
 			/* We need at least version, action, encryption ID, so this identiifer line is invalid */
 			NSLog(@"%@ doesn't have enough information...", identifierLine);
 			
@@ -325,9 +325,9 @@
 		
 		//NSLog(@"items: %@", items);
 		/* GNTP was eaten by our first-four byte read, so we start at the version number, /1.0 */
-		if ([[items objectAtIndex:0] isEqualToString:@"/1.0"]) {
+		if ([items[0] isEqualToString:@"/1.0"]) {
 			/* We only support version 1.0 at this time */
-			action = [items objectAtIndex:1];
+			action = items[1];
 			BOOL authorized = YES;
 			GrowlGNTPErrorCode errorCode = 0;
 			NSString *errorDescription = nil;
@@ -375,11 +375,11 @@
 				
 				//Setup the initial packet here
 				if(packet){
-					[packet setAction:action];
-					[packet setKey:key];
-					[packet setConnectedHost:[sock connectedHost]];
-					[packet setConnectedAddress:[sock connectedAddress]];
-					[packet setGuid:guid];
+					packet.action = action;
+					packet.key = key;
+					packet.connectedHost = sock.connectedHost;
+					packet.connectedAddress = sock.connectedAddress;
+					packet.guid = guid;
 					[self.packetsByGUID setObject:packet forKey:guid];
 					
 					//Get our next read to value/tag
@@ -392,14 +392,14 @@
 			[self dumpSocket:sock
 					actionType:nil
 				withErrorCode:GrowlGNTPUnknownProtocolVersionErrorCode
-			errorDescription:[NSString stringWithFormat:@"Growl does not support version string: %@", [items objectAtIndex:0]]];
+			errorDescription:[NSString stringWithFormat:@"Growl does not support version string: %@", items[0]]];
 			return;
 		}
 	}else if(tag == 2){
 		//Pass the data to the packet and get our next read data/tag/length
 		GNTPPacket *packet = [self.packetsByGUID objectForKey:guid];
 		//All our data in here is a double clrf trailed
-		NSData *trimmedData = [NSData dataWithBytes:[data bytes] length:[data length] - [[GNTPUtilities doubleCRLF] length]];
+		NSData *trimmedData = [NSData dataWithBytes:data.bytes length:data.length - [GNTPUtilities doubleCRLF].length];
 		NSInteger result = [packet parsePossiblyEncryptedDataBlock:trimmedData];
 		if(result > 0){
 			//Segments in GNTP are all seperated by a double CLRF
@@ -410,7 +410,7 @@
 			//Dump socket/packet with appropriate error
 			NSLog(@"Could not validate packet!");
 			[self dumpSocket:sock
-					actionType:[packet action]
+					actionType:packet.action
 				withErrorCode:GrowlGNTPInvalidRequestErrorCode
 			errorDescription:@"Unable to validate packet"];
 		}else{
@@ -423,22 +423,22 @@
 			 * * If we need to send feedback later
 			 * * If we are going to reuse this socket for another packet
 			 */
-			if([packet validate]){
+			if(packet.validate){
 				//Send ok
-				responseData = [packet responseData];
-				keepAliveFor = [packet requestedTimeAlive];
+				responseData = packet.responseData;
+				keepAliveFor = packet.requestedTimeAlive;
 				if(keepAliveFor > 0.0)
 					writeToTag = -1;
 				else
 					writeToTag = -2;
 				
-				if([packet keepAlive]){
+				if(packet.keepAlive){
 					readToTag = 99;
 					readToData = [GNTPUtilities gntpEndData];
 					NSLog(@"We should read to the end of GNTP/1.0");
 				}
 				
-				NSDictionary *growlDict = [packet growlDict];
+				NSDictionary *growlDict = packet.growlDict;
 				if([packet isKindOfClass:[GNTPRegisterPacket class]]){
 					[self.delegate server:self registerWithDictionary:growlDict];
 				}else if([packet isKindOfClass:[GNTPNotifyPacket class]]){
@@ -446,18 +446,18 @@
 					switch (notifyResult) {
 						case GrowlNotificationResultDisabled:
 							[self dumpSocket:sock
-									actionType:[packet action]
+									actionType:packet.action
 								withErrorCode:GrowlGNTPUserDisabledErrorCode
-							errorDescription:[NSString stringWithFormat:@"Note %@ in %@ was disabled by the user", [growlDict objectForKey:GROWL_NOTIFICATION_NAME], 
-													[growlDict objectForKey:GROWL_APP_NAME]]];
+							errorDescription:[NSString stringWithFormat:@"Note %@ in %@ was disabled by the user", growlDict[GROWL_NOTIFICATION_NAME], 
+													growlDict[GROWL_APP_NAME]]];
 							responseData = nil;
 							break;
 						case GrowlNotificationResultNotRegistered:
 							[self dumpSocket:sock
-									actionType:[packet action]
+									actionType:packet.action
 								withErrorCode:GrowlGNTPUnknownNotificationErrorCode
-							errorDescription:[NSString stringWithFormat:@"%@ is not registered for %@", [growlDict objectForKey:GROWL_NOTIFICATION_NAME], 
-													[growlDict objectForKey:GROWL_APP_NAME]]];
+							errorDescription:[NSString stringWithFormat:@"%@ is not registered for %@", growlDict[GROWL_NOTIFICATION_NAME], 
+													growlDict[GROWL_APP_NAME]]];
 							responseData = nil;
 							break;
 						case GrowlNotificationResultPosted:
@@ -475,7 +475,7 @@
 				//Send error
 				NSLog(@"Could not validate packet!");
 				[self dumpSocket:sock
-						actionType:[packet action]
+						actionType:packet.action
 					withErrorCode:GrowlGNTPInvalidRequestErrorCode
 				errorDescription:@"Unable to validate packet"];
 			}

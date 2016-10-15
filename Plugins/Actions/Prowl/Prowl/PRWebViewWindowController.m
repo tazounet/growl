@@ -15,7 +15,7 @@
 @synthesize successful = _successful;
 @synthesize delegate = _delegate;
 
-- (id)initWithURL:(NSString *)retrieveURL
+- (instancetype)initWithURL:(NSString *)retrieveURL
 		 delegate:(id<PRWebViewWindowControllerDelegate>)delegate
 {
 	self = [super initWithWindowNibName:@"PRWebViewWindowController"];
@@ -41,7 +41,7 @@
 - (void)showWindow:(id)sender
 {
 	[super showWindow:sender];
-	[self.webView setMainFrameURL:self.retrieveURL];
+	(self.webView).mainFrameURL = self.retrieveURL;
 	[self.progressIndicator startAnimation:nil];
 }
 

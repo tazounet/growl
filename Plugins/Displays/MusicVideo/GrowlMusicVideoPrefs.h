@@ -19,19 +19,17 @@
 #define GrowlMusicVideoDurationPrefDefault		5.0
 
 #define MUSICVIDEO_SIZE_PREF			@"Size"
-typedef enum
-{
+typedef NS_ENUM(NSInteger, MusicVideoSize) {
 	MUSICVIDEO_SIZE_NORMAL = 0,
-	MUSICVIDEO_SIZE_HUGE =1
-} MusicVideoSize;
+	MUSICVIDEO_SIZE_HUGE = 1
+};
 
 #define MUSICVIDEO_EFFECT_PREF			@"Transition effect"
-typedef enum
-{
+typedef NS_ENUM(NSInteger, MusicVideoEffectType) {
 	MUSICVIDEO_EFFECT_SLIDE	= 0,
 	MUSICVIDEO_EFFECT_WIPE = 1,
 	MUSICVIDEO_EFFECT_FADING = 2
-} MusicVideoEffectType;
+};
 
 #define MUSICVIDEO_TEXT_ALIGN_PREF		@"Text Alignment"
 

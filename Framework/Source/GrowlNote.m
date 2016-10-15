@@ -54,23 +54,20 @@
 + (NSDictionary *) notificationDictionaryByFillingInDictionary:(NSDictionary *)notifDict {
 	NSMutableDictionary *mNotifDict = (notifDict != nil) ? [notifDict mutableCopy] : [[NSMutableDictionary alloc] init];
    
-	if (![mNotifDict objectForKey:GROWL_APP_NAME]) {
-		if ([[GrowlApplicationBridge sharedBridge] appName]) {
-			[mNotifDict setObject:[[GrowlApplicationBridge sharedBridge] appName]
-			               forKey:GROWL_APP_NAME];
+	if (!mNotifDict[GROWL_APP_NAME]) {
+		if ([GrowlApplicationBridge sharedBridge].appName) {
+			mNotifDict[GROWL_APP_NAME] = [GrowlApplicationBridge sharedBridge].appName;
 		}
 	}
    
-	if (![mNotifDict objectForKey:GROWL_APP_ICON_DATA]) {      
-		if ([[GrowlApplicationBridge sharedBridge] appIconData]) {
-			[mNotifDict setObject:[[GrowlApplicationBridge sharedBridge] appIconData]
-			               forKey:GROWL_APP_ICON_DATA];
+	if (!mNotifDict[GROWL_APP_ICON_DATA]) {      
+		if ([GrowlApplicationBridge sharedBridge].appIconData) {
+			mNotifDict[GROWL_APP_ICON_DATA] = [GrowlApplicationBridge sharedBridge].appIconData;
 		}
 	}
    
-   NSNumber *pidNum = [[NSNumber alloc] initWithInt:[[NSProcessInfo processInfo] processIdentifier]];
-   [mNotifDict setObject:pidNum
-                  forKey:GROWL_APP_PID];
+   NSNumber *pidNum = @([NSProcessInfo processInfo].processIdentifier);
+   mNotifDict[GROWL_APP_PID] = pidNum;
    
 	return mNotifDict;
 }
@@ -92,14 +89,14 @@
    return _ivarKeys;
 }
 + (NSDictionary *)notificationDictionaryByRemovingIvarKeys:(NSDictionary*)notifDict {
-   NSMutableArray *keysToKeep = [[notifDict allKeys] mutableCopy];
+   NSMutableArray *keysToKeep = [notifDict.allKeys mutableCopy];
    [keysToKeep removeObjectsInArray:[self ivarKeys]];
    return [notifDict dictionaryWithValuesForKeys:keysToKeep];
 }
 
 
 /* Designated initializer, internal only */
--(id)initWithDictionary:(NSDictionary *)dictionary
+-(instancetype)initWithDictionary:(NSDictionary *)dictionary
                   title:(NSString *)title
             description:(NSString *)description
        notificationName:(NSString *)notifName
@@ -114,7 +111,7 @@
    BOOL useDict = dictionary != nil;
    NSMutableDictionary *noteDict = [[GrowlNote notificationDictionaryByFillingInDictionary:dictionary] mutableCopy];
    if((self = [super init])){
-      self.noteUUID = [[NSProcessInfo processInfo] globallyUniqueString];
+      self.noteUUID = [NSProcessInfo processInfo].globallyUniqueString;
       self.status = NSIntegerMax;
       _localDisplayed = NO;
       
@@ -139,14 +136,14 @@
       
       BOOL useNotificationCenter = [GrowlMiniDispatch copyNotificationCenter];
       if(useNotificationCenter){
-         [noteDict setObject:@YES forKey:GROWL_NOTIFICATION_ALREADY_SHOWN];
+         noteDict[GROWL_NOTIFICATION_ALREADY_SHOWN] = @YES;
       }
       
       if(actionTitle != nil){
-         [noteDict setObject:actionTitle forKey:GROWL_NOTIFICATION_BUTTONTITLE_ACTION];
+         noteDict[GROWL_NOTIFICATION_BUTTONTITLE_ACTION] = actionTitle;
       }
       if(cancelTitle != nil){
-         [noteDict setObject:cancelTitle forKey:GROWL_NOTIFICATION_BUTTONTITLE_CANCEL];
+         noteDict[GROWL_NOTIFICATION_BUTTONTITLE_CANCEL] = cancelTitle;
       }
       
       self.otherKeysDict = [GrowlNote notificationDictionaryByRemovingIvarKeys:noteDict];
@@ -182,7 +179,7 @@
 
 }
 
--(id)initWithDictionary:(NSDictionary*)dictionary {
+-(instancetype)initWithDictionary:(NSDictionary*)dictionary {
    NSParameterAssert([dictionary valueForKey:GROWL_NOTIFICATION_NAME]);	//Notification name is required.
 	NSParameterAssert([dictionary valueForKey:GROWL_NOTIFICATION_TITLE] ||
                      [dictionary valueForKey:GROWL_NOTIFICATION_DESCRIPTION]);	//At least one of title or description is required.
@@ -206,7 +203,7 @@
    return [[GrowlNote alloc] initWithDictionary:dict];
 }
 
-- (id) initWithTitle:(NSString *)title
+- (instancetype) initWithTitle:(NSString *)title
          description:(NSString *)description
     notificationName:(NSString *)notifName
             iconData:(NSData *)iconData
@@ -266,16 +263,16 @@
 -(NSDictionary*)noteDictionary {
    NSMutableDictionary *buildDict = [self.otherKeysDict mutableCopy];
    
-   [buildDict setObject:self.noteUUID forKey:GROWL_NOTIFICATION_INTERNAL_ID];
-   if (self.noteName)         [buildDict setObject:self.noteName forKey:GROWL_NOTIFICATION_NAME];
-   if (self.title)            [buildDict setObject:self.title forKey:GROWL_NOTIFICATION_TITLE];
-   if (self.description)      [buildDict setObject:self.description forKey:GROWL_NOTIFICATION_DESCRIPTION];
-   if (self.iconData)         [buildDict setObject:self.iconData forKey:GROWL_NOTIFICATION_ICON_DATA];
-   if (self.clickContext)     [buildDict setObject:self.clickContext forKey:GROWL_NOTIFICATION_CLICK_CONTEXT];
-   if (self.clickCallbackURL) [buildDict setObject:self.clickCallbackURL forKey:GROWL_NOTIFICATION_CALLBACK_URL_TARGET];
-   if (self.overwriteIdentifier) [buildDict setObject:self.overwriteIdentifier forKey:GROWL_NOTIFICATION_IDENTIFIER];
-   if (self.priority != 0)    [buildDict setObject:@(self.priority) forKey:GROWL_NOTIFICATION_PRIORITY];
-   if (self.sticky)           [buildDict setObject:@(self.sticky) forKey:GROWL_NOTIFICATION_STICKY];
+   buildDict[GROWL_NOTIFICATION_INTERNAL_ID] = self.noteUUID;
+   if (self.noteName)         buildDict[GROWL_NOTIFICATION_NAME] = self.noteName;
+   if (self.title)            buildDict[GROWL_NOTIFICATION_TITLE] = self.title;
+   if (self.description)      buildDict[GROWL_NOTIFICATION_DESCRIPTION] = self.description;
+   if (self.iconData)         buildDict[GROWL_NOTIFICATION_ICON_DATA] = self.iconData;
+   if (self.clickContext)     buildDict[GROWL_NOTIFICATION_CLICK_CONTEXT] = self.clickContext;
+   if (self.clickCallbackURL) buildDict[GROWL_NOTIFICATION_CALLBACK_URL_TARGET] = self.clickCallbackURL;
+   if (self.overwriteIdentifier) buildDict[GROWL_NOTIFICATION_IDENTIFIER] = self.overwriteIdentifier;
+   if (self.priority != 0)    buildDict[GROWL_NOTIFICATION_PRIORITY] = @(self.priority);
+   if (self.sticky)           buildDict[GROWL_NOTIFICATION_STICKY] = @(self.sticky);
    
    return [buildDict copy];
 }
@@ -291,15 +288,15 @@
    
    NSDictionary *noteDictionary = self.noteDictionary;
    //All the cases where growl is reachable *should* be covered now
-   if ([[GrowlApplicationBridge sharedBridge] registered] && [[GrowlApplicationBridge sharedBridge] _growlIsReachableUpdateCache:NO]) {
+   if ([GrowlApplicationBridge sharedBridge].registered && [[GrowlApplicationBridge sharedBridge] _growlIsReachableUpdateCache:NO]) {
       GrowlCommunicationAttempt *firstAttempt = nil;
       GrowlApplicationBridgeNotificationAttempt *secondAttempt = nil;
       
-      if([[GrowlApplicationBridge sharedBridge] hasGNTP]){
+      if([GrowlApplicationBridge sharedBridge].hasGNTP){
          //These should be the only way we get marked as having gntp
          if([GrowlXPCCommunicationAttempt canCreateConnection])
             firstAttempt = [[GrowlXPCNotificationAttempt alloc] initWithDictionary:noteDictionary];
-         else if([[GrowlApplicationBridge sharedBridge] hasNetworkClient])
+         else if([GrowlApplicationBridge sharedBridge].hasNetworkClient)
             firstAttempt = [[GrowlGNTPNotificationAttempt alloc] initWithDictionary:noteDictionary];
          
          if(firstAttempt){
@@ -308,7 +305,7 @@
          }
       }
       
-      if(![[GrowlApplicationBridge sharedBridge] sandboxed]){
+      if(![GrowlApplicationBridge sharedBridge].sandboxed){
          secondAttempt = [[GrowlApplicationBridgeNotificationAttempt alloc] initWithDictionary:noteDictionary];
          secondAttempt.delegate = (id <GrowlCommunicationAttemptDelegate>)self;
          
@@ -361,15 +358,15 @@
 }
 
 -(void)nsdncNoteUpdate:(NSNotification*)note {
-   if([[note name] isEqualToString:GROWL3_NOTIFICATION_CLICK]){
+   if([note.name isEqualToString:GROWL3_NOTIFICATION_CLICK]){
       [self handleStatusUpdate:GrowlNoteClicked];
-   }else if([[note name] isEqualToString:GROWL3_NOTIFICATION_TIMEOUT]){
+   }else if([note.name isEqualToString:GROWL3_NOTIFICATION_TIMEOUT]){
       [self handleStatusUpdate:GrowlNoteTimedOut];
-   }else if([[note name] isEqualToString:GROWL3_NOTIFICATION_CLOSED]){
+   }else if([note.name isEqualToString:GROWL3_NOTIFICATION_CLOSED]){
       [self handleStatusUpdate:GrowlNoteClosed];
-   }else if([[note name] isEqualToString:GROWL3_NOTIFICATION_NOT_DISPLAYED]){
+   }else if([note.name isEqualToString:GROWL3_NOTIFICATION_NOT_DISPLAYED]){
       [self handleStatusUpdate:GrowlNoteNotDisplayed];
-   }else if([[note name] isEqualToString:GROWL3_NOTIFICATION_SHOW_NOTIFICATION_CENTER]){
+   }else if([note.name isEqualToString:GROWL3_NOTIFICATION_SHOW_NOTIFICATION_CENTER]){
       //We have been told to display this note using our fallback system, force it to happen regardless of default enabled
       _localDisplayed = [[GrowlMiniDispatch sharedDispatch] displayNotification:self force:YES];
    }
@@ -395,7 +392,7 @@
 }
    
 -(void)checkLifecycle {
-   if([[GrowlApplicationBridge sharedBridge] hasGrowlThreeFrameworkSupport]){
+   if([GrowlApplicationBridge sharedBridge].hasGrowlThreeFrameworkSupport){
       /* We delay because Growl.framework 3 support
        * might tell us after the attempt finishes to use NSUNC
        */
@@ -413,10 +410,10 @@
 }
 -(void)_delayedCheckLifecycle {
    BOOL finished = (self.status < NSIntegerMax);
-   if(!finished && ![[GrowlApplicationBridge sharedBridge] hasGrowlThreeFrameworkSupport]){
+   if(!finished && ![GrowlApplicationBridge sharedBridge].hasGrowlThreeFrameworkSupport){
       if(self.firstAttempt == nil &&
          self.secondAttempt == nil &&
-         [[[GrowlMiniDispatch sharedDispatch] windowDictionary] objectForKey:self.noteUUID] == nil)
+         [GrowlMiniDispatch sharedDispatch].windowDictionary[self.noteUUID] == nil)
       {
          //We got here because we had our socket timeout against an old growl
          //And NC or Mist was not in use, send timed out
@@ -439,7 +436,7 @@
    //hrm
 }
 - (void) attemptDidFail:(GrowlCommunicationAttempt *)attempt {
-   BOOL fallback = [attempt nextAttempt] == nil;
+   BOOL fallback = attempt.nextAttempt == nil;
    if([attempt isEqual:self.firstAttempt]){
       self.firstAttempt = nil;
    }else if([attempt isEqual:self.secondAttempt]){

@@ -26,7 +26,7 @@
 @synthesize ioKitNotificationPort;
 @synthesize notificationRunLoopSource;
 
--(id)init {
+-(instancetype)init {
 	if((self = [super init])){
 		self.notificationsArePrimed = NO;
 
@@ -63,7 +63,7 @@
 		return NULL;
 	}
 
-	NSString* tempDeviceName = [NSString stringWithCString:deviceNameChars encoding:NSASCIIStringEncoding];
+	NSString* tempDeviceName = @(deviceNameChars);
 	if (tempDeviceName) {
 		if ([tempDeviceName compare:@"IOFireWireDevice"] != NSOrderedSame)
 			return tempDeviceName;
@@ -111,7 +111,7 @@
 -(void)fwDeviceAdded:(io_iterator_t)iterator {
 	io_object_t	thisObject;
 	while ((thisObject = IOIteratorNext(iterator))) {
-		if (notificationsArePrimed || [delegate onLaunchEnabled]) {
+		if (notificationsArePrimed || delegate.onLaunchEnabled) {
 			NSString *deviceName = [self nameForFireWireObject:thisObject];
 			[self fwDeviceName:deviceName added:YES];
 		}
@@ -216,18 +216,18 @@ static void fwDeviceRemoved(void *refCon, io_iterator_t iterator) {
 #pragma mark HWGrowlPluginNotifierProtocol
 
 -(NSArray*)noteNames {
-	return [NSArray arrayWithObjects:@"FirewireConnected", @"FirewireDisconnected", nil];
+	return @[@"FirewireConnected", @"FirewireDisconnected"];
 }
 -(NSDictionary*)localizedNames {
-	return [NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"Firewire Connected", @""), @"FirewireConnected",
-			  NSLocalizedString(@"Firewire Disconnected", @""), @"FirewireDisconnected", nil];
+	return @{@"FirewireConnected": NSLocalizedString(@"Firewire Connected", @""),
+			  @"FirewireDisconnected": NSLocalizedString(@"Firewire Disconnected", @"")};
 }
 -(NSDictionary*)noteDescriptions {
-	return [NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"Sent when a Firewire Device is connected", @""), @"FirewireConnected",
-			  NSLocalizedString(@"Sent when a Firewire Device is disconnected", @""), @"FirewireDisconnected", nil];
+	return @{@"FirewireConnected": NSLocalizedString(@"Sent when a Firewire Device is connected", @""),
+			  @"FirewireDisconnected": NSLocalizedString(@"Sent when a Firewire Device is disconnected", @"")};
 }
 -(NSArray*)defaultNotifications {
-	return [NSArray arrayWithObjects:@"FirewireConnected", @"FirewireDisconnected", nil];
+	return @[@"FirewireConnected", @"FirewireDisconnected"];
 }
 
 @end

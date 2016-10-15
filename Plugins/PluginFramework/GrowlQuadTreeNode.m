@@ -30,7 +30,7 @@
 @synthesize bottomLeft;
 @synthesize bottomRight;
 
--(id)initWithState:(NSInteger)newState forRect:(CGRect)aRect {
+-(instancetype)initWithState:(NSInteger)newState forRect:(CGRect)aRect {
 	if((self = [super init])){
 		self.state = newState;
 		self.frame = aRect;
@@ -77,10 +77,10 @@
 	if(!topLeft){
 		return YES;
 	}
-	if([topLeft consolidate] && 
-		[topRight consolidate] &&
-		[bottomLeft consolidate] &&
-		[bottomRight consolidate])
+	if(topLeft.consolidate && 
+		topRight.consolidate &&
+		bottomLeft.consolidate &&
+		bottomRight.consolidate)
 	{
 		
 		if(topLeft.state == topRight.state && 
@@ -208,7 +208,7 @@
 }
 
 -(NSString*)description {
-	return [NSString stringWithFormat:@"%@ rect: %@ state %ld", [super description], NSStringFromRect(frame), state];
+	return [NSString stringWithFormat:@"%@ rect: %@ state %ld", super.description, NSStringFromRect(frame), state];
 }
 
 @end

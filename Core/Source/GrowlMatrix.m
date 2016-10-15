@@ -11,8 +11,8 @@
 @implementation GrowlMatrix
 
 -(NSSize)intrinsicContentSize {
-   __block NSSize newSize = [super intrinsicContentSize];
-   [[self cells] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+   __block NSSize newSize = super.intrinsicContentSize;
+   [self.cells enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
       if([obj cellSize].width > newSize.width)
          newSize.width = [obj cellSize].width;
    }];

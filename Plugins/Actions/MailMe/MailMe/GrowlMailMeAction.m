@@ -23,7 +23,7 @@
  */
 -(void)dispatchNotification:(NSDictionary *)note withConfiguration:(NSDictionary *)configuration {
 	NSString *subject = [configuration valueForKey:SMTPSubjectKey];
-	subject = [subject length] ? subject : @"Growl";
+	subject = subject.length ? subject : @"Growl";
 	subject = [NSString stringWithFormat:@"[%@] %@: %@", subject, [note valueForKey:GROWL_APP_NAME], [note valueForKey:GROWL_NOTIFICATION_TITLE]];
 	
 	NSString *message = [[note valueForKey:GROWL_NOTIFICATION_DESCRIPTION] stringByReplacingOccurrencesOfString:@"\n" withString:@"<br/>\n"];
@@ -32,7 +32,7 @@
 	NSString *serverPorts = [configuration valueForKey:SMTPServerPortsKey];
 	NSString *serverAuthUsername = [configuration valueForKey:SMTPServerAuthUsernameKey];
 	NSString *serverAuthPassword = [GrowlKeychainUtilities passwordForServiceName:@"Growl-MailMe" 
-																							accountName:[configuration valueForKey:GROWL_PLUGIN_CONFIG_ID]];
+                                                                      accountName:[configuration valueForKey:GROWL_PLUGIN_CONFIG_ID]];
 	NSString *messageFrom = [configuration valueForKey:SMTPFromKey];
 	NSString *messageTo = [configuration valueForKey:SMTPToKey];
 
@@ -69,18 +69,16 @@
 	NSInteger tlsMode = SMTPClientTLSModeTLSIfPossible;
 	if([configuration valueForKey:SMTPServerTLSModeKey])
 		tlsMode = [[configuration valueForKey:SMTPServerTLSModeKey] integerValue];
-	NSDictionary* params = [NSDictionary dictionaryWithObjectsAndKeys: 
-									serverAddress, SMTPServerAddressKey,
-									portArray, SMTPServerPortsKey,
-									[NSNumber numberWithInteger:tlsMode], SMTPServerTLSModeKey,
-									[NSNumber numberWithBool:authFlag], SMTPServerAuthFlagKey,
-									serverAuthUsername, SMTPServerAuthUsernameKey,
-									serverAuthPassword, SMTPServerAuthPasswordKey,
-									messageFrom, SMTPFromKey,
-									messageTo, SMTPToKey,
-									subject, SMTPSubjectKey,
-									message, SMTPMessageKey,
-									NULL];
+	NSDictionary* params = @{SMTPServerAddressKey: serverAddress,
+									SMTPServerPortsKey: portArray,
+									SMTPServerTLSModeKey: @(tlsMode),
+									SMTPServerAuthFlagKey: @(authFlag),
+									SMTPServerAuthUsernameKey: serverAuthUsername,
+									SMTPServerAuthPasswordKey: serverAuthPassword,
+									SMTPFromKey: messageFrom,
+									SMTPToKey: messageTo,
+									SMTPSubjectKey: subject,
+									SMTPMessageKey: message};
 	[SMTPClient send:params];
 }
 

@@ -179,11 +179,11 @@
  */
 #define FLOAT_EQ(x,y) (((y - FLT_EPSILON) < x) && (x < (y + FLT_EPSILON)))
 
-typedef enum {
+typedef NS_ENUM(NSInteger, GrowlNotificationResult) {
 	GrowlNotificationResultPosted,
 	GrowlNotificationResultNotRegistered,
 	GrowlNotificationResultDisabled
-} GrowlNotificationResult;
+};
 
 #ifndef GROWLHELPERAPP
 

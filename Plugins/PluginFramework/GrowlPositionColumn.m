@@ -16,14 +16,14 @@
 
 
 -(void)addWidth:(CGFloat)newWidth {
-	NSNumber *number = [NSNumber numberWithFloat:newWidth];
+	NSNumber *number = @(newWidth);
 	if(!rects)
 		self.rects = [NSMutableArray array];
 	[rects addObject:number];
 }
 
 -(void)removeWidth:(CGFloat)oldWidth {
-	NSNumber *number = [NSNumber numberWithFloat:oldWidth];
+	NSNumber *number = @(oldWidth);
 	NSUInteger result = [rects indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
 		if([number isEqualToNumber:obj])
 			return YES;

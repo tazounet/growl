@@ -54,7 +54,7 @@
 @synthesize skipNoteLabel;
 @synthesize clickNoteLabel;
 
-- (id)initWithBundle:(NSBundle *)bundle {
+- (instancetype)initWithBundle:(NSBundle *)bundle {
    if((self = [super initWithBundle:bundle])){
       self.voiceLabel = NSLocalizedStringFromTableInBundle(@"Voice:", @"Localizable", bundle, @"Label for popup with voices");
 		self.limitCharCheckboxTitle = NSLocalizedStringFromTableInBundle(@"Limit to", @"Localizable", bundle, @"Limit speech display to a given amount of characters");
@@ -97,31 +97,31 @@
 	NSInteger pauseCode = [[defaults valueForKey:GrowlSpeechPauseKeyCodePref] integerValue];
 	NSUInteger pauseModifiers = [[defaults valueForKey:GrowlSpeechPauseKeyModifierPref] unsignedIntegerValue];
 	KeyCombo pauseCombo = {SRCarbonToCocoaFlags(pauseModifiers), pauseCode};
-	[self.pauseShortcut setKeyCombo:pauseCombo];
+	(self.pauseShortcut).keyCombo = pauseCombo;
 	
 	NSInteger skipCode = [[defaults valueForKey:GrowlSpeechSkipKeyCodePref] integerValue];
 	NSUInteger skipModifiers = [[defaults valueForKey:GrowlSpeechSkipKeyModifierPref] unsignedIntegerValue];
 	KeyCombo skipCombo = {SRCarbonToCocoaFlags(skipModifiers), skipCode};
-	[self.skipShortcut setKeyCombo:skipCombo];
+	(self.skipShortcut).keyCombo = skipCombo;
 	
 	NSInteger clickCode = [[defaults valueForKey:GrowlSpeechClickKeyCodePref] integerValue];
 	NSUInteger clickModifiers = [[defaults valueForKey:GrowlSpeechClickKeyModifierPref] unsignedIntegerValue];
 	KeyCombo clickCombo = {SRCarbonToCocoaFlags(clickModifiers), clickCode};
-	[self.clickShortcut setKeyCombo:clickCombo];
+	(self.clickShortcut).keyCombo = clickCombo;
 }
 
 -(void)updateVoiceList {
 	NSMutableArray *voiceAttributes = [NSMutableArray array];
 	
 	NSMutableDictionary *defaultChoice = [NSMutableDictionary dictionary];
-	[defaultChoice setObject:GrowlSpeechSystemVoice forKey:NSVoiceIdentifier];
-	[defaultChoice setObject:NSLocalizedString(@"System Default", @"The voice chosen as the system voice in the Speech preference pane") forKey:NSVoiceName];
+	defaultChoice[NSVoiceIdentifier] = GrowlSpeechSystemVoice;
+	defaultChoice[NSVoiceName] = NSLocalizedString(@"System Default", @"The voice chosen as the system voice in the Speech preference pane");
 	[voiceAttributes addObject:defaultChoice];
 	
 	for (NSString *voiceIdentifier in [NSSpeechSynthesizer availableVoices]) {
 		[voiceAttributes addObject:[NSSpeechSynthesizer attributesForVoice:voiceIdentifier]];
 	}
-	[self setVoices:voiceAttributes];
+	self.voices = voiceAttributes;
 }
 
 -(void)updateConfigurationValues {
@@ -136,10 +136,10 @@
 	if (row == NSNotFound)
 		row = [availableVoices indexOfObject:[NSSpeechSynthesizer defaultVoice]];
 	
-	if ((row == NSNotFound) && ([availableVoices count]))
+	if ((row == NSNotFound) && (availableVoices.count))
 		row = 1;
 	
-	if (row != NSNotFound && [voices count] > 0) {
+	if (row != NSNotFound && voices.count > 0) {
 		[voiceList selectItemAtIndex:row];
 	}
 	[super updateConfigurationValues];
@@ -149,14 +149,14 @@
 	NSInteger row = [sender indexOfSelectedItem];
 	
 	if (row != -1) {
-		if(lastPreview != nil && [lastPreview isSpeaking]) {
+		if(lastPreview != nil && lastPreview.speaking) {
 			[lastPreview stopSpeaking];
 		}
-		NSString *voice = [[voices objectAtIndex:row] objectForKey:NSVoiceIdentifier];
+		NSString *voice = voices[row][NSVoiceIdentifier];
 		if([voice isEqualToString:GrowlSpeechSystemVoice])
             voice = nil;
         NSSpeechSynthesizer *quickVoice = [[NSSpeechSynthesizer alloc] initWithVoice:voice];
-		[quickVoice startSpeakingString:[NSString stringWithFormat:NSLocalizedString(@"This is a preview of the %@ voice.", nil), [[voices objectAtIndex:row] objectForKey:NSVoiceName]]];
+		[quickVoice startSpeakingString:[NSString stringWithFormat:NSLocalizedString(@"This is a preview of the %@ voice.", nil), voices[row][NSVoiceName]]];
 		lastPreview = quickVoice;
 	}
 }
@@ -165,7 +165,7 @@
 	NSInteger row = [sender indexOfSelectedItem];
 
 	if (row != -1) {
-		NSString *voice = [[voices objectAtIndex:row] objectForKey:NSVoiceIdentifier];
+		NSString *voice = voices[row][NSVoiceIdentifier];
 		[self setConfigurationValue:voice forKey:GrowlSpeechVoicePref];
 		[self previewVoice:sender];
 	}
@@ -182,7 +182,7 @@
 	return value;
 }
 -(void)setUseLimit:(BOOL)value {
-	[self setConfigurationValue:[NSNumber numberWithBool:value] forKey:GrowlSpeechUseLimitPref];
+	[self setConfigurationValue:@(value) forKey:GrowlSpeechUseLimitPref];
 }
 
 -(BOOL)useRate {
@@ -193,7 +193,7 @@
 	return value;
 }
 -(void)setUseRate:(BOOL)value {
-	[self setConfigurationValue:[NSNumber numberWithBool:value] forKey:GrowlSpeechUseRatePref];
+	[self setConfigurationValue:@(value) forKey:GrowlSpeechUseRatePref];
 }
 
 -(BOOL)useVolume {
@@ -204,7 +204,7 @@
 	return value;
 }
 -(void)setUseVolume:(BOOL)value {
-	[self setConfigurationValue:[NSNumber numberWithBool:value] forKey:GrowlSpeechUseVolumePref];
+	[self setConfigurationValue:@(value) forKey:GrowlSpeechUseVolumePref];
 }
 
 -(NSUInteger)characterLimit {
@@ -215,7 +215,7 @@
 	return value;
 }
 -(void)setCharacterLimit:(NSUInteger)value {
-	[self setConfigurationValue:[NSNumber numberWithUnsignedInteger:value] forKey:GrowlSpeechLimitPref];
+	[self setConfigurationValue:@(value) forKey:GrowlSpeechLimitPref];
 }
 
 -(float)rate {
@@ -226,7 +226,7 @@
 	return value;
 }
 -(void)setRate:(float)value {
-	[self setConfigurationValue:[NSNumber numberWithFloat:value] forKey:GrowlSpeechRatePref];
+	[self setConfigurationValue:@(value) forKey:GrowlSpeechRatePref];
 }
 
 -(NSUInteger)volume {
@@ -237,7 +237,7 @@
 	return value;
 }
 -(void)setVolume:(NSUInteger)value {
-	[self setConfigurationValue:[NSNumber numberWithUnsignedInteger:value] forKey:GrowlSpeechVolumePref];
+	[self setConfigurationValue:@(value) forKey:GrowlSpeechVolumePref];
 }
 
 #pragma mark SRRecorderControl delegate
@@ -270,9 +270,9 @@
 	
     if(combo)
     {
-        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:combo.keyCode]
+        [[NSUserDefaults standardUserDefaults] setObject:@(combo.keyCode)
                                                   forKey:codePref];
-        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithUnsignedInteger:combo.modifiers]
+        [[NSUserDefaults standardUserDefaults] setObject:@(combo.modifiers)
                                                   forKey:modifierPref];
         [[NSUserDefaults standardUserDefaults] synchronize];
 	}
@@ -285,8 +285,7 @@
     
 	[[NSNotificationCenter defaultCenter] postNotificationName:GrowlSpeechHotKeyChanged
 																		 object:self 
-																	  userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:type] 
-																														forKey:@"hotKeyType"]];
+																	  userInfo:@{@"hotKeyType": @(type)}];
 }
 
 @end

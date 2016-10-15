@@ -11,9 +11,9 @@
 
 @implementation GrowlShrinkingWindowTransition
 
-- (id) initWithWindow:(NSWindow *)inWindow {
+- (instancetype) initWithWindow:(NSWindow *)inWindow {
 	if((self = [super initWithWindow:inWindow])){
-		[[inWindow contentView] setWantsLayer:YES];
+		[inWindow.contentView setWantsLayer:YES];
 	}
 	return self;
 }
@@ -44,7 +44,7 @@
 		if(inProgress <= 0.0f)
 			inProgress = 0.01f;
 		CATransform3D scale = CATransform3DMakeScale(inProgress, inProgress, 1.0f);
-		[[[[self window] contentView] layer] setTransform:scale];
+		self.window.contentView.layer.transform = scale;
 	}
 }
 

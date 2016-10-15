@@ -51,7 +51,7 @@ typedef void(^GrowlFirstLaunchAction)(void);
    return NO;
 }
 
-- (id)init
+- (instancetype)init
 {
     if ((self = [super initWithWindowNibName:@"FirstLaunchWindow" owner:self])) {
         // Initialization code here.
@@ -63,35 +63,35 @@ typedef void(^GrowlFirstLaunchAction)(void);
        
        NSMutableArray *views = [NSMutableArray array];
       
-		 NSString *welcomeString = [[[NSBundle mainBundle] URLForResource:@"Welcome" withExtension:@"html"] absoluteString];
-       NSDictionary *welcomeDict = [NSDictionary dictionaryWithObjectsAndKeys:welcomeString, @"textBody", nil];
+		 NSString *welcomeString = [[NSBundle mainBundle] URLForResource:@"Welcome" withExtension:@"html"].absoluteString;
+       NSDictionary *welcomeDict = @{@"textBody": welcomeString};
        [views addObject:welcomeDict];
        
-		 NSString *whatsNewString = [[[NSBundle mainBundle] URLForResource:@"WhatsNew" withExtension:@"html"] absoluteString];
-       NSDictionary *whatsNewDict = [NSDictionary dictionaryWithObjectsAndKeys:whatsNewString, @"textBody", nil];
+		 NSString *whatsNewString = [[NSBundle mainBundle] URLForResource:@"WhatsNew" withExtension:@"html"].absoluteString;
+       NSDictionary *whatsNewDict = @{@"textBody": whatsNewString};
        [views addObject:whatsNewDict];
        
-       if(![preferences allowStartAtLogin]) {
+       if(!preferences.allowStartAtLogin) {
          GrowlFirstLaunchAction loginBlock = [^{
              GrowlPreferencesController *prefs = [GrowlPreferencesController sharedController];
              [prefs setShouldStartGrowlAtLogin:YES];
              [prefs setAllowStartAtLogin:YES];
           } copy];
           
-			 NSString *loginString = [[[NSBundle mainBundle] URLForResource:@"StartAtLogin" withExtension:@"html"] absoluteString];
-          NSDictionary *loginDict = [NSDictionary dictionaryWithObjectsAndKeys:loginString, @"textBody",
-                                                                               loginBlock, @"actionBlock", 
-                                                                               FirstLaunchStartGrowlButton, @"actionTitle", nil];
+			 NSString *loginString = [[NSBundle mainBundle] URLForResource:@"StartAtLogin" withExtension:@"html"].absoluteString;
+          NSDictionary *loginDict = @{@"textBody": loginString,
+                                      @"actionBlock": loginBlock,
+                                      @"actionTitle": FirstLaunchStartGrowlButton};
           [views addObject:loginDict];
        }
        if(![[GrowlPathUtilities runningHelperAppBundle] isEqual:[NSBundle mainBundle]]) {
           GrowlFirstLaunchAction oldBlock = [^{
 				 [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"http://growl.info/documentation/growl-package-removal.php#1.2easy"]];
           } copy];
-			 NSString *oldString = [[[NSBundle mainBundle] URLForResource:@"OldGrowl" withExtension:@"html"] absoluteString];
-          NSDictionary *oldDict = [NSDictionary dictionaryWithObjectsAndKeys:oldString, @"textBody",
-                                                                             oldBlock, @"actionBlock",
-                                                                             FirstLaunchOldGrowlButton, @"actionTitle", nil];
+			 NSString *oldString = [[NSBundle mainBundle] URLForResource:@"OldGrowl" withExtension:@"html"].absoluteString;
+          NSDictionary *oldDict = @{@"textBody": oldString,
+                                    @"actionBlock": oldBlock,
+                                    @"actionTitle": FirstLaunchOldGrowlButton};
           [views addObject:oldDict];
        }
        
@@ -103,7 +103,7 @@ typedef void(^GrowlFirstLaunchAction)(void);
 
 -(void)awakeFromNib
 {
-   [progressIndicator setMaxValue:[launchViews count]];
+   progressIndicator.maxValue = launchViews.count;
    [self showCurrent];
 }
 
@@ -118,25 +118,25 @@ typedef void(^GrowlFirstLaunchAction)(void);
 
 -(void)showCurrent
 {
-   self.progressLabel = [NSString stringWithFormat:@"%lu/%lu", current + 1, [launchViews count]];
-   [progressIndicator setDoubleValue:(double)(current + 1)];
-   if(current == [launchViews count] - 1){
+   self.progressLabel = [NSString stringWithFormat:@"%lu/%lu", current + 1, launchViews.count];
+   progressIndicator.doubleValue = (double)(current + 1);
+   if(current == launchViews.count - 1){
       self.continueButtonTitle = NSLocalizedString(@"Done", @"Continue button title when done");
    }
    
-   if([[launchViews objectAtIndex:current] valueForKey:@"actionBlock"]){
+   if([launchViews[current] valueForKey:@"actionBlock"]){
       self.actionEnabled = YES;
-      self.actionButtonTitle = [[launchViews objectAtIndex:current] valueForKey:@"actionTitle"];
+      self.actionButtonTitle = [launchViews[current] valueForKey:@"actionTitle"];
    }
    
-   self.textBoxString = [[launchViews objectAtIndex:current] valueForKey:@"textBody"];
-	[self.webView setMainFrameURL:self.textBoxString];
+   self.textBoxString = [launchViews[current] valueForKey:@"textBody"];
+	(self.webView).mainFrameURL = self.textBoxString;
 }
 
 -(IBAction)nextPage:(id)sender
 {
    self.current++;
-   if(current >= [launchViews count]){
+   if(current >= launchViews.count){
       [self close];
       return;
    }
@@ -145,8 +145,8 @@ typedef void(^GrowlFirstLaunchAction)(void);
 
 -(IBAction)actionButton:(id)sender
 {
-   if([[launchViews objectAtIndex:current] valueForKey:@"actionBlock"]){
-      GrowlFirstLaunchAction action = [[launchViews objectAtIndex:current] valueForKey:@"actionBlock"];
+   if([launchViews[current] valueForKey:@"actionBlock"]){
+      GrowlFirstLaunchAction action = [launchViews[current] valueForKey:@"actionBlock"];
       action();
    }
 }
@@ -157,9 +157,9 @@ decidePolicyForNavigationAction:(NSDictionary *)actionInformation
 			 frame:(WebFrame *)frame
 decisionListener:(id < WebPolicyDecisionListener >)listener
 {
-	NSString *host = [[request URL] host];
+	NSString *host = request.URL.host;
 	if (host) {
-		[[NSWorkspace sharedWorkspace] openURL:[request URL]];
+		[[NSWorkspace sharedWorkspace] openURL:request.URL];
 	} else {
 		[listener use];
 	}

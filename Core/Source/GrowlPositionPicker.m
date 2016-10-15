@@ -39,7 +39,7 @@ NSString *GrowlPositionPickerChangedSelectionNotification = @"GrowlPositionPicke
 		return;
 	
 	backgroundImage = [self imageForCurrentOS];
-	imageBounds = NSMakeRect(0.0,0.0,[backgroundImage size].width,[backgroundImage size].height);
+	imageBounds = NSMakeRect(0.0,0.0,backgroundImage.size.width,backgroundImage.size.height);
 	unselectedColor = [NSColor colorWithDeviceWhite:1.0 alpha:GrowlPositionPickerHotCornerUnselectedAlpha];
 	rolloverColor = [NSColor grayColor];
 	selectedColor = [NSColor whiteColor];
@@ -47,7 +47,7 @@ NSString *GrowlPositionPickerChangedSelectionNotification = @"GrowlPositionPicke
 	[NSObject exposeBinding:@"selectedPosition"];
 }
 
-- (id) initWithFrame:(NSRect)frame {
+- (instancetype) initWithFrame:(NSRect)frame {
 	self = [super initWithFrame:frame];
 	if (self) {
 		[self generateHotCornerPaths];
@@ -82,7 +82,7 @@ NSString *GrowlPositionPickerChangedSelectionNotification = @"GrowlPositionPicke
 
 - (void) drawRect:(NSRect)rect {
 	// make sure that the view is big enough...
-	NSRect bounds = [self bounds];
+	NSRect bounds = self.bounds;
 	if ((bounds.size.width < GrowlPositionPickerMinWidth)||(bounds.size.height < GrowlPositionPickerMinHeight))
 	{
 		NSLog (@"The view dimensions fall below the minimum requirement: %f by %f",GrowlPositionPickerMinWidth,GrowlPositionPickerMinHeight);
@@ -90,7 +90,7 @@ NSString *GrowlPositionPickerChangedSelectionNotification = @"GrowlPositionPicke
 	}
 	
 	// draw the background image...
-	[backgroundImage drawInRect:bounds fromRect:imageBounds operation:NSCompositeSourceOver fraction:(self.enabled ? 1.0 : 0.25)];
+	[backgroundImage drawInRect:bounds fromRect:imageBounds operation:NSCompositingOperationSourceOver fraction:(self.enabled ? 1.0 : 0.25)];
 	
 	// select the appropriate hotcorner before drawing
 	//[self setSelectedPosition:[associatedController selectedPosition]];
@@ -104,18 +104,18 @@ NSString *GrowlPositionPickerChangedSelectionNotification = @"GrowlPositionPicke
 
 - (void) viewDidMoveToWindow {
 	// make sure that the window accepts mouse moved events for the rollovers...
-	NSWindow *window = [self window];
+	NSWindow *window = self.window;
 	if (window) {
 		[self resetTrackingRect];
 	}
 }
 
 - (NSRect)focusRingMaskBounds {
-   return [self bounds];
+   return self.bounds;
 }
 
 - (void)drawFocusRingMask {
-   NSRectFill([self bounds]);
+   NSRectFill(self.bounds);
 }
 
 #pragma mark -
@@ -131,8 +131,8 @@ NSString *GrowlPositionPickerChangedSelectionNotification = @"GrowlPositionPicke
 
 - (void) mouseEntered:(NSEvent *)theEvent {
 	// turn on mouse moved tracking on the window...
-	NSWindow *window = [self window];
-	windowWatchesMouseMovedEvents = [window acceptsMouseMovedEvents];
+	NSWindow *window = self.window;
+	windowWatchesMouseMovedEvents = window.acceptsMouseMovedEvents;
 	[window setAcceptsMouseMovedEvents:YES];
 	mouseOverView = YES;
 }
@@ -140,7 +140,7 @@ NSString *GrowlPositionPickerChangedSelectionNotification = @"GrowlPositionPicke
 - (void) mouseExited:(NSEvent *)theEvent {
 	// revert the window to its previous setting...
 	if (!windowWatchesMouseMovedEvents) {
-		[[self window] setAcceptsMouseMovedEvents:NO];
+		[self.window setAcceptsMouseMovedEvents:NO];
 	}
 	mouseOverView = NO;
 	rolloverPosition = GrowlNoOrigin;
@@ -155,7 +155,7 @@ NSString *GrowlPositionPickerChangedSelectionNotification = @"GrowlPositionPicke
         
         // did the mouse hit any of the hotcorners...?
         NSUInteger lastHit = rolloverPosition;
-        NSPoint mouseLoc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+        NSPoint mouseLoc = [self convertPoint:theEvent.locationInWindow fromView:nil];
         if ([topLeftHotCorner containsPoint:mouseLoc]) {
             rolloverPosition = GrowlTopLeftCorner;
         } else if ([topRightHotCorner containsPoint:mouseLoc]) {
@@ -179,15 +179,15 @@ NSString *GrowlPositionPickerChangedSelectionNotification = @"GrowlPositionPicke
     {
         // did the mouse hit any of the hotcorners...?
 	NSUInteger lastHit = selectedPosition;
-	NSPoint mouseLoc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+	NSPoint mouseLoc = [self convertPoint:theEvent.locationInWindow fromView:nil];
 	if ([topLeftHotCorner containsPoint:mouseLoc]) {
-		[self setSelectedPosition:GrowlTopLeftCorner];
+		self.selectedPosition = GrowlTopLeftCorner;
 	} else if ([topRightHotCorner containsPoint:mouseLoc]) {
-		[self setSelectedPosition:GrowlTopRightCorner];
+		self.selectedPosition = GrowlTopRightCorner;
 	} else if ([bottomRightHotCorner containsPoint:mouseLoc]) {
-		[self setSelectedPosition:GrowlBottomRightCorner];
+		self.selectedPosition = GrowlBottomRightCorner;
 	} else if ([bottomLeftHotCorner containsPoint:mouseLoc]) {
-		[self setSelectedPosition:GrowlBottomLeftCorner];
+		self.selectedPosition = GrowlBottomLeftCorner;
 	}
 	
 	// do we need to redisplay...?
@@ -217,7 +217,7 @@ NSString *GrowlPositionPickerChangedSelectionNotification = @"GrowlPositionPicke
    }
    
    if(destination != selectedPosition)
-      [self setSelectedPosition:destination];
+      self.selectedPosition = destination;
 }
 
 - (void)swapVertical {
@@ -241,7 +241,7 @@ NSString *GrowlPositionPickerChangedSelectionNotification = @"GrowlPositionPicke
    }
    
    if(destination != selectedPosition)
-      [self setSelectedPosition:destination];
+      self.selectedPosition = destination;
 }
 
 - (void)moveLeft:(id)sender {
@@ -285,7 +285,7 @@ NSString *GrowlPositionPickerChangedSelectionNotification = @"GrowlPositionPicke
    }
    
    if(destination != selectedPosition)
-      [self setSelectedPosition:destination];
+      self.selectedPosition = destination;
 }
 
 - (void)performClick:(id)sender {
@@ -312,7 +312,7 @@ NSString *GrowlPositionPickerChangedSelectionNotification = @"GrowlPositionPicke
 - (void)setNilValueForKey:(NSString *)key
 {
 	if ([key isEqualToString:@"selectedPosition"])
-		[self setSelectedPosition:GrowlNoOrigin];
+		self.selectedPosition = GrowlNoOrigin;
 	else
 		return [super setNilValueForKey:key];
 }
@@ -324,7 +324,7 @@ NSString *GrowlPositionPickerChangedSelectionNotification = @"GrowlPositionPicke
 @implementation GrowlPositionPicker(Private)
 
 - (void) generateHotCornerPaths {
-	NSRect rectToUse = NSInsetRect([self bounds],
+	NSRect rectToUse = NSInsetRect(self.bounds,
 								   GrowlPositionPickerHotCornerInset,
 								   GrowlPositionPickerHotCornerInset);
 	
@@ -374,7 +374,7 @@ NSString *GrowlPositionPickerChangedSelectionNotification = @"GrowlPositionPicke
 		[self removeTrackingRect:trackingRectTag];
 		trackingRectTag = 0;
 	}
-	if ( [self window] ) {
+	if ( self.window ) {
 		[self addTrackingRect:imageBounds owner:self userData:NULL assumeInside:NO];
 	}
 }
@@ -401,7 +401,7 @@ NSString *GrowlPositionPickerChangedSelectionNotification = @"GrowlPositionPicke
 		//… and put a black dot in it to make it really obvious that it's selected.
 		[[[NSColor blackColor] colorWithAlphaComponent:GrowlPositionPickerHotCornerSelectionDotAlpha] set];
 		NSBezierPath *dot = [NSBezierPath bezierPath];
-		NSRect cornerPathBounds = [cornerPath bounds];
+		NSRect cornerPathBounds = cornerPath.bounds;
 		NSPoint centerPoint = NSMakePoint(NSMidX(cornerPathBounds),
 		                                  NSMidY(cornerPathBounds));
 		//Center our dot within the correct quadrant of the corner path's bounding rectangle, by adding or subtracting one-eighth of its bounds on each axis.

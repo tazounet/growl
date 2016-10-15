@@ -17,27 +17,21 @@
 	NSImage *appIcon = path ? [self iconForFile:path] : nil;
 
 	if (appIcon)
-		[appIcon setSize:NSMakeSize(128.0,128.0)];
+		appIcon.size = NSMakeSize(128.0,128.0);
 
 	return appIcon;
 }
 
-- (BOOL) getFileType:(out NSString **)outFileType creatorCode:(out NSString **)outCreatorCode forURL:(NSURL *)URL {
+- (BOOL) getFileType:(out NSString **)outFileType forURL:(NSURL *)URL {
 	NSParameterAssert(URL != nil);
 
-	struct LSItemInfoRecord rec;
-
-	OSStatus err = LSCopyItemInfoForURL((__bridge CFURLRef)URL, kLSRequestTypeCreator, &rec);
-	if (err == noErr) {
-		if (outFileType)    *outFileType    = NSFileTypeForHFSTypeCode(rec.filetype);
-		if (outCreatorCode) *outCreatorCode = NSFileTypeForHFSTypeCode(rec.creator);
-	}
-
-	return (err == noErr);
+    NSError *error;
+    return [URL getResourceValue:outFileType forKey:NSURLTypeIdentifierKey error:&error];
 }
-- (BOOL) getFileType:(out NSString **)outFileType creatorCode:(out NSString **)outCreatorCode forFile:(NSString *)path {
+
+- (BOOL) getFileType:(out NSString **)outFileType forFile:(NSString *)path {
 	NSURL *URL = [[NSURL alloc] initFileURLWithPath:path];
-	BOOL success = [self getFileType:outFileType creatorCode:outCreatorCode forURL:URL];
+	BOOL success = [self getFileType:outFileType forURL:URL];
 	return success;
 }
 

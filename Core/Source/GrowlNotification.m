@@ -21,31 +21,32 @@
 @synthesize auxiliaryDictionary;
 @synthesize configurationDict;
 
-+ (GrowlNotification *) notificationWithDictionary:(NSDictionary *)dict configurationDict:(NSDictionary*)config {
++ (GrowlNotification *) notificationWithDictionary:(NSDictionary *)dict
+                                 configurationDict:(NSDictionary*)config {
 	return [[self alloc] initWithDictionary:dict configurationDict:config];
 }
 
 - (GrowlNotification *) initWithDictionary:(NSDictionary *)dict
-								 configurationDict:(NSDictionary *)config
+                         configurationDict:(NSDictionary *)config
 {
-	if ((self = [self initWithName:[dict objectForKey:GROWL_NOTIFICATION_NAME]
-						applicationName:[dict objectForKey:GROWL_APP_NAME]
-									 title:[dict objectForKey:GROWL_NOTIFICATION_TITLE]
-							 description:[dict objectForKey:GROWL_NOTIFICATION_DESCRIPTION]
-					configureationDict:config])) {
+	if ((self = [self initWithName:dict[GROWL_NOTIFICATION_NAME]
+                   applicationName:dict[GROWL_APP_NAME]
+                             title:dict[GROWL_NOTIFICATION_TITLE]
+                       description:dict[GROWL_NOTIFICATION_DESCRIPTION]
+                configureationDict:config])) {
 		NSMutableDictionary *mutableDict = [dict mutableCopy];
-		[mutableDict removeObjectsForKeys:[[GrowlNotification standardKeys] allObjects]];
-		if ([mutableDict count])
-			[self setAuxiliaryDictionary:mutableDict];
+		[mutableDict removeObjectsForKeys:[GrowlNotification standardKeys].allObjects];
+		if (mutableDict.count)
+			self.auxiliaryDictionary = mutableDict;
 	}
 	return self;
 }
 
 - (GrowlNotification *) initWithName:(NSString *)newName
-							applicationName:(NSString *)newAppName
-										 title:(NSString *)newTitle
-								 description:(NSString *)newDesc
-						configureationDict:(NSDictionary *)config
+                     applicationName:(NSString *)newAppName
+                               title:(NSString *)newTitle
+                         description:(NSString *)newDesc
+                  configureationDict:(NSDictionary *)config
 {
 	if ((self = [self init])) {
 		name            = [newName      copy];
@@ -96,24 +97,24 @@
 			nil];
 
 		for (id key in auxiliaryDictionary)
-			if (![dict objectForKey:key])
-				[dict setObject:[auxiliaryDictionary objectForKey:key] forKey:key];
+			if (!dict[key])
+				dict[key] = auxiliaryDictionary[key];
 	} else {
 		//Only include keys in the set.
-		dict = [[NSMutableDictionary alloc] initWithCapacity:[keys count]];
+		dict = [[NSMutableDictionary alloc] initWithCapacity:keys.count];
 
 		if ([keys containsObject:GROWL_NOTIFICATION_NAME])
-			[dict setObject:name forKey:GROWL_NOTIFICATION_NAME];
+			dict[GROWL_NOTIFICATION_NAME] = name;
 		if ([keys containsObject:GROWL_APP_NAME])
-			[dict setObject:applicationName forKey:GROWL_APP_NAME];
+			dict[GROWL_APP_NAME] = applicationName;
 		if ([keys containsObject:GROWL_NOTIFICATION_TITLE])
-			[dict setObject:title forKey:GROWL_NOTIFICATION_TITLE];
+			dict[GROWL_NOTIFICATION_TITLE] = title;
 		if ([keys containsObject:GROWL_NOTIFICATION_DESCRIPTION])
-			[dict setObject:messageText forKey:GROWL_NOTIFICATION_DESCRIPTION];
+			dict[GROWL_NOTIFICATION_DESCRIPTION] = messageText;
 
 		for (id key in auxiliaryDictionary)
-			if ([keys containsObject:key] && ![dict objectForKey:key])
-				[dict setObject:[auxiliaryDictionary objectForKey:key] forKey:key];
+			if ([keys containsObject:key] && !dict[key])
+				dict[key] = auxiliaryDictionary[key];
 	}
 
 	NSDictionary *result = [NSDictionary dictionaryWithDictionary:dict];

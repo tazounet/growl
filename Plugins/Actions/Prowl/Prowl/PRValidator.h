@@ -10,7 +10,8 @@
 
 @interface PRValidator : NSObject
 
-- (id)initWithDelegate:(id<PRValidatorDelegate>)delegate;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithDelegate:(id<PRValidatorDelegate>)delegate NS_DESIGNATED_INITIALIZER;
 @property (nonatomic, unsafe_unretained, readonly) id<PRValidatorDelegate> delegate;
 
 - (void)validateApiKey:(PRAPIKey *)apiKey;

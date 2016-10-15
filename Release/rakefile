@@ -51,7 +51,7 @@ end
 $destdir       = env_default(:DESTDIR, File.join($release_dir, 'distribution'))
 $build_root    = File.join($destdir, "build")
 $product_root  = File.join($destdir, "product")
-$csi           = env_default(:CODE_SIGN_IDENTITY, "3rd Party Mac Developer Application")
+$csi           = env_default(:CODE_SIGN_IDENTITY, "Mac Developer")
 $csi_installer = $csi.gsub("Application", "Installer")
 $csi_sdk       = env_default(:CODE_SIGN_IDENTITY_SDK, "Developer ID Application: The Growl Project, LLC")
 $beta          = false
@@ -112,7 +112,6 @@ namespace "build" do
   desc "build growlnotify"
   task :growlnotify do
     system "#{$xcodebuild} -project #{$src_root}/Extras/growlnotify/growlnotify.xcodeproj -configuration #{$configuration} SYMROOT=#{$build_root}/growlnotify"
-    system "codesign --preserve-metadata -f -s \"Developer ID Application: The Growl Project, LLC\" -v #{$build_root}/growlnotify/#{$configuration}/growlnotify"
   end
 
   desc "build growl"
@@ -186,11 +185,9 @@ namespace "package" do
     curdir   = FileUtils.pwd()
     absolute = File.expand_path("#{$product_root}")
     FileUtils.mkdir_p(absolute)
-	failure = resign(File.expand_path("#{$build_root}/growl/#{$configuration}/Growl.app"), $csi)
-	if not failure
-		failure = validate(File.expand_path("#{$build_root}/growl/#{$configuration}/Growl.app"), $csi)
-		exit(failure) if failure
-	end
+	failure = validate(File.expand_path("#{$build_root}/growl/#{$configuration}/Growl.app"), $csi)
+	exit(failure) if failure
+
     FileUtils.cd("#{$build_root}/growl/#{$configuration}")
     if !$beta
       system "productbuild --component Growl.app /Applications --sign \"#{$csi_installer}\" Growl.pkg && cp -Rp Growl.pkg #{absolute}/"
@@ -207,11 +204,9 @@ namespace "package" do
     curdir = FileUtils.pwd()
     absolute = File.expand_path("#{$product_root}")
     FileUtils.mkdir_p(absolute)
-	failure = resign(File.expand_path("#{$build_root}/hardwaregrowler/#{$configuration}/HardwareGrowler.app"), $csi)
-	if not failure
-		failure = validate(File.expand_path("#{$build_root}/hardwaregrowler/#{$configuration}/HardwareGrowler.app"), $csi)
-		exit(failure) if failure
-	end
+	failure = validate(File.expand_path("#{$build_root}/hardwaregrowler/#{$configuration}/HardwareGrowler.app"), $csi)
+	exit(failure) if failure
+
     FileUtils.cd("#{$build_root}/hardwaregrowler/#{$configuration}")
     if !$beta
       system "productbuild --component HardwareGrowler.app /Applications --sign \"#{$csi_installer}\" HardwareGrowler.pkg && cp -Rp HardwareGrowler.pkg #{$product_root}"
@@ -253,11 +248,8 @@ namespace "package" do
     curdir = FileUtils.pwd()
     absolute = File.expand_path("#{$product_root}")
     FileUtils.mkdir_p(absolute)
-	failure = resign(File.expand_path("#{$build_root}/growltunes/#{$configuration}/GrowlTunes.app"), $csi)
-	if not failure
-		failure = validate(File.expand_path("#{$build_root}/growltunes/#{$configuration}/GrowlTunes.app"), $csi)
-		exit(failure) if failure
-	end
+	failure = validate(File.expand_path("#{$build_root}/growltunes/#{$configuration}/GrowlTunes.app"), $csi)
+	exit(failure) if failure
 	
     FileUtils.cd("#{$build_root}/growltunes/#{$configuration}")
     if !$beta

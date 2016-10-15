@@ -22,16 +22,16 @@
 
 #pragma mark -
 
-- (id) initWithNotification:(GrowlNotification *)note plugin:(GrowlDisplayPlugin *)aPlugin {
-	NSDictionary *configDict = [notification configurationDict];
+- (instancetype) initWithNotification:(GrowlNotification *)note plugin:(GrowlDisplayPlugin *)aPlugin {
+	NSDictionary *configDict = notification.configurationDict;
 	screenNumber = 0U;
 	if([configDict valueForKey:GrowliCalScreen]){
 		screenNumber = [[configDict valueForKey:GrowliCalScreen] unsignedIntegerValue];
 	}
 	NSArray *screens = [NSScreen screens];
-	NSUInteger screensCount = [screens count];
+	NSUInteger screensCount = screens.count;
 	if (screensCount) {
-		[self setScreen:((screensCount >= (screenNumber + 1)) ? [screens objectAtIndex:screenNumber] : [screens objectAtIndex:0])];
+		self.screen = ((screensCount >= (screenNumber + 1)) ? screens[screenNumber] : screens[0]);
 	}
 
 	NSTimeInterval duration = GrowliCalDurationPrefDefault;
@@ -45,16 +45,16 @@
 	// A window with a frame of NSZeroRect is off-screen and doesn't respect opacity even
 	// if moved on screen later. -Evan
 	NSPanel *panel = [[NSPanel alloc] initWithContentRect:NSMakeRect(0.0, 0.0, 270.0, 65.0)
-												styleMask:NSBorderlessWindowMask | NSNonactivatingPanelMask
+												styleMask:NSWindowStyleMaskBorderless | NSWindowStyleMaskNonactivatingPanel
 												  backing:NSBackingStoreBuffered
 													defer:YES];
-	NSRect panelFrame = [panel frame];
+	NSRect panelFrame = panel.frame;
 	[panel setBecomesKeyOnlyIfNeeded:YES];
 	[panel setHidesOnDeactivate:NO];
-	[panel setBackgroundColor:[NSColor clearColor]];
+	panel.backgroundColor = [NSColor clearColor];
 	[panel setLevel:GrowlVisualDisplayWindowLevel];
-	[panel setCollectionBehavior:NSWindowCollectionBehaviorCanJoinAllSpaces];
-	[panel setAlphaValue:0.0];
+	panel.collectionBehavior = NSWindowCollectionBehaviorCanJoinAllSpaces;
+	panel.alphaValue = 0.0;
 	[panel setOpaque:NO];
 	[panel setHasShadow:YES];
 	[panel setCanHide:NO];
@@ -63,9 +63,9 @@
 
 	// Create the content view...
 	GrowliCalWindowView *view = [[GrowliCalWindowView alloc] initWithFrame:panelFrame configurationDict:configDict];
-	[view setTarget:self];
-	[view setAction:@selector(notificationClicked:)];
-	[panel setContentView:view];
+	view.target = self;
+	view.action = @selector(notificationClicked:);
+	panel.contentView = view;
 
 	// call super so everything else is set up...
 	if ((self = [super initWithWindow:panel andPlugin:aPlugin])) {

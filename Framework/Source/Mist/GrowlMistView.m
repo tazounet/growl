@@ -17,17 +17,17 @@
 - (id)initWithFrame:(NSRect)frame {
    self = [super initWithFrame:frame];
    if (self) {
-      clipPath = [NSBezierPath bezierPathWithRoundedRect:[self bounds] xRadius:8 yRadius:8];
-      NSRect insetRect = NSInsetRect([self bounds], 1, 1);
+      clipPath = [NSBezierPath bezierPathWithRoundedRect:self.bounds xRadius:8 yRadius:8];
+      NSRect insetRect = NSInsetRect(self.bounds, 1, 1);
       strokePath = [NSBezierPath bezierPathWithRoundedRect:insetRect xRadius:8 yRadius:8];
       NSMutableParagraphStyle *titleParaStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopyWithZone:nil];
-      [titleParaStyle setLineBreakMode:NSLineBreakByTruncatingTail];
+      titleParaStyle.lineBreakMode = NSLineBreakByTruncatingTail;
       notificationTitleFont = [NSFont boldSystemFontOfSize:MIST_TITLE_SIZE];
-      notificationTitleAttrs = [[NSDictionary alloc] initWithObjectsAndKeys:notificationTitleFont,NSFontAttributeName,[NSColor whiteColor],NSForegroundColorAttributeName,titleParaStyle,NSParagraphStyleAttributeName,nil];
+      notificationTitleAttrs = @{NSFontAttributeName: notificationTitleFont,NSForegroundColorAttributeName: [NSColor whiteColor],NSParagraphStyleAttributeName: titleParaStyle};
       notificationTextFont = [NSFont systemFontOfSize:MIST_TEXT_SIZE];
-      notificationTextAttrs = [[NSDictionary alloc] initWithObjectsAndKeys:notificationTextFont,NSFontAttributeName,[NSColor whiteColor],NSForegroundColorAttributeName,nil];
+      notificationTextAttrs = @{NSFontAttributeName: notificationTextFont,NSForegroundColorAttributeName: [NSColor whiteColor]};
       
-      trackingArea = [[NSTrackingArea alloc] initWithRect:[self bounds] options:(NSTrackingMouseEnteredAndExited | NSTrackingActiveAlways) owner:self userInfo:nil];
+      trackingArea = [[NSTrackingArea alloc] initWithRect:self.bounds options:(NSTrackingMouseEnteredAndExited | NSTrackingActiveAlways) owner:self userInfo:nil];
       [self addTrackingArea:trackingArea];
    }
    return self;
@@ -44,15 +44,15 @@
 
 - (void)setFrame:(NSRect)frameRect
 {
-   [super setFrame:frameRect];
+   super.frame = frameRect;
    
-   clipPath = [NSBezierPath bezierPathWithRoundedRect:[self bounds] xRadius:8 yRadius:8];
+   clipPath = [NSBezierPath bezierPathWithRoundedRect:self.bounds xRadius:8 yRadius:8];
    
-   NSRect insetRect = NSInsetRect([self bounds], 1, 1);
+   NSRect insetRect = NSInsetRect(self.bounds, 1, 1);
    strokePath = [NSBezierPath bezierPathWithRoundedRect:insetRect xRadius:8 yRadius:8];
    
    [self removeTrackingArea:trackingArea];
-   trackingArea = [[NSTrackingArea alloc] initWithRect:[self bounds] options:(NSTrackingMouseEnteredAndExited | NSTrackingActiveAlways) owner:self userInfo:nil];
+   trackingArea = [[NSTrackingArea alloc] initWithRect:self.bounds options:(NSTrackingMouseEnteredAndExited | NSTrackingActiveAlways) owner:self userInfo:nil];
    [self addTrackingArea:trackingArea];
 }
 
@@ -67,7 +67,7 @@
 - (void)sizeToFit {
    NSRect imageRect = NSZeroRect;
    if (notificationImage) {
-      imageRect.size = [notificationImage size];
+      imageRect.size = notificationImage.size;
    }
    
    NSRect titleRect = NSZeroRect;
@@ -89,7 +89,7 @@
    if (myFrame.size.height < (MIST_IMAGE_DIM + (MIST_PADDING * 2)))
       myFrame.size.height = MIST_IMAGE_DIM + (MIST_PADDING * 2);
    
-   [self setFrame:myFrame];
+   self.frame = myFrame;
 }
 
 - (void)drawRect:(NSRect)rect {
@@ -105,14 +105,14 @@
    
    if (selected) {
       [[NSColor whiteColor] set];
-      [strokePath setLineWidth:3.0f];
+      strokePath.lineWidth = 3.0f;
       [strokePath stroke];
    }
    
    // Draw image.
    NSRect imageRect = NSZeroRect;
    if (notificationImage) {
-      imageRect.size = [notificationImage size];
+      imageRect.size = notificationImage.size;
       imageRect.origin.x = self.bounds.origin.x + MIST_PADDING;
       imageRect.origin.y = self.bounds.origin.y + MIST_PADDING;
       [notificationImage drawInRect:imageRect];
@@ -151,24 +151,24 @@
 - (void)mouseEntered:(NSEvent *)theEvent {
    selected = YES;
    [self setNeedsDisplay:YES];
-   if ([[self delegate] respondsToSelector:@selector(mistViewSelected:)])
-      [[self delegate] mistViewSelected:YES];
+   if ([self.delegate respondsToSelector:@selector(mistViewSelected:)])
+      [self.delegate mistViewSelected:YES];
 }
 
 - (void)mouseExited:(NSEvent *)theEvent {
    selected = NO;
    [self setNeedsDisplay:YES];
-   if ([[self delegate] respondsToSelector:@selector(mistViewSelected:)])
-      [[self delegate] mistViewSelected:NO];
+   if ([self.delegate respondsToSelector:@selector(mistViewSelected:)])
+      [self.delegate mistViewSelected:NO];
 }
 
 - (void)mouseDown:(NSEvent *)theEvent {
-   if(([theEvent modifierFlags] & NSAlternateKeyMask) != 0){
-      if([[self delegate] respondsToSelector:@selector(closeAllNotifications)])
-         [[self delegate] closeAllNotifications];
+   if((theEvent.modifierFlags & NSEventModifierFlagOption) != 0){
+      if([self.delegate respondsToSelector:@selector(closeAllNotifications)])
+         [self.delegate closeAllNotifications];
    }else{
-      if ([[self delegate] respondsToSelector:@selector(mistViewDismissed:)])
-         [[self delegate] mistViewDismissed:NO];
+      if ([self.delegate respondsToSelector:@selector(mistViewDismissed:)])
+         [self.delegate mistViewDismissed:NO];
    }
 }
 

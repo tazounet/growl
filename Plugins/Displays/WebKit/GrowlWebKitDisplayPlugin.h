@@ -13,6 +13,7 @@
 	NSString    *style;
 }
 
-- (id) initWithStyleBundle:(NSBundle *)styleBundle;
+- (instancetype) initWithName:(NSString *)name author:(NSString *)author version:(NSString *)version pathname:(NSString *)pathname NS_UNAVAILABLE;
+- (instancetype) initWithStyleBundle:(NSBundle *)styleBundle;
 
 @end

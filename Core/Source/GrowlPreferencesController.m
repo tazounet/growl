@@ -73,7 +73,7 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
     return instance;
 }
 
-- (id) init {
+- (instancetype) init {
 	if ((self = [super init])) {
 		[[NSNotificationCenter defaultCenter] addObserver:self
 															  selector:@selector(growlPreferencesChanged:)
@@ -86,7 +86,7 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
 		NSNumber *code = [[NSUserDefaults standardUserDefaults] objectForKey:GrowlRollupKeyComboCode];
 		NSNumber *modifiers = [[NSUserDefaults standardUserDefaults] objectForKey:GrowlRollupKeyComboFlags];
 		if(code && modifiers)
-			self.rollupKeyCombo = [SGKeyCombo keyComboWithKeyCode:[code integerValue] modifiers:[modifiers unsignedIntegerValue]];
+			self.rollupKeyCombo = [SGKeyCombo keyComboWithKeyCode:code.integerValue modifiers:modifiers.unsignedIntegerValue];
 		
 		//configure for close all hotkey
 		[self addObserver:self forKeyPath:@"closeAllCombo" options:NSKeyValueObservingOptionNew context:&self];
@@ -94,7 +94,7 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
 		code = [[NSUserDefaults standardUserDefaults] objectForKey:GrowlCloseAllKeyComboCode];
 		modifiers = [[NSUserDefaults standardUserDefaults] objectForKey:GrowlCloseAllKeyComboFlags];
 		if(code && modifiers)
-			self.closeAllCombo = [SGKeyCombo keyComboWithKeyCode:[code integerValue] modifiers:[modifiers unsignedIntegerValue]];
+			self.closeAllCombo = [SGKeyCombo keyComboWithKeyCode:code.integerValue modifiers:modifiers.unsignedIntegerValue];
 		
 	}
 	return self;
@@ -115,8 +115,8 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
         {
             SGHotKey *hotKey = [[SGHotKey alloc] initWithIdentifier:showHideHotKey keyCombo:self.rollupKeyCombo target:[GrowlApplicationController sharedController] action:@selector(toggleRollup)];
             [[SGHotKeyCenter sharedCenter] registerHotKey:hotKey];
-            [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:self.rollupKeyCombo.keyCode] forKey:GrowlRollupKeyComboCode];
-            [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithUnsignedInteger:self.rollupKeyCombo.modifiers] forKey:GrowlRollupKeyComboFlags];
+            [[NSUserDefaults standardUserDefaults] setObject:@(self.rollupKeyCombo.keyCode) forKey:GrowlRollupKeyComboCode];
+            [[NSUserDefaults standardUserDefaults] setObject:@(self.rollupKeyCombo.modifiers) forKey:GrowlRollupKeyComboFlags];
             [[NSUserDefaults standardUserDefaults] synchronize];
         }
         else
@@ -134,8 +134,8 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
         {
             SGHotKey *hotKey = [[SGHotKey alloc] initWithIdentifier:closeAllHotKey keyCombo:self.closeAllCombo target:[GrowlApplicationController sharedController] action:@selector(closeAllNotifications)];
             [[SGHotKeyCenter sharedCenter] registerHotKey:hotKey];
-            [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:self.closeAllCombo.keyCode] forKey:GrowlCloseAllKeyComboCode];
-            [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithUnsignedInteger:self.closeAllCombo.modifiers] forKey:GrowlCloseAllKeyComboFlags];
+            [[NSUserDefaults standardUserDefaults] setObject:@(self.closeAllCombo.keyCode) forKey:GrowlCloseAllKeyComboCode];
+            [[NSUserDefaults standardUserDefaults] setObject:@(self.closeAllCombo.modifiers) forKey:GrowlCloseAllKeyComboFlags];
             [[NSUserDefaults standardUserDefaults] synchronize];
         }
         else
@@ -153,7 +153,7 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
 
 - (void) registerDefaults:(NSDictionary *)inDefaults {
 	NSUserDefaults *helperAppDefaults = [[NSUserDefaults alloc] init];
-	[helperAppDefaults addSuiteNamed:GROWL_HELPERAPP_BUNDLE_IDENTIFIER];
+	//[helperAppDefaults addSuiteNamed:GROWL_GROUP_IDENTIFIER];
 	NSDictionary *existing = [helperAppDefaults persistentDomainForName:GROWL_HELPERAPP_BUNDLE_IDENTIFIER];
 	if (existing) {
 		NSMutableDictionary *domain = [inDefaults mutableCopy];
@@ -183,7 +183,7 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
 	[[NSUserDefaults standardUserDefaults] synchronize];
 
 	int pid = getpid();
-	NSDictionary *userInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:pid] forKey:@"pid"];	
+	NSDictionary *userInfo = @{@"pid": @(pid)};	
 	[[NSNotificationCenter defaultCenter] postNotificationName:GrowlPreferencesChanged object:key userInfo:userInfo];
 }
 
@@ -192,7 +192,7 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
 }
 
 - (void) setBool:(BOOL)value forKey:(NSString *)key {
-	NSNumber *object = [[NSNumber alloc] initWithBool:value];
+	NSNumber *object = @(value);
 	[self setObject:object forKey:key];
 }
 
@@ -202,7 +202,7 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
 
 - (void) setInteger:(CFIndex)value forKey:(NSString *)key {
 #ifdef __LP64__
-	NSNumber *object = [[NSNumber alloc] initWithInteger:value];
+	NSNumber *object = @(value);
 #else
 	NSNumber *object = [[NSNumber alloc] initWithInt:value];
 #endif
@@ -217,7 +217,7 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
 
 - (void)setUnsignedShort:(unsigned short)theShort forKey:(NSString *)key
 {
-	[self setObject:[NSNumber numberWithUnsignedShort:theShort] forKey:key];
+	[self setObject:@(theShort) forKey:key];
 }
 
 #pragma mark -
@@ -278,7 +278,7 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
     [self setBool:squelch forKey:GrowlSquelchMode];
     [self didChangeValueForKey:@"squelchMode"];
    
-   if(!squelch && [[GrowlNotificationDatabase sharedInstance] notificationsWhileAway] && [self isRollupAutomatic]){
+   if(!squelch && [GrowlNotificationDatabase sharedInstance].notificationsWhileAway && self.isRollupAutomatic){
        [self setRollupShown:YES];
    }
 }
@@ -326,9 +326,9 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
 #pragma mark Idle Detection
 
 -(void)updateIdleThreshold {
-	NSTimeInterval threshold = [idleThreshold doubleValue];
+	NSTimeInterval threshold = idleThreshold.doubleValue;
 	threshold *= (NSTimeInterval)idleMultiplier;
-	[[GrowlIdleStatusObserver sharedObserver] setValue:[NSNumber numberWithDouble:threshold] forKey:@"idleThreshold"];
+	[[GrowlIdleStatusObserver sharedObserver] setValue:@(threshold) forKey:@"idleThreshold"];
 }
 
 - (void) setIdleThreshold:(NSNumber*)value {
@@ -346,17 +346,17 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
 - (void) setUseIdleByTime:(BOOL)value	{
 	useIdleByTime = value;
 	[self setBool:value forKey:GrowlIdleByTimeKey];
-	[[GrowlIdleStatusObserver sharedObserver] setValue:[NSNumber numberWithBool:value] forKey:@"useTime"];
+	[[GrowlIdleStatusObserver sharedObserver] setValue:@(value) forKey:@"useTime"];
 }
 - (void) setUseIdleByScreensaver:(BOOL)value {
 	useIdleByScreensaver = value;
 	[self setBool:value forKey:GrowlIdleByScreensaverKey];
-	[[GrowlIdleStatusObserver sharedObserver] setValue:[NSNumber numberWithBool:value] forKey:@"useScreensaver"];
+	[[GrowlIdleStatusObserver sharedObserver] setValue:@(value) forKey:@"useScreensaver"];
 }
 - (void) setUseIdleByScreenLock:(BOOL)value	{
 	useIdleByScreenLock = value;
 	[self setBool:value forKey:GrowlIdleByScreenLockKey];
-	[[GrowlIdleStatusObserver sharedObserver] setValue:[NSNumber numberWithBool:value] forKey:@"useLock"];
+	[[GrowlIdleStatusObserver sharedObserver] setValue:@(value) forKey:@"useLock"];
 }
 
 - (void)setIdleTimeExceptionApps:(NSArray *)array {
@@ -376,13 +376,13 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
 }
 
 - (void) setMenuNumber:(NSNumber*)state{
-   [self setMenuState:[state integerValue]];
+   self.menuState = state.integerValue;
 }
 - (NSInteger) menuState {
    return [self integerForKey:GrowlMenuState];
 }
 - (void) setMenuState:(NSInteger)state {
-   NSInteger current = [self menuState];
+   NSInteger current = self.menuState;
    if(state == current)
       return;
    
@@ -395,26 +395,29 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
       case GrowlDockMenu:
       case GrowlBothMenus:
          [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
-         [[NSApp dockTile] setBadgeLabel:nil];
+         [NSApp.dockTile setBadgeLabel:nil];
          break;
       case GrowlNoMenu:
-         if(![self isBackgroundAllowed]){
-            NSAlert *alert = [NSAlert alertWithMessageText:NSLocalizedString(@"Warning! Enabling this option will cause Growl to run in the background", nil)
-                                             defaultButton:NSLocalizedString(@"Ok", nil)
-                                           alternateButton:NSLocalizedString(@"Cancel", nil)
-                                               otherButton:nil
-                                 informativeTextWithFormat:NSLocalizedString(@"Enabling this option will cause Growl to run without showing a dock icon or a menu item.\n\nTo access preferences, tap Growl in Launchpad, or open Growl in Finder.", nil)];
+         if(!self.isBackgroundAllowed){
+            NSAlert *alert = [[NSAlert alloc] init];
+            [alert setMessageText:NSLocalizedString(@"Warning! Enabling this option will cause Growl to run in the background", nil)];
+            [alert addButtonWithTitle:NSLocalizedString(@"Ok", nil)];
+            [alert addButtonWithTitle:NSLocalizedString(@"Cancel", nil)];
+            [alert setInformativeText:NSLocalizedString(@"Enabling this option will cause Growl to run without showing a dock icon or a menu item.\n\nTo access preferences, tap Growl in Launchpad, or open Growl in Finder.", nil)];
+             
+            alert.alertStyle = NSAlertStyleWarning;
             [alert setShowsSuppressionButton:YES];
+             
             NSInteger allow = [alert runModal];
-            BOOL suppress = [[alert suppressionButton] state] == NSOnState;
+            BOOL suppress = alert.suppressionButton.state == NSOnState;
             if(suppress)
                [self setBackgroundAllowed:YES];
             
-            if(allow == NSAlertDefaultReturn)
+            if(allow == NSAlertFirstButtonReturn)
                [self removeDockMenu];
             else{
                //While the state will already be reset below, we call the new setMenuNumber with our current, and thats enough to trigger the menu updating
-               [self performSelector:@selector(setMenuNumber:) withObject:[NSNumber numberWithInteger:current] afterDelay:0];
+               [self performSelector:@selector(setMenuNumber:) withObject:@(current) afterDelay:0];
                state = current;
             }
          }else
@@ -432,7 +435,7 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
 
 - (void)removeDockMenu {
    //We can't actually remove the dock menu without restarting, inform the user.
-   if([self menuState] != GrowlDockMenu && [self menuState] != GrowlBothMenus)
+   if(self.menuState != GrowlDockMenu && self.menuState != GrowlBothMenus)
       return;
 
 /*   if(![self boolForKey:GrowlRelaunchWarnSuppress]){
@@ -467,7 +470,7 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
    return [self boolForKey:GrowlRollupShown];
 }
 - (void) setRollupShown:(BOOL)shown {
-   if(shown && ![self isRollupShown] && ![self isRollupEnabled])
+   if(shown && !self.isRollupShown && !self.isRollupEnabled)
       shown = NO;
    [self setBool:shown forKey:GrowlRollupShown];
    if (shown) {
@@ -594,7 +597,7 @@ unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key)
  */
 - (void) growlPreferencesChanged:(NSNotification *)notification {
 	@autoreleasepool {
-        NSString *object = [notification object];
+        NSString *object = notification.object;
     //	NSLog(@"%s: %@\n", __func__, object);
         if (!object || [object isEqualToString:GrowlDisplayPluginKey]) {
             [self willChangeValueForKey:@"defaultDisplayPluginName"];

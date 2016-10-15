@@ -49,16 +49,16 @@
    return instance;
 }
 
--(id)init {
+-(instancetype)init {
    if((self = [super init])) {
       self.preferences = [GrowlPreferencesController sharedController];
       
 		self.attemptArray = [NSMutableArray array];
 		
-      self.subscriberID = [preferences GNTPSubscriberID];
+      self.subscriberID = preferences.GNTPSubscriberID;
       if(!subscriberID || [subscriberID isEqualToString:@""]) {
-         self.subscriberID = [[NSProcessInfo processInfo] globallyUniqueString];
-         [preferences setGNTPSubscriberID:subscriberID];
+         self.subscriberID = [NSProcessInfo processInfo].globallyUniqueString;
+         preferences.GNTPSubscriberID = subscriberID;
       }
       
       self.remoteSubscriptions = [NSMutableDictionary dictionary];
@@ -67,28 +67,28 @@
       [remoteItems enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
          //init a subscriber item, check if its still valid, and add it
          GNTPSubscriberEntry *entry = [[GNTPSubscriberEntry alloc] initWithDictionary:obj];
-         if([[NSDate date] compare:[NSDate dateWithTimeInterval:[entry timeToLive] sinceDate:[entry initialTime]]] != NSOrderedDescending)
-            [blockRemote setValue:entry forKey:[entry subscriberID]];
+         if([[NSDate date] compare:[NSDate dateWithTimeInterval:entry.timeToLive sinceDate:entry.initialTime]] != NSOrderedDescending)
+            [blockRemote setValue:entry forKey:entry.subscriberID];
          else
             [entry invalidate];
       }];
       
       //We had some subscriptions that have lapsed, remove them
-      if([[remoteSubscriptions allValues] count] < [remoteItems count])
+      if(remoteSubscriptions.allValues.count < remoteItems.count)
          [self saveSubscriptions:YES];
       
       NSArray *localItems = [preferences objectForKey:@"GrowlLocalSubscriptions"];
-      self.localSubscriptions = [NSMutableArray arrayWithCapacity:[localItems count]];
+      self.localSubscriptions = [NSMutableArray arrayWithCapacity:localItems.count];
       __weak NSMutableArray *blockLocal = self.localSubscriptions;
       [localItems enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
          GNTPSubscriberEntry *entry = [[GNTPSubscriberEntry alloc] initWithDictionary:obj];
          
          //If someone deleted the GNTPSubscriptionID key in the plist, this will make sure they got updated
-         if(![[entry subscriberID] isEqualToString:subscriberID])
-            [entry setSubscriberID:subscriberID];
+         if(![entry.subscriberID isEqualToString:subscriberID])
+            entry.subscriberID = subscriberID;
             
          [blockLocal addObject:entry];
-         if([entry use]){
+         if(entry.use){
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                //attempt to renew the subscription with the remote machine, 
                [entry subscribe];
@@ -128,13 +128,13 @@
    NSString *saveKey;
    NSArray *toSave;
    if(remote) {
-      toSave = [[remoteSubscriptions allValues] copy];
+      toSave = [remoteSubscriptions.allValues copy];
       saveKey = @"GrowlRemoteSubscriptions";
    } else {
       toSave = [localSubscriptions copy];
       saveKey = @"GrowlLocalSubscriptions";
    }
-   __weak NSMutableArray *saveItems = [NSMutableArray arrayWithCapacity:[toSave count]];
+   __weak NSMutableArray *saveItems = [NSMutableArray arrayWithCapacity:toSave.count];
    [toSave enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
       NSDictionary *dict = [obj dictionaryRepresentation];
       if(dict)
@@ -148,7 +148,7 @@
    if(![packet isKindOfClass:[GNTPSubscribePacket class]])
       return NO;
 
-   GNTPSubscriberEntry *entry = [remoteSubscriptions valueForKey:[[packet gntpDictionary] objectForKey:GrowlGNTPSubscriberID]];
+   GNTPSubscriberEntry *entry = [remoteSubscriptions valueForKey:packet.gntpDictionary[GrowlGNTPSubscriberID]];
    if(entry){
       //We need to update the entry
       [self willChangeValueForKey:@"remoteSubscriptionsArray"];
@@ -158,7 +158,7 @@
       //We need to try creating the entry
       entry = [[GNTPSubscriberEntry alloc] initWithPacket:packet];
       [self willChangeValueForKey:@"remoteSubscriptionsArray"];
-      [remoteSubscriptions setValue:entry forKey:[entry subscriberID]];
+      [remoteSubscriptions setValue:entry forKey:entry.subscriberID];
       [entry updateRemoteWithPacket:packet];
       [self didChangeValueForKey:@"remoteSubscriptionsArray"];
    }
@@ -173,7 +173,7 @@
                                                                addressString:nil
                                                                       domain:@"local."
                                                                      address:nil
-                                                                        uuid:[[NSProcessInfo processInfo] globallyUniqueString]
+                                                                        uuid:[NSProcessInfo processInfo].globallyUniqueString
                                                                 subscriberID:subscriberID
                                                                       remote:NO
                                                                       manual:YES
@@ -196,10 +196,10 @@
 }
 
 -(BOOL)removeLocalSubscriptionAtIndex:(NSUInteger)index {
-   if(index >= [localSubscriptions count])
+   if(index >= localSubscriptions.count)
       return NO;
    [self willChangeValueForKey:@"localSubscriptions"];
-   [GrowlKeychainUtilities removePasswordForService:@"GrowlLocalSubscriber" accountName:[[localSubscriptions objectAtIndex:index] uuid]];
+   [GrowlKeychainUtilities removePasswordForService:@"GrowlLocalSubscriber" accountName:[localSubscriptions[index] uuid]];
    [localSubscriptions removeObjectAtIndex:index];
    [self didChangeValueForKey:@"localSubscriptions"];
    [self saveSubscriptions:NO];
@@ -251,9 +251,9 @@
          NSData *coercedAddress = [GrowlNetworkUtilities addressData:[obj lastKnownAddress] coercedToPort:[obj subscriberPort]];
          if(coercedAddress){
             NSMutableDictionary *sendingDetails = [NSMutableDictionary dictionary];
-            [sendingDetails setObject:coercedAddress forKey:@"GNTPAddressData"];
-            if([preferences remotePassword])
-               [sendingDetails setObject:[NSString stringWithFormat:@"%@%@", [preferences remotePassword], [obj subscriberID]] forKey:@"GNTPPassword"];
+            sendingDetails[@"GNTPAddressData"] = coercedAddress;
+            if(preferences.remotePassword)
+               sendingDetails[@"GNTPPassword"] = [NSString stringWithFormat:@"%@%@", preferences.remotePassword, [obj subscriberID]];
             [hostResults addObject:sendingDetails];
          }
       }];
@@ -264,13 +264,13 @@
 -(void)forwardDictionary:(NSDictionary*)dict isRegistration:(BOOL)registration toSubscriberIDs:(NSArray*)entryIDs {
    __weak GNTPSubscriptionController *blockSubscriber = self;
    if(!registration){
-      NSMutableArray *keys = [[dict allKeys] mutableCopy];
+      NSMutableArray *keys = [dict.allKeys mutableCopy];
       [keys removeObject:GROWL_NOTIFICATION_ALREADY_SHOWN];
       dict = [dict dictionaryWithValuesForKeys:keys];
    }
    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
       NSArray *sendingDetails = nil;
-      if(!entryIDs || [entryIDs count] == 0){
+      if(!entryIDs || entryIDs.count == 0){
          sendingDetails = [self sendingDetaulsForEnabledHosts];
       }else{
          sendingDetails = [self sendingDetailsForBrowserEntryIDs:entryIDs];
@@ -282,11 +282,11 @@
          }else{
             attempt = [[GrowlXPCNotificationAttempt alloc] initWithDictionary:dict];
          }
-         [attempt setSendingDetails:obj];
-         [attempt setDelegate:blockSubscriber];
+         attempt.sendingDetails = obj;
+         attempt.delegate = blockSubscriber;
          dispatch_async(dispatch_get_main_queue(), ^{
 				//send note
-				[[blockSubscriber attemptArray] addObject:attempt];
+				[blockSubscriber.attemptArray addObject:attempt];
 				[attempt begin];
          });
       }];
@@ -295,19 +295,19 @@
 
 - (void)forwardNotification:(NSDictionary *)dict
 {
-   if([preferences isSubscriptionAllowed])
+   if(preferences.isSubscriptionAllowed)
       [self forwardDictionary:dict isRegistration:NO toSubscriberIDs:nil];
 }
 
 - (void)appRegistered:(NSNotification*)dict
 {
-   if([preferences isSubscriptionAllowed])
-      [self forwardRegistration:[dict userInfo]];
+   if(preferences.isSubscriptionAllowed)
+      [self forwardRegistration:dict.userInfo];
 }
 
 - (void)forwardRegistration:(NSDictionary *)dict
 {
-   if([preferences isSubscriptionAllowed])
+   if(preferences.isSubscriptionAllowed)
       [self forwardDictionary:dict isRegistration:YES toSubscriberIDs:nil];
 }
 
@@ -315,7 +315,7 @@
 
 -(NSArray*)remoteSubscriptionsArray
 {
-    return [remoteSubscriptions allValues];
+    return remoteSubscriptions.allValues;
 }
 
 #pragma mark Bonjour Browser notification methods
@@ -334,7 +334,7 @@
       if(![obj use] && ![obj password] && ![currentNames containsObject:[obj computerName]])
          [toRemove addObject:obj];
    }];
-   if([toRemove count] > 0){
+   if(toRemove.count > 0){
       [self willChangeValueForKey:@"localSubscriptions"];
       [localSubscriptions removeObjectsInArray:toRemove];
       [self didChangeValueForKey:@"localSubscriptions"];
@@ -345,8 +345,8 @@
 -(void)serviceFound:(NSNotification*)note
 {
 	// check if a computer with this name has already been added
-   NSNetService *aNetService = [[note userInfo] valueForKey:GNTPServiceKey];
-	NSString *name = [aNetService name];
+   NSNetService *aNetService = [note.userInfo valueForKey:GNTPServiceKey];
+	NSString *name = aNetService.name;
 	__block GNTPSubscriberEntry *entry = nil;
    [localSubscriptions enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
       if(![obj isKindOfClass:[GNTPSubscriberEntry class]])
@@ -362,15 +362,15 @@
       return;
    
 	// don't add the local machine    
-   if([name isLocalHost])
+   if(name.isLocalHost)
       return;
    
 	// add a new entry at the end
 	entry = [[GNTPSubscriberEntry alloc] initWithName:name
                                        addressString:nil
-                                              domain:[aNetService domain]
+                                              domain:aNetService.domain
                                              address:nil
-                                                uuid:[[NSProcessInfo processInfo] globallyUniqueString]
+                                                uuid:[NSProcessInfo processInfo].globallyUniqueString
                                         subscriberID:subscriberID
                                               remote:NO
                                               manual:NO
@@ -385,10 +385,10 @@
 
 -(void)serviceRemoved:(NSNotification*)note
 {
-   NSNetService *aNetService = [[note userInfo] valueForKey:GNTPServiceKey];
+   NSNetService *aNetService = [note.userInfo valueForKey:GNTPServiceKey];
    NSArray *destinationNames = [[self.preferences objectForKey:@"GrowlLocalSubscriptions"] valueForKey:@"computerName"];
 	__block GNTPSubscriberEntry *toRemove = nil;
-	NSString *name = [aNetService name];
+	NSString *name = aNetService.name;
    [localSubscriptions enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
       if(![obj isKindOfClass:[GNTPSubscriberEntry class]])
          return;
@@ -415,11 +415,11 @@
 
 - (void) attemptDidSucceed:(GrowlCommunicationAttempt *)attempt {
 	__weak GNTPSubscriptionController *blockSubscriber = self;
-	if([attempt attemptType] == GrowlCommunicationAttemptTypeRegister){
+	if(attempt.attemptType == GrowlCommunicationAttemptTypeRegister){
 		//Not the most efficient way to do this, we could probably add in checks about whether the succesfull registration had anything to do with the queued notes
 		dispatch_async(dispatch_get_main_queue(), ^{
-			if([blockSubscriber attemptQueue]){
-				[[blockSubscriber attemptQueue] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+			if(blockSubscriber.attemptQueue){
+				[blockSubscriber.attemptQueue enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 					if([obj isKindOfClass:[NSDictionary class]])
 						[blockSubscriber forwardNotification:obj];
 				}];
@@ -430,11 +430,11 @@
 }
 - (void) attemptDidFail:(GrowlCommunicationAttempt *)attempt {
 	__weak GNTPSubscriptionController *blockSubscriber = self;
-	if([attempt attemptType] == GrowlCommunicationAttemptTypeRegister){
+	if(attempt.attemptType == GrowlCommunicationAttemptTypeRegister){
 		//Not the most efficient way to do this, we could probably add in checks about whether the succesfull registration had anything to do with the queued notes
 		dispatch_async(dispatch_get_main_queue(), ^{
-			if([blockSubscriber attemptQueue]){
-				NSLog(@"Failed to register with %lu notes in the queue", [[blockSubscriber attemptQueue] count]);
+			if(blockSubscriber.attemptQueue){
+				NSLog(@"Failed to register with %lu notes in the queue", blockSubscriber.attemptQueue.count);
 				[blockSubscriber setAttemptQueue:nil];
 			}
 		});
@@ -443,23 +443,23 @@
 - (void) finishedWithAttempt:(GrowlCommunicationAttempt *)attempt {
 	__weak GNTPSubscriptionController *blockSubscriber = self;
 	dispatch_async(dispatch_get_main_queue(), ^{
-		[[blockSubscriber	attemptArray] removeObject:attempt];
+		[blockSubscriber.attemptArray removeObject:attempt];
 	});
 }
 - (void) queueAndReregister:(GrowlCommunicationAttempt *)attempt {
 	__weak GNTPSubscriptionController *blockSubscriber = self;
 	dispatch_async(dispatch_get_main_queue(), ^{
-		NSString *appName = [[attempt dictionary] valueForKey:GROWL_APP_NAME];
+		NSString *appName = [attempt.dictionary valueForKey:GROWL_APP_NAME];
 		GrowlTicketDatabaseApplication *ticket = [[GrowlTicketDatabase sharedInstance] ticketForApplicationName:appName hostName:nil];
-		NSDictionary *dictionary = [ticket registrationFormatDictionary];
+		NSDictionary *dictionary = ticket.registrationFormatDictionary;
 		//We should have a dictionary, but just to be safe
 		if(dictionary){
 			[blockSubscriber forwardRegistration:dictionary];
-			if(![blockSubscriber attemptQueue]){
-				[blockSubscriber setAttemptQueue:[NSMutableArray array]];
+			if(!blockSubscriber.attemptQueue){
+				blockSubscriber.attemptQueue = [NSMutableArray array];
 			}
-			[[blockSubscriber attemptQueue] addObject:[attempt dictionary]];
-			[[blockSubscriber attemptArray] removeObject:attempt];
+			[blockSubscriber.attemptQueue addObject:attempt.dictionary];
+			[blockSubscriber.attemptArray removeObject:attempt];
 		}
 	});
 }

@@ -103,11 +103,11 @@ NSString* const SMTPMessageKey = @"SMTPMessage";
 	NSString* subject = [params objectForKey:SMTPSubjectKey ofClass:NSString.class];
 	NSString* message = [params objectForKey:SMTPMessageKey ofClass:NSString.class];
 	
-	BOOL auth = [serverAuthFlag boolValue];
+	BOOL auth = serverAuthFlag.boolValue;
 	
 	SMTPClient *client = [[self class] clientWithServerAddress:serverAddress 
 																		  ports:serverPorts 
-																		tlsMode:[serverTlsMode integerValue] 
+																		tlsMode:serverTlsMode.integerValue 
 																	  username: auth? serverUsername : nil 
 																	  password: auth? serverPassword : nil]; 
 	[client sendMessage:message 
@@ -129,7 +129,7 @@ NSString* const SMTPMessageKey = @"SMTPMessage";
 															 password:authPassword];
 }
 
--(id)initWithServerAddress:(NSString*)address 
+-(instancetype)initWithServerAddress:(NSString*)address 
 							ports:(NSArray*)ports 
 						 tlsMode:(SMTPClientTLSMode)tlsMode 
 						username:(NSString*)authUsername 
@@ -143,9 +143,9 @@ NSString* const SMTPMessageKey = @"SMTPMessage";
 		//NSAssert(address.length > 0, @"Invalid server address");
 		self.address = address;
 		if (ports.count) self.ports = ports;
-		else self.ports = [NSArray arrayWithObjects:[NSNumber numberWithInteger:25], 
-								 [NSNumber numberWithInteger:465], 
-								 [NSNumber numberWithInteger:587], NULL];
+		else self.ports = @[@25, 
+								 @465, 
+								 @587];
 		self.tlsMode = tlsMode;
 		self.username = authUsername;
 		self.password = authPassword;
@@ -287,7 +287,7 @@ enum {
 	ConnectionStatusClosed = 0, ConnectionStatusConnecting, ConnectionStatusOk
 };
 
--(id)init {
+-(instancetype)init {
 	if ((self = [super init])) {
 		_ibuffer = [[NSMutableData alloc] init];
 		_obuffer = [[NSMutableData alloc] init];
@@ -305,16 +305,16 @@ enum {
         NSInputStream __autoreleasing *localInputStream = nil;
         NSOutputStream __autoreleasing *localOutputStream = nil;
 
-		[NSStream getStreamsToHost:[NSHost hostWithName:self.client.address] 
-									 port:port.integerValue 
-							inputStream:&localInputStream
-						  outputStream:&localOutputStream];
+        [NSStream getStreamsToHostWithName:self.client.address
+                              port:port.integerValue
+                       inputStream:&localInputStream
+                      outputStream:&localOutputStream];
 
         _istream = localInputStream;
         _ostream = localOutputStream;
 
-		[_istream setDelegate:self];
-		[_ostream setDelegate:self];
+		_istream.delegate = self;
+		_ostream.delegate = self;
 		[_istream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
 		[_ostream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
 		
@@ -344,8 +344,8 @@ enum {
 	//  NSLog(@"StartTLS with %@", self.client.address);
 	NSMutableDictionary* settings = [NSMutableDictionary dictionary];
 	self.connectionStatus = ConnectionStatusConnecting;
-	[settings setObject:NSStreamSocketSecurityLevelNegotiatedSSL forKey:(NSString*)kCFStreamSSLLevel];
-	[settings setObject:self.client.address forKey:(NSString*)kCFStreamSSLPeerName];
+	settings[(NSString*)kCFStreamSSLLevel] = NSStreamSocketSecurityLevelNegotiatedSSL;
+	settings[(NSString*)kCFStreamSSLPeerName] = self.client.address;
 	[_istream setProperty:settings forKey:(NSString*)kCFStreamPropertySSLSettings];
 	[_ostream setProperty:settings forKey:(NSString*)kCFStreamPropertySSLSettings];
 	[_istream open];
@@ -404,7 +404,7 @@ enum {
 		
 	}
 	
-	if (stream == _ostream && event == NSStreamEventHasSpaceAvailable && [_obuffer length]) {
+	if (stream == _ostream && event == NSStreamEventHasSpaceAvailable && _obuffer.length) {
 		if (_isTLS && self.connectionStatus == ConnectionStatusConnecting)
 			self.connectionStatus = ConnectionStatusOk;
 		[self performSelector:@selector(trySendingDataNow) withObject:nil afterDelay:0];
@@ -515,8 +515,8 @@ CramMD5AUTH
 	
 	_handleOpenCompleted = 0;
 	self.connectionStatus = ConnectionStatusClosed;
-	[_ibuffer setLength:0];
-	[_obuffer setLength:0];
+	_ibuffer.length = 0;
+	_obuffer.length = 0;
 	_isTLS = NO;
 	
 	self.smtpStatus = InitialStatus;
@@ -530,8 +530,9 @@ CramMD5AUTH
 	
 	NSData* secretData = [secretString dataUsingEncoding:NSUTF8StringEncoding];
 	if (secretData.length > 64)
-		secretData = [secretData md5];
-	[secretData getBytes:ipad];
+		secretData = secretData.md5;
+	[secretData getBytes:ipad
+                  length:64];
 	memset(&ipad[secretData.length], 0, 64-secretData.length);
 	memcpy(opad, ipad, 64);
 	for (NSInteger i = 0; i < 64; ++i) {
@@ -543,15 +544,15 @@ CramMD5AUTH
 	NSMutableData* r1 = [NSMutableData dataWithBytes:opad length:64];
 	NSMutableData* r2 = [NSMutableData dataWithBytes:ipad length:64];
 	[r2 appendData:[challengeString dataUsingEncoding:NSUTF8StringEncoding]];
-	[r1 appendData:[r2 md5]];
-	return [[r1 md5] hex];
+	[r1 appendData:r2.md5];
+	return r1.md5.hex;
 }
 
 +(NSString*)_hostname {
 	char hostname[128];
 	gethostname(hostname, 127);
 	hostname[127] = 0;
-	NSString* string = [NSString stringWithCString:hostname encoding:NSUTF8StringEncoding];
+	NSString* string = @(hostname);
 	if (![string rangeOfString:@"."].length) string = [string stringByAppendingString:@".local"];
 	return string;
 }
@@ -591,7 +592,7 @@ CramMD5AUTH
 			self.smtpSubstatus = CramMD5AUTH;
 		}
 		else if ([self.authModes containsObject:@"PLAIN"]) {
-			[self writeLine:[@"AUTH PLAIN " stringByAppendingString:[[[NSString stringWithFormat:@"%@\0%@\0%@", self.client.username, self.client.username, self.client.password] dataUsingEncoding:NSUTF8StringEncoding] base64]]];
+			[self writeLine:[@"AUTH PLAIN " stringByAppendingString:[[NSString stringWithFormat:@"%@\0%@\0%@", self.client.username, self.client.username, self.client.password] dataUsingEncoding:NSUTF8StringEncoding].base64]];
 			self.smtpStatus = StatusAUTH;
 			self.smtpSubstatus = PlainAUTH;
 		}
@@ -680,10 +681,10 @@ CramMD5AUTH
 						case 334:
 							message = [[NSString alloc] initWithData:[NSData dataWithBase64:message] encoding:NSUTF8StringEncoding];
 							if ([message isEqualToString:@"Username:"]) {
-								[self writeLine:[[self.client.username dataUsingEncoding:NSUTF8StringEncoding] base64]];
+								[self writeLine:[self.client.username dataUsingEncoding:NSUTF8StringEncoding].base64];
 								return;
 							} else if ([message isEqualToString:@"Password:"]) {
-								[self writeLine:[[self.client.password dataUsingEncoding:NSUTF8StringEncoding] base64]];
+								[self writeLine:[self.client.password dataUsingEncoding:NSUTF8StringEncoding].base64];
 								return;
 							}
 						case 235:
@@ -695,7 +696,7 @@ CramMD5AUTH
 						case 334: {
 							message = [[NSString alloc] initWithData:[NSData dataWithBase64:message] encoding:NSUTF8StringEncoding];
 							NSString* temp = [NSString stringWithFormat:@"%@ %@", self.client.username, [[self class] CramMD5:message key:self.client.password]];
-							[self writeLine:[[temp dataUsingEncoding:NSUTF8StringEncoding] base64]];
+							[self writeLine:[temp dataUsingEncoding:NSUTF8StringEncoding].base64];
 							return;
 						} break;
 						case 235:
@@ -709,7 +710,7 @@ CramMD5AUTH
 			switch (code) {
 				case 250:
 					for (NSArray* ito in self.to) {
-						NSString* to = [ito objectAtIndex:0];
+						NSString* to = ito[0];
 						if ([to rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]].location == NSNotFound)
 							to = [NSString stringWithFormat:@"<%@>", to];
 						[self writeLine:[@"RCPT TO: " stringByAppendingString:to]];
@@ -743,7 +744,7 @@ CramMD5AUTH
 					return;
 				case 354:
 					if (self.fromDescription)
-						[self writeLine:[NSString stringWithFormat:@"From: =?UTF-8?B?%@?= <%@>", [[self.fromDescription dataUsingEncoding:NSUTF8StringEncoding] base64], self.from]];
+						[self writeLine:[NSString stringWithFormat:@"From: =?UTF-8?B?%@?= <%@>", [self.fromDescription dataUsingEncoding:NSUTF8StringEncoding].base64, self.from]];
 					else [self writeLine:[NSString stringWithFormat:@"From: %@", self.from]];
 					
 					NSMutableString* to = [NSMutableString string];
@@ -751,19 +752,19 @@ CramMD5AUTH
 						if (to.length)
 							[to appendString:@", "];
 						if (ito.count > 1)
-							[to appendFormat:@"=?UTF-8?B?%@?= <%@>", [[[ito objectAtIndex:1] dataUsingEncoding:NSUTF8StringEncoding] base64], [ito objectAtIndex:0]];
-						else [to appendFormat:@"%@", [ito objectAtIndex:0]];
+							[to appendFormat:@"=?UTF-8?B?%@?= <%@>", [ito[1] dataUsingEncoding:NSUTF8StringEncoding].base64, ito[0]];
+						else [to appendFormat:@"%@", ito[0]];
 					}
 					[self writeLine:[NSString stringWithFormat:@"To: %@", to]];
 					
-					[self writeLine:[NSString stringWithFormat:@"Subject: =?UTF-8?B?%@?=", [[self.subject dataUsingEncoding:NSUTF8StringEncoding] base64]]];
+					[self writeLine:[NSString stringWithFormat:@"Subject: =?UTF-8?B?%@?=", [self.subject dataUsingEncoding:NSUTF8StringEncoding].base64]];
 					[self writeLine:@"Mime-Version: 1.0"];
 					[self writeLine:@"Content-Type: text/html; charset=\"UTF-8\""];
 					[self writeLine:@"Content-Transfer-Encoding: base64"];
 					
 					[self writeLine:@""];
 					
-					[self writeLine:[[self.message dataUsingEncoding:NSUTF8StringEncoding] base64]];
+					[self writeLine:[self.message dataUsingEncoding:NSUTF8StringEncoding].base64];
 					
 					[self writeLine:@"."];
 					
@@ -795,7 +796,7 @@ CramMD5AUTH
 	[line splitStringAtCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@" -"] 
 									 intoChunks:&temp:&message 
 									  separator:&separator];
-	code = [temp integerValue];
+	code = temp.integerValue;
 	
 	NSAssert(code > 0, @"Couldn't parse line");
 	if (code) {
@@ -838,7 +839,7 @@ CramMD5AUTH
 @implementation NSDictionary (SMTP)
 
 -(id)objectForKey:(id)key ofClass:(Class)cl {
-	id obj = [self objectForKey:key];
+	id obj = self[key];
 	if (obj && ![obj isKindOfClass:cl])
 		return nil;
 	return obj;
@@ -855,9 +856,9 @@ CramMD5AUTH
 }
 
 -(NSString*)hex {
-	NSMutableString* stringBuffer = [NSMutableString stringWithCapacity:([self length] * 2)];
-	const unsigned char* dataBuffer = (unsigned char*)[self bytes];
-	for (NSUInteger i = 0; i < [self length]; ++i)
+	NSMutableString* stringBuffer = [NSMutableString stringWithCapacity:(self.length * 2)];
+	const unsigned char* dataBuffer = (unsigned char*)self.bytes;
+	for (NSUInteger i = 0; i < self.length; ++i)
 		[stringBuffer appendFormat:@"%02lX", (unsigned long)dataBuffer[i]];
 	return [stringBuffer copy];
 }
@@ -865,21 +866,21 @@ CramMD5AUTH
 static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 -(NSString*)base64 {
-	if ([self length] == 0)
+	if (self.length == 0)
 		return @"";
 	
-	char *characters = (char*)malloc((([self length] + 2) / 3) * 4);
+	char *characters = (char*)malloc(((self.length + 2) / 3) * 4);
 	if (characters == NULL)
 		return nil;
 	NSUInteger length = 0;
 	
 	NSUInteger i = 0;
-	while (i < [self length])
+	while (i < self.length)
 	{
 		char buffer[3] = {0,0,0};
 		short bufferLength = 0;
-		while (bufferLength < 3 && i < [self length])
-			buffer[bufferLength++] = ((char *)[self bytes])[i++];
+		while (bufferLength < 3 && i < self.length)
+			buffer[bufferLength++] = ((char *)self.bytes)[i++];
 		
 		//  Encode the bytes in the buffer to four characters, including padding "=" characters if necessary.
 		characters[length++] = base64EncodingTable[(buffer[0] & 0xFC) >> 2];
@@ -904,7 +905,7 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 }
 
 -(NSData*)initWithBase64:(NSString*)base64 {
-	if ([base64 length] == 0)
+	if (base64.length == 0)
 		return [NSData data];
 	
 	static char *decodingTable = NULL;
@@ -922,7 +923,7 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 	const char *characters = [base64 cStringUsingEncoding:NSASCIIStringEncoding];
 	if (characters == NULL)     //  Not an ASCII string!
 		return nil;
-	char *bytes = (char*)malloc((([base64 length] + 3) / 4) * 3);
+	char *bytes = (char*)malloc(((base64.length + 3) / 4) * 3);
 	if (bytes == NULL)
 		return nil;
 	NSUInteger length = 0;

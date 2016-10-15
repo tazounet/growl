@@ -45,7 +45,7 @@
 @synthesize newFrame;
 @synthesize deviceID;
 
--(id)initWithScreenFrame:(CGRect)frame {
+-(instancetype)initWithScreenFrame:(CGRect)frame {
 	if((self = [super init])){
 		self.screenFrame = frame;
 		
@@ -112,7 +112,7 @@
 	}];
 	if(result == NSNotFound)
 		return nil;
-	return [allColumns objectAtIndex:result];
+	return allColumns[result];
 }
 
 -(NSUInteger)nextColumnIndexFromIndex:(NSUInteger)index
@@ -123,39 +123,39 @@
 	if(index == NSNotFound){
 		//Find our first column
 		if(direction == QuadLeft){
-			if([rightColumns count])
-				result = [allColumns count] - 1;
+			if(rightColumns.count)
+				result = allColumns.count - 1;
 			else{
 				if([self addColumnOfWidth:width inDirection:direction])
-					result = [leftColumns count];
-				else if([leftColumns count])
-					result = [leftColumns count] - 1;
+					result = leftColumns.count;
+				else if(leftColumns.count)
+					result = leftColumns.count - 1;
 			}
 		}else if(direction == QuadRight){
-			if([leftColumns count])
+			if(leftColumns.count)
 				result = 0;
 			else{
 				if([self addColumnOfWidth:width inDirection:direction])
 					result = 0;
-				else if([rightColumns count])
+				else if(rightColumns.count)
 					result = 0;
 			}
 		}
 	}else{
-		GrowlPositionColumn *column = [allColumns objectAtIndex:index];
+		GrowlPositionColumn *column = allColumns[index];
 		if([rightColumns containsObject:column]){
 			NSUInteger rightIndex = [rightColumns indexOfObject:column];
 			if(direction == QuadRight){
-				if(rightIndex + 1 < [rightColumns count])
+				if(rightIndex + 1 < rightColumns.count)
 					result = index + 1;
 			}else if(direction == QuadLeft){
 				if(rightIndex > 0)
 					result = index - 1;
 				else if(rightIndex == 0){
 					if([self addColumnOfWidth:width inDirection:direction])
-						result = [leftColumns count];
-					else if([leftColumns count])
-						result = [leftColumns count] - 1;
+						result = leftColumns.count;
+					else if(leftColumns.count)
+						result = leftColumns.count - 1;
 				}
 			}
 		}else if([leftColumns containsObject:column]){
@@ -163,13 +163,13 @@
 				if(index > 0)
 					result = index - 1;
 			}else if(direction == QuadRight){
-				if(index + 1 < [leftColumns count])
+				if(index + 1 < leftColumns.count)
 					result = index + 1;
-				else if(index == [leftColumns count] - 1){
+				else if(index == leftColumns.count - 1){
 					if([self addColumnOfWidth:width inDirection:direction])
-						result = [leftColumns count] - 1;
-					else if([rightColumns count])
-						result = [leftColumns count];
+						result = leftColumns.count - 1;
+					else if(rightColumns.count)
+						result = leftColumns.count;
 				}
 
 			}
@@ -197,11 +197,11 @@
 		if(nextColumn == NSNotFound){
 			return CGRectZero;
 		}
-		column = [allColumns objectAtIndex:nextColumn];
+		column = allColumns[nextColumn];
 	} while (column.width < colWidth && ![self canResizeColumn:nextColumn toWidth:colWidth]);
 
 	BOOL willNeeedResizing = NO;
-	if([column width] < colWidth){
+	if(column.width < colWidth){
 		willNeeedResizing = YES;
 	}
 	
@@ -243,10 +243,10 @@
 					//NSLog(@"Unable to find additional columns for width %lf", size.width);
 					return CGRectZero;
 				}
-				column = [allColumns objectAtIndex:nextColumn];
+				column = allColumns[nextColumn];
 			} while (column.width < colWidth && ![self canResizeColumn:nextColumn toWidth:colWidth]);
 			
-			if([column width] < colWidth){
+			if(column.width < colWidth){
 				willNeeedResizing = YES;
 			}else{
 				willNeeedResizing = NO;
@@ -294,9 +294,9 @@
 	c_consolidate(c_rootNode);
 #endif
 	
-	if([column minWidth] < [column width] && [column minWidth] > 0.0f) 
+	if(column.minWidth < column.width && column.minWidth > 0.0f) 
 		[self resizeColumn:[allColumns indexOfObject:column]
-					  toWidth:[column minWidth]];
+					  toWidth:column.minWidth];
 
 	NSMutableArray *deadLeft = [NSMutableArray array];
 	[leftColumns enumerateObjectsWithOptions:NSEnumerationReverse
@@ -330,14 +330,14 @@
 }
 
 -(BOOL)canResizeColumn:(NSUInteger)index toWidth:(CGFloat)width {
-	GrowlPositionColumn *column = [allColumns objectAtIndex:index];
+	GrowlPositionColumn *column = allColumns[index];
 	CGFloat diff = width - column.width;
 	if(availableWidth - diff < 0.0f)
 		return NO;
 	
 	BOOL result = NO;
 	if([leftColumns containsObject:column]){
-		if(index + 1 == [leftColumns count])
+		if(index + 1 == leftColumns.count)
 			result = YES;
 	}else if([rightColumns containsObject:column]){
 		NSUInteger rightIndex = [rightColumns indexOfObject:column];
@@ -349,14 +349,14 @@
 
 -(BOOL)resizeColumn:(NSUInteger)index toWidth:(CGFloat)width {
 	if([self canResizeColumn:index toWidth:width]){
-		GrowlPositionColumn *column = [allColumns objectAtIndex:index];
+		GrowlPositionColumn *column = allColumns[index];
 		//NSLog(@"resize column %@ from %lf to %lf", column, column.width, width);
 		CGFloat diff = width - column.width;
 		availableWidth -= diff;
 		column.width = width;
 		if([leftColumns containsObject:column]){
-			if(index + 1 < [leftColumns count]){
-				GrowlPositionColumn *nextTo = [rightColumns objectAtIndex:index + 1];
+			if(index + 1 < leftColumns.count){
+				GrowlPositionColumn *nextTo = rightColumns[index + 1];
 				nextTo.width += diff;
 				nextTo.xOrigin -= diff;
 				availableWidth += diff;
@@ -364,7 +364,7 @@
 		}else if([rightColumns containsObject:column]){
 			NSUInteger rightIndex = [rightColumns indexOfObject:column];
 			if(rightIndex > 0){
-				GrowlPositionColumn *nextTo = [rightColumns objectAtIndex:rightIndex - 1];
+				GrowlPositionColumn *nextTo = rightColumns[rightIndex - 1];
 				nextTo.width += diff;
 				availableWidth += diff;
 			}
@@ -391,24 +391,24 @@
 		availableWidth -= width;
 		switch (direction) {
 			case QuadLeft:
-				if([rightColumns count])
-					nextTo = [rightColumns objectAtIndex:0U];
+				if(rightColumns.count)
+					nextTo = rightColumns[0U];
 				if(nextTo)
 					newColumn.xOrigin = nextTo.xOrigin - width;
 				else
 					newColumn.xOrigin = screenFrame.origin.x + (screenFrame.size.width - width);
 				[rightColumns insertObject:newColumn atIndex:0];
-				[allColumns insertObject:newColumn atIndex:[leftColumns count]];
+				[allColumns insertObject:newColumn atIndex:leftColumns.count];
 				break;
 			case QuadRight:
-				if([leftColumns count])
-					nextTo = [leftColumns lastObject];
+				if(leftColumns.count)
+					nextTo = leftColumns.lastObject;
 				if(nextTo)
 					newColumn.xOrigin = nextTo.xOrigin + nextTo.width;
 				else
 					newColumn.xOrigin = screenFrame.origin.x;
 				[leftColumns addObject:newColumn];
-				[allColumns insertObject:newColumn atIndex:[leftColumns count] - 1];
+				[allColumns insertObject:newColumn atIndex:leftColumns.count - 1];
 				break;
 			default:
 				break;

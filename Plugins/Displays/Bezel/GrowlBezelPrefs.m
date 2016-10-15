@@ -27,7 +27,7 @@
 
 @synthesize positionStrings;
 
--(id)initWithBundle:(NSBundle *)bundle {
+-(instancetype)initWithBundle:(NSBundle *)bundle {
    if((self = [super initWithBundle:bundle])){
       self.styleLabel = NSLocalizedStringFromTableInBundle(@"Style:", @"Localizable", bundle, @"Label for bezel style picker");
       self.positionLabel = NSLocalizedStringFromTableInBundle(@"Position:", @"Localizable", bundle, @"Label for position picker");
@@ -37,11 +37,11 @@
       self.styleDefault = NSLocalizedStringFromTableInBundle(@"Default", @"Localizable", bundle, @"Default style option");
       self.styleCharcoal = NSLocalizedStringFromTableInBundle(@"Charcoal", @"Localizable", bundle, @"Charcoal style option");
       
-      self.positionStrings = [NSArray arrayWithObjects:bezelPositionDefault,
+      self.positionStrings = @[bezelPositionDefault,
                                                        bezelPositionTopRight,
                                                        bezelPositionBottomRight,
                                                        bezelPositionBottomLeft,
-                                                       bezelPositionTopLeft, nil];
+                                                       bezelPositionTopLeft];
    }
    return self;
 }
@@ -52,7 +52,7 @@
 }
 
 - (void) mainViewDidLoad {
-	[slider_opacity setAltIncrementValue:5.0];
+	slider_opacity.altIncrementValue = 5.0;
 }
 
 - (NSSet*)bindingKeys {
@@ -92,7 +92,7 @@
 }
 
 - (void) setOpacity:(CGFloat)value {
-	[self setConfigurationValue:[NSNumber numberWithFloat:value] forKey:BEZEL_OPACITY_PREF];
+	[self setConfigurationValue:@(value) forKey:BEZEL_OPACITY_PREF];
 }
 
 #pragma mark -
@@ -106,7 +106,7 @@
 }
 
 - (void) setDuration:(CGFloat)value {
-	[self setConfigurationValue:[NSNumber numberWithFloat:value] forKey:GrowlBezelDuration];
+	[self setConfigurationValue:@(value) forKey:GrowlBezelDuration];
 }
 
 #pragma mark -
@@ -120,18 +120,18 @@
 }
 
 - (void) setSize:(int)value {
-	[self setConfigurationValue:[NSNumber numberWithInt:value] forKey:BEZEL_SIZE_PREF];
+	[self setConfigurationValue:@(value) forKey:BEZEL_SIZE_PREF];
 }
 
 #pragma mark -
 
 - (NSInteger) numberOfItemsInComboBox:(NSComboBox *)aComboBox {
-	return [[NSScreen screens] count];
+	return [NSScreen screens].count;
 }
 
 - (id) comboBox:(NSComboBox *)aComboBox objectValueForItemAtIndex:(NSInteger)idx {
 #ifdef __LP64__
-	return [NSNumber numberWithInteger:idx];
+	return @(idx);
 #else
 	return [NSNumber numberWithInt:idx];
 #endif
@@ -146,7 +146,7 @@
 }
 
 - (void) setScreen:(int)value {
-	[self setConfigurationValue:[NSNumber numberWithInt:value] forKey:BEZEL_SCREEN_PREF];
+	[self setConfigurationValue:@(value) forKey:BEZEL_SCREEN_PREF];
 }
 
 #pragma mark -
@@ -160,7 +160,7 @@
 }
 
 - (void) setStyle:(int)value {
-	[self setConfigurationValue:[NSNumber numberWithInt:value] forKey:BEZEL_STYLE_PREF];
+	[self setConfigurationValue:@(value) forKey:BEZEL_STYLE_PREF];
 }
 
 #pragma mark -
@@ -174,7 +174,7 @@
 }
 
 - (void) setPosition:(int)value {
-	[self setConfigurationValue:[NSNumber numberWithInt:value] forKey:BEZEL_POSITION_PREF];
+	[self setConfigurationValue:@(value) forKey:BEZEL_POSITION_PREF];
 }
 
 #pragma mark -
@@ -188,7 +188,7 @@
 }
 
 - (void) setShrink:(BOOL)flag {
-	[self setConfigurationValue:[NSNumber numberWithBool:flag] forKey:BEZEL_SHRINK_PREF];
+	[self setConfigurationValue:@(flag) forKey:BEZEL_SHRINK_PREF];
 }
 
 #pragma mark -
@@ -202,7 +202,7 @@
 }
 
 - (void) setFlip:(BOOL)flag {
-	[self setConfigurationValue:[NSNumber numberWithBool:flag] forKey:BEZEL_FLIP_PREF];
+	[self setConfigurationValue:@(flag) forKey:BEZEL_FLIP_PREF];
 }
 
 #pragma mark -

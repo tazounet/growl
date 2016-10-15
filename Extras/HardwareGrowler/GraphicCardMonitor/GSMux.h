@@ -6,12 +6,12 @@
 //  Copyright 2011 Cody Krieger. All rights reserved.
 //
 
-typedef enum {
+typedef NS_ENUM (NSInteger, GSSwitcherMode) {
     GSSwitcherModeForceIntegrated,
     GSSwitcherModeForceDiscrete,
     GSSwitcherModeDynamicSwitching,
     GSSwitcherModeToggleGPU
-} GSSwitcherMode;
+};
 
 #define kDriverClassName "AppleGraphicsControl"
 

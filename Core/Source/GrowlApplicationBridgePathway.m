@@ -21,15 +21,15 @@ static GrowlApplicationBridgePathway *theOneTrueGrowlApplicationBridgePathway;
 	return theOneTrueGrowlApplicationBridgePathway;
 }
 
-- (id) init {
+- (instancetype) init {
 	if (theOneTrueGrowlApplicationBridgePathway) {
 		return theOneTrueGrowlApplicationBridgePathway;
 	}
 
 	if ((self = [super init])) {
 		//We create our own connection, rather than use defaultConnection, because an input manager such as the one in Logitech Control Center may also use defaultConnection, and would thereby steal it away from us.
-		connection = [[NSConnection alloc] initWithReceivePort:[NSPort port] sendPort:nil];
-		[connection setRootObject:self];
+		connection = [[NSConnection alloc] init];
+		connection.rootObject = self;
 
 		if (![connection registerName:@"GrowlApplicationBridgePathway"]) {
 			NSLog(@"WARNING: Could not register connection for GrowlApplicationBridgePathway");

@@ -16,7 +16,7 @@
 @synthesize tokenURL = _tokenURL;
 @synthesize apiKey = _apiKey;
 
-- (id)initWithProviderKey:(NSString *)providerKey
+- (instancetype)initWithProviderKey:(NSString *)providerKey
 				 delegate:(id<PRGeneratorDelegate>)delegate
 {
 	self = [super init];
@@ -30,11 +30,11 @@
 
 - (NSString *)encodedStringForString:(NSString *)string
 {
-	NSString *encodedString = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL,
-																				  (CFStringRef)string, 
-																				  NULL,
-																				  (CFStringRef)@";/?:@&=+$",
-																				  kCFStringEncodingUTF8));
+    NSCharacterSet *queryKVSet = [NSCharacterSet
+                                  characterSetWithCharactersInString:@";/?:@&=+$"
+                                  ].invertedSet;
+    
+    NSString *encodedString = [string stringByAddingPercentEncodingWithAllowedCharacters:queryKVSet];
 	
 	return encodedString;
 }
@@ -70,33 +70,36 @@
 	
 	request.HTTPMethod = @"GET";
 	
-	[NSURLConnection sendAsynchronousRequest:request
-									   queue:[NSOperationQueue mainQueue]
-						   completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-							   if(!data) {
-								   [self.delegate generator:self didFailWithError:error];
-								   return;
-							   }
-							   
-							   NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
-							   
-							   //NSLog(@"Got back XML: %@", [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease]);
-							   
-							   if(statusCode == 200) {
-								   NSXMLElement *retrieveElement = [self retrieveElementFromData:data error:&error];
-								   if(retrieveElement) {
-									   NSXMLNode *tokenNode = [retrieveElement attributeForName:@"token"];
-									   NSXMLNode *urlNode = [retrieveElement attributeForName:@"url"];
-									   
-									   self.token = tokenNode.stringValue;
-									   [self.delegate generator:self didFetchTokenURL:urlNode.stringValue];
-								   } else {
-									   [self.delegate generator:self didFailWithError:error];
-								   }
-							   } else {
-								   [self.delegate generator:self didFailWithError:[PRServerError serverErrorWithStatusCode:statusCode]];
-							   }
-						   }];
+    NSURLSession *session = [NSURLSession sharedSession];
+    NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request
+                                                completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+    {
+        if(!data) {
+            [self.delegate generator:self didFailWithError:error];
+            return;
+        }
+        
+        NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
+        
+        //NSLog(@"Got back XML: %@", [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease]);
+        
+        if(statusCode == 200) {
+            NSXMLElement *retrieveElement = [self retrieveElementFromData:data error:&error];
+            if(retrieveElement) {
+                NSXMLNode *tokenNode = [retrieveElement attributeForName:@"token"];
+                NSXMLNode *urlNode = [retrieveElement attributeForName:@"url"];
+                
+                self.token = tokenNode.stringValue;
+                [self.delegate generator:self didFetchTokenURL:urlNode.stringValue];
+            } else {
+                [self.delegate generator:self didFailWithError:error];
+            }
+        } else {
+            [self.delegate generator:self didFailWithError:[PRServerError serverErrorWithStatusCode:statusCode]];
+        }
+    }];
+
+    [dataTask resume];
 }
 
 - (void)fetchApiKey
@@ -111,36 +114,39 @@
 	
 	request.HTTPMethod = @"GET";
 	
-	[NSURLConnection sendAsynchronousRequest:request
-									   queue:[NSOperationQueue mainQueue]
-						   completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-							   if(!data) {
-								   [self.delegate generator:self didFailWithError:error];
-								   return;
-							   }
-							   
-							   NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
-							   
-							   NSLog(@"Got back XML: %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-							   
-							   if(statusCode == 200) {
-								   NSXMLElement *retrieveElement = [self retrieveElementFromData:data error:&error];
-								   if(retrieveElement) {
-									   NSXMLNode *apikeyNode = [retrieveElement attributeForName:@"apikey"];
-									   
-									   self.apiKey = [[PRAPIKey alloc] init];
-									   self.apiKey.enabled = YES;
-									   self.apiKey.apiKey = apikeyNode.stringValue;
-									   self.apiKey.validated = YES; // after so the change doesn't reset it
-									   
-									   [self.delegate generator:self didFetchApiKey:self.apiKey];
-								   } else {
-									   [self.delegate generator:self didFailWithError:error];
-								   }
-							   } else {
-								   [self.delegate generator:self didFailWithError:[PRServerError serverErrorWithStatusCode:statusCode]];
-							   }
-						   }];
+    NSURLSession *session = [NSURLSession sharedSession];
+    NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request
+                                                completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+    {
+        if(!data) {
+            [self.delegate generator:self didFailWithError:error];
+            return;
+        }
+        
+        NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
+        
+        NSLog(@"Got back XML: %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+        
+        if(statusCode == 200) {
+            NSXMLElement *retrieveElement = [self retrieveElementFromData:data error:&error];
+            if(retrieveElement) {
+                NSXMLNode *apikeyNode = [retrieveElement attributeForName:@"apikey"];
+                
+                self.apiKey = [[PRAPIKey alloc] init];
+                self.apiKey.enabled = YES;
+                self.apiKey.apiKey = apikeyNode.stringValue;
+                self.apiKey.validated = YES; // after so the change doesn't reset it
+                
+                [self.delegate generator:self didFetchApiKey:self.apiKey];
+            } else {
+                [self.delegate generator:self didFailWithError:error];
+            }
+        } else {
+            [self.delegate generator:self didFailWithError:[PRServerError serverErrorWithStatusCode:statusCode]];
+        }
+    }];
+
+    [dataTask resume];
 }
 
 @end

@@ -26,7 +26,7 @@
 @synthesize monitors;
 
 
--(id)init {
+-(instancetype)init {
 	if((self = [super init])){
 		self.plugins = [NSMutableArray array];
 		self.notifiers = [NSMutableArray array];
@@ -38,14 +38,14 @@
 		
 		[self postRegistrationInit];
 		
-		if([self onLaunchEnabled])
+		if(self.onLaunchEnabled)
 			[self fireOnLaunchNotes];
 	}
 	return self;
 }
 
 -(void)loadPlugins {
-	NSString *pluginsPath = [[NSBundle mainBundle] builtInPlugInsPath];
+	NSString *pluginsPath = [NSBundle mainBundle].builtInPlugInsPath;
 	NSArray *pluginBundles = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:pluginsPath 
 																										  error:nil];
 	if(pluginBundles) {
@@ -57,21 +57,21 @@
 			NSBundle *pluginBundle = [NSBundle bundleWithPath:bundlePath];
 			if(pluginBundle && [pluginBundle load])
 			{
-				NSString *bundleID = [pluginBundle bundleIdentifier];
-				id plugin = [[[pluginBundle principalClass] alloc] init];
+				NSString *bundleID = pluginBundle.bundleIdentifier;
+				id plugin = [[pluginBundle.principalClass alloc] init];
 				if(plugin)
 				{ 
 					if([plugin conformsToProtocol:@protocol(HWGrowlPluginProtocol)])
 					{
 						[plugin setDelegate:self];
 						BOOL disabled = NO;
-						if(disabledPlugins && [disabledPlugins objectForKey:bundleID])
-							disabled = [[disabledPlugins objectForKey:bundleID] boolValue];
+						if(disabledPlugins && disabledPlugins[bundleID])
+							disabled = [disabledPlugins[bundleID] boolValue];
 						else if([plugin respondsToSelector:@selector(enabledByDefault)])
 							disabled = ![plugin enabledByDefault];
 						
 						NSMutableDictionary *pluginDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:plugin, @"plugin", 
-																	  [NSNumber numberWithBool:disabled], @"disabled", nil];
+																	  @(disabled), @"disabled", nil];
 						[weakSelf.plugins addObject:pluginDict];
 						
 						if([plugin conformsToProtocol:@protocol(HWGrowlPluginNotifierProtocol)])
@@ -79,10 +79,10 @@
 						if([plugin conformsToProtocol:@protocol(HWGrowlPluginMonitorProtocol)])
 							[weakSelf.monitors addObject:plugin];
 					}else{
-						NSLog(@"%@ does not conform to HWGrowlPluginProtocol", NSStringFromClass([pluginBundle principalClass]));
+						NSLog(@"%@ does not conform to HWGrowlPluginProtocol", NSStringFromClass(pluginBundle.principalClass));
 					}
 				}else{
-					NSLog(@"We couldn't instantiate %@ for plugin %@", NSStringFromClass([pluginBundle principalClass]), bundleID);
+					NSLog(@"We couldn't instantiate %@ for plugin %@", NSStringFromClass(pluginBundle.principalClass), bundleID);
 				}
 			}else{
 				NSLog(@"%@ is not a bundle or could not be loaded", bundlePath);
@@ -90,14 +90,14 @@
 		}];
 	}
 	[plugins sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-		return [[[obj1 objectForKey:@"plugin"] pluginDisplayName] compare:[[obj2 objectForKey:@"plugin"] pluginDisplayName]];
+		return [[obj1[@"plugin"] pluginDisplayName] compare:[obj2[@"plugin"] pluginDisplayName]];
 	}];
 }
 			
 -(void)postRegistrationInit {
 	[plugins enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-		if([[obj objectForKey:@"plugin"] respondsToSelector:@selector(postRegistrationInit)])
-			[[obj objectForKey:@"plugin"] postRegistrationInit];
+		if([obj[@"plugin"] respondsToSelector:@selector(postRegistrationInit)])
+			[obj[@"plugin"] postRegistrationInit];
 	}];
 }
 
@@ -109,40 +109,51 @@
 }
 
 -(void)notifyWithName:(NSString*)name 
-					 title:(NSString*)title
-			 description:(NSString*)description
-					  icon:(NSData*)iconData
-	  identifierString:(NSString*)identifier
-		  contextString:(NSString*)context
-					plugin:(id)plugin
+                title:(NSString*)title
+          description:(NSString*)description
+                 icon:(NSData*)iconData
+     identifierString:(NSString*)identifier
+        contextString:(NSString*)context
+               plugin:(id)plugin
 {
 	__block BOOL disabled = NO;
 	[plugins enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-		if([obj objectForKey:@"plugin"] == plugin) 
+		if(obj[@"plugin"] == plugin) 
 		{
-			disabled = [[obj objectForKey:@"disabled"] boolValue];
+			disabled = [obj[@"disabled"] boolValue];
 			*stop = YES;
 		}
 	}];
 	if(disabled)
 		return;
-	
+
+    NSMutableDictionary *notification = [[NSMutableDictionary alloc] init];
+    notification[GROWL_NOTIFICATION_NAME] = name;
+    notification[GROWL_NOTIFICATION_TITLE] = title;
+    notification[GROWL_NOTIFICATION_DESCRIPTION] = description;
+    notification[GROWL_NOTIFICATION_IDENTIFIER] = identifier;
+    if (iconData) notification[GROWL_NOTIFICATION_ICON_DATA] = iconData;
+
 	NSString *contextCombined = nil;
 	if(context && [context rangeOfString:@" : "].location != NSNotFound) {
 		NSLog(@"found \" : \" in context string %@", context);
 	}
 	if(context && plugin && [context rangeOfString:@" : "].location == NSNotFound) {
 		contextCombined = [NSString stringWithFormat:@"%@ : %@", NSStringFromClass([plugin class]), context];
+        notification[GROWL_NOTIFICATION_CLICK_CONTEXT] = contextCombined;
+        //notification[GROWL_NOTIFICATION_BUTTONTITLE_ACTION] = @"Action";
 	}
 	
-    [GrowlApplicationBridge	notifyWithTitle:title
-										 description:description
-								  notificationName:name 
-											 iconData:iconData
-											 priority:0
-											 isSticky:NO
-										clickContext:contextCombined
-										  identifier:identifier];
+/*    [GrowlApplicationBridge	notifyWithTitle:title
+                                description:description
+                           notificationName:name
+                                   iconData:iconData
+                                   priority:0
+                                   isSticky:NO
+                               clickContext:contextCombined
+                                 identifier:identifier];*/
+
+    [GrowlApplicationBridge notifyWithDictionary:notification];
 }
 
 -(BOOL)onLaunchEnabled {
@@ -152,9 +163,9 @@
 -(BOOL)pluginDisabled:(id)plugin {
 	__block BOOL disabled = NO;
 	[plugins enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-		if([obj objectForKey:@"plugin"] == plugin) 
+		if(obj[@"plugin"] == plugin) 
 		{
-			disabled = [[obj objectForKey:@"disabled"] boolValue];
+			disabled = [obj[@"disabled"] boolValue];
 			*stop = YES;
 		}
 	}];
@@ -163,10 +174,10 @@
 
 -(void)growlNotificationClosed:(id)clickContext viaClick:(BOOL)click {
 	NSArray *components = [clickContext componentsSeparatedByString:@" : "];
-	if([components count] < 2)
+	if(components.count < 2)
 		return;
-	NSString *classString = [components objectAtIndex:0];
-	NSString *context = [components objectAtIndex:1];
+	NSString *classString = components[0];
+	NSString *context = components[1];
 	
 	[notifiers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 		if([obj isKindOfClass:NSClassFromString(classString)]){
@@ -187,17 +198,17 @@
 	
 	[notifiers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 		id<HWGrowlPluginNotifierProtocol> notifier = obj;
-		[allNotes addObjectsFromArray:[notifier noteNames]];
+		[allNotes addObjectsFromArray:notifier.noteNames];
 		if([notifier defaultNotifications])
 			[defaultNotes addObjectsFromArray:[notifier defaultNotifications]];
-		[descriptions addEntriesFromDictionary:[notifier noteDescriptions]];
-		[localizedNames addEntriesFromDictionary:[notifier localizedNames]];
+		[descriptions addEntriesFromDictionary:notifier.noteDescriptions];
+		[localizedNames addEntriesFromDictionary:notifier.localizedNames];
 	}];
 	
-	NSDictionary *regDict = [NSDictionary dictionaryWithObjectsAndKeys:allNotes, GROWL_NOTIFICATIONS_ALL,
-									 defaultNotes, GROWL_NOTIFICATIONS_DEFAULT,
-									 descriptions, GROWL_NOTIFICATIONS_DESCRIPTIONS,
-									 localizedNames, GROWL_NOTIFICATIONS_HUMAN_READABLE_NAMES, nil];
+	NSDictionary *regDict = @{GROWL_NOTIFICATIONS_ALL: allNotes,
+									 GROWL_NOTIFICATIONS_DEFAULT: defaultNotes,
+									 GROWL_NOTIFICATIONS_DESCRIPTIONS: descriptions,
+									 GROWL_NOTIFICATIONS_HUMAN_READABLE_NAMES: localizedNames};
 	return regDict;
 }
 

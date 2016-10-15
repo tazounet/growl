@@ -13,7 +13,7 @@
 
 @implementation GrowlScriptAction
 
--(id)init{
+-(instancetype)init{
    if(![GrowlUserScriptTaskUtilities hasScriptTaskClass])
       return nil;
    
@@ -33,11 +33,11 @@
    id icon = [dict valueForKey:GROWL_NOTIFICATION_ICON_DATA];
    NSData *iconData = [icon isKindOfClass:[NSData class]] ? icon : ([icon isKindOfClass:[NSImage class]] ? [icon TIFFRepresentation] : nil);
    
-   [result setObject:host forKey:@"host"];
-   [result setObject:[dict valueForKey:GROWL_APP_NAME] forKey:@"application"];
-   [result setObject:[dict valueForKey:GROWL_NOTIFICATION_NAME] forKey:@"type"];
-   [result setObject:[dict valueForKey:GROWL_NOTIFICATION_TITLE] forKey:@"title"];
-   [result setObject:[dict valueForKey:GROWL_NOTIFICATION_DESCRIPTION] forKey:@"description"];
+   result[@"host"] = host;
+   result[@"application"] = [dict valueForKey:GROWL_APP_NAME];
+   result[@"type"] = [dict valueForKey:GROWL_NOTIFICATION_NAME];
+   result[@"title"] = [dict valueForKey:GROWL_NOTIFICATION_TITLE];
+   result[@"description"] = [dict valueForKey:GROWL_NOTIFICATION_DESCRIPTION];
    //if([dict valueForKey:GROWL_NOTIFICATION_STICKY])
       //[result setObject:[dict valueForKey:GROWL_NOTIFICATION_STICKY] forKey:@"sticky"];
    //else
@@ -113,7 +113,7 @@
 
    if(scriptTask){
       if([scriptTask isKindOfClass:[NSUserAppleScriptTask class]]){
-         int pid = [[NSProcessInfo processInfo] processIdentifier];
+         int pid = [NSProcessInfo processInfo].processIdentifier;
          NSAppleEventDescriptor *thisApplication = [NSAppleEventDescriptor descriptorWithDescriptorType:typeKernelProcessID
                                                                                                   bytes:&pid
                                                                                                  length:sizeof(pid)];
@@ -131,9 +131,9 @@
                                                     }
                                                  }];
       }else if([scriptTask isKindOfClass:[NSUserUnixTask class]]){
-         [(NSUserUnixTask*)scriptTask setStandardInput:[NSFileHandle fileHandleWithStandardInput]];
-         [(NSUserUnixTask*)scriptTask setStandardOutput:[NSFileHandle fileHandleWithStandardOutput]];
-         [(NSUserUnixTask*)scriptTask setStandardError:[NSFileHandle fileHandleWithStandardError]];
+         ((NSUserUnixTask*)scriptTask).standardInput = [NSFileHandle fileHandleWithStandardInput];
+         ((NSUserUnixTask*)scriptTask).standardOutput = [NSFileHandle fileHandleWithStandardOutput];
+         ((NSUserUnixTask*)scriptTask).standardError = [NSFileHandle fileHandleWithStandardError];
 			NSArray *argumentKeys = [configuration valueForKey:@"ScriptActionUnixArguments"];
 			NSArray *arguments = nil;
 			if(argumentKeys)

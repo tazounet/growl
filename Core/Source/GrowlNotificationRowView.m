@@ -13,7 +13,7 @@
 
 @synthesize mouseInside;
 
-- (id)init
+- (instancetype)init
 {
     self = [super init];
     if (self) {
@@ -40,7 +40,7 @@
 - (void)updateTrackingAreas {
     [super updateTrackingAreas];
     [self ensureTrackingArea];
-    if (![[self trackingAreas] containsObject:trackingArea]) {
+    if (![self.trackingAreas containsObject:trackingArea]) {
         [self addTrackingArea:trackingArea];
     }
 }
@@ -48,20 +48,20 @@
 - (void)mouseEntered:(NSEvent *)theEvent {
     self.mouseInside = YES;
     if([[self viewAtColumn:0] isKindOfClass:[GrowlNotificationCellView class]])
-        [[(GrowlNotificationCellView*)[self viewAtColumn:0] deleteButton] setHidden:NO];
+        [((GrowlNotificationCellView*)[self viewAtColumn:0]).deleteButton setHidden:NO];
 }
 
 - (void)mouseExited:(NSEvent *)theEvent {
     self.mouseInside = NO;
     if(!self.selected){
         if([[self viewAtColumn:0] isKindOfClass:[GrowlNotificationCellView class]])
-            [[(GrowlNotificationCellView*)[self viewAtColumn:0] deleteButton] setHidden:YES];
+            [((GrowlNotificationCellView*)[self viewAtColumn:0]).deleteButton setHidden:YES];
     }
 }
 
 // interiorBackgroundStyle is normaly "dark" when the selection is drawn (self.selected == YES) and we are in a key window (self.emphasized == YES). However, we always draw a dark selection, so we override this method to always return a light color.
 - (NSBackgroundStyle)interiorBackgroundStyle {
-    if(![self isGroupRowStyle])
+    if(!self.groupRowStyle)
         return NSBackgroundStyleDark;
     else
         return NSBackgroundStyleLight;
@@ -79,7 +79,7 @@
 - (void)drawSelectionInRect:(NSRect)dirtyRect {
     // Check the selectionHighlightStyle, in case it was set to None
     if (self.selectionHighlightStyle != NSTableViewSelectionHighlightStyleNone) {
-        [self drawRoundedRectInRect:[self bounds]];
+        [self drawRoundedRectInRect:self.bounds];
     }
 }
 
@@ -88,12 +88,12 @@
     NSRect selectionRect = NSInsetRect(rect, 3.0, 3.0);
     [[NSColor colorWithCalibratedWhite:1.0 alpha:1.0] setStroke];
     NSBezierPath *selectionPath = [NSBezierPath bezierPathWithRoundedRect:selectionRect xRadius:10 yRadius:10];
-    [selectionPath setLineWidth:2.0];
+    selectionPath.lineWidth = 2.0;
     [selectionPath stroke];
 }
 
 static NSGradient *gradientWithTargetColor(NSColor *targetColor) {
-    NSArray *colors = [NSArray arrayWithObjects:[targetColor colorWithAlphaComponent:0], targetColor, targetColor, [targetColor colorWithAlphaComponent:0], nil];
+    NSArray *colors = @[[targetColor colorWithAlphaComponent:0], targetColor, targetColor, [targetColor colorWithAlphaComponent:0]];
     const CGFloat locations[4] = { 0.0, 0.35, 0.65, 1.0 };
     return [[NSGradient alloc] initWithColors:colors atLocations:locations colorSpace:[NSColorSpace sRGBColorSpace]];
 }

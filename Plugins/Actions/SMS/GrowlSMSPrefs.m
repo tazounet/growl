@@ -22,7 +22,7 @@
 @synthesize apiIDLabel;
 @synthesize destinationLabel;
                                    
-- (id)initWithBundle:(NSBundle *)bundle {
+- (instancetype)initWithBundle:(NSBundle *)bundle {
    if((self = [super initWithBundle:bundle])){
        
        self.smsNotifications = NSLocalizedStringFromTableInBundle(@"SMS Notifications", @"Localizable", bundle, @"Title for SMS plugin");

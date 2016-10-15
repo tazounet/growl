@@ -71,7 +71,7 @@ static NSTimeInterval currentIdleTime(void) {
    return instance;
 }
 
-- (id)init
+- (instancetype)init
 {
 	if((self = [super init])){
 		self.useSleep = YES;
@@ -102,7 +102,7 @@ static NSTimeInterval currentIdleTime(void) {
 							usingBlock:^(NSNotification *note) {
 								weakSelf.screenLocked = NO;
 							}];
-		NSNotificationCenter *workspaceNC = [[NSWorkspace sharedWorkspace] notificationCenter];
+		NSNotificationCenter *workspaceNC = [NSWorkspace sharedWorkspace].notificationCenter;
 		[workspaceNC addObserverForName:NSWorkspaceWillSleepNotification
 										 object:nil
 										  queue:[NSOperationQueue mainQueue]
@@ -132,7 +132,7 @@ static NSTimeInterval currentIdleTime(void) {
 										 object:nil 
 										  queue:[NSOperationQueue mainQueue] 
 									usingBlock:^(NSNotification *note) {
-										NSString *newID = [[[note userInfo] valueForKey:NSWorkspaceApplicationKey] bundleIdentifier];
+										NSString *newID = [[note.userInfo valueForKey:NSWorkspaceApplicationKey] bundleIdentifier];
 										weakSelf.activeApplicationID = newID;
 									}];
 		
@@ -148,7 +148,7 @@ static NSTimeInterval currentIdleTime(void) {
 - (void)dealloc
 {
 	[[NSDistributedNotificationCenter defaultCenter] removeObserver:self];
-	[[[NSWorkspace sharedWorkspace] notificationCenter] removeObserver:self];
+	[[NSWorkspace sharedWorkspace].notificationCenter removeObserver:self];
 }
 
 + (NSSet*)keyPathsForValuesAffectingIsIdle {

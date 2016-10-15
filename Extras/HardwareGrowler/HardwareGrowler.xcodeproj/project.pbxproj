@@ -30,6 +30,7 @@
 		777FCFBD193B8BFB004EA8E2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 777FCFBB193B8BFB004EA8E2 /* InfoPlist.strings */; };
 		777FCFD5193B8D5C004EA8E2 /* HWGrowlGraphicCardMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 777FCFD4193B8D5C004EA8E2 /* HWGrowlGraphicCardMonitor.m */; };
 		778CDDAD1B9763CC0058B3A1 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 778CDDAC1B9763CC0058B3A1 /* CoreAudio.framework */; };
+		77CA21361DA10C9D00325273 /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCB80673155158DA0088C69A /* Growl.framework */; };
 		77DD85F41B36E5830020C6F5 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCB805EE155153330088C69A /* AppKit.framework */; };
 		77DD85F61B36E5DB0020C6F5 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC523C3515556BE500548427 /* IOKit.framework */; };
 		77DD85FB1B36E6C40020C6F5 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77DD85FA1B36E6C30020C6F5 /* CoreGraphics.framework */; };
@@ -147,7 +148,6 @@
 		BCB8076A1551A7510088C69A /* HWGrowlNetworkMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = BCB807691551A7510088C69A /* HWGrowlNetworkMonitor.m */; };
 		BCB8076F1551A82B0088C69A /* HWGrowlPluginController.m in Sources */ = {isa = PBXBuildFile; fileRef = BCB8076E1551A82A0088C69A /* HWGrowlPluginController.m */; };
 		BCD4756A156BCDD000F81910 /* ACImageAndTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BCD47569156BCDD000F81910 /* ACImageAndTextCell.m */; };
-		BCE06FFB178CCAA700D7839A /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCB80673155158DA0088C69A /* Growl.framework */; };
 		BCE06FFC178CCBF500D7839A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = BC4FC626155C05C700EE65EC /* Localizable.strings */; };
 		BCE3BC1C15C9619000B0BFFB /* TMSliderControl.m in Sources */ = {isa = PBXBuildFile; fileRef = BCE3BC1B15C9619000B0BFFB /* TMSliderControl.m */; };
 		BCE3BC2115C961A500B0BFFB /* OverlayMask.png in Resources */ = {isa = PBXBuildFile; fileRef = BCE3BC1D15C961A500B0BFFB /* OverlayMask.png */; };
@@ -744,7 +744,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BCE06FFB178CCAA700D7839A /* Growl.framework in Frameworks */,
+				77CA21361DA10C9D00325273 /* Growl.framework in Frameworks */,
 				BCB807481551A6EA0088C69A /* Cocoa.framework in Frameworks */,
 				BCECA3681552D22100F49280 /* SystemConfiguration.framework in Frameworks */,
 			);
@@ -2085,7 +2085,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "XPC_START=\"$BUILT_PRODUCTS_DIR\"\nXPC_SCRIPT=\"$SRCROOT/../../scripts/xpc-rename-move.rb\"\nruby \"$XPC_SCRIPT\" \"$XPC_START\" \"$BUILT_PRODUCTS_DIR/$WRAPPER_NAME\" \"$CODE_SIGN_IDENTITY\"";
+			shellScript = "XPC_START=\"$BUILT_PRODUCTS_DIR\"\nXPC_SCRIPT=\"$SRCROOT/../../scripts/xpc-rename-move.rb\"\necho ruby \"$XPC_SCRIPT\" \"$XPC_START\" \"$BUILT_PRODUCTS_DIR/$WRAPPER_NAME\" \"$EXPANDED_CODE_SIGN_IDENTITY\"\nruby \"$XPC_SCRIPT\" \"$XPC_START\" \"$BUILT_PRODUCTS_DIR/$WRAPPER_NAME\" \"$EXPANDED_CODE_SIGN_IDENTITY\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2991,7 +2991,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 			};
@@ -3024,7 +3023,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 			};
 			name = Release;
@@ -3035,16 +3033,13 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = HardwareGrowler/HardwareGrowler.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HardwareGrowler/HardwareGrowler-Prefix.pch";
 				INFOPLIST_FILE = "HardwareGrowler/HardwareGrowler-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.growl.hardwaregrowler;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -3055,16 +3050,13 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = HardwareGrowler/HardwareGrowler.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HardwareGrowler/HardwareGrowler-Prefix.pch";
 				INFOPLIST_FILE = "HardwareGrowler/HardwareGrowler-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.growl.hardwaregrowler;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -3102,7 +3094,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 			};
 			name = Localization;
@@ -3113,16 +3104,13 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = HardwareGrowler/HardwareGrowler.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HardwareGrowler/HardwareGrowler-Prefix.pch";
 				INFOPLIST_FILE = "HardwareGrowler/HardwareGrowler-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.growl.hardwaregrowler;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Localization;
@@ -3133,16 +3121,13 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = HardwareGrowlerLauncher/HardwareGrowlerLauncher.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HardwareGrowlerLauncher/HardwareGrowlerLauncher-Prefix.pch";
 				INFOPLIST_FILE = "HardwareGrowlerLauncher/HardwareGrowlerLauncher-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -3153,16 +3138,13 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = HardwareGrowlerLauncher/HardwareGrowlerLauncher.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HardwareGrowlerLauncher/HardwareGrowlerLauncher-Prefix.pch";
 				INFOPLIST_FILE = "HardwareGrowlerLauncher/HardwareGrowlerLauncher-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Localization;
@@ -3173,16 +3155,13 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = HardwareGrowlerLauncher/HardwareGrowlerLauncher.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HardwareGrowlerLauncher/HardwareGrowlerLauncher-Prefix.pch";
 				INFOPLIST_FILE = "HardwareGrowlerLauncher/HardwareGrowlerLauncher-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.growl.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

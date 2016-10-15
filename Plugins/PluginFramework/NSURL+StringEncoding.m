@@ -11,14 +11,12 @@
 @implementation NSURL (StringEncoding)
 
 +(NSString*)encodedStringByAddingPercentEscapesToString:(NSString*)string {
-	CFStringRef stringRef = CFURLCreateStringByAddingPercentEscapes(NULL,
-																						 (CFStringRef)string, 
-																						 NULL,
-																						 (CFStringRef)@";/?:@&=+$",
-																						 kCFStringEncodingUTF8);
-	NSString *encodedString = [(__bridge NSString*)stringRef copy];
-	CFRelease(stringRef);
-	
+    NSCharacterSet *queryKVSet = [NSCharacterSet
+                                  characterSetWithCharactersInString:@";/?:@&=+$"
+                                 ].invertedSet;
+
+    NSString *encodedString = [string stringByAddingPercentEncodingWithAllowedCharacters:queryKVSet];
+
 	return encodedString;
 }
 

@@ -11,19 +11,19 @@
 
 - (NSImage *) flippedImage
 {
-    NSImage *l_result = [[NSImage alloc] initWithSize:[self size]];
+    NSImage *l_result = [[NSImage alloc] initWithSize:self.size];
     [l_result lockFocus];
-    [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationNone];
+    [NSGraphicsContext currentContext].imageInterpolation = NSImageInterpolationNone;
     [[NSGraphicsContext currentContext] setShouldAntialias:NO];
     NSRect l_target = NSZeroRect;
-    l_target.size = [self size];
+    l_target.size = self.size;
 	
     NSAffineTransform* xform = [NSAffineTransform transform];
     [xform translateXBy:0.0f yBy:l_target.size.height];
     [xform scaleXBy:1.0f yBy:-1.0f];
     [xform concat];    
     
-    [self drawInRect:l_target fromRect:l_target operation:NSCompositeCopy fraction:1.0f];
+    [self drawInRect:l_target fromRect:l_target operation:NSCompositingOperationCopy fraction:1.0f];
     [l_result unlockFocus];
     
     return l_result;
@@ -31,7 +31,7 @@
 
 - (NSImage *) imageSizedToDimension:(int)dimension
 {
-	NSSize imageSize = [self size];
+	NSSize imageSize = self.size;
 	
 	if ((imageSize.width <= dimension) && (imageSize.height <= dimension))
 		return self;
@@ -41,7 +41,7 @@
 
 - (NSImage *) imageSizedToDimensionScalingUp:(int)dimension
 {
-	NSSize imageSize = [self size];
+	NSSize imageSize = self.size;
 	double ratio = 1;
 	
 	if (imageSize.width > imageSize.height) {
@@ -57,14 +57,14 @@
 	
 	NSImage *result = [[NSImage alloc] initWithSize:imageSize];
 	[result lockFocus];
-	[[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationHigh];
+	[NSGraphicsContext currentContext].imageInterpolation = NSImageInterpolationHigh;
 	
 	NSRect destRect = NSZeroRect;
 	destRect.size = imageSize;
 	NSRect sourceRect = NSZeroRect;
-	sourceRect.size = [self size];
+	sourceRect.size = self.size;
 	
-	[self drawInRect:destRect fromRect:sourceRect operation:NSCompositeCopy fraction:1.0f];
+	[self drawInRect:destRect fromRect:sourceRect operation:NSCompositingOperationCopy fraction:1.0f];
 	
 	[result unlockFocus];
 	
@@ -73,7 +73,7 @@
 
 - (NSImage *) imageSizedToDimensionSquaring:(int)dimension
 {
-	NSSize imageSize = [self size];
+	NSSize imageSize = self.size;
 	double ratio = 1;
 	
 	if (imageSize.width > imageSize.height) {
@@ -91,7 +91,7 @@
 	
 	NSImage *result = [[NSImage alloc] initWithSize:finalSize];
 	[result lockFocus];
-	[[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationHigh];
+	[NSGraphicsContext currentContext].imageInterpolation = NSImageInterpolationHigh;
 	
 	NSRect destRect = NSZeroRect;
 	destRect.size = imageSize;
@@ -100,9 +100,9 @@
 	destRect.origin.x = truncf((float)(dimension - destRect.size.width) / 2);
 	
 	NSRect sourceRect = NSZeroRect;
-	sourceRect.size = [self size];
+	sourceRect.size = self.size;
 	
-	[self drawInRect:destRect fromRect:sourceRect operation:NSCompositeCopy fraction:1.0f];
+	[self drawInRect:destRect fromRect:sourceRect operation:NSCompositingOperationCopy fraction:1.0f];
 	
 	[result unlockFocus];
 	

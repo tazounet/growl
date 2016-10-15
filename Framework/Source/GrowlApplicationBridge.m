@@ -76,7 +76,7 @@ static dispatch_queue_t notificationQueue_Queue;
    return _bridge;
 }
 
--(id)init {
+-(instancetype)init {
    if((self = [super init])){
       self.isGrowlRunning = Growl_HelperAppIsRunning();
       [self _checkSandbox];
@@ -214,7 +214,7 @@ static dispatch_queue_t notificationQueue_Queue;
 
 - (void) finishedWithNote:(GrowlNote*)note {
    dispatch_async(notificationQueue_Queue, ^{
-		[[self notifications] removeObjectForKey:[note noteUUID]];
+		[[self notifications] removeObjectForKey:note.noteUUID];
 	});
 }
 
@@ -251,7 +251,7 @@ static dispatch_queue_t notificationQueue_Queue;
 	 * unique notification name based on our app name, pid and
 	 * GROWL_DISTRIBUTED_NOTIFICATION_CLICKED_SUFFIX.
 	 */
-	int pid = [[NSProcessInfo processInfo] processIdentifier];
+	int pid = [NSProcessInfo processInfo].processIdentifier;
 	NSString *growlNotificationClickedName = [[NSString alloc] initWithFormat:@"%@-%d-%@",
                                              self.appName, pid, GROWL_DISTRIBUTED_NOTIFICATION_CLICKED_SUFFIX];
    
@@ -306,11 +306,11 @@ static dispatch_queue_t notificationQueue_Queue;
 	[self reregisterGrowlNotifications];
 }
 + (void) setGrowlDelegate:(id<GrowlApplicationBridgeDelegate>)inDelegate {
-   [[GrowlApplicationBridge sharedBridge] setDelegate:inDelegate];
+   [GrowlApplicationBridge sharedBridge].delegate = inDelegate;
 }
 
 + (NSObject<GrowlApplicationBridgeDelegate> *) growlDelegate {
-	return [[GrowlApplicationBridge sharedBridge] delegate];
+	return [GrowlApplicationBridge sharedBridge].delegate;
 }
 
 - (void)setRegistrationDictionary:(NSDictionary *)registrationDictionary {
@@ -403,7 +403,7 @@ static dispatch_queue_t notificationQueue_Queue;
    dispatch_async(notificationQueue_Queue, ^{
       if(note.delegate == nil && note.self.statusUpdateBlock == NULL)
          note.delegate = self;
-      [[self notifications] setObject:note forKey:[note noteUUID]];
+      [self notifications][note.noteUUID] = note;
       [note notify];      
    });
 }
@@ -437,12 +437,12 @@ static dispatch_queue_t notificationQueue_Queue;
       else if([defaultNotes isKindOfClass:[NSArray class]] && [defaultNotes count] > 0) 
       {
          //If first one is a number, its a numeric index array of defaults, if its a string, its an array of notification names
-         if([[defaultNotes objectAtIndex:0] isKindOfClass:[NSNumber class]]) 
+         if([defaultNotes[0] isKindOfClass:[NSNumber class]]) 
          {
-            if([defaultNotes containsObject:[NSNumber numberWithUnsignedInteger:indexInAll]])
+            if([defaultNotes containsObject:@(indexInAll)])
                result = YES;
          }
-         else if([[defaultNotes objectAtIndex:0] isKindOfClass:[NSString class]]) 
+         else if([defaultNotes[0] isKindOfClass:[NSString class]]) 
          {
             if([defaultNotes containsObject:name])
                result = YES;
@@ -498,7 +498,7 @@ static dispatch_queue_t notificationQueue_Queue;
 
 
 + (BOOL) isGrowlRunning {
-	return [[GrowlApplicationBridge sharedBridge] isGrowlRunning];
+	return [GrowlApplicationBridge sharedBridge].isGrowlRunning;
 }
 
 #pragma mark -
@@ -570,10 +570,10 @@ static dispatch_queue_t notificationQueue_Queue;
 }
 
 + (void) setWillRegisterWhenGrowlIsReady:(BOOL)flag {
-	[[GrowlApplicationBridge sharedBridge] setRegisterWhenGrowlIsReady:flag];
+	[GrowlApplicationBridge sharedBridge].registerWhenGrowlIsReady = flag;
 }
 + (BOOL) willRegisterWhenGrowlIsReady {
-	return [[GrowlApplicationBridge sharedBridge] registerWhenGrowlIsReady];
+	return [GrowlApplicationBridge sharedBridge].registerWhenGrowlIsReady;
 }
 
 #pragma mark -
@@ -585,7 +585,7 @@ static dispatch_queue_t notificationQueue_Queue;
    NSDictionary *regDict = nil;
    
 	if (self.delegate && [self.delegate respondsToSelector:@selector(registrationDictionaryForGrowl)])
-		regDict = [self.delegate registrationDictionaryForGrowl];
+		regDict = (self.delegate).registrationDictionaryForGrowl;
    
 //   if(!regDict)
 //      NSLog(@"GrowlApplicationBridge: Either no delegate, or it does not respond to registrationDictionaryForGrowl");
@@ -645,32 +645,31 @@ static dispatch_queue_t notificationQueue_Queue;
 	NSMutableDictionary *mRegDict = [regDict mutableCopy];
 
 	if ((!keys) || [keys containsObject:GROWL_APP_NAME]) {
-		if (![mRegDict objectForKey:GROWL_APP_NAME]) {
+		if (!mRegDict[GROWL_APP_NAME]) {
 			if (!self.appName)
 				self.appName = [self _applicationNameForGrowlSearchingRegistrationDictionary:regDict];
 
-			[mRegDict setObject:self.appName
-			             forKey:GROWL_APP_NAME];
+			mRegDict[GROWL_APP_NAME] = self.appName;
 		}
 	}
 
 	if ((!keys) || [keys containsObject:GROWL_APP_ICON_DATA]) {
-		if (![mRegDict objectForKey:GROWL_APP_ICON_DATA]) {
+		if (!mRegDict[GROWL_APP_ICON_DATA]) {
 			if (!self.appIconData)
 				self.appIconData = [self _applicationIconDataForGrowlSearchingRegistrationDictionary:regDict];
 			if (self.appIconData)
-				[mRegDict setObject:self.appIconData forKey:GROWL_APP_ICON_DATA];
+				mRegDict[GROWL_APP_ICON_DATA] = self.appIconData;
 		}
 	}
 
 	if ((!keys) || [keys containsObject:GROWL_APP_LOCATION]) {
-		if (![mRegDict objectForKey:GROWL_APP_LOCATION]) {
-			NSURL *myURL = [[NSBundle mainBundle] bundleURL];
+		if (!mRegDict[GROWL_APP_LOCATION]) {
+			NSURL *myURL = [NSBundle mainBundle].bundleURL;
 			if (myURL) {
 				NSDictionary *file_data = dockDescriptionWithURL(myURL);
 				if (file_data) {
-					NSDictionary *location = [[NSDictionary alloc] initWithObjectsAndKeys:file_data, @"file-data", nil];
-					[mRegDict setObject:location forKey:GROWL_APP_LOCATION];
+					NSDictionary *location = @{@"file-data": file_data};
+					mRegDict[GROWL_APP_LOCATION] = location;
 				} else {
 					[mRegDict removeObjectForKey:GROWL_APP_LOCATION];
 				}
@@ -679,16 +678,16 @@ static dispatch_queue_t notificationQueue_Queue;
 	}
 
 	if ((!keys) || [keys containsObject:GROWL_NOTIFICATIONS_DEFAULT]) {
-		if (![mRegDict objectForKey:GROWL_NOTIFICATIONS_DEFAULT]) {
-			NSArray *all = [mRegDict objectForKey:GROWL_NOTIFICATIONS_ALL];
+		if (!mRegDict[GROWL_NOTIFICATIONS_DEFAULT]) {
+			NSArray *all = mRegDict[GROWL_NOTIFICATIONS_ALL];
 			if (all)
-				[mRegDict setObject:all forKey:GROWL_NOTIFICATIONS_DEFAULT];
+				mRegDict[GROWL_NOTIFICATIONS_DEFAULT] = all;
 		}
 	}
 
 	if ((!keys) || [keys containsObject:GROWL_APP_ID])
-		if (![mRegDict objectForKey:GROWL_APP_ID])
-			[mRegDict setObject:(NSString *)CFBundleGetIdentifier(CFBundleGetMainBundle()) forKey:GROWL_APP_ID];
+		if (!mRegDict[GROWL_APP_ID])
+			mRegDict[GROWL_APP_ID] = (NSString *)CFBundleGetIdentifier(CFBundleGetMainBundle());
 
 	return mRegDict;
 }
@@ -698,7 +697,7 @@ static dispatch_queue_t notificationQueue_Queue;
 }
 
 + (NSDictionary *) frameworkInfoDictionary {
-	return [[NSBundle bundleForClass:[self class]] infoDictionary];
+	return [NSBundle bundleForClass:[self class]].infoDictionary;
 }
 
 #pragma mark -
@@ -724,7 +723,8 @@ static dispatch_queue_t notificationQueue_Queue;
       return NO;
    }
    NSString *appString = showApp ? [NSString stringWithFormat:@"/applications/%@", self.appName] : @"";
-   NSString *urlString = [[NSString stringWithFormat:@"growl://preferences%@", appString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+   NSCharacterSet *set = [NSCharacterSet URLPathAllowedCharacterSet];
+   NSString *urlString = [[NSString stringWithFormat:@"growl://preferences%@", appString] stringByAddingPercentEncodingWithAllowedCharacters:set];
    NSURL *url = [NSURL URLWithString:urlString];
    return [[NSWorkspace sharedWorkspace] openURL:url];
 }
@@ -736,13 +736,13 @@ static dispatch_queue_t notificationQueue_Queue;
 	NSString *applicationNameForGrowl = nil;
 
 	if (self.delegate != nil && [self.delegate respondsToSelector:@selector(applicationNameForGrowl)])
-		applicationNameForGrowl = [self.delegate applicationNameForGrowl];
+		applicationNameForGrowl = (self.delegate).applicationNameForGrowl;
 
 	if (!applicationNameForGrowl) {
-		applicationNameForGrowl = [regDict objectForKey:GROWL_APP_NAME];
+		applicationNameForGrowl = regDict[GROWL_APP_NAME];
 
 		if (!applicationNameForGrowl)
-			applicationNameForGrowl = [[NSProcessInfo processInfo] processName];
+			applicationNameForGrowl = [NSProcessInfo processInfo].processName;
 	}
 
 	return applicationNameForGrowl;
@@ -752,7 +752,7 @@ static dispatch_queue_t notificationQueue_Queue;
 
 	if (self.delegate != nil) {
 		if ([self.delegate respondsToSelector:@selector(applicationIconForGrowl)])
-			iconData = (NSData *)[self.delegate applicationIconForGrowl];
+			iconData = (NSData *)(self.delegate).applicationIconForGrowl;
 		else if ([self.delegate respondsToSelector:@selector(applicationIconDataForGrowl)])
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -761,14 +761,14 @@ static dispatch_queue_t notificationQueue_Queue;
 	}
 
 	if (!iconData)
-		iconData = [regDict objectForKey:GROWL_APP_ICON_DATA];
+		iconData = regDict[GROWL_APP_ICON_DATA];
 
 	if (iconData && [iconData isKindOfClass:[NSImage class]])
-		iconData = [(NSImage *)iconData PNGRepresentation];
+		iconData = ((NSImage *)iconData).PNGRepresentation;
 
 	if (!iconData) {
-		NSString *path = [[NSBundle mainBundle] bundlePath];
-		iconData = [[[NSWorkspace sharedWorkspace] iconForFile:path] PNGRepresentation];
+		NSString *path = [NSBundle mainBundle].bundlePath;
+		iconData = [[NSWorkspace sharedWorkspace] iconForFile:path].PNGRepresentation;
 	}
 
 	return iconData;
@@ -780,18 +780,18 @@ static dispatch_queue_t notificationQueue_Queue;
  */
 - (void) growlNotificationWasClicked:(NSNotification *)notification {
    @autoreleasepool {
-        NSDictionary *userInfo = [notification userInfo];
-        if ([[userInfo objectForKey:GROWL_NOTIFICATION_CLICK_BUTTONUSED] boolValue]) {
-           [self.delegate growlNotificationActionButtonClicked:[userInfo objectForKey:GROWL_KEY_CLICKED_CONTEXT]];
+        NSDictionary *userInfo = notification.userInfo;
+        if ([userInfo[GROWL_NOTIFICATION_CLICK_BUTTONUSED] boolValue]) {
+           [self.delegate growlNotificationActionButtonClicked:userInfo[GROWL_KEY_CLICKED_CONTEXT]];
         }
         else {
-           [self.delegate growlNotificationWasClicked:[[notification userInfo] objectForKey:GROWL_KEY_CLICKED_CONTEXT]];
+           [self.delegate growlNotificationWasClicked:notification.userInfo[GROWL_KEY_CLICKED_CONTEXT]];
         }
    }
 }
 - (void) growlNotificationTimedOut:(NSNotification *)notification {
 	@autoreleasepool {
-      [self.delegate growlNotificationTimedOut:[[notification userInfo] objectForKey:GROWL_KEY_CLICKED_CONTEXT]];
+      [self.delegate growlNotificationTimedOut:notification.userInfo[GROWL_KEY_CLICKED_CONTEXT]];
    }
 }
 
@@ -801,7 +801,7 @@ static dispatch_queue_t notificationQueue_Queue;
 {
 	dispatch_async(notificationQueue_Queue, ^{
       NSMutableArray *queue = [self queuedNotes];
-		if([queue count]){
+		if(queue.count){
 			[queue enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 				if([obj isKindOfClass:[GrowlNote class]])
 					[obj notify];
@@ -816,7 +816,7 @@ static dispatch_queue_t notificationQueue_Queue;
    static BOOL _cached = NO;
    static BOOL _reachable = NO;
    
-   BOOL running = [self isGrowlRunning];
+   BOOL running = self.isGrowlRunning;
    
    //No sense in running version checks repeatedly, but if growl relaunched, we will recheck
    if(_cached && !update){
@@ -833,8 +833,8 @@ static dispatch_queue_t notificationQueue_Queue;
    //This is a bit of a hack, we check for Growl 1.2.2 and lower by seeing if the running helper app is inside Growl.prefpane
    NSString *runningPath = nil;
    NSArray *runningApplications = [NSRunningApplication runningApplicationsWithBundleIdentifier:GROWL_HELPERAPP_BUNDLE_IDENTIFIER];
-   if(runningApplications && [runningApplications count])
-      runningPath = [[[runningApplications objectAtIndex:0] bundleURL] absoluteString];
+   if(runningApplications && runningApplications.count)
+      runningPath = [runningApplications[0] bundleURL].absoluteString;
    NSString *prefPaneSubpath = @"Growl.prefpane/Contents/Resources";
    
     if(runningPath) {
@@ -891,7 +891,7 @@ static dispatch_queue_t notificationQueue_Queue;
       if(attempt.attemptType == GrowlCommunicationAttemptTypeRegister){
          dispatch_async(notificationQueue_Queue, ^{
             NSMutableArray *queue = [self queuedNotes];
-            if([queue count]){
+            if(queue.count){
                NSLog(@"We failed at registering with items in our queue waiting to go to growl, falling back to built in notifications");
                [queue enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
                   dispatch_async(dispatch_get_main_queue(), ^{

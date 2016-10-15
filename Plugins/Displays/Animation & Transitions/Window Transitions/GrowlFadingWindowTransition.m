@@ -16,10 +16,10 @@
 	if (aWindow) {
 		switch (direction) {
 			case GrowlForwardTransition:
-				[aWindow setAlphaValue:inProgress];
+				aWindow.alphaValue = inProgress;
 				break;
 			case GrowlReverseTransition:
-				[aWindow setAlphaValue:(1.0 - inProgress)];
+				aWindow.alphaValue = (1.0 - inProgress);
 				break;
 			default:
 				break;

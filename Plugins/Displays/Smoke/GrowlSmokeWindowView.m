@@ -30,15 +30,15 @@
 
 @implementation GrowlSmokeWindowView
 
-- (id) initWithFrame:(NSRect)frame configurationDict:(NSDictionary*)configDict {
+- (instancetype) initWithFrame:(NSRect)frame configurationDict:(NSDictionary*)configDict {
 	if ((self = [super initWithFrame:frame])) {
 		textFont = [NSFont systemFontOfSize:GrowlSmokeTextFontSize];
 		textLayoutManager = [[NSLayoutManager alloc] init];
 		titleLayoutManager = [[NSLayoutManager alloc] init];
 		lineHeight = [textLayoutManager defaultLineHeightForFont:textFont];
 		textShadow = [[NSShadow alloc] init];
-		[textShadow setShadowOffset:NSMakeSize(0.0, -2.0)];
-		[textShadow setShadowBlurRadius:3.0];
+		textShadow.shadowOffset = NSMakeSize(0.0, -2.0);
+		textShadow.shadowBlurRadius = 3.0;
 
 		int size = GrowlSmokeSizePrefDefault;
 		if([configDict valueForKey:GrowlSmokeSizePref]){
@@ -56,14 +56,14 @@
 	if (value) {
 		if (!progressIndicator) {
 			progressIndicator = [[ISProgressIndicator alloc] initWithFrame:NSMakeRect(GrowlSmokePadding, GrowlSmokePadding + iconSize + GrowlSmokeIconProgressPadding, iconSize, NSProgressIndicatorPreferredSmallThickness)];
-			[progressIndicator setStyle:NSProgressIndicatorBarStyle];
-			[progressIndicator setControlSize:NSSmallControlSize];
+			progressIndicator.style = NSProgressIndicatorBarStyle;
+			progressIndicator.controlSize = NSControlSizeSmall;
 			[progressIndicator setBezeled:NO];
-			[progressIndicator setControlTint:NSDefaultControlTint];
+			progressIndicator.controlTint = NSDefaultControlTint;
 			[progressIndicator setIndeterminate:NO];
 			[self addSubview:progressIndicator];
 		}
-		[progressIndicator setDoubleValue:[value doubleValue]];
+		progressIndicator.doubleValue = value.doubleValue;
 		[self setNeedsDisplay:YES];
 	} else if (progressIndicator) {
 		[progressIndicator removeFromSuperview];
@@ -78,14 +78,14 @@
 }
 
 - (void) drawRect:(NSRect)rect {
-	NSRect b = [self bounds];
+	NSRect b = self.bounds;
 	CGRect bounds = CGRectMake(b.origin.x, b.origin.y, b.size.width, b.size.height);
 
 	// calculate bounds based on icon-float pref on or off
 	CGRect shadedBounds;
 	BOOL floatIcon = GrowlSmokeFloatIconPrefDefault;
-	if([[self configurationDict] valueForKey:GrowlSmokeFloatIconPref]){
-		floatIcon = [[[self configurationDict] valueForKey:GrowlSmokeFloatIconPref] boolValue];
+	if([self.configurationDict valueForKey:GrowlSmokeFloatIconPref]){
+		floatIcon = [[self.configurationDict valueForKey:GrowlSmokeFloatIconPref] boolValue];
 	}
 	if (floatIcon) {
 		CGFloat sizeReduction = GrowlSmokePadding + iconSize + (GrowlSmokeIconTextPadding * 0.5);
@@ -100,7 +100,7 @@
 
 	// set up bezier path for rounded corners
     NSBezierPath *bezierPath = [NSBezierPath bezierPathWithRoundedRect:shadedBounds xRadius:GrowlSmokeBorderRadius yRadius:GrowlSmokeBorderRadius];
-	[bezierPath setLineWidth:2.0f];
+	bezierPath.lineWidth = 2.0f;
 
 	// draw background
 	if (mouseOver) {
@@ -121,7 +121,7 @@
 	drawRect.size.height = iconSize;
 
 	[icon drawScaledInRect:drawRect
-				 operation:NSCompositeSourceOver
+				 operation:NSCompositingOperationSourceOver
 				  fraction:1.0
                 neverFlipped:YES];
 
@@ -129,7 +129,7 @@
     
     [NSGraphicsContext saveGraphicsState];
     //we do this because we don't want 10.7 helping us.
-    CGContextSetShouldSmoothFonts([[NSGraphicsContext currentContext] graphicsPort], false);
+    CGContextSetShouldSmoothFonts([NSGraphicsContext currentContext].graphicsPort, false);
 	if (haveTitle) {
 		[titleLayoutManager drawGlyphsForGlyphRange:titleRange atPoint:drawRect.origin];
 		drawRect.origin.y += titleHeight + GrowlSmokeTitleTextPadding;
@@ -139,7 +139,7 @@
 		[textLayoutManager drawGlyphsForGlyphRange:textRange atPoint:drawRect.origin];
     
     [NSGraphicsContext restoreGraphicsState];
-	[[self window] invalidateShadow];
+	[self.window invalidateShadow];
 	[super drawRect:rect];
 }
 
@@ -149,7 +149,7 @@
 }
 
 - (void) setTitle:(NSString *)aTitle {
-	haveTitle = [aTitle length] != 0;
+	haveTitle = aTitle.length != 0;
 
 	if (!haveTitle) {
 		[self setNeedsDisplay:YES];
@@ -164,22 +164,20 @@
 		titleContainer = [[NSTextContainer alloc] initWithContainerSize:containerSize];
         [titleLayoutManager addTextContainer:titleContainer];	// retains textContainer
 		[titleStorage addLayoutManager:titleLayoutManager];	// retains layoutManager
-		[titleContainer setLineFragmentPadding:0.0];
+		titleContainer.lineFragmentPadding = 0.0;
 	}
 
 	// construct attributes for the title
 	NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-	[paragraphStyle setLineBreakMode:NSLineBreakByTruncatingTail];
+	paragraphStyle.lineBreakMode = NSLineBreakByTruncatingTail;
 	NSFont *titleFont = [NSFont boldSystemFontOfSize:GrowlSmokeTitleFontSize];
-	NSDictionary *defaultAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:
-		titleFont,		NSFontAttributeName,
-		textColor,		NSForegroundColorAttributeName,
-		textShadow,     NSShadowAttributeName,
-		paragraphStyle, NSParagraphStyleAttributeName,
-		nil];
+	NSDictionary *defaultAttributes = @{NSFontAttributeName: titleFont,
+		NSForegroundColorAttributeName: textColor,
+		NSShadowAttributeName: textShadow,
+		NSParagraphStyleAttributeName: paragraphStyle};
 
-	[[titleStorage mutableString] setString:aTitle];
-	[titleStorage setAttributes:defaultAttributes range:NSMakeRange(0U, [aTitle length])];
+	[titleStorage.mutableString setString:aTitle];
+	[titleStorage setAttributes:defaultAttributes range:NSMakeRange(0U, aTitle.length)];
 
 
 	titleRange = [titleLayoutManager glyphRangeForTextContainer:titleContainer];	// force layout
@@ -189,7 +187,7 @@
 }
 
 - (void) setText:(NSString *)aText {
-	haveText = [aText length] != 0;
+	haveText = aText.length != 0;
 
 	if (!haveText) {
 		[self setNeedsDisplay:YES];
@@ -199,8 +197,8 @@
 	if (!textStorage) {
 		NSSize containerSize;
 		BOOL limitPref = GrowlSmokeLimitPrefDefault;
-		if([[self configurationDict] valueForKey:GrowlSmokeLimitPref]){
-			limitPref = [[[self configurationDict] valueForKey:GrowlSmokeLimitPref] boolValue];
+		if([self.configurationDict valueForKey:GrowlSmokeLimitPref]){
+			limitPref = [[self.configurationDict valueForKey:GrowlSmokeLimitPref] boolValue];
 		}
 		containerSize.width = GrowlSmokeTextAreaWidth;
 		if (limitPref)
@@ -211,18 +209,16 @@
 		textContainer = [[NSTextContainer alloc] initWithContainerSize:containerSize];
 		[textLayoutManager addTextContainer:textContainer];	// retains textContainer
 		[textStorage addLayoutManager:textLayoutManager];	// retains layoutManager
-		[textContainer setLineFragmentPadding:0.0];
+		textContainer.lineFragmentPadding = 0.0;
 	}
 
 	// construct default attributes for the description text
-	NSDictionary *defaultAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:
-		textFont,	NSFontAttributeName,
-		textColor,  NSForegroundColorAttributeName,
-		textShadow, NSShadowAttributeName,
-		nil];
+	NSDictionary *defaultAttributes = @{NSFontAttributeName: textFont,
+		NSForegroundColorAttributeName: textColor,
+		NSShadowAttributeName: textShadow};
 
-	[[textStorage mutableString] setString:aText];
-	[textStorage setAttributes:defaultAttributes range:NSMakeRange(0U, [aText length])];
+	[textStorage.mutableString setString:aText];
+	[textStorage setAttributes:defaultAttributes range:NSMakeRange(0U, aText.length)];
 
 
 	textRange = [textLayoutManager glyphRangeForTextContainer:textContainer];	// force layout
@@ -259,14 +255,14 @@
 	}
 
 	CGFloat backgroundAlpha = GrowlSmokeAlphaPrefDefault;
-	if([[self configurationDict] valueForKey:GrowlSmokeAlphaPref]){
-		backgroundAlpha = [[[self configurationDict] valueForKey:GrowlSmokeAlphaPref] floatValue];
+	if([self.configurationDict valueForKey:GrowlSmokeAlphaPref]){
+		backgroundAlpha = [[self.configurationDict valueForKey:GrowlSmokeAlphaPref] floatValue];
 	}
 	backgroundAlpha *= 0.01;
 
 
 	Class NSDataClass = [NSData class];
-	NSData *data = [[self configurationDict] valueForKey:key];
+	NSData *data = [self.configurationDict valueForKey:key];
 
 	if (data && [data isKindOfClass:NSDataClass]) {
 		bgColor = [NSUnarchiver unarchiveObjectWithData:data];
@@ -276,7 +272,7 @@
 	}
 	data = nil;
 
-	data = [[self configurationDict] valueForKey:textKey];
+	data = [self.configurationDict valueForKey:textKey];
 	if (data && [data isKindOfClass:NSDataClass]) {
 		textColor = [NSUnarchiver unarchiveObjectWithData:data];
 	} else {
@@ -284,25 +280,25 @@
 	}
 	data = nil;
 	
-	[textShadow setShadowColor:[bgColor blendedColorWithFraction:0.5 ofColor:[NSColor blackColor]]];
+	textShadow.shadowColor = [bgColor blendedColorWithFraction:0.5 ofColor:[NSColor blackColor]];
 }
 
 - (void) sizeToFit {
-	CGFloat height = GrowlSmokePadding + GrowlSmokePadding + [self titleHeight] + [self descriptionHeight];
+	CGFloat height = GrowlSmokePadding + GrowlSmokePadding + self.titleHeight + self.descriptionHeight;
 	if (haveTitle && haveText)
 		height += GrowlSmokeTitleTextPadding;
 	if (progressIndicator)
-		height += GrowlSmokeIconProgressPadding + [progressIndicator bounds].size.height;
+		height += GrowlSmokeIconProgressPadding + progressIndicator.bounds.size.height;
 	if (height < GrowlSmokeMinTextHeight)
 		height = GrowlSmokeMinTextHeight;
 
-	NSRect rect = [self frame];
+	NSRect rect = self.frame;
 	rect.size.height = height;
-	[self setFrame:rect];
+	self.frame = rect;
 
 	// resize the window so that it contains the tracking rect
-	NSWindow *window = [self window];
-	NSRect windowRect = [window frame];
+	NSWindow *window = self.window;
+	NSRect windowRect = window.frame;
 	windowRect.origin.y -= height - windowRect.size.height;
 	windowRect.size.height = height;
 	[window setFrame:windowRect display:YES animate:YES];
@@ -323,8 +319,8 @@
 - (NSInteger) descriptionRowCount {
 	NSInteger rowCount = textHeight / lineHeight;
 	BOOL limitPref = GrowlSmokeLimitPrefDefault;
-	if([[self configurationDict] valueForKey:GrowlSmokeLimitPref]){
-		limitPref = [[[self configurationDict] valueForKey:GrowlSmokeLimitPref] boolValue];
+	if([self.configurationDict valueForKey:GrowlSmokeLimitPref]){
+		limitPref = [[self.configurationDict valueForKey:GrowlSmokeLimitPref] boolValue];
 	}
 	if (limitPref)
 		return MIN(rowCount, GrowlSmokeMaxLines);

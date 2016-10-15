@@ -35,7 +35,7 @@
     
 }
 
--(id)init {
+-(instancetype)init {
 	if((self = [super init])){
 		NSString *path = [[NSBundle mainBundle] pathForResource:@"HandsFreeDeviceSDPRecord" ofType:@"plist"];
 		NSDictionary *serviceDict = [NSDictionary dictionaryWithContentsOfFile:path]; 
@@ -101,12 +101,11 @@
 						  device:(IOBluetoothDevice*)device 
 {
 	if(device.isHandsFreeAudioGateway){
-		NSLog(@"%@", [device name]);
+		NSLog(@"%@", device.name);
 		//if(IOBluetoothLaunchHandsFreeAgent([device addressString]))
 		//	NSLog(@"agent launched?");
 		
-		NSDictionary *scoDict = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES]
-																			 forKey:@"Autoconfig hidden"];
+		NSDictionary *scoDict = @{@"Autoconfig hidden": @YES};
 		IOReturn result = IOBluetoothAddSCOAudioDevice((IOBluetoothDeviceRef)[device getDeviceRef], (__bridge CFDictionaryRef)scoDict);
 		if (result != kIOReturnSuccess)
 		{
@@ -129,9 +128,9 @@
 			if(handsFree){
 				NSLog(@"yay!");
 				
-				[handsFree setSupportedFeatures:handsFree.supportedFeatures | IOBluetoothHandsFreeDeviceFeatureCLIPresentation];
+				handsFree.supportedFeatures = handsFree.supportedFeatures | IOBluetoothHandsFreeDeviceFeatureCLIPresentation;
 				[handsFree connect];
-				[weakSelf setPhone:handsFree];
+				weakSelf.phone = handsFree;
 				[device registerForDisconnectNotification:weakSelf selector:@selector(bluetoothDisconnection:device:)];
 			}else{
 				NSLog(@"Sigh");
@@ -171,16 +170,16 @@
 #pragma mark HWGrowlPluginNotifierProtocol
 
 -(NSArray*)noteNames {
-	return [NSArray arrayWithObjects:@"IncomingPhoneCall", @"IncomingSMS", nil];
+	return @[@"IncomingPhoneCall", @"IncomingSMS"];
 }
 -(NSDictionary*)localizedNames {
-	return [NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"Incoming Phone Call", @""), @"IncomingPhoneCall", NSLocalizedString(@"Incoming SMS", @""), @"IncomingSMS", nil];
+	return @{@"IncomingPhoneCall": NSLocalizedString(@"Incoming Phone Call", @""), @"IncomingSMS": NSLocalizedString(@"Incoming SMS", @"")};
 }
 -(NSDictionary*)noteDescriptions {
-	return [NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"Incoming Phone Call", @""), @"IncomingPhoneCall", NSLocalizedString(@"Incoming SMS", @""), @"IncomingSMS", nil];
+	return @{@"IncomingPhoneCall": NSLocalizedString(@"Incoming Phone Call", @""), @"IncomingSMS": NSLocalizedString(@"Incoming SMS", @"")};
 }
 -(NSArray*)defaultNotifications {
-	return [NSArray arrayWithObjects:@"IncomingPhoneCall", @"IncomingSMS", nil];
+	return @[@"IncomingPhoneCall", @"IncomingSMS"];
 }
 
 @end

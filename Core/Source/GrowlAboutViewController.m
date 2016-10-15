@@ -47,12 +47,12 @@
 			versionString = versionStringWithVCSVersion;
 	}
    
-	[aboutVersionString setStringValue:[NSString stringWithFormat:@"%@ %@", 
+	aboutVersionString.stringValue = [NSString stringWithFormat:@"%@ %@", 
                                        [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"], 
-                                       versionString]];
+                                       versionString];
 	//[aboutBoxTextView readRTFDFromFile:[[NSBundle mainBundle] pathForResource:@"About" ofType:@"rtf"]];
-	NSString *path = [[[NSBundle mainBundle] URLForResource:@"About" withExtension:@"html"] absoluteString];
-	[aboutWebView setMainFrameURL:path];
+	NSString *path = [[NSBundle mainBundle] URLForResource:@"About" withExtension:@"html"].absoluteString;
+	aboutWebView.mainFrameURL = path;
 }
 
 - (IBAction) openGrowlWebSite:(id)sender {
@@ -69,9 +69,9 @@ decidePolicyForNavigationAction:(NSDictionary *)actionInformation
 			 frame:(WebFrame *)frame
 decisionListener:(id < WebPolicyDecisionListener >)listener
 {
-	NSString *host = [[request URL] host];
+	NSString *host = request.URL.host;
 	if (host) {
-		[[NSWorkspace sharedWorkspace] openURL:[request URL]];
+		[[NSWorkspace sharedWorkspace] openURL:request.URL];
 	} else {
 		[listener use];
 	}

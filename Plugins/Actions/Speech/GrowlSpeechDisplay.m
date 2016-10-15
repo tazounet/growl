@@ -22,7 +22,7 @@
 @synthesize syn;
 @synthesize paused;
 
-- (id) init {
+- (instancetype) init {
     if((self = [super init])) {
         self.speech_queue = [NSMutableArray array];
         self.syn = [[NSSpeechSynthesizer alloc] initWithVoice:nil];
@@ -71,7 +71,7 @@
     SGKeyCombo *combo = nil;
     
 	if(code && modifiers){
-		combo = [SGKeyCombo keyComboWithKeyCode:[code integerValue] modifiers:[modifiers unsignedIntegerValue]];
+		combo = [SGKeyCombo keyComboWithKeyCode:code.integerValue modifiers:modifiers.unsignedIntegerValue];
     }
     
     if(combo && combo.keyCode) {
@@ -94,7 +94,7 @@
 																		  object:_preferencePane
 																			queue:[NSOperationQueue mainQueue]
 																	 usingBlock:^(NSNotification *note) {
-																		 SpeechHotKey hotKey = (int)[[[note userInfo] valueForKey:@"hotKeyType"] integerValue];
+																		 SpeechHotKey hotKey = (int)[[note.userInfo valueForKey:@"hotKeyType"] integerValue];
 																		 [weakSelf updateKeyCombo:hotKey];
 																	 }];
 	}
@@ -111,7 +111,7 @@
 		NSString *summary = [NSString stringWithFormat:@"%@\n\n%@", title, desc];
 		if([configuration valueForKey:GrowlSpeechUseLimitPref] && [[configuration valueForKey:GrowlSpeechUseLimitPref] boolValue]){
 			NSUInteger limit = [configuration valueForKey:GrowlSpeechLimitPref] ? [[configuration valueForKey:GrowlSpeechLimitPref] unsignedIntegerValue] : GrowlSpeechLimitDefault;
-			if([summary length] > limit){
+			if(summary.length > limit){
 				NSRange nearestWhite = [summary rangeOfCharacterFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]
 																				options:NSBackwardsSearch 
 																				  range:NSMakeRange(0, limit)];
@@ -121,10 +121,10 @@
 			}
 		}
 		
-		NSDictionary *queueDict = [NSDictionary dictionaryWithObjectsAndKeys:summary, @"summary", noteDict, @"note", configuration, @"configuration", nil];
+		NSDictionary *queueDict = @{@"summary": summary, @"note": noteDict, @"configuration": configuration};
 		
 		[weakSelf.speech_queue addObject:queueDict];
-		if(![weakSelf.syn isSpeaking] && !weakSelf.paused)
+		if(!(weakSelf.syn).speaking && !weakSelf.paused)
 		{
 			[weakSelf speakNotification:summary withConfiguration:configuration];
 		}
@@ -157,7 +157,7 @@
 -(void)toggleSpeech {
 	__weak GrowlSpeechDisplay *weakSelf = self;
 	dispatch_async(speech_dispatch_queue, ^{
-		if([weakSelf.syn isSpeaking] || weakSelf.paused){
+		if((weakSelf.syn).speaking || weakSelf.paused){
 			weakSelf.paused = weakSelf.paused ? NO : YES;
 			if(weakSelf.paused){
 				[weakSelf.syn pauseSpeakingAtBoundary:NSSpeechWordBoundary];
@@ -179,9 +179,9 @@
 -(void)clickNote {
 	__weak GrowlSpeechDisplay *weakSelf = self;
 	dispatch_async(speech_dispatch_queue, ^{
-		if([weakSelf.speech_queue count]){
-			NSDictionary *noteDict = [[weakSelf.speech_queue objectAtIndex:0U] valueForKey:@"note"];
-			NSDictionary *configDict = [[weakSelf.speech_queue objectAtIndex:0U] valueForKey:@"configuration"];
+		if((weakSelf.speech_queue).count){
+			NSDictionary *noteDict = [(weakSelf.speech_queue)[0U] valueForKey:@"note"];
+			NSDictionary *configDict = [(weakSelf.speech_queue)[0U] valueForKey:@"configuration"];
 			GrowlNotification *note = [GrowlNotification notificationWithDictionary:noteDict configurationDict:configDict];
 			[[NSNotificationCenter defaultCenter] postNotificationName:GROWL_NOTIFICATION_CLICKED
 																				 object:note
@@ -198,13 +198,13 @@
 {
 	if([sender isEqualTo:syn])
 	{
-		if([speech_queue count]){
+		if(speech_queue.count){
 			[speech_queue removeObjectAtIndex:0U];
-			if([speech_queue count])
+			if(speech_queue.count)
 			{
 				//insert a slight delay
 				__weak GrowlSpeechDisplay *weakSelf = self;
-				NSDictionary *speechDict = [speech_queue objectAtIndex:0U];
+				NSDictionary *speechDict = speech_queue[0U];
 				double delayInSeconds = 1.0;
 				dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
 				dispatch_after(popTime, speech_dispatch_queue, ^(void){

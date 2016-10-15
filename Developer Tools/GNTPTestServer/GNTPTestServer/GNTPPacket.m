@@ -57,28 +57,28 @@
 		forPassword:(NSString*)password
 {
    GNTPKey *remoteKey = [[GNTPKey alloc] initWithPassword:password
-															hashAlgorithm:[key hashAlgorithm]
-													encryptionAlgorithm:[key encryptionAlgorithm]];
-   [remoteKey setSalt:[key salt]];
-   NSData *IV = [key IV];
+                                            hashAlgorithm:key.hashAlgorithm
+                                      encryptionAlgorithm:key.encryptionAlgorithm];
+   remoteKey.salt = key.salt;
+   NSData *IV = key.IV;
    [remoteKey generateKey];
    if(IV)
-      [remoteKey setIV:IV];
+      remoteKey.IV = IV;
    
-   if ([HexEncode([key keyHash]) caseInsensitiveCompare:HexEncode([remoteKey keyHash])] == NSOrderedSame)
+   if ([HexEncode(key.keyHash) caseInsensitiveCompare:HexEncode(remoteKey.keyHash)] == NSOrderedSame)
       return YES;
    return NO;
 }
 + (BOOL)isAuthorizedPacketType:(NSString*)action
-							  withKey:(GNTPKey*)key
-							originKey:(GNTPKey*)originKey
-							forSocket:(GCDAsyncSocket*)socket
-							errorCode:(GrowlGNTPErrorCode*)errCode
-						 description:(NSString**)errDescription
+                       withKey:(GNTPKey*)key
+                     originKey:(GNTPKey*)originKey
+                     forSocket:(GCDAsyncSocket*)socket
+                     errorCode:(GrowlGNTPErrorCode*)errCode
+                   description:(NSString**)errDescription
 {
    NSString *conHost = nil;
-   if([socket connectedHost])
-      conHost = [socket connectedHost];
+   if(socket.connectedHost)
+      conHost = socket.connectedHost;
    else{
       NSLog(@"We dont know what host sent this (will show as missing hash string error)");
       if (errCode) *errCode = GrowlGNTPInternalServerErrorErrorCode;
@@ -87,10 +87,10 @@
    }
 #if GROWLHELPERAPP
    GrowlPreferencesController *preferences = [GrowlPreferencesController sharedController];
-   if(![conHost isLocalHost])
+   if(!conHost.isLocalHost)
    {
       /* These two cases are for if the socket has to be open for subscription, but not remote notes/registration, or vice versa */
-      if(![preferences isGrowlServerEnabled] && ([action caseInsensitiveCompare:GrowlGNTPNotificationMessageType] == NSOrderedSame ||
+      if(!preferences.isGrowlServerEnabled && ([action caseInsensitiveCompare:GrowlGNTPNotificationMessageType] == NSOrderedSame ||
 																 [action caseInsensitiveCompare:GrowlGNTPRegisterMessageType] == NSOrderedSame))
       {
          if (errCode) *errCode = GrowlGNTPUnauthorizedErrorCode;
@@ -98,7 +98,7 @@
          return NO;
       }
       
-      if(![preferences isSubscriptionAllowed] && [action caseInsensitiveCompare:GrowlGNTPSubscribeMessageType] == NSOrderedSame) {
+      if(!preferences.isSubscriptionAllowed && [action caseInsensitiveCompare:GrowlGNTPSubscribeMessageType] == NSOrderedSame) {
          if (errCode) *errCode = GrowlGNTPUnauthorizedErrorCode;
          if (errDescription) *errDescription = NSLocalizedString(@"Incoming subscription requests have been disabled by the user", @"GNTP unathorized packet error message");
          return NO;
@@ -112,7 +112,7 @@
 								  [action caseInsensitiveCompare:GrowlGNTPOKResponseType] == NSOrderedSame ||
 								  [action caseInsensitiveCompare:GrowlGNTPCallbackTypeHeader] == NSOrderedSame);
    
-   if([conHost isLocalHost] && [key hashAlgorithm] == GNTPNoHash && [key encryptionAlgorithm] == GNTPNone)
+   if(conHost.isLocalHost && key.hashAlgorithm == GNTPNoHash && key.encryptionAlgorithm == GNTPNone)
       return YES;
    
    //This is mainly for future reference, responses are supposed to have security by spec, but it isn't implemented in GfW or Growl.app
@@ -129,7 +129,7 @@
    //New setting to allow no encryption when password is empty
    NSString *remotePassword = @"TESTING";
 #if GROWLHELPERAPP
-	remotePassword = [preferences remotePassword];
+	remotePassword = preferences.remotePassword;
    if(![preferences boolForKey:@"RequireGNTPSecurityWhenPasswordEmpty"]) {
       if(!remotePassword || [remotePassword isEqualToString:@""])
          passwordRequired = NO;
@@ -137,21 +137,21 @@
 #endif
    
    //Despite all the above, if we have an encryption algorithm, we require a password setup to decrypt
-   if([key encryptionAlgorithm] != GNTPNone)
+   if(key.encryptionAlgorithm != GNTPNone)
       passwordRequired = YES;
    
    //If we dont have a hash algorithm, and we require password, we dont have what we need
-   if([key hashAlgorithm] == GNTPNoHash && passwordRequired)
+   if(key.hashAlgorithm == GNTPNoHash && passwordRequired)
       return NO;
    
    //We dont need a password, we dont have a hash algorithm, and we dont have encryption
-   if(!passwordRequired && [key hashAlgorithm] == GNTPNoHash)
+   if(!passwordRequired && key.hashAlgorithm == GNTPNoHash)
       return YES;
    
    //At this point, we know we need a password, for decryption, or just authorization
 	if(isResponseType){
 		//check hash against the origin packet, regardless of subscription or not, this should be valid
-		if (originKey && [HexEncode([originKey keyHash]) caseInsensitiveCompare:HexEncode([key keyHash])] == NSOrderedSame)
+		if (originKey && [HexEncode(originKey.keyHash) caseInsensitiveCompare:HexEncode(key.keyHash)] == NSOrderedSame)
 			return YES;
 	}else{
 		//Try our remote password
@@ -185,17 +185,17 @@
 	BOOL errorSet = NO;
 	GNTPKey *key = [[GNTPKey alloc] init];
 	
-	NSArray *encryptionSubstrings = [[headers objectAtIndex:2] componentsSeparatedByString:@":"];
-	NSString *packetEncryptionAlgorithm = [[encryptionSubstrings objectAtIndex:0] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+	NSArray *encryptionSubstrings = [headers[2] componentsSeparatedByString:@":"];
+	NSString *packetEncryptionAlgorithm = [encryptionSubstrings[0] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 	
 	GrowlGNTPEncryptionAlgorithm algorithm = [GNTPKey encryptionAlgorithmFromString:packetEncryptionAlgorithm];
-	[key setEncryptionAlgorithm:algorithm]; //this should be None if there is only one item
+	key.encryptionAlgorithm = algorithm; //this should be None if there is only one item
 	if([GNTPKey isSupportedEncryptionAlgorithm:packetEncryptionAlgorithm])
 	{
-		if([encryptionSubstrings count] == 2)
-			[key setIV:HexUnencode([encryptionSubstrings objectAtIndex:1])];
+		if(encryptionSubstrings.count == 2)
+			key.IV = HexUnencode(encryptionSubstrings[1]);
 		else {
-			if ([key encryptionAlgorithm] != GNTPNone) {
+			if (key.encryptionAlgorithm != GNTPNone) {
 				errorSet = YES;
 				*errCode = GrowlGNTPUnauthorizedErrorCode;
 				*errDescription = NSLocalizedString(@"Missing initialization vector for encryption", /*comment*/ @"GNTP packet parsing error");
@@ -212,21 +212,21 @@
 	if(!errorSet)
 	{
 		BOOL hashStringError = NO;
-		if([headers count] == 4)
+		if(headers.count == 4)
 		{
-			NSString *item4 = [[headers objectAtIndex:3] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+			NSString *item4 = [headers[3] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 			if([item4 caseInsensitiveCompare:@""] == NSOrderedSame){
 				NSLog(@"Empty item 4, possibly a flaw in the GNTP sender, ignoring");
 			} else {
 				NSArray *keySubstrings = [item4 componentsSeparatedByString:@":"];
-				NSString *keyHashAlgorithm = [keySubstrings objectAtIndex:0];
+				NSString *keyHashAlgorithm = keySubstrings[0];
 				if([GNTPKey isSupportedHashAlgorithm:keyHashAlgorithm]) {
-					[key setHashAlgorithm:[GNTPKey hashingAlgorithmFromString:keyHashAlgorithm]];
-					if([keySubstrings count] == 2) {
-						NSArray *keyHashStrings = [[keySubstrings objectAtIndex:1] componentsSeparatedByString:@"."];
-						if([keyHashStrings count] == 2) {
-							[key setKeyHash:HexUnencode([keyHashStrings objectAtIndex:0])];
-							[key setSalt:HexUnencode([[keyHashStrings objectAtIndex:1] substringWithRange:NSMakeRange(0, [[keyHashStrings objectAtIndex:1] length])])];
+					key.hashAlgorithm = [GNTPKey hashingAlgorithmFromString:keyHashAlgorithm];
+					if(keySubstrings.count == 2) {
+						NSArray *keyHashStrings = [keySubstrings[1] componentsSeparatedByString:@"."];
+						if(keyHashStrings.count == 2) {
+							key.keyHash = HexUnencode(keyHashStrings[0]);
+							key.salt = HexUnencode([keyHashStrings[1] substringWithRange:NSMakeRange(0, [keyHashStrings[1] length])]);
 							//we will do actual check of all this in isAuthorizedPacket
 						}
 						else 
@@ -261,34 +261,34 @@
 	static NSDictionary *_matchingDict = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		_matchingDict = [NSDictionary dictionaryWithObjectsAndKeys:GROWL_APP_NAME, GrowlGNTPApplicationNameHeader,
-								GROWL_APP_ICON_DATA, GrowlGNTPApplicationIconHeader,
-								GROWL_NOTIFICATION_ICON_DATA, GrowlGNTPNotificationIcon,
-								GROWL_NOTIFICATION_IDENTIFIER, @"Notification-Coalescing-ID",
-								GROWL_NOTIFICATION_INTERNAL_ID, GrowlGNTPNotificationID,
-								GROWL_NOTIFICATION_NAME, GrowlGNTPNotificationName,
-								GROWL_NOTIFICATION_TITLE, GrowlGNTPNotificationTitle,
-								GROWL_NOTIFICATION_DESCRIPTION, GrowlGNTPNotificationText,
-                     GROWL_NOTIFICATION_ALREADY_SHOWN, GrowlGNTPXNotificationAlreadyShown,
-                     GROWL_NOTIFICATION_BUTTONTITLE_ACTION, GrowlGNTPXNotificationButtonsAction,
-                     GROWL_NOTIFICATION_BUTTONTITLE_CANCEL, GrowlGNTPXNotificationButtonsCancel,
-                     GROWL_NOTIFICATION_CLICK_BUTTONUSED, GrowlGNTPXNotificationButtonWasClicked,
-								GROWL_NOTIFICATION_STICKY, GrowlGNTPNotificationSticky,
-								GROWL_NOTIFICATION_PRIORITY, GrowlGNTPNotificationPriority,
-								GROWL_NOTIFICATION_CALLBACK_URL_TARGET, GrowlGNTPNotificationCallbackTarget,
-								GROWL_NOTIFICATION_GNTP_RECEIVED, @"Received",
-								GROWL_NOTIFICATION_GNTP_SENT_BY, @"Sent-By",
-								GROWL_GNTP_ORIGIN_MACHINE, GrowlGNTPOriginMachineName,
-								GROWL_GNTP_ORIGIN_SOFTWARE_NAME, GrowlGNTPOriginSoftwareName,
-								GROWL_GNTP_ORIGIN_SOFTWARE_VERSION, GrowlGNTPOriginSoftwareVersion,
-								GROWL_GNTP_ORIGIN_PLATFORM_NAME, GrowlGNTPOriginPlatformName,
-								GROWL_GNTP_ORIGIN_PLATFORM_VERSION, GrowlGNTPOriginPlatformVersion, nil];
+		_matchingDict = @{GrowlGNTPApplicationNameHeader: GROWL_APP_NAME,
+                          GrowlGNTPApplicationIconHeader: GROWL_APP_ICON_DATA,
+                          GrowlGNTPNotificationIcon: GROWL_NOTIFICATION_ICON_DATA,
+                          @"Notification-Coalescing-ID": GROWL_NOTIFICATION_IDENTIFIER,
+                          GrowlGNTPNotificationID: GROWL_NOTIFICATION_INTERNAL_ID,
+                          GrowlGNTPNotificationName: GROWL_NOTIFICATION_NAME,
+                          GrowlGNTPNotificationTitle: GROWL_NOTIFICATION_TITLE,
+                          GrowlGNTPNotificationText: GROWL_NOTIFICATION_DESCRIPTION,
+                          GrowlGNTPXNotificationAlreadyShown: GROWL_NOTIFICATION_ALREADY_SHOWN,
+                          GrowlGNTPXNotificationButtonsAction: GROWL_NOTIFICATION_BUTTONTITLE_ACTION,
+                          GrowlGNTPXNotificationButtonsCancel: GROWL_NOTIFICATION_BUTTONTITLE_CANCEL,
+                          GrowlGNTPXNotificationButtonWasClicked: GROWL_NOTIFICATION_CLICK_BUTTONUSED,
+                          GrowlGNTPNotificationSticky: GROWL_NOTIFICATION_STICKY,
+                          GrowlGNTPNotificationPriority: GROWL_NOTIFICATION_PRIORITY,
+                          GrowlGNTPNotificationCallbackTarget: GROWL_NOTIFICATION_CALLBACK_URL_TARGET,
+                          @"Received": GROWL_NOTIFICATION_GNTP_RECEIVED,
+                          @"Sent-By": GROWL_NOTIFICATION_GNTP_SENT_BY,
+                          GrowlGNTPOriginMachineName: GROWL_GNTP_ORIGIN_MACHINE,
+                          GrowlGNTPOriginSoftwareName: GROWL_GNTP_ORIGIN_SOFTWARE_NAME,
+                          GrowlGNTPOriginSoftwareVersion: GROWL_GNTP_ORIGIN_SOFTWARE_VERSION,
+                          GrowlGNTPOriginPlatformName: GROWL_GNTP_ORIGIN_PLATFORM_NAME,
+                          GrowlGNTPOriginPlatformVersion: GROWL_GNTP_ORIGIN_PLATFORM_VERSION};
 	});
 	return _matchingDict;
 }
 +(NSString*)growlDictKeyForGNTPKey:(NSString*)gntpKey {
-	if([[self gntpToGrowlMatchingDict] objectForKey:gntpKey])
-		return [[self gntpToGrowlMatchingDict] objectForKey:gntpKey];
+	if([self gntpToGrowlMatchingDict][gntpKey])
+		return [self gntpToGrowlMatchingDict][gntpKey];
 	return gntpKey;
 }
 +(id)convertedObjectFromGNTPObject:(id)obj forGrowlKey:(NSString*)growlKey {
@@ -297,12 +297,12 @@
 		if([obj caseInsensitiveCompare:@"Yes"] == NSOrderedSame || 
 			[obj caseInsensitiveCompare:@"True"] == NSOrderedSame)
 		{
-			convertedObj = [NSNumber numberWithBool:YES];
+			convertedObj = @YES;
 		}else {
-			convertedObj = [NSNumber numberWithBool:NO];
+			convertedObj = @NO;
 		}
 	}else if([growlKey isEqualToString:GROWL_NOTIFICATION_PRIORITY]){
-		convertedObj = [NSNumber numberWithInteger:[obj integerValue]];
+		convertedObj = @([obj integerValue]);
 	}else if([growlKey isEqualToString:GROWL_APP_ICON_DATA] ||
 				[growlKey isEqualToString:GROWL_NOTIFICATION_ICON_DATA])
 	{
@@ -322,7 +322,7 @@
 	}
 	if(!data){
 		NSLog(@"Icon Object: %@ is not a URL or data, or could not retrieved by the packet as a resource, inserting placeholder icon", obj);
-		data = [[NSImage imageNamed:NSImageNameNetwork] TIFFRepresentation];
+		data = [NSImage imageNamed:NSImageNameNetwork].TIFFRepresentation;
 	}
 	return data;
 }
@@ -332,38 +332,38 @@
 	static NSDictionary *_matchingDict = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		_matchingDict = [NSDictionary dictionaryWithObjectsAndKeys:GrowlGNTPApplicationNameHeader, GROWL_APP_NAME,
-								GrowlGNTPApplicationIconHeader, GROWL_APP_ICON_DATA,
-								GrowlGNTPNotificationIcon, GROWL_NOTIFICATION_ICON_DATA,
-								@"Notification-Coalescing-ID", GROWL_NOTIFICATION_IDENTIFIER,
-								GrowlGNTPNotificationID, GROWL_NOTIFICATION_INTERNAL_ID,
-								GrowlGNTPNotificationName, GROWL_NOTIFICATION_NAME,
-								GrowlGNTPNotificationTitle, GROWL_NOTIFICATION_TITLE,
-								GrowlGNTPNotificationText, GROWL_NOTIFICATION_DESCRIPTION,
-								GrowlGNTPXNotificationAlreadyShown, GROWL_NOTIFICATION_ALREADY_SHOWN,
-								GrowlGNTPXNotificationButtonsAction, GROWL_NOTIFICATION_BUTTONTITLE_ACTION,
-								GrowlGNTPXNotificationButtonsCancel, GROWL_NOTIFICATION_BUTTONTITLE_CANCEL,
-								GrowlGNTPXNotificationButtonWasClicked, GROWL_NOTIFICATION_CLICK_BUTTONUSED,
-								GrowlGNTPNotificationSticky, GROWL_NOTIFICATION_STICKY,
-								GrowlGNTPNotificationPriority, GROWL_NOTIFICATION_PRIORITY,
-								GrowlGNTPNotificationCallbackTarget, GROWL_NOTIFICATION_CALLBACK_URL_TARGET,
-								@"Received", GROWL_NOTIFICATION_GNTP_RECEIVED,
-								@"Sent-By", GROWL_NOTIFICATION_GNTP_SENT_BY,
-								GrowlGNTPOriginMachineName, GROWL_GNTP_ORIGIN_MACHINE,
-								GrowlGNTPOriginSoftwareName, GROWL_GNTP_ORIGIN_SOFTWARE_NAME,
-								GrowlGNTPOriginSoftwareVersion, GROWL_GNTP_ORIGIN_SOFTWARE_VERSION,
-								GrowlGNTPOriginPlatformName, GROWL_GNTP_ORIGIN_PLATFORM_NAME,
-								GrowlGNTPOriginPlatformVersion, GROWL_GNTP_ORIGIN_PLATFORM_VERSION,
-								GrowlGNTPSubscriberName, GrowlGNTPSubscriberName,
-								GrowlGNTPSubscriberID, GrowlGNTPSubscriberID,
-								GrowlGNTPSubscriberPort, GrowlGNTPSubscriberPort,
-								@"Connection", @"Connection", nil];
+		_matchingDict = @{GROWL_APP_NAME: GrowlGNTPApplicationNameHeader,
+                          GROWL_APP_ICON_DATA: GrowlGNTPApplicationIconHeader,
+                          GROWL_NOTIFICATION_ICON_DATA: GrowlGNTPNotificationIcon,
+                          GROWL_NOTIFICATION_IDENTIFIER: @"Notification-Coalescing-ID",
+                          GROWL_NOTIFICATION_INTERNAL_ID: GrowlGNTPNotificationID,
+                          GROWL_NOTIFICATION_NAME: GrowlGNTPNotificationName,
+                          GROWL_NOTIFICATION_TITLE: GrowlGNTPNotificationTitle,
+                          GROWL_NOTIFICATION_DESCRIPTION: GrowlGNTPNotificationText,
+                          GROWL_NOTIFICATION_ALREADY_SHOWN: GrowlGNTPXNotificationAlreadyShown,
+                          GROWL_NOTIFICATION_BUTTONTITLE_ACTION: GrowlGNTPXNotificationButtonsAction,
+                          GROWL_NOTIFICATION_BUTTONTITLE_CANCEL: GrowlGNTPXNotificationButtonsCancel,
+                          GROWL_NOTIFICATION_CLICK_BUTTONUSED: GrowlGNTPXNotificationButtonWasClicked,
+                          GROWL_NOTIFICATION_STICKY: GrowlGNTPNotificationSticky,
+                          GROWL_NOTIFICATION_PRIORITY: GrowlGNTPNotificationPriority,
+                          GROWL_NOTIFICATION_CALLBACK_URL_TARGET: GrowlGNTPNotificationCallbackTarget,
+                          GROWL_NOTIFICATION_GNTP_RECEIVED: @"Received",
+                          GROWL_NOTIFICATION_GNTP_SENT_BY: @"Sent-By",
+                          GROWL_GNTP_ORIGIN_MACHINE: GrowlGNTPOriginMachineName,
+                          GROWL_GNTP_ORIGIN_SOFTWARE_NAME: GrowlGNTPOriginSoftwareName,
+                          GROWL_GNTP_ORIGIN_SOFTWARE_VERSION: GrowlGNTPOriginSoftwareVersion,
+                          GROWL_GNTP_ORIGIN_PLATFORM_NAME: GrowlGNTPOriginPlatformName,
+                          GROWL_GNTP_ORIGIN_PLATFORM_VERSION: GrowlGNTPOriginPlatformVersion,
+                          GrowlGNTPSubscriberName: GrowlGNTPSubscriberName,
+                          GrowlGNTPSubscriberID: GrowlGNTPSubscriberID,
+                          GrowlGNTPSubscriberPort: GrowlGNTPSubscriberPort,
+                          @"Connection": @"Connection"};
 	});
 	return _matchingDict;
 }
 +(NSString*)gntpKeyForGrowlDictKey:(NSString*)growlKey {
-	if([[self growlToGNTPMatchingDict] objectForKey:growlKey])
-		return [[self growlToGNTPMatchingDict] objectForKey:growlKey];
+	if([self growlToGNTPMatchingDict][growlKey])
+		return [self growlToGNTPMatchingDict][growlKey];
 	return nil;
 }
 +(id)convertedObjectFromGrowlObject:(id)obj forGNTPKey:(NSString*)gntpKey {
@@ -398,8 +398,8 @@
  */
 +(NSDictionary*)growlDictFilledInForConversion:(NSDictionary*)growlDict {
 	NSMutableDictionary *dictCopy = [growlDict mutableCopy];
-	if(![dictCopy objectForKey:GROWL_NOTIFICATION_INTERNAL_ID])
-		[dictCopy setObject:[[NSProcessInfo processInfo] globallyUniqueString] forKey:GROWL_NOTIFICATION_INTERNAL_ID];
+	if(!dictCopy[GROWL_NOTIFICATION_INTERNAL_ID])
+		dictCopy[GROWL_NOTIFICATION_INTERNAL_ID] = [NSProcessInfo processInfo].globallyUniqueString;
 		
 	//Sent/Reived headers
 	NSString *hostName = [GrowlNetworkUtilities localHostName];
@@ -418,14 +418,14 @@
 										  nowAsISO8601];
 		if(!previousRecieved){
 			previousRecieved = [NSMutableArray array];
-			[dictCopy setObject:previousRecieved forKey:GROWL_NOTIFICATION_GNTP_RECEIVED];
+			dictCopy[GROWL_NOTIFICATION_GNTP_RECEIVED] = previousRecieved;
 		}
 		[previousRecieved addObject:nextReceived];
 	}
 
-	[dictCopy setObject:hostName forKey:GROWL_NOTIFICATION_GNTP_SENT_BY];
+	dictCopy[GROWL_NOTIFICATION_GNTP_SENT_BY] = hostName;
 
-	if (![dictCopy objectForKey:GROWL_GNTP_ORIGIN_MACHINE]) {
+	if (!dictCopy[GROWL_GNTP_ORIGIN_MACHINE]) {
 		/* No origin machine --> We are the origin */
 		[dictCopy addEntriesFromDictionary:[self originDictionary]];
 	}
@@ -445,7 +445,7 @@
 		
 		platformVersion = [NSString stringWithFormat:@"%lu.%lu.%lu", (unsigned long)major, (unsigned long)minor, (unsigned long)bugFix];
 		NSBundle *thisBundle = [NSBundle bundleForClass:[self class]];
-		NSString *bundleID = [thisBundle bundleIdentifier];
+		NSString *bundleID = thisBundle.bundleIdentifier;
 		if ([bundleID isEqualToString:GROWL_HELPERAPP_BUNDLE_IDENTIFIER] ||
 			 [bundleID isEqualToString:@"com.Growl.GrowlHelperApp.GNTPClientService"])
 		{
@@ -456,8 +456,8 @@
 		{
 			//This bundle is the Growl framework or its XPC.
 			growlName = @"Growl.framework";
-		} else if ([[NSBundle mainBundle] bundleIdentifier] &&
-					  [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:bundleID])
+		} else if ([NSBundle mainBundle].bundleIdentifier &&
+					  [[NSBundle mainBundle].bundleIdentifier isEqualToString:bundleID])
 		{
 			//This has a bundle id, it isn't one of our bundles or our XPC
 			//They must have compiled us in
@@ -471,7 +471,7 @@
 #endif
 		}
 		
-		growlVersion = [[thisBundle infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey];
+		growlVersion = thisBundle.infoDictionary[(NSString *)kCFBundleVersionKey];
 		if(!growlVersion){
 #ifdef GROWL_VERSION_STRING
 			growlVersion = [NSString stringWithCString:GROWL_VERSION_STRING encoding:NSUTF8StringEncoding];
@@ -482,11 +482,11 @@
 		
 		//Sent/Reived headers
 		NSString *hostName = [GrowlNetworkUtilities localHostName];
-		[buildDict setObject:hostName forKey:GROWL_GNTP_ORIGIN_MACHINE];
-		[buildDict setObject:growlName forKey:GROWL_GNTP_ORIGIN_SOFTWARE_NAME];
-		[buildDict setObject:growlVersion forKey:GROWL_GNTP_ORIGIN_SOFTWARE_VERSION];
-		[buildDict setObject:@"Mac OS X" forKey:GROWL_GNTP_ORIGIN_PLATFORM_NAME];
-		[buildDict setObject:platformVersion forKey:GROWL_GNTP_ORIGIN_PLATFORM_VERSION];
+		buildDict[GROWL_GNTP_ORIGIN_MACHINE] = hostName;
+		buildDict[GROWL_GNTP_ORIGIN_SOFTWARE_NAME] = growlName;
+		buildDict[GROWL_GNTP_ORIGIN_SOFTWARE_VERSION] = growlVersion;
+		buildDict[GROWL_GNTP_ORIGIN_PLATFORM_NAME] = @"Mac OS X";
+		buildDict[GROWL_GNTP_ORIGIN_PLATFORM_VERSION] = platformVersion;
 		
 		originDict = [buildDict copy];
 	});
@@ -515,19 +515,19 @@
 			if(convertedValue){
 				if([convertedValue isKindOfClass:[NSString class]]){
 					//stuff in the regular header
-					[dictionary setObject:convertedValue forKey:gntpKey];
+					dictionary[gntpKey] = convertedValue;
 				}else if([convertedValue isKindOfClass:[NSData class]]){
 					//stuff a header into the binary header
 					NSString *dataIdentifier = [self identifierForBinaryData:convertedValue];
-					NSMutableDictionary *dataDict = [dictionary objectForKey:@"GNTPDATABLOCKS"];
+					NSMutableDictionary *dataDict = dictionary[@"GNTPDATABLOCKS"];
 					if(!dataDict){
 						dataDict = [NSMutableDictionary dictionary];
-						[dictionary setObject:dataDict forKey:@"GNTPDATABLOCKS"];
+						dictionary[@"GNTPDATABLOCKS"] = dataDict;
 					}
-					[dataDict setObject:convertedValue forKey:dataIdentifier];
-					[dictionary setObject:[NSString stringWithFormat:@"x-growl-resource://%@", dataIdentifier] forKey:gntpKey];
+					dataDict[dataIdentifier] = convertedValue;
+					dictionary[gntpKey] = [NSString stringWithFormat:@"x-growl-resource://%@", dataIdentifier];
 				}else if([gntpKey caseInsensitiveCompare:@"Received"] == NSOrderedSame){
-					[dictionary setObject:convertedValue forKey:@"Received"];
+					dictionary[@"Received"] = convertedValue;
 				}else{
 					NSLog(@"%@ for key %@ is an unknown data type for putting in a GNTP dictioanry", convertedValue, gntpKey);
 				}
@@ -556,11 +556,11 @@
 										withKey:(GNTPKey*)encryptionKey
 {
 	NSDictionary *gntpDict = [self gntpDictFromGrowlDict:[self growlDictFilledInForConversion:growlDict]];
-	BOOL encrypt = [encryptionKey encryptionAlgorithm] != GNTPNone;
+	BOOL encrypt = encryptionKey.encryptionAlgorithm != GNTPNone;
 	
-	NSMutableString *packetString = [NSMutableString stringWithFormat:@"GNTP/1.0 %@ %@", type, [encryptionKey encryption]];
-	if([encryptionKey hashAlgorithm] != GNTPNoHash){
-		[packetString appendFormat:@" %@", [encryptionKey key]];
+	NSMutableString *packetString = [NSMutableString stringWithFormat:@"GNTP/1.0 %@ %@", type, encryptionKey.encryption];
+	if(encryptionKey.hashAlgorithm != GNTPNoHash){
+		[packetString appendFormat:@" %@", encryptionKey.key];
 	}
 	[packetString appendString:@"\r\n"];
 	
@@ -575,14 +575,14 @@
 	[packetData appendData:[GCDAsyncSocket CRLFData]];
 	//NSLog(@"%@%@", packetString, headers);
 	
-	NSMutableDictionary *dataBlocks = [gntpDict objectForKey:@"GNTPDATABLOCKS"];
+	NSMutableDictionary *dataBlocks = gntpDict[@"GNTPDATABLOCKS"];
 	if(dataBlocks){
 		[dataBlocks enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
 			NSData *encrypted = obj;
 			if(encrypt)
 				encrypted = [encryptionKey encrypt:obj];
 			
-			NSMutableString *header = [NSMutableString stringWithFormat:@"Identifier: %@\r\nLength: %lu\r\n\r\n", key, [encrypted length]];
+			NSMutableString *header = [NSMutableString stringWithFormat:@"Identifier: %@\r\nLength: %lu\r\n\r\n", key, encrypted.length];
 			[packetData appendData:[header dataUsingEncoding:NSUTF8StringEncoding]];
 			[packetData appendData:encrypted];
 			[packetData appendData:[GNTPUtilities doubleCRLF]];
@@ -596,7 +596,7 @@
 +(NSString*)identifierForBinaryData:(NSData *)data
 {
 	unsigned char *digest = malloc(sizeof(unsigned char)*CC_MD5_DIGEST_LENGTH);
-	CC_MD5([data bytes], (unsigned int)[data length], digest);
+	CC_MD5(data.bytes, (unsigned int)data.length, digest);
 	NSString *identifier = [NSString stringWithFormat: @"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
 									digest[0], digest[1], 
 									digest[2], digest[3],
@@ -611,7 +611,7 @@
 }
 
 #pragma mark Incoming packet instance methods
--(id)init {
+-(instancetype)init {
 	if((self = [super init])){
 		_gntpDictionary = [[NSMutableDictionary alloc] init];
 		_dataBlockIdentifiers = [[NSMutableArray alloc] init];
@@ -626,7 +626,7 @@
 
 
 -(NSInteger)parsePossiblyEncryptedDataBlock:(NSData*)data {
-	if([self.key encryptionAlgorithm] == GNTPNone)
+	if((self.key).encryptionAlgorithm == GNTPNone)
 		return [self parseDataBlock:data];
 	
 	NSData *decryptedData = data;
@@ -639,19 +639,19 @@
 			NSString *allHeaders = [[NSString alloc] initWithData:decryptedData encoding:NSUTF8StringEncoding];
 			
 			NSMutableArray *portions = [[allHeaders componentsSeparatedByString:@"\r\n\r\n"] mutableCopy];
-			if([portions count] > 0) {
+			if(portions.count > 0) {
 				do {
-					NSString *current = [portions objectAtIndex:0];
-					result = [self parseDataBlock:[NSData dataWithBytes:[current UTF8String] length:[current length]]];
+					NSString *current = portions[0];
+					result = [self parseDataBlock:[NSData dataWithBytes:current.UTF8String length:current.length]];
 					[portions removeObjectAtIndex:0];
-				} while (result > 0 && [portions count] > 0);
+				} while (result > 0 && portions.count > 0);
 			}else
 				result = -1;
 			break;
 		}
 		//Data blocks
 		case 2:
-			if([data length] != self.incomingDataLength)
+			if(data.length != self.incomingDataLength)
 				NSLog(@"Gah! Read data block and stated data length not the same!");
 			result = [self parseDataBlock:[self.key decrypt:data]];
 			break;
@@ -678,7 +678,7 @@
 											 [weakSelf parseHeaderKey:headerKey value:headerValue];
 											 return NO;
 										 }];
-			result = [self.dataBlockIdentifiers count];
+			result = (self.dataBlockIdentifiers).count;
 			if(result == 0)
 				self.state = 999;
 			else
@@ -712,8 +712,8 @@
 			}
 			[self parseResourceDataBlock:data];
 			
-			result = [self.dataBlockIdentifiers count];
-			if([self.dataBlockIdentifiers count] == 0){
+			result = (self.dataBlockIdentifiers).count;
+			if((self.dataBlockIdentifiers).count == 0){
 				self.state = 999;
 			}else{
 				self.incomingDataHeaderRead = NO;
@@ -739,7 +739,7 @@
 		//This is a resource ID; add the ID to the array of waiting IDs
 		NSString *dataBlockID = [stringValue substringFromIndex:resourceRange.location + resourceRange.length];
 		[self.dataBlockIdentifiers addObject:dataBlockID];
-		[self.gntpDictionary setObject:stringValue forKey:headerKey];
+		(self.gntpDictionary)[headerKey] = stringValue;
 	}else if([headerKey caseInsensitiveCompare:@"CONNECTION"] == NSOrderedSame){
 		//We need to setup keep alive here
 		if([stringValue caseInsensitiveCompare:@"Keep-Alive"] == NSOrderedSame)
@@ -750,12 +750,11 @@
 		NSMutableArray *receivedValues = [self.gntpDictionary valueForKey:headerKey];
 		if (!receivedValues) {
 			receivedValues = [NSMutableArray array];
-			[self.gntpDictionary setObject:receivedValues
-											forKey:headerKey];
+			(self.gntpDictionary)[headerKey] = receivedValues;
 		}
 		[receivedValues addObject:stringValue];
 	}else{
-		[self.gntpDictionary setObject:stringValue forKey:headerKey];
+		(self.gntpDictionary)[headerKey] = stringValue;
 	}
 }
 
@@ -782,7 +781,7 @@
 	}else{
 		self.incomingDataHeaderRead = YES;
 		self.incomingDataIdentifier = newId;
-		self.incomingDataLength = [newLength integerValue];
+		self.incomingDataLength = newLength.integerValue;
 	}
 }
 
@@ -805,14 +804,14 @@
 		}
 	}];
 	[keysToReplace enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-		[self.gntpDictionary setObject:data forKey:obj];
+		(self.gntpDictionary)[obj] = data;
 	}];
 }
 
 - (BOOL)hasBeenReceivedPreviously
 {
 	__block BOOL result = NO;
-	NSArray *receivedHeaders = [self.gntpDictionary objectForKey:@"Received"];
+	NSArray *receivedHeaders = (self.gntpDictionary)[@"Received"];
 	NSString *myHostString;
 	
    NSString *hostName = [GrowlNetworkUtilities localHostName];
@@ -844,8 +843,8 @@
 	return [NSString stringWithFormat:@"GNTP/1.0 -OK NONE\r\nResponse-Action: %@\r\n%@", self.action, [GNTPPacket originString]];
 }
 -(NSData*)responseData {
-	NSString *responseString = [[self responseString] stringByAppendingString:@"\r\n\r\n"];
-	return [NSData dataWithBytes:[responseString UTF8String] length:[responseString length]];
+	NSString *responseString = [self.responseString stringByAppendingString:@"\r\n\r\n"];
+	return [NSData dataWithBytes:responseString.UTF8String length:responseString.length];
 }
 -(NSTimeInterval)requestedTimeAlive {
 	NSTimeInterval result = 0.0;
@@ -860,29 +859,28 @@
 		NSString *growlDictKey = [GNTPPacket growlDictKeyForGNTPKey:gntpKey];
 		if(!growlDictKey){
 			//If there isn't a growl dict key, just stuff the object in there normal like
-			[convertedDict setObject:obj forKey:gntpKey];
+			convertedDict[gntpKey] = obj;
 		}else{
 			id convertedObj = [GNTPPacket convertedObjectFromGNTPObject:obj forGrowlKey:growlDictKey];
-			[convertedDict setObject:convertedObj forKey:growlDictKey];
+			convertedDict[growlDictKey] = convertedObj;
 		}
 	}];
 	//Give it an internal ID regardless
-	if(![convertedDict objectForKey:GROWL_NOTIFICATION_INTERNAL_ID])
-		[convertedDict setObject:[[NSProcessInfo processInfo] globallyUniqueString] forKey:GROWL_NOTIFICATION_INTERNAL_ID];
-	[convertedDict setObject:self.guid forKey:@"GNTPGUID"];
-	[convertedDict setObject:[NSNumber numberWithBool:self.keepAlive] forKey:@"GNTP-Keep-Alive"];
+	if(!convertedDict[GROWL_NOTIFICATION_INTERNAL_ID])
+		convertedDict[GROWL_NOTIFICATION_INTERNAL_ID] = [NSProcessInfo processInfo].globallyUniqueString;
+	convertedDict[@"GNTPGUID"] = self.guid;
+	convertedDict[@"GNTP-Keep-Alive"] = @(self.keepAlive);
 	
 	//Add in appropriate data for origin if it isnt there
-	if(![convertedDict objectForKey:GROWL_NOTIFICATION_GNTP_SENT_BY]){
-		[convertedDict setObject:self.connectedHost ? self.connectedHost : NSLocalizedString(@"Unknown Host", @"Received from an unknown host")
-								forKey:GROWL_NOTIFICATION_GNTP_SENT_BY];
+	if(!convertedDict[GROWL_NOTIFICATION_GNTP_SENT_BY]){
+		convertedDict[GROWL_NOTIFICATION_GNTP_SENT_BY] = self.connectedHost ? self.connectedHost : NSLocalizedString(@"Unknown Host", @"Received from an unknown host");
 	}
 	
 	return convertedDict;
 }
 -(NSDictionary*)growlDict {
 	if(!_growlDict){
-		_growlDict = [[self convertedGrowlDict] copy];
+		_growlDict = [self.convertedGrowlDict copy];
 	}
 	return _growlDict;
 }

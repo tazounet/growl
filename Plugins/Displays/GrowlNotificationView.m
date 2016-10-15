@@ -16,22 +16,22 @@
 @synthesize target;
 @synthesize action;
 
-- (id) init {
+- (instancetype) init {
 	if( (self = [super init ]) ) {
 		closeBoxOrigin = NSMakePoint(0,0);
 	}
 	return self;
 }
 
-- (id) initWithFrame:(NSRect)frameRect {
+- (instancetype) initWithFrame:(NSRect)frameRect {
 	if((self = [super initWithFrame:frameRect])){
-		NSDictionary *bundleDict = [[NSBundle bundleForClass:[self class]] infoDictionary];
+		NSDictionary *bundleDict = [NSBundle bundleForClass:[self class]].infoDictionary;
 		CGFloat xOrig = 0;
 		CGFloat yOrig = 0;
-		if([bundleDict objectForKey:@"GrowlCloseButtonXOrigin"])
-			xOrig = [[bundleDict objectForKey:@"GrowlCloseButtonXOrigin"] floatValue];
-		if([bundleDict objectForKey:@"GrowlCloseButtonYOrigin"])
-			yOrig = [[bundleDict objectForKey:@"GrowlCloseButtonYOrigin"] floatValue];
+		if(bundleDict[@"GrowlCloseButtonXOrigin"])
+			xOrig = [bundleDict[@"GrowlCloseButtonXOrigin"] floatValue];
+		if(bundleDict[@"GrowlCloseButtonYOrigin"])
+			yOrig = [bundleDict[@"GrowlCloseButtonYOrigin"] floatValue];
 		
 		closeBoxOrigin = NSMakePoint(xOrig,yOrig);
 	}
@@ -62,8 +62,8 @@
 	mouseOver = YES;
 	[self setNeedsDisplay:YES];
 	
-	if ([[[self window] windowController] respondsToSelector:@selector(mouseEnteredNotificationView:)])
-		[[[self window] windowController] performSelector:@selector(mouseEnteredNotificationView:)
+	if ([self.window.windowController respondsToSelector:@selector(mouseEnteredNotificationView:)])
+		[self.window.windowController performSelector:@selector(mouseEnteredNotificationView:)
 											   withObject:self];
 }
 
@@ -74,17 +74,17 @@
 	
 	// abuse the target object
 	if (closeOnMouseExit) {
-		if ([[[self window] windowController] respondsToSelector:@selector(stopDisplay)])
-			[[[self window] windowController] performSelector:@selector(stopDisplay)];
+		if ([self.window.windowController respondsToSelector:@selector(stopDisplay)])
+			[self.window.windowController performSelector:@selector(stopDisplay)];
 	}
 	
-	if ([[[self window] windowController] respondsToSelector:@selector(mouseExitedNotificationView:)])
-		[[[self window] windowController] performSelector:@selector(mouseExitedNotificationView:)
+	if ([self.window.windowController respondsToSelector:@selector(mouseExitedNotificationView:)])
+		[self.window.windowController performSelector:@selector(mouseExitedNotificationView:)
 											   withObject:self];
 }
 
 - (void) mouseUp:(NSEvent *)event {
-	if([event clickCount] == 1) {
+	if(event.clickCount == 1) {
         mouseOver = NO;
 
         if (target && action && [target respondsToSelector:action])
@@ -103,12 +103,12 @@ static NSButton *gCloseButton = nil;
 	dispatch_once(&onceToken, ^{
 		buttonDict = [[NSMutableDictionary alloc] init];
 		gCloseButton = [[NSButton alloc] initWithFrame:NSMakeRect(0,0,30,30)];
-		[gCloseButton setBezelStyle:NSRegularSquareBezelStyle];
+		gCloseButton.bezelStyle = NSRegularSquareBezelStyle;
 		[gCloseButton setBordered:NO];
 		[gCloseButton setButtonType:NSMomentaryChangeButton];
-		[gCloseButton setImagePosition:NSImageOnly];
-		[gCloseButton setImage:[NSImage imageNamed:@"closebox"]];
-		[gCloseButton setAlternateImage:[NSImage imageNamed:@"closebox_pressed"]];
+		gCloseButton.imagePosition = NSImageOnly;
+		gCloseButton.image = [NSImage imageNamed:@"closebox"];
+		gCloseButton.alternateImage = [NSImage imageNamed:@"closebox_pressed"];
 	});
 }
 
@@ -132,12 +132,12 @@ static NSButton *gCloseButton = nil;
 		//If the button is equal to the global close button, it means we don't have a custom one for that key yet
 		if([self closeButtonForKey:key] == gCloseButton){
 			NSButton *button = [[NSButton alloc] initWithFrame:CGRectMake(0.0, 0.0, 30.0, 30.0)];
-			[button setBezelStyle:NSRegularSquareBezelStyle];
+			button.bezelStyle = NSRegularSquareBezelStyle;
 			[button setBordered:NO];
 			[button setButtonType:NSMomentaryChangeButton];
-			[button setImagePosition:NSImageOnly];
-			[button setImage:image ? image : [NSImage imageNamed:@"closebox"]];
-			[button setAlternateImage:pressed ? pressed : [NSImage imageNamed:@"closebox_pressed"]];
+			button.imagePosition = NSImageOnly;
+			button.image = image ? image : [NSImage imageNamed:@"closebox"];
+			button.alternateImage = pressed ? pressed : [NSImage imageNamed:@"closebox_pressed"];
 			[self setButton:button forKey:key];
 		}
 	}
@@ -145,7 +145,7 @@ static NSButton *gCloseButton = nil;
 
 + (void)setButton:(NSButton*)button forKey:(NSString*)key {
 	if(key && button){
-		[buttonDict setObject:button forKey:key];
+		buttonDict[key] = button;
 	}
 }
 
@@ -155,8 +155,8 @@ static NSButton *gCloseButton = nil;
 
 - (void) clickedCloseBox:(id)sender {
 	mouseOver = NO;
-	if ([[[self window] windowController] respondsToSelector:@selector(clickedCloseBox)])
-		[[[self window] windowController] performSelector:@selector(clickedCloseBox)];
+	if ([self.window.windowController respondsToSelector:@selector(clickedCloseBox)])
+		[self.window.windowController performSelector:@selector(clickedCloseBox)];
 
 	/* NSButton can mess up our display in its rect after mouseUp,
 	 * so do a re-display on the next run loop.
@@ -164,19 +164,19 @@ static NSButton *gCloseButton = nil;
 	[self performSelector:@selector(display)
 				  withObject:nil
 				  afterDelay:0
-					  inModes:[NSArray arrayWithObjects:NSRunLoopCommonModes, NSEventTrackingRunLoopMode, nil]];
+					  inModes:@[NSRunLoopCommonModes, NSEventTrackingRunLoopMode]];
 	
-	if (([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask) != 0) {
+	if ((NSApp.currentEvent.modifierFlags & NSEventModifierFlagOption) != 0) {
 		[[NSNotificationCenter defaultCenter] postNotificationName:GROWL_CLOSE_ALL_NOTIFICATIONS
 															object:nil];
 	}
 }
 
 - (void) setCloseBoxVisible:(BOOL)yorn {
-	if ([self showsCloseBox]) {
-		NSButton *button = [GrowlNotificationView closeButtonForKey:[self buttonKey]];
-		[button setTarget:self];
-		[button setAction:@selector(clickedCloseBox:)];
+	if (self.showsCloseBox) {
+		NSButton *button = [GrowlNotificationView closeButtonForKey:self.buttonKey];
+		button.target = self;
+		button.action = @selector(clickedCloseBox:);
 		[button setFrameOrigin:closeBoxOrigin];
 		if(yorn)
 			[self addSubview:button];
@@ -193,7 +193,7 @@ static NSButton *gCloseButton = nil;
 {
 	if(!initialDisplayTest) {
 		initialDisplayTest = YES;
-		if([self showsCloseBox] && NSPointInRect([self convertPointFromScreen:[NSEvent mouseLocation]], [self frame]))
+		if(self.showsCloseBox && NSPointInRect([self convertPointFromScreen:[NSEvent mouseLocation]], self.frame))
 			[self mouseEntered:[[NSEvent alloc]init]];
 	}
 	[super drawRect:rect];
@@ -211,13 +211,13 @@ static NSButton *gCloseButton = nil;
 - (void) sizeToFit {};
 
 -(NSDictionary*)configurationDict {
-	if([[[self window] windowController] respondsToSelector:@selector(configurationDict)])
-		return [[[self window] windowController] performSelector:@selector(configurationDict)];
+	if([self.window.windowController respondsToSelector:@selector(configurationDict)])
+		return [self.window.windowController performSelector:@selector(configurationDict)];
 	return nil;
 }
 
 -(NSString*)buttonKey {
-	return [[NSBundle bundleForClass:[self class]] bundleIdentifier];
+	return [NSBundle bundleForClass:[self class]].bundleIdentifier;
 }
 
 - (void) mouseEnteredNotificationView:(GrowlNotificationView *)notificationView {

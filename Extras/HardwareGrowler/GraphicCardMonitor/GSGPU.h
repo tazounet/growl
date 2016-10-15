@@ -6,10 +6,10 @@
 //  Copyright (c) 2012 Cody Krieger. All rights reserved.
 //
 
-typedef enum {
+typedef NS_ENUM (NSInteger, GSGPUType) {
     GSGPUTypeIntegrated,
     GSGPUTypeDiscrete
-} GSGPUType;
+};
 
 @protocol GSGPUDelegate <NSObject>
 - (void)GPUDidChangeTo:(GSGPUType)gpu;

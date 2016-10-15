@@ -49,7 +49,7 @@
    self.whenScreenLockedTitle = NSLocalizedString(@"When Screen is locked", @"Checkbox for idle detection based on locking the screen");
    
    KeyCombo combo = {SRCarbonToCocoaFlags([GrowlPreferencesController sharedController].rollupKeyCombo.modifiers), [GrowlPreferencesController sharedController].rollupKeyCombo.keyCode};
-   [self.recorderControl setKeyCombo:combo];
+   (self.recorderControl).keyCombo = combo;
 }
 
 + (NSString*)nibName {

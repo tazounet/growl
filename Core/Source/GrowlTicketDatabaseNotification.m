@@ -17,18 +17,18 @@
 @dynamic sticky;
 
 -(void)setWithNotificationTicket:(GrowlNotificationTicket*)ticket {
-   self.enabled = [NSNumber numberWithBool:[ticket enabled]];
-   self.loggingEnabled = [NSNumber numberWithBool:[ticket logNotification]];
-   self.name = [ticket name];
-   self.humanReadableName = [ticket humanReadableName];
-   self.priority = [NSNumber numberWithInteger:[ticket priority]];
-   self.sticky = [NSNumber numberWithInt:[ticket sticky]];
+   self.enabled = @(ticket.enabled);
+   self.loggingEnabled = @(ticket.logNotification);
+   self.name = ticket.name;
+   self.humanReadableName = ticket.humanReadableName;
+   self.priority = @(ticket.priority);
+   self.sticky = @(ticket.sticky);
 	
-	[super importDisplayOrActionForName:[ticket displayPluginName]];
+	[super importDisplayOrActionForName:ticket.displayPluginName];
 }
 
 - (NSComparisonResult) humanReadableNameCompare:(GrowlTicketDatabaseNotification*)inTicket {
-	return [[self humanReadableName] caseInsensitiveCompare:[inTicket humanReadableName]];
+	return [self.humanReadableName caseInsensitiveCompare:inTicket.humanReadableName];
 }
 
 @end

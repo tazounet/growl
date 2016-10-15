@@ -13,9 +13,9 @@
 @class GrowlNotificationTicket, GrowlDisplayPlugin;
 
 @interface GrowlApplicationTicket : NSObject {
-   NSString    *appNameHostName;           // This is <appName> - <hostName>
+	NSString		*appNameHostName;           // This is <appName> - <hostName>
 	NSString		*appName;					// This app's name for display by notifications that want it
-   NSString    *hostName;              // This is the host which registered this
+	NSString		*hostName;					// This is the host which registered this
 	NSString		*appId;						// This app's bundle identifier
 	NSString		*appPath;					// This app's location on disk (cached here and in saved tickets)
 	NSData			*iconData;					// This app's icon data
@@ -40,9 +40,9 @@
 	BOOL			ticketEnabled;
 	
 	BOOL			synchronizeOnChanges;
-   BOOL        isLocalHost;               //If we are local host, this is a faster way of checking than doing string checks
+	BOOL			isLocalHost;				// If we are local host, this is a faster way of checking than doing string checks
 	
-   BOOL        loggingEnabled;
+	BOOL			loggingEnabled;
 }
 
 //these are specifically for auto-discovery tickets, hence the requirement of GROWL_TICKET_VERSION.
@@ -52,11 +52,11 @@
 #pragma mark -
 
 //designated initialiser.
-+ (id) ticketWithDictionary:(NSDictionary *)ticketDict;
-- (id) initWithDictionary:(NSDictionary *)dict;
++ (instancetype) ticketWithDictionary:(NSDictionary *)ticketDict;
+- (instancetype) initWithDictionary:(NSDictionary *)dict;
 
-- (id) initTicketFromPath:(NSString *) inPath;
-- (id) initTicketForApplication: (NSString *) inApp;
+- (instancetype) initTicketFromPath:(NSString *) inPath;
+- (instancetype) initTicketForApplication: (NSString *) inApp;
 
 - (void) saveTicket;
 - (void) saveTicketToPath:(NSString *)destDir;

@@ -29,7 +29,7 @@ NSMutableData *HexUnencode(NSString* string);
 + (GrowlGNTPEncryptionAlgorithm)encryptionAlgorithmFromString:(NSString*)algorithm;
 + (GrowlGNTPHashingAlgorithm)hashingAlgorithmFromString:(NSString*)algorithm;
 
-- (id)initWithPassword:(NSString*)password hashAlgorithm:(GrowlGNTPHashingAlgorithm)hashAlgorithm encryptionAlgorithm:(GrowlGNTPEncryptionAlgorithm)encryptionAlgorithm;
+- (instancetype)initWithPassword:(NSString*)password hashAlgorithm:(GrowlGNTPHashingAlgorithm)hashAlgorithm encryptionAlgorithm:(GrowlGNTPEncryptionAlgorithm)encryptionAlgorithm NS_DESIGNATED_INITIALIZER;
 + (NSData *)generateSalt:(int)length;
 - (void)generateSalt;
 - (void)generateKey;

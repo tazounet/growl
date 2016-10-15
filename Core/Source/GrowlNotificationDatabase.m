@@ -33,17 +33,16 @@
 }
 
 
--(id)init
+-(instancetype)init
 {
    if((self = [super init]))
    {
       GrowlNotificationHistoryWindow *window = [[GrowlNotificationHistoryWindow alloc] initWithNotificationDatabase:self];
       historyWindow = window;
-      [historyWindow window];
       [historyWindow resetArray];
       
       notificationsWhileAway = NO;
-      if([[GrowlPreferencesController sharedController] isRollupShown])
+      if([GrowlPreferencesController sharedController].isRollupShown)
          [self showRollup];
    }
    return self;
@@ -75,10 +74,11 @@
 }
 
 -(void)launchFailed {
-   NSBeginCriticalAlertSheet(NSLocalizedString(@"Disabling History", @"alert when history database could not be moved aside"),
-                             NSLocalizedString(@"Ok", @""),
-                             nil, nil, nil, nil, nil, NULL, NULL, 
-                             NSLocalizedString(@"An uncorrectable error occured in creating or opening the History Database.\nWe are disabling History for the time being, however the rollup will continue to function.\nIf history is reenabled, nothing will be saved, and Growl will potentially use a lot of memory.", @""));
+    NSAlert *alert = [[NSAlert alloc] init];
+    [alert setMessageText:NSLocalizedString(@"Disabling History", @"alert when history database could not be moved aside")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Ok", nil)];
+    [alert setInformativeText:NSLocalizedString(@"An uncorrectable error occured in creating or opening the History Database.\nWe are disabling History for the time being, however the rollup will continue to function.\nIf history is reenabled, nothing will be saved, and Growl will potentially use a lot of memory.", @"")];
+    alert.alertStyle = NSAlertStyleCritical;
    [[GrowlPreferencesController sharedController] setGrowlHistoryLogEnabled:NO];
 }
 
@@ -90,19 +90,19 @@
    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Notification"];
       
    NSSortDescriptor *sortDescription = [[NSSortDescriptor alloc] initWithKey:@"Time" ascending:NO];
-   NSArray *sortArray = [NSArray arrayWithObject:sortDescription];
-   [request setSortDescriptors:sortArray];
+   NSArray *sortArray = @[sortDescription];
+   request.sortDescriptors = sortArray;
    
-   [request setFetchLimit:amount];
+   request.fetchLimit = amount;
    
     __block NSArray *awayHistory = nil;
     void (^recentBlock)(void) = ^{
         NSError *error = nil;
         awayHistory = [managedObjectContext executeFetchRequest:request error:&error];
         if(error)
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            NSLog(@"Unresolved error %@, %@", error, error.userInfo);
     };
-    if(![[NSThread currentThread] isMainThread])
+    if(![NSThread currentThread].isMainThread)
         [managedObjectContext performBlockAndWait:recentBlock];
     else
         recentBlock();
@@ -120,7 +120,7 @@
         NSArray *notes = [managedObjectContext executeFetchRequest:request error:&error];
         if(error)
         {
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            NSLog(@"Unresolved error %@, %@", error, error.userInfo);
             return;
         }
         
@@ -130,7 +130,7 @@
                 [managedObjectContext deleteObject:note];
         }
     };
-    if(![[NSThread currentThread] isMainThread])
+    if(![NSThread currentThread].isMainThread)
         [managedObjectContext performBlock:deleteBlock];
     else
         deleteBlock();
@@ -143,20 +143,20 @@
         NSError *error = nil;
         NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Notification"];
         
-        NSArray *notes = [[self managedObjectContext] executeFetchRequest:request error:&error];
+        NSArray *notes = [self.managedObjectContext executeFetchRequest:request error:&error];
         if(error)
         {
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            NSLog(@"Unresolved error %@, %@", error, error.userInfo);
             return;
         }
         
         NSLog(@"Deleting Entire History");
         for(NSManagedObject *note in notes)
         {
-            [[self managedObjectContext] deleteObject:note];
+            [self.managedObjectContext deleteObject:note];
         }
     };
-    if(![[NSThread currentThread] isMainThread])
+    if(![NSThread currentThread].isMainThread)
         [managedObjectContext performBlock:deleteBlock];
     else
         deleteBlock();
@@ -172,18 +172,18 @@
 {
    GrowlPreferencesController *preferences = [GrowlPreferencesController sharedController];
    
-   if(![preferences isGrowlHistoryTrimByDate] && ![preferences isGrowlHistoryTrimByCount])
+   if(!preferences.isGrowlHistoryTrimByDate && !preferences.isGrowlHistoryTrimByCount)
    {
       NSLog(@"Setting trimByDate since both have been turned off outside of the UI");
       [preferences setGrowlHistoryTrimByDate:YES];
    }
    
-   if([preferences isGrowlHistoryTrimByDate])
+   if(preferences.isGrowlHistoryTrimByDate)
    {
       [self trimByDate];
    }
    
-   if([preferences isGrowlHistoryTrimByCount])
+   if(preferences.isGrowlHistoryTrimByCount)
    {
       [self trimByCount];
    }
@@ -211,17 +211,22 @@
         NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Notification"];
         
         NSSortDescriptor *dateSort = [[NSSortDescriptor alloc] initWithKey:@"Time" ascending:NO];
-        [request setSortDescriptors:[NSArray arrayWithObject:dateSort]];
+        request.sortDescriptors = @[dateSort];
         
-        NSInteger trimDays = -[preferences growlHistoryDayLimit];
-        NSDate *trimDate = [[NSCalendarDate date] dateByAddingYears:0 months:0 days:trimDays hours:0 minutes:0 seconds:0];
+        NSInteger trimDays = -preferences.growlHistoryDayLimit;
+        
+        NSCalendar *calender = [NSCalendar autoupdatingCurrentCalendar];
+        NSDateComponents *dateComponent = [[NSDateComponents alloc]init];
+        dateComponent.day = trimDays;
+        NSDate *trimDate = [calender dateByAddingComponents:dateComponent toDate:[NSDate dateWithTimeIntervalSinceNow:0] options:NSCalendarWrapComponents];
+        
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"Time <= %@", trimDate];
-        [request setPredicate:predicate];
+        request.predicate = predicate;
         
         NSArray *notes = [managedObjectContext executeFetchRequest:request error:&error];
         if(error)
         {
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            NSLog(@"Unresolved error %@, %@", error, error.userInfo);
             return;
         }
         
@@ -243,26 +248,26 @@
         NSUInteger totalCount = [managedObjectContext countForFetchRequest:countRequest error:&error];
         if(error)
         {
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            NSLog(@"Unresolved error %@, %@", error, error.userInfo);
             return;
         }
-        NSUInteger countLimit = [preferences growlHistoryCountLimit];
+        NSUInteger countLimit = preferences.growlHistoryCountLimit;
         if (totalCount <= countLimit)
         {
             return;
         }
         
         NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Notification"];
-        [request setFetchLimit:totalCount - countLimit];
+        request.fetchLimit = totalCount - countLimit;
         
         NSSortDescriptor *dateSort = [[NSSortDescriptor alloc] initWithKey:@"Time" ascending:YES];
-        [request setSortDescriptors:[NSArray arrayWithObject:dateSort]];
+        request.sortDescriptors = @[dateSort];
         
         NSArray *notes = [managedObjectContext executeFetchRequest:request error:&error];
         
         if(error)
         {
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            NSLog(@"Unresolved error %@, %@", error, error.userInfo);
             return;
         }
         for(NSManagedObject *note in notes)
@@ -279,16 +284,16 @@
         NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Image"];
         
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"ANY Notifications == nil"];
-        [request setPredicate:predicate];
+        request.predicate = predicate;
         
         NSArray *images = [managedObjectContext executeFetchRequest:request error:&error];
         if(error)
         {
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            NSLog(@"Unresolved error %@, %@", error, error.userInfo);
             return;
         }
         
-        if([images count] == 0)
+        if(images.count == 0)
         {
             return;
         }
@@ -307,23 +312,23 @@
     [managedObjectContext performBlock:^(void) {
         NSError *error = nil;
         NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Notification"];
-        NSNumber *boolYES = [NSNumber numberWithBool:YES];
+        NSNumber *boolYES = @YES;
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(deleteUponReturn == %@) OR (showInRollup == %@)", boolYES, boolYES];
-        [request setPredicate:predicate];
+        request.predicate = predicate;
         
         NSArray *notes = [managedObjectContext executeFetchRequest:request error:&error];
         if(error)
         {
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            NSLog(@"Unresolved error %@, %@", error, error.userInfo);
             return;
         }
         
         for(GrowlHistoryNotification *note in notes)
         {
-            if([[note deleteUponReturn] boolValue])
+            if(note.deleteUponReturn.boolValue)
                 [managedObjectContext deleteObject:note];
             else
-                [note setShowInRollup:[NSNumber numberWithBool:NO]];
+                note.showInRollup = @NO;
         }        
     }];
     [self saveDatabase:NO];
@@ -350,10 +355,10 @@
     [[NSRunLoop mainRunLoop] addTimer:maintenanceTimer forMode:NSRunLoopCommonModes];
 	[[NSRunLoop mainRunLoop] addTimer:maintenanceTimer forMode:NSEventTrackingRunLoopMode];
     
-    NSDateComponents *components = [[NSCalendar currentCalendar] components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit) fromDate:[NSDate date]];
-    [components setDay:[components day] - 1];
-    [components setHour:23];
-    [components setMinute:59];
+    NSDateComponents *components = [[NSCalendar currentCalendar] components:(NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay) fromDate:[NSDate date]];
+    components.day = components.day - 1;
+    components.hour = 23;
+    components.minute = 59;
     lastImageCheck = [[NSCalendar currentCalendar] dateFromComponents:components];
     NSLog(@"Next image check no earlier than 24 hours from %@", lastImageCheck);
 }
@@ -363,26 +368,26 @@
     
     BOOL deleteUponReturn = NO;
     GrowlPreferencesController *preferences = [GrowlPreferencesController sharedController];
-    NSString *appName = [noteDict objectForKey:GROWL_APP_NAME];
-    NSString *hostName = [noteDict objectForKey:GROWL_NOTIFICATION_GNTP_SENT_BY];
+    NSString *appName = noteDict[GROWL_APP_NAME];
+    NSString *hostName = noteDict[GROWL_NOTIFICATION_GNTP_SENT_BY];
     GrowlTicketDatabaseApplication *ticket = [[GrowlTicketDatabase sharedInstance] ticketForApplicationName:appName 
                                                                                                    hostName:hostName];
-    GrowlTicketDatabaseNotification *notificationTicket = [ticket notificationTicketForName:[noteDict objectForKey:GROWL_NOTIFICATION_NAME]];
+    GrowlTicketDatabaseNotification *notificationTicket = [ticket notificationTicketForName:noteDict[GROWL_NOTIFICATION_NAME]];
     
-    BOOL logging = [preferences isGrowlHistoryLogEnabled];
-    BOOL appLogging = [[ticket loggingEnabled] boolValue];
-    BOOL noteLogging = [[notificationTicket loggingEnabled] boolValue];
+    BOOL logging = preferences.isGrowlHistoryLogEnabled;
+    BOOL appLogging = ticket.loggingEnabled.boolValue;
+    BOOL noteLogging = notificationTicket.loggingEnabled.boolValue;
     
     BOOL dontLog = (!logging || !appLogging || !noteLogging);
     
-    BOOL isAway = [[GrowlIdleStatusObserver sharedObserver] isIdle];
-    if(notificationsWhileAway || [[historyWindow window] isVisible])
+    BOOL isAway = [GrowlIdleStatusObserver sharedObserver].isIdle;
+    if(notificationsWhileAway || historyWindow.window.visible)
         isAway = YES;
     //If the rollup isn't enabled, we aren't away, check last
-    if(![preferences isRollupEnabled])
+    if(!preferences.isRollupEnabled)
         isAway = NO;
     
-    if(![self managedObjectContext])
+    if(!self.managedObjectContext)
     {
         NSLog(@"If we can't find/create the database, we can't log, return");
         return;
@@ -396,7 +401,7 @@
             //NSLog(@"We arent logging, and we arent away, return");
             return;
         }else{
-            if(![preferences retainAllNotesWhileAway]){
+            if(!preferences.retainAllNotesWhileAway){
                 //NSLog(@"We are away, but not logging or retaining, or rollup is disabled, return");
                 return;
             }else{
@@ -413,10 +418,10 @@
         
         // Whatever notification we set above, set its values and save
         [notification setWithNoteDictionary:noteDict];
-        [notification setDeleteUponReturn:[NSNumber numberWithBool:deleteUponReturn]];
-        [notification setShowInRollup:[NSNumber numberWithBool:isAway]];
+        notification.deleteUponReturn = @(deleteUponReturn);
+        notification.showInRollup = @(isAway);
     };
-    if(![[NSThread currentThread] isMainThread])
+    if(![NSThread currentThread].isMainThread)
         [managedObjectContext performBlockAndWait:logBlock];
     else
         logBlock();
@@ -425,17 +430,17 @@
     if(isAway)
     {
         notificationsWhileAway = YES;
-        if(![preferences squelchMode] && [preferences isRollupAutomatic])
+        if(!preferences.squelchMode && preferences.isRollupAutomatic)
             [preferences setRollupShown:YES];
     }
 }
 
 -(void)showRollup
 {
-    if(![[GrowlPreferencesController sharedController] isRollupEnabled])
+    if(![GrowlPreferencesController sharedController].isRollupEnabled)
         return;
     
-    if(![[historyWindow window] isVisible])
+    if(!historyWindow.window.visible)
     {
         [historyWindow resetArray];
         [historyWindow showWindow:self];
@@ -444,7 +449,7 @@
 
 -(void)hideRollup
 {
-    if([[historyWindow window] isVisible])
+    if(historyWindow.window.visible)
         [historyWindow close];
 }
 

@@ -15,7 +15,7 @@
 @synthesize icon;
 @synthesize deleteButton;
 
-- (id)init
+- (instancetype)init
 {
     self = [super init];
     if (self) {
@@ -28,11 +28,11 @@
 -(void)setObjectValue:(id)newValue
 {
     if([newValue isKindOfClass:[GrowlHistoryNotification class]])
-        [super setObjectValue:newValue];
+        super.objectValue = newValue;
     else
         [super setObjectValue:nil];
 
-    [icon setImage:[[self objectValue] valueForKeyPath:@"Image.Image"]];
+    icon.image = [self.objectValue valueForKeyPath:@"Image.Image"];
 }
 
 @end

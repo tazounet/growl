@@ -29,7 +29,7 @@
 @synthesize clearAllHistoryButtonTitle;
 
 
--(id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil forPrefPane:(GrowlPreferencePane *)aPrefPane
+-(instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil forPrefPane:(GrowlPreferencePane *)aPrefPane
 {
     if((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil forPrefPane:aPrefPane])){
         self.notificationDatabase = [GrowlNotificationDatabase sharedInstance];   
@@ -40,14 +40,14 @@
       self.titleColumnLabel = NSLocalizedString(@"Title", @"Column title for the title column in the history table");
       self.timeColumnLabel = NSLocalizedString(@"Time", @"Column title for the time column in the history table");
       self.clearAllHistoryButtonTitle = NSLocalizedString(@"Clear All History", @"Clear all history button title");
-      [[historySearchField cell] setPlaceholderString:NSLocalizedString(@"Search", @"Placeholder text in search field")];
+      [historySearchField.cell setPlaceholderString:NSLocalizedString(@"Search", @"Placeholder text in search field")];
    }
    return self;
 }
 
 -(void) awakeFromNib {
-   [[historySearchField cell] setPlaceholderString:NSLocalizedString(@"Search", @"History search field placeholder")];
-   [historyTable setAutosaveName:@"GrowlPrefsHistoryTable"];
+   [historySearchField.cell setPlaceholderString:NSLocalizedString(@"Search", @"History search field placeholder")];
+   historyTable.autosaveName = @"GrowlPrefsHistoryTable";
    [historyTable setAutosaveTableColumns:YES];
    
    [historyOnOffSwitch addObserver:self 
@@ -57,7 +57,7 @@
     
     //set our default sort descriptor so that we're looking at new stuff at the top by default
     NSSortDescriptor *ascendingTime = [NSSortDescriptor sortDescriptorWithKey:@"Time" ascending:NO];
-    [historyArrayController setSortDescriptors:[NSArray arrayWithObject:ascendingTime]];
+    historyArrayController.sortDescriptors = @[ascendingTime];
    
    [[NSNotificationCenter defaultCenter] addObserver:self 
                                             selector:@selector(growlDatabaseDidUpdate:) 
@@ -80,15 +80,15 @@
 - (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
    if(object == historyOnOffSwitch && [keyPath isEqualToString:@"state"])
-      [self.preferencesController setGrowlHistoryLogEnabled:[historyOnOffSwitch state]];
+      (self.preferencesController).growlHistoryLogEnabled = historyOnOffSwitch.state;
 }
 
 - (void) reloadPrefs:(NSNotification *)notification {
 	// ignore notifications which are sent by ourselves
 	@autoreleasepool {
-        id object = [notification object];
+        id object = notification.object;
         if(!object || [object isEqualToString:GrowlHistoryLogEnabled]){
-			[historyOnOffSwitch setState:[self.preferencesController isGrowlHistoryLogEnabled]];
+			historyOnOffSwitch.state = (self.preferencesController).isGrowlHistoryLogEnabled;
         }
     }
 }
@@ -102,14 +102,15 @@
 
 -(IBAction)validateHistoryTrimSetting:(id)sender
 {
-    if([trimByDateCheck state] == NSOffState && [trimByCountCheck state] == NSOffState)
+    if(trimByDateCheck.state == NSOffState && trimByCountCheck.state == NSOffState)
     {
         NSLog(@"User tried turning off both automatic trim options");
-        NSAlert *alert = [NSAlert alertWithMessageText:NSLocalizedString(@"Turning off both automatic trim functions is not allowed.", nil)
-                                         defaultButton:NSLocalizedString(@"Ok", nil)
-                                       alternateButton:nil
-                                           otherButton:nil
-                             informativeTextWithFormat:NSLocalizedString(@"To prevent the history database from growing indefinitely, at least one type of automatic trim must be active", nil)];
+        
+        NSAlert *alert = [[NSAlert alloc] init];
+        [alert setMessageText:NSLocalizedString(@"Turning off both automatic trim functions is not allowed.", nil)];
+        [alert addButtonWithTitle:NSLocalizedString(@"Ok", nil)];
+        [alert setInformativeText:NSLocalizedString(@"To prevent the history database from growing indefinitely, at least one type of automatic trim must be active", nil)];
+
         [alert runModal];
         if ([sender isEqualTo:trimByDateCheck]) {
             [self.preferencesController setGrowlHistoryTrimByDate:YES];
@@ -123,43 +124,44 @@
 
 - (IBAction) deleteSelectedHistoryItems:(id)sender
 {
-   [[GrowlNotificationDatabase sharedInstance] deleteSelectedObjects:[historyArrayController selectedObjects]];
+   [[GrowlNotificationDatabase sharedInstance] deleteSelectedObjects:historyArrayController.selectedObjects];
    [historyArrayController rearrangeObjects];
 }
 
 - (IBAction) clearAllHistory:(id)sender
 {
-    NSAlert *alert = [NSAlert alertWithMessageText:NSLocalizedString(@"Warning! About to delete ALL history", nil)
-                                     defaultButton:NSLocalizedString(@"Cancel", nil)
-                                   alternateButton:NSLocalizedString(@"Ok", nil)
-                                       otherButton:nil
-                         informativeTextWithFormat:NSLocalizedString(@"This action cannot be undone, please confirm that you want to delete the entire notification history", nil)];
-    [alert beginSheetModalForWindow:[sender window]
-                      modalDelegate:self
-                     didEndSelector:@selector(clearAllHistoryAlert:didReturn:contextInfo:)
-                        contextInfo:nil];
+    NSAlert *alert = [[NSAlert alloc] init];
+    [alert setMessageText:NSLocalizedString(@"Warning! About to delete ALL history", nil)];
+    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", nil)];
+    [alert addButtonWithTitle:NSLocalizedString(@"Ok", nil)];
+    [alert setInformativeText:NSLocalizedString(@"This action cannot be undone, please confirm that you want to delete the entire notification history", nil)];
+
+    [alert beginSheetModalForWindow:[sender window] completionHandler:^(NSModalResponse returnCode) {
+        [self clearAllHistoryAlert:returnCode];
+    }];
 }
 
-- (IBAction) clearAllHistoryAlert:(NSAlert*)alert didReturn:(NSInteger)returnCode contextInfo:(void*)contextInfo
+- (IBAction) clearAllHistoryAlert:(NSModalResponse)returnCode
 {
     switch (returnCode) {
-        case NSAlertDefaultReturn:
+        case NSAlertFirstButtonReturn:
             NSLog(@"Doing nothing");
             break;
-        case NSAlertAlternateReturn:
+        case NSAlertSecondButtonReturn:
             [[GrowlNotificationDatabase sharedInstance] deleteAllHistory];
             break;
     }
 }
 
 - (void)openSettings:(BOOL)notification {
-   id obj = [[historyArrayController arrangedObjects] objectAtIndex:[historyTable clickedRow]];
+   id obj = historyArrayController.arrangedObjects[historyTable.clickedRow];
    NSString *appName =  [obj valueForKey:@"ApplicationName"];
    NSString *hostName = [obj valueForKeyPath:[NSString stringWithFormat:@"GrowlDictionary.%@", GROWL_NOTIFICATION_GNTP_SENT_BY]];
    NSString *noteName = notification ? [obj valueForKey:@"Name"] : nil;
    //NSLog(@"Selected (<application> - <host> : <note>) %@ - %@ : %@", appName, hostName, noteName);
+   NSCharacterSet *set = [NSCharacterSet URLPathAllowedCharacterSet];
    NSString *urlString = [NSString stringWithFormat:@"growl://preferences/applications/%@/%@/%@", appName, (hostName ? hostName : @""), (noteName ? noteName : @"")];
-   urlString = [urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+   urlString = [urlString stringByAddingPercentEncodingWithAllowedCharacters:set];
    //NSLog(@"url: %@", urlString);
    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:urlString]];
 

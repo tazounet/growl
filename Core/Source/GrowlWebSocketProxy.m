@@ -47,8 +47,8 @@
 
 -(NSData*)sha1Hashed {
 	NSData *result = nil;
-	NSUInteger length = [self length];
-	unsigned char *bytes = (unsigned char *)[self bytes];
+	NSUInteger length = self.length;
+	unsigned char *bytes = (unsigned char *)self.bytes;
 	unsigned char *value = (unsigned char*)calloc(CC_SHA1_DIGEST_LENGTH, sizeof(unsigned char));
 	if(value)
 		CC_SHA1(bytes, (unsigned int)length, value);
@@ -57,21 +57,21 @@
 }
 -(NSString*)encodedAsBase64 {
 	static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-	if ([self length] == 0)
+	if (self.length == 0)
 		return @"";
 	
-	char *characters = (char*)malloc((([self length] + 2) / 3) * 4);
+	char *characters = (char*)malloc(((self.length + 2) / 3) * 4);
 	if (characters == NULL)
 		return nil;
 	NSUInteger length = 0;
 	
 	NSUInteger i = 0;
-	while (i < [self length])
+	while (i < self.length)
 	{
 		char buffer[3] = {0,0,0};
 		short bufferLength = 0;
-		while (bufferLength < 3 && i < [self length])
-			buffer[bufferLength++] = ((char *)[self bytes])[i++];
+		while (bufferLength < 3 && i < self.length)
+			buffer[bufferLength++] = ((char *)self.bytes)[i++];
 		
 		//  Encode the bytes in the buffer to four characters, including padding "=" characters if necessary.
 		characters[length++] = base64EncodingTable[(buffer[0] & 0xFC) >> 2];
@@ -127,10 +127,10 @@ static dispatch_queue_t bufferQueue = NULL;
 	});
 }
 
-- (id)initWithSocket:(GCDAsyncSocket*)socket {
+- (instancetype)initWithSocket:(GCDAsyncSocket*)socket {
 	if((self = [super init])){
 		self.socket = socket;
-		self.delegate = [socket delegate];
+		self.delegate = socket.delegate;
 		[self.socket synchronouslySetDelegate:self];
 		
 		self.scheduledReads = [NSMutableArray array];
@@ -155,33 +155,33 @@ static dispatch_queue_t bufferQueue = NULL;
 -(void)maybeDequeueRead {
 	__weak GrowlWebSocketProxy *weakSelf = self;
 	__block NSArray *reads = nil;
-	reads = [[weakSelf scheduledReads] copy];
+	reads = [weakSelf.scheduledReads copy];
 	[reads enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 		if([obj isKindOfClass:[GrowlWebSocketRead class]]){
 			NSData *readData = nil;
 			if([obj readToLength] > 0){
-				if([[weakSelf dataBuffer] length] > [obj readToLength]){
+				if(weakSelf.dataBuffer.length > [obj readToLength]){
 					NSRange byteRange = NSMakeRange(0, [obj readToLength]);
-					readData = [[weakSelf dataBuffer] subdataWithRange:byteRange];
-					[[weakSelf dataBuffer] replaceBytesInRange:byteRange withBytes:NULL length:0];
+					readData = [weakSelf.dataBuffer subdataWithRange:byteRange];
+					[weakSelf.dataBuffer replaceBytesInRange:byteRange withBytes:NULL length:0];
 				}else
 					*stop = YES;
 			}else {
-				NSRange findRange = [[weakSelf dataBuffer] rangeOfData:[obj readToData] options:0 range:NSMakeRange(0, [[weakSelf dataBuffer] length])];
+				NSRange findRange = [weakSelf.dataBuffer rangeOfData:[obj readToData] options:0 range:NSMakeRange(0, weakSelf.dataBuffer.length)];
 				if(findRange.location != NSNotFound){
 					NSRange byteRange = NSMakeRange(0, findRange.location + findRange.length);
-					readData = [[weakSelf dataBuffer] subdataWithRange:byteRange];
-					[[weakSelf dataBuffer] replaceBytesInRange:byteRange withBytes:NULL length:0];
+					readData = [weakSelf.dataBuffer subdataWithRange:byteRange];
+					[weakSelf.dataBuffer replaceBytesInRange:byteRange withBytes:NULL length:0];
 				}else
 					*stop = YES;
 			}
 			if(readData){
-				[[weakSelf scheduledReads] removeObject:obj];
+				[weakSelf.scheduledReads removeObject:obj];
 				//NSLog(@"Passing read data to delegate:\n%@", [[[NSString alloc] initWithData:readData encoding:NSUTF8StringEncoding] autorelease]);
-				if([[weakSelf delegate] respondsToSelector:@selector(socket:didReadData:withTag:)]){
-					dispatch_async([[weakSelf socket] delegateQueue], ^{
+				if([weakSelf.delegate respondsToSelector:@selector(socket:didReadData:withTag:)]){
+					dispatch_async(weakSelf.socket.delegateQueue, ^{
 						@autoreleasepool {
-							[[weakSelf delegate] socket:(GCDAsyncSocket*)weakSelf didReadData:readData withTag:[obj tag]];
+							[weakSelf.delegate socket:(GCDAsyncSocket*)weakSelf didReadData:readData withTag:[obj tag]];
 						}
 					});
 				}
@@ -197,17 +197,17 @@ static dispatch_queue_t bufferQueue = NULL;
 }
 
 - (NSString *)connectedHost {
-	return [_socket connectedHost];
+	return _socket.connectedHost;
 }
 - (NSData *)connectedAddress {
-	return [_socket connectedAddress];
+	return _socket.connectedAddress;
 }
 
 - (id)userData {
-	return [_socket userData];
+	return _socket.userData;
 }
 - (void)setUserData:(id)userData {
-	[_socket setUserData:userData];
+	_socket.userData = userData;
 }
 
 - (void)readDataToData:(NSData *)data
@@ -221,9 +221,9 @@ static dispatch_queue_t bufferQueue = NULL;
 	}
 	//Build a read, queue it, then fire the dequeue check
 	GrowlWebSocketRead *read = [[GrowlWebSocketRead alloc] init];
-	[read setReadToData:data];
-	[read setReadToLength:length];
-	[read setTag:tag];
+	read.readToData = data;
+	read.readToLength = length;
+	read.tag = tag;
 	
 	dispatch_async(bufferQueue, ^{
 		[self.scheduledReads addObject:read];
@@ -246,7 +246,7 @@ static dispatch_queue_t bufferQueue = NULL;
 	[buildData appendBytes:&frameControl length:1];
 	
 	// Mask and length
-	NSUInteger length = [data length];
+	NSUInteger length = data.length;
 	if (length > INT16_MAX) {
 		char byteLength = LENGTH_BYTE_64;
 		int64_t length64 = (int64_t)length;
@@ -288,8 +288,8 @@ static dispatch_queue_t bufferQueue = NULL;
 			//Start building our return string
 			NSString *socketKey = [self.startHeaders valueForKey:@"Sec-WebSocket-Key"];
 			NSString *combinedKey = [socketKey stringByAppendingString:@"258EAFA5-E914-47DA-95CA-C5AB0DC85B11"];
-			NSData *hashedData = [[combinedKey dataUsingEncoding:NSUTF8StringEncoding] sha1Hashed]; //Hash this
-			NSString *returnKeyEncoded = [hashedData encodedAsBase64];
+			NSData *hashedData = [combinedKey dataUsingEncoding:NSUTF8StringEncoding].sha1Hashed; //Hash this
+			NSString *returnKeyEncoded = hashedData.encodedAsBase64;
 
 			NSString *protocolList = [self.startHeaders valueForKey:@"Sec-WebSocket-Protocol"];
 			__block BOOL found = NO;
@@ -329,7 +329,7 @@ static dispatch_queue_t bufferQueue = NULL;
 	}else{
 		NSUInteger readLength = 0;
 		long nextTag = 0;
-		char *rawBytes = (char*)[data bytes];
+		char *rawBytes = (char*)data.bytes;
 		if(tag == FRAME_START_TAG){
 			const char frameControl = rawBytes[0];
 			const char dataControl = rawBytes[1];
@@ -375,14 +375,14 @@ static dispatch_queue_t bufferQueue = NULL;
 			}
 		}else if (tag == LENGTH_READ_TAG) {
 			NSUInteger length = 0;
-			if ([data length] == 2) {
+			if (data.length == 2) {
 				uint16_t s;
-				[data getBytes:&s length:[data length]];
+				[data getBytes:&s length:data.length];
 				NTOHS(s);
 				length = (NSUInteger)s;
-			}else if ([data length] == 8) {
+			}else if (data.length == 8) {
 				uint64_t l;
-				[data getBytes:&l length:[data length]];
+				[data getBytes:&l length:data.length];
 /* see: http://stackoverflow.com/questions/809902/64-bit-ntohl-in-c/875505#875505 */
 				union { unsigned long lv[2]; unsigned long long llv; } u;
 				u.lv[0] = htonl(l >> 32);
@@ -432,9 +432,9 @@ static dispatch_queue_t bufferQueue = NULL;
 		}else if (tag == DATA_READ_TAG) {
 			char *unmaskedBytes = NULL;
 			if (_masked) {
-				const char *mask = [self.mask bytes];
-				unmaskedBytes = malloc([data length]);
-				for(NSUInteger i = 0; i < [data length]; i++) {
+				const char *mask = (self.mask).bytes;
+				unmaskedBytes = malloc(data.length);
+				for(NSUInteger i = 0; i < data.length; i++) {
 					int b = i % 4;
 					char unmaskedByte = (rawBytes[i] ^ mask[b]);
 					unmaskedBytes[i] = unmaskedByte;
@@ -443,7 +443,7 @@ static dispatch_queue_t bufferQueue = NULL;
 				unmaskedBytes = rawBytes;
 			}
          
-			NSData *unmaskedData = [NSData dataWithBytesNoCopy:unmaskedBytes length:[data length] freeWhenDone:YES];
+			NSData *unmaskedData = [NSData dataWithBytesNoCopy:unmaskedBytes length:data.length freeWhenDone:YES];
 			//NSLog(@"Read message:\n%@", [[[NSString alloc] initWithBytes:unmaskedBytes length:[data length] encoding:NSUTF8StringEncoding] autorelease]);
 			//Add to our main mutable data buffer
 			dispatch_async(bufferQueue, ^{

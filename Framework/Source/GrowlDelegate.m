@@ -15,10 +15,8 @@
 
 - (id) initWithAllNotifications:(NSArray *)allNotifications defaultNotifications:(NSArray *)defaultNotifications {
 	if ((self = [self init])) {
-		self.registrationDictionaryForGrowl = [[NSDictionary alloc] initWithObjectsAndKeys:
-			allNotifications,     GROWL_NOTIFICATIONS_ALL,
-			defaultNotifications, GROWL_NOTIFICATIONS_DEFAULT,
-			nil];
+		self.registrationDictionaryForGrowl = @{GROWL_NOTIFICATIONS_ALL: allNotifications,
+                                                GROWL_NOTIFICATIONS_DEFAULT: defaultNotifications};
 	}
 	return self;
 }

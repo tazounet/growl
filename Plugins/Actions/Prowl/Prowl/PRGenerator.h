@@ -12,8 +12,9 @@
 
 @interface PRGenerator : NSObject
 
-- (id)initWithProviderKey:(NSString *)providerKey
-				 delegate:(id<PRGeneratorDelegate>)delegate;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithProviderKey:(NSString *)providerKey
+				 delegate:(id<PRGeneratorDelegate>)delegate NS_DESIGNATED_INITIALIZER;
 @property (nonatomic, copy, readonly) NSString *providerKey;
 @property (nonatomic, unsafe_unretained, readonly) id<PRGeneratorDelegate> delegate;
 

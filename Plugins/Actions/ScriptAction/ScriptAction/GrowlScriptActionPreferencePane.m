@@ -46,7 +46,7 @@
 
 @synthesize isUnixTask = _isUnixTask;
 
--(id)initWithBundle:(NSBundle *)bundle {
+-(instancetype)initWithBundle:(NSBundle *)bundle {
 	if((self = [super initWithBundle:bundle])){
       self.scriptListTitle = NSLocalizedStringFromTableInBundle(@"Scripts", @"Localizable", bundle, @"List of scripts in the script action");
 		self.unixArgumentLabel = NSLocalizedStringFromTableInBundle(@"UNIX Arguments", @"Localizable", bundle, @"Token field for UNIX arguments");
@@ -83,32 +83,32 @@
 
 -(void)updateConfigurationValues {
 	[self updateActionList];
-	if((!self.actionName || ![self.actions containsObject:[self actionName]]) && [self.actions count] > 0){
-		[self setActionName:[self.actions objectAtIndex:0U]];
-	}else if(![self.actions containsObject:[self actionName]] && [self.actions count] == 0){
+	if((!self.actionName || ![self.actions containsObject:self.actionName]) && (self.actions).count > 0){
+		self.actionName = (self.actions)[0U];
+	}else if(![self.actions containsObject:self.actionName] && (self.actions).count == 0){
 		[self setActionName:nil];
 	}
 	[super updateConfigurationValues];
 	if(self.actionName && [self.actions containsObject:self.actionName]){
-		[self.actionsTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:[self.actions indexOfObject:[self actionName]]]
+		[self.actionsTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:[self.actions indexOfObject:self.actionName]]
 								 byExtendingSelection:NO];
 	}
 	
 	NSArray *arguments = [self.configuration valueForKey:@"ScriptActionUnixArguments"];
 	if(!arguments)
 		arguments = [self defaultArgumentsArray];
-	[self.tokenField setObjectValue:arguments];
+	(self.tokenField).objectValue = arguments;
 }
 
 -(void)tableViewSelectionDidChange:(NSNotification *)notification	{
-	NSInteger selectedRow = [self.actionsTableView selectedRow];
-	if(selectedRow >= 0 && (NSUInteger)selectedRow < [self.actions count]){
-		NSString *actionName = [self.actions objectAtIndex:selectedRow];
-		if([[self actionName] caseInsensitiveCompare:actionName] != NSOrderedSame){
+	NSInteger selectedRow = (self.actionsTableView).selectedRow;
+	if(selectedRow >= 0 && (NSUInteger)selectedRow < (self.actions).count){
+		NSString *actionName = (self.actions)[selectedRow];
+		if([self.actionName caseInsensitiveCompare:actionName] != NSOrderedSame){
          if([self respondsToSelector:@selector(_setDisplayName:)]){
             [self performSelector:@selector(_setDisplayName:) withObject:actionName];
          }
-			[self setActionName:actionName];
+			self.actionName = actionName;
 		}
 	}
 }
@@ -137,9 +137,9 @@
 }
 
 -(BOOL)isUnixTask {
-	if([self actionName] && ![self.actionName isEqualToString:self.previousUnixTestName]){
+	if(self.actionName && ![self.actionName isEqualToString:self.previousUnixTestName]){
 		self.previousUnixTestName = self.actionName;
-		NSUserScriptTask *task = [GrowlUserScriptTaskUtilities scriptTaskForFile:[self actionName]];
+		NSUserScriptTask *task = [GrowlUserScriptTaskUtilities scriptTaskForFile:self.actionName];
 		if([task isKindOfClass:[NSUserUnixTask class]])
 			_isUnixTask = YES;
 		else
@@ -199,7 +199,7 @@ completionsForSubstring:(NSString *)substring
 	 indexOfSelectedItem:(NSInteger *)selectedIndex
 {
 	NSMutableArray *result = [NSMutableArray array];
-	[[[self keysToTokenDisplayStrings] allValues] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+	[[self keysToTokenDisplayStrings].allValues enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 		if([obj rangeOfString:substring options:NSAnchoredSearch | NSCaseInsensitiveSearch].location != NSNotFound){
 			[result addObject:obj];
 		}
@@ -219,9 +219,9 @@ completionsForSubstring:(NSString *)substring
 
 - (NSArray *)tokenField:(NSTokenField *)tokenField shouldAddObjects:(NSArray *)tokens atIndex:(NSUInteger)index
 {
-	NSMutableArray *result = [NSMutableArray arrayWithCapacity:[tokens count]];
+	NSMutableArray *result = [NSMutableArray arrayWithCapacity:tokens.count];
 	[tokens enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-		if([[[self keysToTokenDisplayStrings] allKeys] containsObject:obj])
+		if([[self keysToTokenDisplayStrings].allKeys containsObject:obj])
 			[result addObject:obj];
 	}];
 	dispatch_async(dispatch_get_main_queue(), ^{
@@ -235,9 +235,9 @@ completionsForSubstring:(NSString *)substring
 }
 
 -(void)saveArguments {
-	NSArray *tokens = [_tokenField objectValue];
+	NSArray *tokens = _tokenField.objectValue;
 	if(!tokens)
-		tokens = [NSArray array];
+		tokens = @[];
 	[self setConfigurationValue:tokens forKey:@"ScriptActionUnixArguments"];
 }
 

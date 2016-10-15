@@ -23,15 +23,15 @@
 @synthesize colorLabel;
 @synthesize colorNames;
 
--(id)initWithBundle:(NSBundle *)bundle {
+-(instancetype)initWithBundle:(NSBundle *)bundle {
    if((self = [super initWithBundle:bundle])){
       self.colorLabel = NSLocalizedStringFromTableInBundle(@"Color:", @"Localizable", bundle, @"Label for pop up button to choose color");
-      self.colorNames = [NSArray arrayWithObjects:GrowliCalColorPurple, 
+      self.colorNames = @[GrowliCalColorPurple, 
                                                   GrowliCalColorPink, 
                                                   GrowliCalColorGreen, 
                                                   GrowliCalColorBlue, 
                                                   GrowliCalColorOrange, 
-                                                  GrowliCalColorRed, nil];
+                                                  GrowliCalColorRed];
    }
    return self;
 }
@@ -57,7 +57,7 @@
 
 //make sure we set up our settings prior to the PrefPane view actually loading, or we risk not having our controls display correctly
 - (void) willSelect {
-	[slider_opacity setAltIncrementValue:0.05];
+	slider_opacity.altIncrementValue = 0.05;
 }
 
 #pragma mark -
@@ -71,7 +71,7 @@
 }
 
 - (void) setLimit:(BOOL)value {
-	[self setConfigurationValue:[NSNumber numberWithBool:value] forKey:GrowliCalLimitPref];
+	[self setConfigurationValue:@(value) forKey:GrowliCalLimitPref];
 }
 
 #pragma mark -
@@ -85,7 +85,7 @@
 }
 
 - (void) setOpacity:(CGFloat)value {
-	[self setConfigurationValue:[NSNumber numberWithFloat:value] forKey:GrowliCalOpacity];
+	[self setConfigurationValue:@(value) forKey:GrowliCalOpacity];
 }
 
 #pragma mark -
@@ -99,7 +99,7 @@
 }
 
 - (void) setDuration:(CGFloat)value {
-	[self setConfigurationValue:[NSNumber numberWithFloat:value] forKey:GrowliCalDuration];
+	[self setConfigurationValue:@(value) forKey:GrowliCalDuration];
 }
 
 #pragma mark -
@@ -113,18 +113,18 @@
 }
 - (void)setColor:(GrowliCalColorType)color
 {
-	[self setConfigurationValue:[NSNumber numberWithInt:color] forKey:GrowliCalColor];
+	[self setConfigurationValue:@(color) forKey:GrowliCalColor];
 }
 
 #pragma mark -
 
 - (NSInteger) numberOfItemsInComboBox:(NSComboBox *)aComboBox {
-	return [[NSScreen screens] count];
+	return [NSScreen screens].count;
 }
 
 - (id) comboBox:(NSComboBox *)aComboBox objectValueForItemAtIndex:(NSInteger)idx {
 #ifdef __LP64__
-	return [NSNumber numberWithInteger:idx];
+	return @(idx);
 #else
 	return [NSNumber numberWithInt:idx];
 #endif
@@ -139,7 +139,7 @@
 }
 
 - (void) setScreen:(int)value {
-	[self setConfigurationValue:[NSNumber numberWithInt:value] forKey:GrowliCalScreen];
+	[self setConfigurationValue:@(value) forKey:GrowliCalScreen];
 }
 
 - (int) size {
@@ -151,6 +151,6 @@
 }
 
 - (void) setSize:(int)value {
-	[self setConfigurationValue:[NSNumber numberWithInt:value] forKey:GrowliCalSizePref];
+	[self setConfigurationValue:@(value) forKey:GrowliCalSizePref];
 }
 @end

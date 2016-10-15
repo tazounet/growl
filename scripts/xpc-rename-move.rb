@@ -108,7 +108,7 @@ def main
   Dir.chdir(start_location)
 
   rename(xpc_id)
-  #resign(new_signing_identity)
+  resign(new_signing_identity)
 
   Dir.chdir(cur_dir)
 

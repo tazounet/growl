@@ -8,7 +8,7 @@
 @synthesize enabled = _enabled;
 @synthesize validated = _validated;
 
-- (id)init
+- (instancetype)init
 {
 	self = [super init];
 	if(self) {
@@ -19,7 +19,7 @@
 	return self;
 }
 
-- (id)initWithCoder:(NSCoder *)decoder
+- (instancetype)initWithCoder:(NSCoder *)decoder
 {
 	self = [super init];
 	if(self) {
@@ -32,11 +32,11 @@
 
 - (void)encodeWithCoder:(NSCoder *)coder
 {
-	[coder encodeObject:[NSNumber numberWithBool:self.enabled]
+	[coder encodeObject:@(self.enabled)
 				 forKey:@"enabled"];
 	[coder encodeObject:self.apiKey
 				 forKey:@"apiKey"];
-	[coder encodeObject:[NSNumber numberWithBool:self.validated]
+	[coder encodeObject:@(self.validated)
 				 forKey:@"validated"];
 }
 

@@ -19,7 +19,7 @@ NSString *GrowlDisplayPluginInfoKeyWindowNibName = @"GrowlDisplayWindowNibName";
 
 @implementation GrowlDisplayPlugin
 
-- (id) initWithBundle:(NSBundle *)bundle {
+- (instancetype) initWithBundle:(NSBundle *)bundle {
 	if ((self = [super initWithBundle:bundle])) {
 		/*determine whether this display should enqueue notifications when a
 		 *	notification is already being displayed.
@@ -27,10 +27,10 @@ NSString *GrowlDisplayPluginInfoKeyWindowNibName = @"GrowlDisplayWindowNibName";
 		windowControllerClass    = nil;
 		
 		if(![self fullCustomButton]){
-			NSImage *image = [self buttonImage];
-			NSImage *pressed = [self pressedButtonImage];
-			if([self buttonKey] && (image || pressed)){
-				[GrowlNotificationView makeButtonWithImage:image pressedImage:pressed forKey:[self buttonKey]];
+			NSImage *image = self.buttonImage;
+			NSImage *pressed = self.pressedButtonImage;
+			if(self.buttonKey && (image || pressed)){
+				[GrowlNotificationView makeButtonWithImage:image pressedImage:pressed forKey:self.buttonKey];
 			}
 		}
 	}
@@ -42,23 +42,23 @@ NSString *GrowlDisplayPluginInfoKeyWindowNibName = @"GrowlDisplayWindowNibName";
 	return NO;
 }
 -(NSString*)buttonKey {
-	return [[self bundle] bundleIdentifier];
+	return self.bundle.bundleIdentifier;
 }
 -(NSImage*)buttonImage {
-	NSString *imageName = [[[self bundle] infoDictionary] objectForKey:@"GrowlCloseButtonImage"];
+	NSString *imageName = self.bundle.infoDictionary[@"GrowlCloseButtonImage"];
 	if(!imageName)
 		return nil;
 	
-	NSString *path = [[self bundle] pathForImageResource:imageName];
+	NSString *path = [self.bundle pathForImageResource:imageName];
 	NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
 	return image;
 }
 -(NSImage*)pressedButtonImage {
-	NSString *imageName = [[[self bundle] infoDictionary] objectForKey:@"GrowlCloseButtonPressedImage"];
+	NSString *imageName = self.bundle.infoDictionary[@"GrowlCloseButtonPressedImage"];
 	if(!imageName)
 		return nil;
 	
-	NSString *path = [[self bundle] pathForImageResource:imageName];
+	NSString *path = [self.bundle pathForImageResource:imageName];
 	NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
 	return image;
 }
@@ -68,13 +68,13 @@ NSString *GrowlDisplayPluginInfoKeyWindowNibName = @"GrowlDisplayWindowNibName";
 - (void)dispatchNotification:(NSDictionary *)noteDict withConfiguration:(NSDictionary *)configuration {
 	GrowlNotification *notification = [GrowlNotification notificationWithDictionary:noteDict 
 																					  configurationDict:configuration];
-	NSString *windowNibName = [self windowNibName];
+	NSString *windowNibName = self.windowNibName;
 	GrowlDisplayWindowController *thisWindow = nil;
 	
-	NSString *identifier = [[notification auxiliaryDictionary] valueForKey:GROWL_NOTIFICATION_IDENTIFIER];
+	NSString *identifier = [notification.auxiliaryDictionary valueForKey:GROWL_NOTIFICATION_IDENTIFIER];
 	
 	if (identifier) {
-		thisWindow = [coalescableWindows objectForKey:identifier];
+		thisWindow = coalescableWindows[identifier];
 	}
 	
 	if (thisWindow) {
@@ -89,14 +89,13 @@ NSString *GrowlDisplayPluginInfoKeyWindowNibName = @"GrowlDisplayWindowNibName";
 			thisWindow = [[windowControllerClass alloc] initWithNotification:notification plugin:self];
       
       if(thisWindow != nil){
-         [thisWindow setNotification:notification];
+         thisWindow.notification = notification;
          
          [thisWindow startDisplay];
          
          if (identifier) {
             if (!coalescableWindows) coalescableWindows = [[NSMutableDictionary alloc] init];
-            [coalescableWindows setObject:thisWindow
-                                   forKey:identifier];
+            coalescableWindows[identifier] = thisWindow;
          }
       }else{
          NSLog(@"Error! Unable to make a display of class %@", NSStringFromClass(windowControllerClass));
@@ -129,7 +128,7 @@ NSString *GrowlDisplayPluginInfoKeyWindowNibName = @"GrowlDisplayWindowNibName";
 		
 		
 		if (coalescableWindows) {
-			NSString *identifier = [[[wc notification] auxiliaryDictionary] objectForKey:GROWL_NOTIFICATION_IDENTIFIER];
+			NSString *identifier = wc.notification.auxiliaryDictionary[GROWL_NOTIFICATION_IDENTIFIER];
 			if (identifier)
 				[coalescableWindows removeObjectForKey:identifier];
 		}

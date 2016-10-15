@@ -25,7 +25,7 @@
 @synthesize soundTableTitle;
 @synthesize volumeLabel;
 
--(id)initWithBundle:(NSBundle *)bundle {
+-(instancetype)initWithBundle:(NSBundle *)bundle {
 	if((self = [super initWithBundle:bundle])){
 		self.soundTableTitle = NSLocalizedStringFromTableInBundle(@"Sounds", @"Localizable", bundle, @"Sounds table title");
 		self.volumeLabel = NSLocalizedStringFromTableInBundle(@"Volume:", @"Localizable", bundle, @"Volume slider label");
@@ -53,20 +53,20 @@
    self.soundTableView.delegate = nil;
 	[self updateSoundsList];
 	[super updateConfigurationValues];
-	if((![self soundName] || ![sounds containsObject:[self soundName]]) && [sounds count] > 0){
-		[self setSoundName:[sounds objectAtIndex:0U]];
+	if((!self.soundName || ![sounds containsObject:self.soundName]) && sounds.count > 0){
+		self.soundName = sounds[0U];
 	}
-	[soundTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:[sounds indexOfObject:[self soundName]]]
+	[soundTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:[sounds indexOfObject:self.soundName]]
 					byExtendingSelection:NO];
    self.soundTableView.delegate = self;
 }
 
 -(void)tableViewSelectionDidChange:(NSNotification *)notification	{
-	NSInteger selectedRow = [soundTableView selectedRow];
-	if(selectedRow >= 0 && (NSUInteger)selectedRow < [sounds count]){
-		NSString *soundName = [sounds objectAtIndex:selectedRow];
-		if([[self soundName] caseInsensitiveCompare:soundName] != NSOrderedSame){
-			[self setSoundName:soundName];
+	NSInteger selectedRow = soundTableView.selectedRow;
+	if(selectedRow >= 0 && (NSUInteger)selectedRow < sounds.count){
+		NSString *soundName = sounds[selectedRow];
+		if([self.soundName caseInsensitiveCompare:soundName] != NSOrderedSame){
+			self.soundName = soundName;
 			if([soundName caseInsensitiveCompare:LocalizedSystemDefaultSound] == NSOrderedSame)
 				NSBeep();
 			else
@@ -92,7 +92,7 @@
 }
 
 -(void)setSoundVolume:(NSUInteger)volume {
-	[self setConfigurationValue:[NSNumber numberWithUnsignedInteger:volume] forKey:SoundVolumePref];
+	[self setConfigurationValue:@(volume) forKey:SoundVolumePref];
 }
 
 -(NSUInteger)soundVolume {
@@ -105,10 +105,9 @@
 -(void)updateSoundsList {
 	NSMutableArray *soundNames = [NSMutableArray array];
 	
-	NSArray *paths = [NSArray arrayWithObjects:@"/System/Library/Sounds",
+	NSArray *paths = @[@"/System/Library/Sounds",
                      @"/Library/Sounds",
-                     [NSString stringWithFormat:@"%@/Library/Sounds", NSHomeDirectory()],
-                     nil];
+                     [NSString stringWithFormat:@"%@/Library/Sounds", NSHomeDirectory()]];
    
 	[paths enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 		BOOL isDirectory = NO;
@@ -118,7 +117,7 @@
 				
 				NSArray *files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:obj error:nil];
 				for (NSString *filename in files) {
-					NSString *file = [filename stringByDeletingPathExtension];
+					NSString *file = filename.stringByDeletingPathExtension;
                
 					if (![file isEqualToString:@".DS_Store"])
 						[soundNames addObject:file];

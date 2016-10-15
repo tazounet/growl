@@ -26,7 +26,7 @@
 @synthesize generator = _generator;
 @synthesize validator = _validator;
 
-- (id)initWithBundle:(NSBundle *)bundle
+- (instancetype)initWithBundle:(NSBundle *)bundle
 {
     self = [super initWithBundle:bundle];
     if (self) {
@@ -123,7 +123,7 @@
 	if([sender isKindOfClass:[NSTextField class]]) {
 		NSInteger idx = [self.tableView rowForView:sender];
 		if(idx != -1) {
-			PRAPIKey *apiKey = [self.apiKeys objectAtIndex:idx];
+			PRAPIKey *apiKey = (self.apiKeys)[idx];
 			if(!apiKey.validated) {
 				[self validateApiKey:apiKey];
 			}
@@ -206,7 +206,7 @@
 
 - (void)setPrefixEnabled:(BOOL)prefixEnabled
 {
-	[self setConfigurationValue:[NSNumber numberWithBool:prefixEnabled]
+	[self setConfigurationValue:@(prefixEnabled)
 						 forKey:PRPreferenceKeyPrefixEnabled];
 }
 
@@ -227,7 +227,7 @@
 
 - (void)setMinimumPriorityEnabled:(BOOL)minimumPriorityEnabled
 {
-	[self setConfigurationValue:[NSNumber numberWithBool:minimumPriorityEnabled]
+	[self setConfigurationValue:@(minimumPriorityEnabled)
 						 forKey:PRPreferenceKeyMinimumPriorityEnabled];
 }
 
@@ -238,7 +238,7 @@
 
 - (void)setMinimumPriority:(NSInteger)minimumPriority
 {
-	[self setConfigurationValue:[NSNumber numberWithInteger:minimumPriority]
+	[self setConfigurationValue:@(minimumPriority)
 						 forKey:PRPreferenceKeyMinimumPriority];
 }
 
@@ -249,7 +249,7 @@
 
 - (void)setOnlyWhenIdle:(BOOL)onlyWhenIdle
 {
-	[self setConfigurationValue:[NSNumber numberWithBool:onlyWhenIdle]
+	[self setConfigurationValue:@(onlyWhenIdle)
 						 forKey:PRPreferenceKeyOnlyWhenIdle];
 }
 
@@ -283,7 +283,7 @@
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
-	PRAPIKey *apiKey = [self.apiKeys objectAtIndex:row];
+	PRAPIKey *apiKey = (self.apiKeys)[row];
 	
 	if([tableColumn.identifier isEqualToString:@"validated"]) {
 		if([self.validator isValidatingApiKey:apiKey]) {
@@ -302,7 +302,7 @@
 
 - (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
-	PRAPIKey *apiKey = [self.apiKeys objectAtIndex:row];
+	PRAPIKey *apiKey = (self.apiKeys)[row];
 	
 	if([tableColumn.identifier isEqualToString:@"enabled"]) {
 		return apiKey;
@@ -310,7 +310,7 @@
 		return apiKey;
 	} else if([tableColumn.identifier isEqualToString:@"validated"]) {
 		if([self.validator isValidatingApiKey:apiKey]) {
-			return [NSNumber numberWithBool:YES];
+			return @YES;
 		} else if(apiKey.validated) {
             return [[NSBundle bundleForClass:[self class]] imageForResource:@"checkmark"];
 		} else {

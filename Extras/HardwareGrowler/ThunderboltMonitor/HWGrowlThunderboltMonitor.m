@@ -26,7 +26,7 @@
 @synthesize ioKitNotificationPort;
 @synthesize notificationRunLoopSource;
 
--(id)init {
+-(instancetype)init {
 	if((self = [super init])){
 		self.notificationsArePrimed = NO;
 		//#warning	kIOMasterPortDefault is only available on 10.2 and above...
@@ -62,7 +62,7 @@
 		return NULL;
 	}
 	
-	NSString* tempDeviceName = [NSString stringWithCString:deviceNameChars encoding:NSASCIIStringEncoding];
+	NSString* tempDeviceName = @(deviceNameChars);
 	if (tempDeviceName) {
 		return tempDeviceName;
 	}
@@ -87,7 +87,7 @@
 -(void)tbDeviceAdded:(io_iterator_t)iterator {
 	io_object_t	thisObject;
 	while ((thisObject = IOIteratorNext(iterator))) {
-		if (notificationsArePrimed || [delegate onLaunchEnabled]) {
+		if (notificationsArePrimed || delegate.onLaunchEnabled) {
 			//NSString *deviceName = [self nameForThunderboltObject:thisObject];
 			//NSLog(@"hello %@", deviceName);
 			//[self tbDeviceName:deviceName added:YES];
@@ -194,18 +194,18 @@ static void tbDeviceRemoved(void *refCon, io_iterator_t iterator) {
 #pragma mark HWGrowlPluginNotifierProtocol
 
 -(NSArray*)noteNames {
-	return [NSArray arrayWithObjects:@"ThunderboltConnected", @"ThunderboltDisconnected", nil];
+	return @[@"ThunderboltConnected", @"ThunderboltDisconnected"];
 }
 -(NSDictionary*)localizedNames {
-	return [NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"Thunderbolt Connected", @""), @"ThunderboltConnected",
-			  NSLocalizedString(@"Thunderbolt Disconnected", @""), @"ThunderboltDisconnected", nil];
+	return @{@"ThunderboltConnected": NSLocalizedString(@"Thunderbolt Connected", @""),
+			  @"ThunderboltDisconnected": NSLocalizedString(@"Thunderbolt Disconnected", @"")};
 }
 -(NSDictionary*)noteDescriptions {
-	return [NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"Sent when a Thunderbolt Device is connected", @""), @"ThunderboltConnected",
-			  NSLocalizedString(@"Sent when a Thunderbolt Device is disconnected", @""), @"ThunderboltDisconnected", nil];
+	return @{@"ThunderboltConnected": NSLocalizedString(@"Sent when a Thunderbolt Device is connected", @""),
+			  @"ThunderboltDisconnected": NSLocalizedString(@"Sent when a Thunderbolt Device is disconnected", @"")};
 }
 -(NSArray*)defaultNotifications {
-	return [NSArray arrayWithObjects:@"ThunderboltConnected", @"ThunderboltDisconnected", nil];
+	return @[@"ThunderboltConnected", @"ThunderboltDisconnected"];
 }
 
 @end

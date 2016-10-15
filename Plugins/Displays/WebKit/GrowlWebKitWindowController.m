@@ -82,14 +82,14 @@ static dispatch_queue_t __imageCacheQueue;
 + (NSData*)cachedImageForKey:(NSString *)key {
    __block NSData *image = nil;
    dispatch_sync(__imageCacheQueue, ^{
-      image = [[GrowlWebKitWindowController imageCache] objectForKey:key];
+      image = [GrowlWebKitWindowController imageCache][key];
    });
    return image;
 }
 
 + (void)setCachedImage:(NSData*)image forKey:(NSString*)key {
    dispatch_barrier_sync(__imageCacheQueue, ^{
-      [[GrowlWebKitWindowController imageCache] setObject:image forKey:key];
+      [GrowlWebKitWindowController imageCache][key] = image;
    });
 }
 
@@ -99,12 +99,12 @@ static dispatch_queue_t __imageCacheQueue;
    });
 }
 
-- (id) initWithNotification:(GrowlNotification *)note plugin:(GrowlDisplayPlugin *)aPlugin {
+- (instancetype) initWithNotification:(GrowlNotification *)note plugin:(GrowlDisplayPlugin *)aPlugin {
 	// init the window used to init
-	NSDictionary *configDict = [note configurationDict];
+	NSDictionary *configDict = note.configurationDict;
 	
 	NSPanel *panel = [[KeyPanel alloc] initWithContentRect:NSMakeRect(0.0, 0.0, 270.0, 1.0)
-												 styleMask:NSBorderlessWindowMask | NSNonactivatingPanelMask
+												 styleMask:NSWindowStyleMaskBorderless | NSWindowStyleMaskNonactivatingPanel
 												   backing:NSBackingStoreBuffered
 													 defer:YES];
 	if (!(self = [super initWithWindow:panel andPlugin:aPlugin])) {
@@ -114,7 +114,7 @@ static dispatch_queue_t __imageCacheQueue;
 
 	// Read the template file....exit on error...
 	NSError *error = nil;
-	NSBundle *displayBundle = [aPlugin bundle];
+	NSBundle *displayBundle = aPlugin.bundle;
 	NSString *templateFile = [displayBundle pathForResource:@"template" ofType:@"html"];
 	if (![[NSFileManager defaultManager] fileExistsAtPath:templateFile])
 		templateFile = [[NSBundle mainBundle] pathForResource:@"template" ofType:@"html"];
@@ -125,14 +125,14 @@ static dispatch_queue_t __imageCacheQueue;
 		NSLog(@"ERROR: could not read template '%@' - %@", templateFile,error);
 		return nil;
 	}
-	baseURL = [NSURL fileURLWithPath:[displayBundle resourcePath]];
+	baseURL = [NSURL fileURLWithPath:displayBundle.resourcePath];
 
 	// Read the prefs for the plugin...
 	unsigned theScreenNo = 0U;
 	if([configDict valueForKey:GrowlWebKitScreenPref]){
 		theScreenNo = [[configDict valueForKey:GrowlWebKitScreenPref] unsignedIntValue];
 	}
-	[self setScreenNumber:theScreenNo];
+	self.screenNumber = theScreenNo;
 
 	NSTimeInterval duration = GrowlWebKitDurationPrefDefault;
 	if([configDict valueForKey:GrowlWebKitDurationPref]){
@@ -141,52 +141,51 @@ static dispatch_queue_t __imageCacheQueue;
 	self.displayDuration = duration;
 	
 	// Read the plugin specifics from the info.plist
-	NSDictionary *styleInfo = [displayBundle infoDictionary];
+	NSDictionary *styleInfo = displayBundle.infoDictionary;
 	BOOL hasShadow = NO;
-	hasShadow =	[(NSNumber *)[styleInfo valueForKey:@"GrowlHasShadow"] boolValue];
+	hasShadow =	((NSNumber *)[styleInfo valueForKey:@"GrowlHasShadow"]).boolValue;
 	paddingX = GrowlWebKitPadding;
 	paddingY = GrowlWebKitPadding;
 	NSNumber *xPad = [styleInfo valueForKey:@"GrowlPaddingX"];
 	NSNumber *yPad = [styleInfo valueForKey:@"GrowlPaddingY"];
 	if (xPad)
-		paddingX = [xPad floatValue];
+		paddingX = xPad.floatValue;
 	if (yPad)
-		paddingY = [yPad floatValue];
+		paddingY = yPad.floatValue;
 
 	// Configure the window
 	[panel setBecomesKeyOnlyIfNeeded:YES];
 	[panel setHidesOnDeactivate:NO];
-	[panel setBackgroundColor:[NSColor clearColor]];
+	panel.backgroundColor = [NSColor clearColor];
 	[panel setLevel:GrowlVisualDisplayWindowLevel];
-	[panel setCollectionBehavior:NSWindowCollectionBehaviorCanJoinAllSpaces];
-	[panel setAlphaValue:0.0];
+	panel.collectionBehavior = NSWindowCollectionBehaviorCanJoinAllSpaces;
+	panel.alphaValue = 0.0;
 	[panel setOpaque:NO];
 	[panel setCanHide:NO];
 	[panel setOneShot:YES];
-	[panel useOptimizedDrawing:YES];
 	[panel disableCursorRects];
-	[panel setHasShadow:hasShadow];
-	[panel setDelegate:self];
+	panel.hasShadow = hasShadow;
+	panel.delegate = self;
 
 	// Configure the view
-	NSRect panelFrame = [panel frame];
+	NSRect panelFrame = panel.frame;
 	GrowlWebKitWindowView *view = [[GrowlWebKitWindowView alloc] initWithFrame:panelFrame
 																	 frameName:nil
 																	 groupName:nil];
-	[view setStyleBundle:[plugin bundle]];
+	view.styleBundle = plugin.bundle;
 	[view setMaintainsBackForwardList:NO];
-	[view setTarget:self];
-	[view setAction:@selector(notificationClicked:)];
-	[view setPolicyDelegate:self];
-	[view setFrameLoadDelegate:self];
+	view.target = self;
+	view.action = @selector(notificationClicked:);
+	view.policyDelegate = self;
+	view.frameLoadDelegate = self;
 	if ([view respondsToSelector:@selector(setDrawsBackground:)])
 		[view setDrawsBackground:NO];
-	[panel setContentView:view];
-	[panel makeFirstResponder:[[[view mainFrame] frameView] documentView]];
+	panel.contentView = view;
+	[panel makeFirstResponder:view.mainFrame.frameView.documentView];
 
 	// set up the transitions...
-	NSDictionary *bundleDict = [[plugin bundle] infoDictionary];
-	if(![bundleDict objectForKey:@"UseDefaultWebKitFadeInOut"] || [[bundleDict objectForKey:@"UseDefaultWebKitFadeInOut"] boolValue]){
+	NSDictionary *bundleDict = plugin.bundle.infoDictionary;
+	if(!bundleDict[@"UseDefaultWebKitFadeInOut"] || [bundleDict[@"UseDefaultWebKitFadeInOut"] boolValue]){
 		GrowlFadingWindowTransition *fader = [[GrowlFadingWindowTransition alloc] initWithWindow:panel];
 		[self addTransition:fader];
 		[self setStartPercentage:0 endPercentage:100 forTransition:fader];
@@ -198,14 +197,14 @@ static dispatch_queue_t __imageCacheQueue;
 		[self setStartPercentage:100 endPercentage:100 forTransition:fader];
 		[fader setAutoReverses:YES];
 	}
-	if([bundleDict objectForKey:@"UseWebKitAnimationOut"] && [[bundleDict objectForKey:@"UseWebKitAnimationOut"] boolValue]){
+	if(bundleDict[@"UseWebKitAnimationOut"] && [bundleDict[@"UseWebKitAnimationOut"] boolValue]){
 		GrowlWebKitWindowTransition *webkitTransition = [[GrowlWebKitWindowTransition alloc] initWithWindow:panel];
 		[self addTransition:webkitTransition];
 		[self setStartPercentage:0 endPercentage:100 forTransition:webkitTransition];
 		[webkitTransition setAutoReverses:YES];
 	}
-	if([bundleDict objectForKey:@"WebKitAnimationDuration"]){
-		[self setTransitionDuration:[[bundleDict objectForKey:@"WebKitAnimationDuration"] floatValue]];
+	if(bundleDict[@"WebKitAnimationDuration"]){
+		self.transitionDuration = [bundleDict[@"WebKitAnimationDuration"] floatValue];
 	}
 	
 		
@@ -228,7 +227,7 @@ static dispatch_queue_t __imageCacheQueue;
 }
 
 - (void) dealloc {
-	GrowlWebKitWindowView *webView = [[self window] contentView];
+	GrowlWebKitWindowView *webView = self.window.contentView;
 	//we do this because its entirely possible to make it to dealloc before a
     //WebView has been assigned as the contentView for our window and all of these
     //method calls expect that that has happened
@@ -275,27 +274,27 @@ static dispatch_queue_t __imageCacheQueue;
 	[GrowlWebKitWindowController setCachedImage:iconData forKey:cacheKey];
 	
 	CGFloat opacity = 95.0;
-	if([[self configurationDict] valueForKey:GrowlWebKitOpacityPref]){
-		opacity = [[[self configurationDict] valueForKey:GrowlWebKitOpacityPref] floatValue];
+	if([self.configurationDict valueForKey:GrowlWebKitOpacityPref]){
+		opacity = [[self.configurationDict valueForKey:GrowlWebKitOpacityPref] floatValue];
 	}
 	opacity *= 0.01;
 
-	NSString *titleHTML = [title stringByEscapingForHTML];
-	NSString *textHTML = [text stringByEscapingForHTML];
+	NSString *titleHTML = title.stringByEscapingForHTML;
+	NSString *textHTML = text.stringByEscapingForHTML;
 	NSString *opacityString = [NSString stringWithFormat:@"%f", opacity];
 
-	[htmlString replaceOccurrencesOfString:@"%baseurl%" withString:[baseURL absoluteString] options:0 range:NSMakeRange(0, [htmlString length])];
-	[htmlString replaceOccurrencesOfString:@"%opacity%" withString:opacityString options:0 range:NSMakeRange(0, [htmlString length])];
-	[htmlString replaceOccurrencesOfString:@"%priority%" withString:priorityName options:0 range:NSMakeRange(0, [htmlString length])];
-	[htmlString replaceOccurrencesOfString:@"growlimage://%image%" withString:cacheKey options:0 range:NSMakeRange(0, [htmlString length])];
-	[htmlString replaceOccurrencesOfString:@"%title%" withString:titleHTML options:0 range:NSMakeRange(0, [htmlString length])];
-	[htmlString replaceOccurrencesOfString:@"%text%" withString:textHTML options:0 range:NSMakeRange(0, [htmlString length])];
+	[htmlString replaceOccurrencesOfString:@"%baseurl%" withString:baseURL.absoluteString options:0 range:NSMakeRange(0, htmlString.length)];
+	[htmlString replaceOccurrencesOfString:@"%opacity%" withString:opacityString options:0 range:NSMakeRange(0, htmlString.length)];
+	[htmlString replaceOccurrencesOfString:@"%priority%" withString:priorityName options:0 range:NSMakeRange(0, htmlString.length)];
+	[htmlString replaceOccurrencesOfString:@"growlimage://%image%" withString:cacheKey options:0 range:NSMakeRange(0, htmlString.length)];
+	[htmlString replaceOccurrencesOfString:@"%title%" withString:titleHTML options:0 range:NSMakeRange(0, htmlString.length)];
+	[htmlString replaceOccurrencesOfString:@"%text%" withString:textHTML options:0 range:NSMakeRange(0, htmlString.length)];
 
-	WebFrame *webFrame = [view mainFrame];
-	[[self window] disableFlushWindow];
+	WebFrame *webFrame = view.mainFrame;
+	[self.window disableFlushWindow];
 
 	[webFrame loadHTMLString:htmlString baseURL:baseURL];
-	[[webFrame frameView] setAllowsScrolling:NO];
+	[webFrame.frameView setAllowsScrolling:NO];
 }
 
 /*!
@@ -307,14 +306,14 @@ static dispatch_queue_t __imageCacheQueue;
 		  frame:(WebFrame *)frame
 	decisionListener:(id<WebPolicyDecisionListener>)listener
 {
-	int actionKey = [[actionInformation objectForKey:WebActionNavigationTypeKey] intValue];
+	int actionKey = [actionInformation[WebActionNavigationTypeKey] intValue];
 	if (actionKey == WebNavigationTypeOther) {
 		[listener use];
 	} else {
-		NSURL *url = [actionInformation objectForKey:WebActionOriginalURLKey];
+		NSURL *url = actionInformation[WebActionOriginalURLKey];
 
 		//Ignore file URLs, but open anything else
-		if (![url isFileURL])
+		if (!url.fileURL)
 			[[NSWorkspace sharedWorkspace] openURL:url];
 
 		[listener ignore];
@@ -331,7 +330,7 @@ static dispatch_queue_t __imageCacheQueue;
 {	
 	if([name isEqualToString:@"closeNote"])
 	{
-		GrowlWebKitWindowView *webView = [[self window] contentView];
+		GrowlWebKitWindowView *webView = self.window.contentView;
 		if([webView respondsToSelector:@selector(clickedCloseBox:)])
 			[webView performSelector:@selector(clickedCloseBox:) withObject:nil];
 		[webView stringByEvaluatingJavaScriptFromString:@"if (!e) var e = window.event; e.stopPropagation();"];
@@ -345,22 +344,22 @@ static dispatch_queue_t __imageCacheQueue;
  * @brief Invoked once the webview has loaded and is ready to accept content
  */
 - (void) webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame {
-	if (frame != [sender mainFrame]) return;
+	if (frame != sender.mainFrame) return;
 
-	if ([[[frame frameView] documentView] frame].size.height < 2.0f) {
+	if (frame.frameView.documentView.frame.size.height < 2.0f) {
 		//Finished loading it may be, but it's not finished rendering, in which case the document view's height will be 1 px. Not good for sizing to fit. So, try again one cycle of the run loop from now.
 		[self performSelector:@selector(viewIsReady:) 
 					  withObject:sender 
 					  afterDelay:0.0
-						  inModes:[NSArray arrayWithObjects:NSRunLoopCommonModes, NSEventTrackingRunLoopMode, nil]];
+						  inModes:@[NSRunLoopCommonModes, NSEventTrackingRunLoopMode]];
 	} else {
 		//It really is done, so just call through directly.
 		[self viewIsReady:(GrowlWebKitWindowView *)sender];
 	}
 }
 - (void) viewIsReady:(GrowlWebKitWindowView *)view {
-	NSWindow *myWindow = [self window];
-	if ([myWindow isFlushWindowDisabled])
+	NSWindow *myWindow = self.window;
+	if (myWindow.flushWindowDisabled)
 		[myWindow enableFlushWindow];
 
 	[view sizeToFit];
@@ -373,21 +372,21 @@ static dispatch_queue_t __imageCacheQueue;
     if (notification == theNotification)
 		return;
 
-	[super setNotification:theNotification];
+	super.notification = theNotification;
 
 	// Extract the new details from the notification
 	NSDictionary *noteDict = [notification dictionaryRepresentation];
-	NSString *title = [notification title];
-	NSString *text  = [notification notificationDescription];
+	NSString *title = notification.title;
+	NSString *text  = notification.notificationDescription;
 
-	NSData *iconData = [noteDict objectForKey:GROWL_NOTIFICATION_ICON_DATA];
+	NSData *iconData = noteDict[GROWL_NOTIFICATION_ICON_DATA];
 	if ([iconData isKindOfClass:[NSImage class]])
-		iconData = [(NSImage *)iconData PNGRepresentation];
+		iconData = ((NSImage *)iconData).PNGRepresentation;
 	
-	int priority    = [[noteDict objectForKey:GROWL_NOTIFICATION_PRIORITY] intValue];
+	int priority    = [noteDict[GROWL_NOTIFICATION_PRIORITY] intValue];
 
-	NSPanel *panel = (NSPanel *)[self window];
-	WebView *view = [panel contentView];
+	NSPanel *panel = (NSPanel *)self.window;
+	WebView *view = panel.contentView;
 	[self setTitle:title text:text iconData:iconData priority:priority forView:view];
 }
 
@@ -395,8 +394,8 @@ static dispatch_queue_t __imageCacheQueue;
 #pragma mark positioning methods
 
 - (NSPoint) idealOriginInRect:(NSRect)rect {
-	NSRect viewFrame = [[[self window] contentView] frame];
-	NSDictionary *configDict = [[self notification] configurationDict];
+	NSRect viewFrame = self.window.contentView.frame;
+	NSDictionary *configDict = self.notification.configurationDict;
 	GrowlPositionOrigin	position = configDict ? [[configDict valueForKey:@"com.growl.positioncontroller.selectedposition"] intValue] : GrowlTopRightCorner;
 	NSPoint idealOrigin;
 

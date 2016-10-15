@@ -60,7 +60,7 @@
 	NSRect retRect;
 
 	if (image) {
-		retRect.size = [image size];
+		retRect.size = image.size;
 		retRect.origin.x = cellFrame.origin.x + xImagePadding;
 		retRect.origin.y = cellFrame.origin.y
 			+ ceilf((cellFrame.size.height - retRect.size.height) * 0.5);
@@ -78,7 +78,7 @@
 				 event:(NSEvent *)theEvent {
 	NSRect textFrame, imageFrame;
 
-	NSDivideRect (aRect, &imageFrame, &textFrame, xImagePadding + [image size].width, NSMinXEdge);
+	NSDivideRect (aRect, &imageFrame, &textFrame, xImagePadding + image.size.width, NSMinXEdge);
 	[super editWithFrame: textFrame
 				  inView: controlView
 				  editor: textObj
@@ -94,7 +94,7 @@
 				  length:(NSInteger)selLength {
 	NSRect textFrame, imageFrame;
 
-	NSDivideRect (aRect, &imageFrame, &textFrame, xImagePadding + [image size].width, NSMinXEdge);
+	NSDivideRect (aRect, &imageFrame, &textFrame, xImagePadding + image.size.width, NSMinXEdge);
 	[super selectWithFrame: textFrame
 					inView: controlView
 					editor:textObj
@@ -105,12 +105,12 @@
 
 - (void) drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView {
 	if (image) {
-		NSSize	imageSize = [image size];
+		NSSize	imageSize = image.size;
 		NSRect	imageFrame;
 
 		NSDivideRect(cellFrame, &imageFrame, &cellFrame, xImagePadding + imageSize.width, NSMinXEdge);
-		if ([self drawsBackground]) {
-			[[self backgroundColor] set];
+		if (self.drawsBackground) {
+			[self.backgroundColor set];
 			NSRectFill(imageFrame);
 		}
 		imageFrame.origin.x += 3.0;
@@ -118,13 +118,13 @@
 
         [self.image drawInRect:imageFrame
                         fromRect:NSZeroRect
-                       operation:NSCompositeSourceOver
+                       operation:NSCompositingOperationSourceOver
                         fraction:1.0
                   respectFlipped:YES
                            hints:nil];
 	}
 
-	NSAttributedString *string = [self attributedStringValue];
+	NSAttributedString *string = self.attributedStringValue;
 	if (string) {
 		NSSize textSize = [string size];
 		if (cellFrame.size.height > textSize.height) {
@@ -138,8 +138,8 @@
 }
 
 - (NSSize) cellSize {
-	NSSize cellSize = [super cellSize];
-	cellSize.width += (image ? [image size].width + xImagePadding : 3.0);
+	NSSize cellSize = super.cellSize;
+	cellSize.width += (image ? image.size.width + xImagePadding : 3.0);
 	return cellSize;
 }
 

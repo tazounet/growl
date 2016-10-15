@@ -31,12 +31,11 @@
 	static NSData *_mountIconData = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-        NSArray *representations = [[[NSWorkspace sharedWorkspace] iconForFileType:NSFileTypeForHFSTypeCode(kGenericRemovableMediaIcon)] representations];
-        NSBitmapImageRep *bitmapRep = [representations objectAtIndex:0U];
+        NSArray *representations = [[NSWorkspace sharedWorkspace] iconForFileType:NSFileTypeForHFSTypeCode(kGenericRemovableMediaIcon)].representations;
+        NSBitmapImageRep *bitmapRep = representations[0U];
 
 		_mountIconData = [bitmapRep representationUsingType: NSPNGFileType
-                                                 properties: [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat:2.0],
-                                                                                                         NSImageCompressionFactor, nil]];
+                                                 properties: @{NSImageCompressionFactor: @2.0f}];
 	});
 	return _mountIconData;
 }
@@ -49,15 +48,14 @@
 	return [[VolumeInfo alloc] initForUnmountWithPath:aPath];
 }
 
-- (id) initForMountWithPath:(NSString *)aPath {
+- (instancetype) initForMountWithPath:(NSString *)aPath {
 	if ((self = [self initWithPath:aPath])) {
 		if (path) {
             NSImage *icon = [[NSWorkspace sharedWorkspace] iconForFile:path];
             CGImageRef iconRef = [icon CGImageForProposedRect:nil context:nil hints:nil];
             NSBitmapImageRep *bitmapRep = [[NSBitmapImageRep alloc] initWithCGImage:iconRef];
 			self.iconData = [bitmapRep representationUsingType: NSPNGFileType
-                                                    properties: [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat:2.0],
-                                                                 NSImageCompressionFactor, nil]];
+                                                    properties: @{NSImageCompressionFactor: @2.0f}];
 		} else {
 			self.iconData = [VolumeInfo mountIconData];
 		}
@@ -66,15 +64,15 @@
 	return self;
 }
 
-- (id) initForUnmountWithPath:(NSString *)aPath {
+- (instancetype) initForUnmountWithPath:(NSString *)aPath {
 	if ((self = [self initWithPath:aPath])) {
 		if (path) {
 			//Get the icon for the volume.
 			NSImage *icon = [[NSWorkspace sharedWorkspace] iconForFile:path];
-			NSSize iconSize = [icon size];
+			NSSize iconSize = icon.size;
 			//Also get the standard Eject icon.
 			NSImage *ejectIcon = [VolumeInfo ejectIconImage];
-			NSSize ejectIconSize = [ejectIcon size];
+			NSSize ejectIconSize = ejectIcon.size;
 			
 			//Badge the volume icon with the Eject icon. This is what we'll pass off te Growl.
 			//The badge's width and height are 2/3 of the overall icon's width and height. If they were 1/2, it would look small (so I found in testing —boredzo). This looks pretty good.
@@ -82,25 +80,24 @@
 			
 			[ejectIcon drawInRect:CGRectMake(0.0f, 0.0f, iconSize.width, iconSize.width)
 							 fromRect:(NSRect){ NSZeroPoint, ejectIconSize }
-							operation:NSCompositeSourceOver
+							operation:NSCompositingOperationSourceOver
 							 fraction:1.0f];
 			
 			//For some reason, passing [icon TIFFRepresentation] only passes the unbadged volume icon to Growl, even though writing the same TIFF data out to a file and opening it in Preview does show the badge. If anybody can figure that out, you're welcome to do so. Until then:
 			//We get a NSBIR for the current focused view (the image), and make PNG data from it. (There is no reason why this could not be TIFF if we wanted it to be. I just generally prefer PNG. —boredzo)
 			NSBitmapImageRep *imageRep = [[NSBitmapImageRep alloc] initWithFocusedViewRect:(NSRect){ NSZeroPoint, iconSize }];
-            self.iconData = [imageRep representationUsingType:NSPNGFileType properties:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat:2.0],
-                                                                                        NSImageCompressionFactor, nil]];
+            self.iconData = [imageRep representationUsingType:NSPNGFileType properties:@{NSImageCompressionFactor: @2.0f}];
 			
 			[icon unlockFocus];
 		} else {
-            self.iconData = [[VolumeInfo ejectIconImage] TIFFRepresentation];
+            self.iconData = [VolumeInfo ejectIconImage].TIFFRepresentation;
         }
 	}
 	
 	return self;
 }
 
-- (id) initWithPath:(NSString *)aPath {
+- (instancetype) initWithPath:(NSString *)aPath {
 	if ((self = [super init])) {
 		if (aPath) {
 			path = aPath;
@@ -116,13 +113,13 @@
 	NSMutableDictionary *desc = [NSMutableDictionary dictionary];
 	
 	if (name)
-		[desc setObject:name forKey:@"name"];
+		desc[@"name"] = name;
 	if (path)
-		[desc setObject:path forKey:@"path"];
+		desc[@"path"] = path;
 	if (iconData)
-		[desc setObject:@"<yes>" forKey:@"iconData"];
+		desc[@"iconData"] = @"<yes>";
 	
-	return [desc description];
+	return desc.description;
 }
 
 @end
@@ -147,11 +144,11 @@
 @synthesize arrayController;
 @synthesize tableView;
 
--(id)init {
+-(instancetype)init {
 	if((self = [super init])){
 		self.ejectCache = [NSMutableDictionary dictionary];
 		
-		NSNotificationCenter *center = [[NSWorkspace sharedWorkspace] notificationCenter];
+		NSNotificationCenter *center = [NSWorkspace sharedWorkspace].notificationCenter;
 		
 		[center addObserver:self selector:@selector(volumeDidMount:) name:NSWorkspaceDidMountNotification object:nil];
 		//Note that we must use both WILL and DID unmount, so we can only get the volume's icon before the volume has finished unmounting.
@@ -165,10 +162,10 @@
 }
 
 - (void)dealloc {
-	[[[NSWorkspace sharedWorkspace] notificationCenter] removeObserver:self];
+	[[NSWorkspace sharedWorkspace].notificationCenter removeObserver:self];
 	
 	[ejectCache enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-		[[obj objectAtIndex:VolumeEjectCacheTimerIndex] invalidate];
+		[obj[VolumeEjectCacheTimerIndex] invalidate];
 	}];		
 	
 	
@@ -180,8 +177,8 @@
 	__block BOOL found = NO;
 	[exceptions enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 		NSString *justAString = [obj valueForKey:@"justastring"];
-		NSString *path = [volume path];
-		NSString *name = [volume name];
+		NSString *path = volume.path;
+		NSString *name = volume.name;
 		BOOL hasWildCard = [justAString hasSuffix:@"*"];
 		if(!hasWildCard){
 			if([path caseInsensitiveCompare:justAString] == NSOrderedSame ||
@@ -191,7 +188,7 @@
 				*stop = YES;
 			}
 		}else{
-			justAString = [justAString substringToIndex:[justAString length] - 1];
+			justAString = [justAString substringToIndex:justAString.length - 1];
 			if([path rangeOfString:justAString options:(NSAnchoredSearch | NSCaseInsensitivePredicateOption)].location != NSNotFound ||
 				[name rangeOfString:justAString options:(NSAnchoredSearch | NSCaseInsensitivePredicateOption)].location != NSNotFound)
 			{
@@ -203,32 +200,32 @@
 	if(found)
 		return;
 	
-	NSString *context = mounted ? [volume path] : nil;
+	NSString *context = mounted ? volume.path : nil;
 	NSString *type = mounted ? @"VolumeMounted" : @"VolumeUnmounted";
-	NSString *title = [NSString stringWithFormat:@"%@ %@", [volume name], mounted ? NSLocalizedString(@"Mounted", @"") : NSLocalizedString(@"Unmounted", @"")];
+	NSString *title = [NSString stringWithFormat:@"%@ %@", volume.name, mounted ? NSLocalizedString(@"Mounted", @"") : NSLocalizedString(@"Unmounted", @"")];
 	[delegate notifyWithName:type
 							 title:title
 					 description:mounted ? NSLocalizedString(@"Click to open", @"Message body on a volume mount notification, clicking it opens the drive in finder") : nil
-							  icon:[volume iconData]
-			  identifierString:[volume path]
+							  icon:volume.iconData
+			  identifierString:volume.path
 				  contextString:context 
 							plugin:self];
 }
 
 - (void) staleEjectItemTimerFired:(NSTimer *)theTimer {
-	VolumeInfo *info = [theTimer userInfo];
+	VolumeInfo *info = theTimer.userInfo;
 	
-	[ejectCache removeObjectForKey:[info path]];
+	[ejectCache removeObjectForKey:info.path];
 }
 
 - (void) volumeDidMount:(NSNotification *)aNotification {
 	//send notification
-	VolumeInfo *volume = [VolumeInfo volumeInfoForMountWithPath:[[aNotification userInfo] objectForKey:@"NSDevicePath"]];
+	VolumeInfo *volume = [VolumeInfo volumeInfoForMountWithPath:aNotification.userInfo[@"NSDevicePath"]];
 	[self sendMountNotificationForVolume:volume mounted:YES];
 }
 
 - (void) volumeWillUnmount:(NSNotification *)aNotification {
-	NSString *path = [[aNotification userInfo] objectForKey:@"NSDevicePath"];
+	NSString *path = aNotification.userInfo[@"NSDevicePath"];
 	
 	if (path) {
 		VolumeInfo *info = [VolumeInfo volumeInfoForUnmountWithPath:path];
@@ -239,21 +236,21 @@
 																		 repeats:NO];
 		
 		// need to invalidate the timer for a previous item if it exists
-		NSArray *cacheItem = [ejectCache objectForKey:path];
+		NSArray *cacheItem = ejectCache[path];
 		if (cacheItem)
-			[[cacheItem objectAtIndex:VolumeEjectCacheTimerIndex] invalidate];
+			[cacheItem[VolumeEjectCacheTimerIndex] invalidate];
 		
-		[ejectCache setObject:[NSArray arrayWithObjects:info, timer, nil] forKey:path];
+		ejectCache[path] = @[info, timer];
 	}
 }
 
 - (void) volumeDidUnmount:(NSNotification *)aNotification {
 	VolumeInfo *info = nil;
-	NSString *path = [[aNotification userInfo] objectForKey:@"NSDevicePath"];
-	NSArray *cacheItem = path ? [ejectCache objectForKey:path] : nil;
+	NSString *path = aNotification.userInfo[@"NSDevicePath"];
+	NSArray *cacheItem = path ? ejectCache[path] : nil;
 	
 	if (cacheItem)
-		info = [cacheItem objectAtIndex:VolumeEjectCacheInfoIndex];
+		info = cacheItem[VolumeEjectCacheInfoIndex];
 	else
 		info = [VolumeInfo volumeInfoForUnmountWithPath:path];
 	
@@ -261,7 +258,7 @@
 	[self sendMountNotificationForVolume:info mounted:NO];
 	
 	if (cacheItem) {
-		[[cacheItem objectAtIndex:VolumeEjectCacheTimerIndex] invalidate];
+		[cacheItem[VolumeEjectCacheTimerIndex] invalidate];
 		// we need to remove the item from the cache AFTER calling volumeDidUnmount so that "info" stays
 		// retained long enough to be useful. After this next call, "info" is no longer valid.
 		[ejectCache removeObjectForKey:path];
@@ -272,10 +269,10 @@
 #pragma mark UI
 
 -(void)tableViewSelectionDidChange:(NSNotification *)notification {
-   NSArray *arranged = [arrayController arrangedObjects];
-   NSUInteger selection = [arrayController selectionIndex];
-   if(selection < [arranged count] && [arranged count]){
-      NSString *justastring = [[arranged objectAtIndex:selection] valueForKey:@"justastring"];
+   NSArray *arranged = arrayController.arrangedObjects;
+   NSUInteger selection = arrayController.selectionIndex;
+   if(selection < arranged.count && arranged.count){
+      NSString *justastring = [arranged[selection] valueForKey:@"justastring"];
       if(!justastring || [justastring isEqualToString:@""])
          [self.tableView editColumn:0 row:selection withEvent:nil select:YES];
    }
@@ -284,7 +281,7 @@
 -(IBAction)addVolumeEntry:(id)sender {
    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
    [self.arrayController addObject:dict];
-   [self.arrayController setSelectedObjects:[NSArray arrayWithObject:dict]];
+   [self.arrayController setSelectedObjects:@[dict]];
 }
 #pragma mark HWGrowlPluginProtocol
 
@@ -317,25 +314,25 @@
 #pragma mark HWGrowlPluginNotifierProtocol
 
 -(NSArray*)noteNames {
-	return [NSArray arrayWithObjects:@"VolumeMounted", @"VolumeUnmounted", nil];
+	return @[@"VolumeMounted", @"VolumeUnmounted"];
 }
 -(NSDictionary*)localizedNames {
-	return [NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"Volume Mounted", @""), @"VolumeMounted",
-			  NSLocalizedString(@"Volume Unmounted", @""), @"VolumeUnmounted", nil];
+	return @{@"VolumeMounted": NSLocalizedString(@"Volume Mounted", @""),
+			  @"VolumeUnmounted": NSLocalizedString(@"Volume Unmounted", @"")};
 }
 -(NSDictionary*)noteDescriptions {
-	return [NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"Sent when a volume is mounted", @""), @"VolumeMounted",
-			  NSLocalizedString(@"Sent when a volume is unmounted", @""), @"VolumeUnmounted", nil];
+	return @{@"VolumeMounted": NSLocalizedString(@"Sent when a volume is mounted", @""),
+			  @"VolumeUnmounted": NSLocalizedString(@"Sent when a volume is unmounted", @"")};
 }
 -(NSArray*)defaultNotifications {
-	return [NSArray arrayWithObjects:@"VolumeMounted", @"VolumeUnmounted", nil];
+	return @[@"VolumeMounted", @"VolumeUnmounted"];
 }
 
 -(void)fireOnLaunchNotes{
-	NSArray *paths = [[NSWorkspace sharedWorkspace] mountedLocalVolumePaths];
+    NSArray *paths = [[NSFileManager defaultManager] mountedVolumeURLsIncludingResourceValuesForKeys:nil options:0];
 	__weak HWGrowlVolumeMonitor *weakSelf = self;
-	[paths enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-		[weakSelf sendMountNotificationForVolume:[VolumeInfo volumeInfoForMountWithPath:obj] mounted:YES];
+	[paths enumerateObjectsUsingBlock:^(NSURL* obj, NSUInteger idx, BOOL *stop) {
+		[weakSelf sendMountNotificationForVolume:[VolumeInfo volumeInfoForMountWithPath:obj.path] mounted:YES];
 	}];
 }
 -(void)noteClosed:(NSString*)contextString byClick:(BOOL)clicked {

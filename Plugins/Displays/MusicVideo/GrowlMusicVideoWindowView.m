@@ -14,7 +14,7 @@ extern CGLayerRef CGLayerCreateWithContext() __attribute__((weak_import));
 
 @implementation GrowlMusicVideoWindowView
 
-- (id) initWithFrame:(NSRect)frame {
+- (instancetype) initWithFrame:(NSRect)frame {
 	if ((self = [super initWithFrame:frame])) {
 		cache = [[NSImage alloc] initWithSize:frame.size];
 		needsDisplay = YES;
@@ -45,23 +45,23 @@ extern CGLayerRef CGLayerCreateWithContext() __attribute__((weak_import));
 
 - (void) drawRect:(NSRect)rect {
 	NSGraphicsContext *context = [NSGraphicsContext currentContext];
-	CGContextRef cgContext = [context graphicsPort];
-	NSRect bounds = [self bounds];
+	CGContextRef cgContext = context.graphicsPort;
+	NSRect bounds = self.bounds;
 	if (needsDisplay) {
 		// rects and sizes
 		int sizePref = 0;
-		if([[self configurationDict] valueForKey:MUSICVIDEO_SIZE_PREF]){
-			sizePref = [[[self configurationDict] valueForKey:MUSICVIDEO_SIZE_PREF] boolValue];
+		if([self.configurationDict valueForKey:MUSICVIDEO_SIZE_PREF]){
+			sizePref = [[self.configurationDict valueForKey:MUSICVIDEO_SIZE_PREF] boolValue];
 		}
 		NSRect titleRect, textRect;
 		NSRect iconRect;
 		
-		NSTextAlignment alignment = NSLeftTextAlignment;
-		if([[self configurationDict] valueForKey:MUSICVIDEO_TEXT_ALIGN_PREF])
-			alignment = [[[self configurationDict] valueForKey:MUSICVIDEO_TEXT_ALIGN_PREF] intValue];
+		NSTextAlignment alignment = NSTextAlignmentLeft;
+		if([self.configurationDict valueForKey:MUSICVIDEO_TEXT_ALIGN_PREF])
+			alignment = [[self.configurationDict valueForKey:MUSICVIDEO_TEXT_ALIGN_PREF] intValue];
 
 		if (sizePref == MUSICVIDEO_SIZE_HUGE) {
-			if(alignment == NSLeftTextAlignment){
+			if(alignment == NSTextAlignmentLeft){
 				titleRect.origin.x = HUGE_TITLE_X_SHIFT;
 				iconRect.origin.x = HUGE_ICON_SHIFT;
 			}else{
@@ -77,7 +77,7 @@ extern CGLayerRef CGLayerCreateWithContext() __attribute__((weak_import));
 			iconRect.size.width = HUGE_ICON_SIZE;
 			iconRect.size.height = HUGE_ICON_SIZE;
 		} else {
-			if(alignment == NSLeftTextAlignment){
+			if(alignment == NSTextAlignmentLeft){
 				titleRect.origin.x = TITLE_X_SHIFT;
 				iconRect.origin.x = ICON_SHIFT;
 			}else{
@@ -114,7 +114,7 @@ extern CGLayerRef CGLayerCreateWithContext() __attribute__((weak_import));
 
 		[text drawInRect:textRect withAttributes:textAttributes];
 
-		[icon drawScaledInRect:iconRect operation:NSCompositeSourceOver fraction:1.0 neverFlipped:NO];
+		[icon drawScaledInRect:iconRect operation:NSCompositingOperationSourceOver fraction:1.0 neverFlipped:NO];
 
 		if (CGLayerCreateWithContext)
 			[NSGraphicsContext setCurrentContext:context];
@@ -131,8 +131,8 @@ extern CGLayerRef CGLayerCreateWithContext() __attribute__((weak_import));
 	// draw cache to screen
 	NSRect imageRect = rect;
 	int effect = MUSICVIDEO_EFFECT_SLIDE;
-	if([[self configurationDict] valueForKey:MUSICVIDEO_EFFECT_PREF]){
-		effect = [[[self configurationDict] valueForKey:MUSICVIDEO_EFFECT_PREF] intValue];
+	if([self.configurationDict valueForKey:MUSICVIDEO_EFFECT_PREF]){
+		effect = [[self.configurationDict valueForKey:MUSICVIDEO_EFFECT_PREF] intValue];
 	}
 	if (effect == MUSICVIDEO_EFFECT_SLIDE) {
 		if (CGLayerCreateWithContext)
@@ -159,23 +159,23 @@ extern CGLayerRef CGLayerCreateWithContext() __attribute__((weak_import));
 		cgRect.size.height = bounds.size.height;
 		CGContextDrawLayerInRect(cgContext, cgRect, layer);
 	} else {
-		[cache drawInRect:rect fromRect:imageRect operation:NSCompositeSourceOver fraction:1.0];
+		[cache drawInRect:rect fromRect:imageRect operation:NSCompositingOperationSourceOver fraction:1.0];
 	}
 }
 
 - (void) setIcon:(NSImage *)anIcon {
 	icon = anIcon;
-	[self setNeedsDisplay:(needsDisplay = YES)];
+	self.needsDisplay = (needsDisplay = YES);
 }
 
 - (void) setTitle:(NSString *)aTitle {
 	title = [aTitle copy];
-	[self setNeedsDisplay:(needsDisplay = YES)];
+	self.needsDisplay = (needsDisplay = YES);
 }
 
 - (void) setText:(NSString *)aText {
 	text = [aText copy];
-	[self setNeedsDisplay:(needsDisplay = YES)];
+	self.needsDisplay = (needsDisplay = YES);
 }
 
 - (void) setPriority:(int)priority {
@@ -207,13 +207,13 @@ extern CGLayerRef CGLayerCreateWithContext() __attribute__((weak_import));
 
 
 	CGFloat opacityPref = MUSICVIDEO_DEFAULT_OPACITY;
-	if([[self configurationDict] valueForKey:MUSICVIDEO_OPACITY_PREF]){
-		opacityPref = [[[self configurationDict] valueForKey:MUSICVIDEO_OPACITY_PREF] floatValue];
+	if([self.configurationDict valueForKey:MUSICVIDEO_OPACITY_PREF]){
+		opacityPref = [[self.configurationDict valueForKey:MUSICVIDEO_OPACITY_PREF] floatValue];
 	}
 	CGFloat alpha = opacityPref * 0.01;
 
 	Class NSDataClass = [NSData class];
-	NSData *data = [[self configurationDict] valueForKey:key];
+	NSData *data = [self.configurationDict valueForKey:key];
 
 	if (data && [data isKindOfClass:NSDataClass])
 		backgroundColor = [NSUnarchiver unarchiveObjectWithData:data];
@@ -222,7 +222,7 @@ extern CGLayerRef CGLayerCreateWithContext() __attribute__((weak_import));
 	backgroundColor = [backgroundColor colorWithAlphaComponent:alpha];
 	data = nil;
 
-	data = [[self configurationDict] valueForKey:textKey];
+	data = [self.configurationDict valueForKey:textKey];
 	if (data && [data isKindOfClass:NSDataClass])
 		textColor = [NSUnarchiver unarchiveObjectWithData:data];
 	else
@@ -231,8 +231,8 @@ extern CGLayerRef CGLayerCreateWithContext() __attribute__((weak_import));
 	CGFloat titleFontSize;
 	CGFloat textFontSize;
 	int sizePref = 0;
-	if([[self configurationDict] valueForKey:MUSICVIDEO_SIZE_PREF]){
-		sizePref = [[[self configurationDict] valueForKey:MUSICVIDEO_SIZE_PREF] intValue];
+	if([self.configurationDict valueForKey:MUSICVIDEO_SIZE_PREF]){
+		sizePref = [[self.configurationDict valueForKey:MUSICVIDEO_SIZE_PREF] intValue];
 	}
 
 	if (sizePref == MUSICVIDEO_SIZE_HUGE) {
@@ -246,32 +246,28 @@ extern CGLayerRef CGLayerCreateWithContext() __attribute__((weak_import));
 	NSShadow *textShadow = [[NSShadow alloc] init];
 
 	NSSize shadowSize = {0.0, -2.0};
-	[textShadow setShadowOffset:shadowSize];
-	[textShadow setShadowBlurRadius:3.0];
-	[textShadow setShadowColor:[NSColor blackColor]];
+	textShadow.shadowOffset = shadowSize;
+	textShadow.shadowBlurRadius = 3.0;
+	textShadow.shadowColor = [NSColor blackColor];
 
-	NSTextAlignment alignment = NSLeftTextAlignment;
-	if([[self configurationDict] valueForKey:MUSICVIDEO_TEXT_ALIGN_PREF])
-		alignment = [[[self configurationDict] valueForKey:MUSICVIDEO_TEXT_ALIGN_PREF] intValue];
+	NSTextAlignment alignment = NSTextAlignmentLeft;
+	if([self.configurationDict valueForKey:MUSICVIDEO_TEXT_ALIGN_PREF])
+		alignment = [[self.configurationDict valueForKey:MUSICVIDEO_TEXT_ALIGN_PREF] intValue];
 	
 	NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-	[paragraphStyle setAlignment:alignment];
-	[paragraphStyle setLineBreakMode:NSLineBreakByTruncatingTail];
-	titleAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:
-		textColor,                                   NSForegroundColorAttributeName,
-		paragraphStyle,                              NSParagraphStyleAttributeName,
-		[NSFont boldSystemFontOfSize:titleFontSize], NSFontAttributeName,
-		textShadow,                                  NSShadowAttributeName,
-		nil];
+	paragraphStyle.alignment = alignment;
+	paragraphStyle.lineBreakMode = NSLineBreakByTruncatingTail;
+	titleAttributes = @{NSForegroundColorAttributeName: textColor,
+		NSParagraphStyleAttributeName: paragraphStyle,
+		NSFontAttributeName: [NSFont boldSystemFontOfSize:titleFontSize],
+		NSShadowAttributeName: textShadow};
 
 	paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-	[paragraphStyle setAlignment:alignment];
-	textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:
-		textColor,                               NSForegroundColorAttributeName,
-		paragraphStyle,                          NSParagraphStyleAttributeName,
-		[NSFont messageFontOfSize:textFontSize], NSFontAttributeName,
-		textShadow,                              NSShadowAttributeName,
-		nil];
+	paragraphStyle.alignment = alignment;
+	textAttributes = @{NSForegroundColorAttributeName: textColor,
+		NSParagraphStyleAttributeName: paragraphStyle,
+		NSFontAttributeName: [NSFont messageFontOfSize:textFontSize],
+		NSShadowAttributeName: textShadow};
 }
 
 - (id) target {
@@ -299,7 +295,7 @@ extern CGLayerRef CGLayerCreateWithContext() __attribute__((weak_import));
 #pragma mark -
 
 - (BOOL) needsDisplay {
-	return needsDisplay && [super needsDisplay];
+	return needsDisplay && super.needsDisplay;
 }
 
 @end

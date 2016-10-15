@@ -14,9 +14,9 @@
 
 @implementation GrowlWebKitDisplayPlugin
 
-- (id) initWithStyleBundle:(NSBundle *)styleBundle {
+- (instancetype) initWithStyleBundle:(NSBundle *)styleBundle {
 	if ((self = [super initWithBundle:styleBundle])) {
-		NSDictionary *styleInfo = [styleBundle infoDictionary];
+		NSDictionary *styleInfo = styleBundle.infoDictionary;
 		style = [styleInfo valueForKey:@"CFBundleName"];
 		prefDomain = [[NSString alloc] initWithFormat:@"%@.%@", GrowlWebKitPrefDomain, style];
 		windowControllerClass = NSClassFromString(@"GrowlWebKitWindowController");

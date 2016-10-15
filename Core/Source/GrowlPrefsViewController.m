@@ -16,7 +16,7 @@
 @synthesize preferencesController;
 @synthesize releaseTimer;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil 
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil 
                bundle:(NSBundle *)nibBundleOrNil
           forPrefPane:(GrowlPreferencePane*)aPrefPane
 {
@@ -36,7 +36,7 @@
 - (void)releaseTimerFire:(NSTimer*)theTimer {
    [self.releaseTimer invalidate];
    self.releaseTimer = nil;
-   if([[self view] superview]){
+   if(self.view.superview){
       return;
    }
    //[prefPane releaseTab:self];

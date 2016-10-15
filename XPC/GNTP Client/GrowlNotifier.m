@@ -24,14 +24,14 @@
 
 @synthesize currentAttempts;
 
-- (id)init
+- (instancetype)init
 {
 	self = [super init];
 	if (self) {
 		// Initialization code here.
 		self.currentAttempts = [NSMutableArray array];
-		NSString *attemptArrayQueueName = [[[NSBundle mainBundle] bundleIdentifier] stringByAppendingString:@".attemptArrayQueue"];
-		self.attemptArrayQueue = dispatch_queue_create([attemptArrayQueueName UTF8String], DISPATCH_QUEUE_SERIAL);
+		NSString *attemptArrayQueueName = [[NSBundle mainBundle].bundleIdentifier stringByAppendingString:@".attemptArrayQueue"];
+		self.attemptArrayQueue = dispatch_queue_create(attemptArrayQueueName.UTF8String, DISPATCH_QUEUE_SERIAL);
 	}
 	
 	return self;
@@ -42,7 +42,7 @@
 {
 	__weak GrowlNotifier *weakSelf = self;
 	dispatch_sync(_attemptArrayQueue, ^{
-		[[weakSelf currentAttempts] addObject:attempt];
+		[weakSelf.currentAttempts addObject:attempt];
 	});
 	[attempt begin];
 }
@@ -50,7 +50,7 @@
 -(void)sendXPCMessage:(id)nsMessage connection:(xpc_connection_t)connection
 {
 	if(connection != NULL){
-		xpc_object_t message = [(NSObject*)nsMessage newXPCObject];
+		xpc_object_t message = ((NSObject*)nsMessage).newXPCObject;
 		xpc_connection_send_message(connection, message);
 	}
 }
@@ -62,9 +62,9 @@
 	
 	[response setValue:context forKey:@"Context"];
    BOOL clicked = [feedback isEqualToString:@"Clicked"] ? YES : NO;
-	[response setValue:[NSNumber numberWithBool:clicked] forKey:@"Clicked"];
+	[response setValue:@(clicked) forKey:@"Clicked"];
    [response setValue:feedback forKey:@"Feedback"];
-	[self sendXPCMessage:response connection:[(GrowlGNTPCommunicationAttempt*)attempt connection]];
+	[self sendXPCMessage:response connection:((GrowlGNTPCommunicationAttempt*)attempt).connection];
 }
 
 -(NSString*)actionTypeForAttempt:(GrowlCommunicationAttempt*)attempt{
@@ -81,38 +81,38 @@
 
 - (void) attemptDidSucceed:(GrowlCommunicationAttempt *)attempt{
 	NSMutableDictionary *response = [NSMutableDictionary dictionary];
-	[response setValue:[NSNumber numberWithBool:YES] forKey:@"Success"];
+	[response setValue:@YES forKey:@"Success"];
 	
-	[response setObject:[self actionTypeForAttempt:attempt] forKey:@"GrowlActionType"];
+	response[@"GrowlActionType"] = [self actionTypeForAttempt:attempt];
 	
-	[self sendXPCMessage:response connection:[(GrowlGNTPCommunicationAttempt*)attempt connection]];
+	[self sendXPCMessage:response connection:((GrowlGNTPCommunicationAttempt*)attempt).connection];
 }
 - (void) attemptDidFail:(GrowlCommunicationAttempt *)attempt{
     NSMutableDictionary *response = [NSMutableDictionary dictionary];
-	[response setValue:[NSNumber numberWithBool:NO] forKey:@"Success"];
-	[response setObject:[self actionTypeForAttempt:attempt] forKey:@"GrowlActionType"];
+	[response setValue:@NO forKey:@"Success"];
+	response[@"GrowlActionType"] = [self actionTypeForAttempt:attempt];
 	
-	[[(GrowlGNTPCommunicationAttempt*)attempt callbackHeaderItems] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+	[((GrowlGNTPCommunicationAttempt*)attempt).callbackHeaderItems enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
 		if([key isEqualToString:@"Error-Code"])
 			[response setValue:obj forKey:key];
 		if([key isEqualToString:@"Error-Description"])
 			[response setValue:obj forKey:key];
 	}];
 	
-	[self sendXPCMessage:response connection:[(GrowlGNTPCommunicationAttempt*)attempt connection]];
+	[self sendXPCMessage:response connection:((GrowlGNTPCommunicationAttempt*)attempt).connection];
 	
 	__weak GrowlNotifier *weakSelf = self;
 	dispatch_async(_attemptArrayQueue, ^{
-		[[weakSelf currentAttempts] removeObject:attempt];
+		[weakSelf.currentAttempts removeObject:attempt];
 	});
 }
 - (void) finishedWithAttempt:(GrowlCommunicationAttempt *)attempt{
-	NSDictionary *response = [NSDictionary dictionaryWithObject:@"finishedAttempt" forKey:@"GrowlActionType"];
+	NSDictionary *response = @{@"GrowlActionType": @"finishedAttempt"};
 	
-	[self sendXPCMessage:response connection:[(GrowlGNTPCommunicationAttempt*)attempt connection]];
+	[self sendXPCMessage:response connection:((GrowlGNTPCommunicationAttempt*)attempt).connection];
 	__weak GrowlNotifier *weakSelf = self;
 	dispatch_async(_attemptArrayQueue, ^{
-		[[weakSelf currentAttempts] removeObject:attempt];
+		[weakSelf.currentAttempts removeObject:attempt];
 	});
 }
 - (void) queueAndReregister:(GrowlCommunicationAttempt *)attempt{
@@ -120,7 +120,7 @@
 	NSMutableDictionary *response = [NSMutableDictionary dictionary];
 	[response setValue:@"reregister" forKey:@"GrowlActionType"];
 	
-	[self sendXPCMessage:response connection:[(GrowlGNTPCommunicationAttempt*)attempt connection]];
+	[self sendXPCMessage:response connection:((GrowlGNTPCommunicationAttempt*)attempt).connection];
 }
 - (void) notificationClicked:(GrowlCommunicationAttempt *)attempt context:(id)context{
 	[self sendXPCFeedback:attempt context:context feedback:@"Clicked"];
@@ -133,9 +133,9 @@
 }
 
 - (void)stoppedAttempts:(GrowlCommunicationAttempt *)attempt{
-	NSDictionary *response = [NSDictionary dictionaryWithObject:@"stoppedAttempts" forKey:@"GrowlActionType"];
+	NSDictionary *response = @{@"GrowlActionType": @"stoppedAttempts"};
 	
-	[self sendXPCMessage:response connection:[(GrowlGNTPCommunicationAttempt*)attempt connection]];
+	[self sendXPCMessage:response connection:((GrowlGNTPCommunicationAttempt*)attempt).connection];
 }
 
 - (void) notificationWasNotDisplayed:(GrowlCommunicationAttempt *)attempt {
@@ -143,6 +143,6 @@
 	NSMutableDictionary *response = [NSMutableDictionary dictionary];
 	[response setValue:@"wasNotDisplayed" forKey:@"GrowlActionType"];
 	
-	[self sendXPCMessage:response connection:[(GrowlGNTPCommunicationAttempt*)attempt connection]];
+	[self sendXPCMessage:response connection:((GrowlGNTPCommunicationAttempt*)attempt).connection];
 }
 @end

@@ -14,7 +14,7 @@
 - (BOOL) becomeFirstResponder {
 	BOOL accept = [super becomeFirstResponder];
 
-	id delegate = [self delegate];
+	id delegate = self.delegate;
 	if ([delegate respondsToSelector:@selector(tableViewDidClickInBody:)]) {
 		[delegate tableViewDidClickInBody:self];
 	}
@@ -37,9 +37,9 @@
 - (void)keyDown:(NSEvent*)event {
 	BOOL deleteKeyEvent = NO;
     
-	if ([event type] == NSKeyDown) {
-		NSString* pressedChars = [event characters];
-		if ([pressedChars length] == 1) {
+	if (event.type == NSEventTypeKeyDown) {
+		NSString* pressedChars = event.characters;
+		if (pressedChars.length == 1) {
 			unichar pressed = [pressedChars characterAtIndex:0];
             if ( (pressed == NSDeleteCharacter) || 
                 (pressed == NSDeleteFunctionKey) )
@@ -48,7 +48,7 @@
 	}
     
 	if (deleteKeyEvent) {
-		[self interpretKeyEvents:[NSArray arrayWithObject:event]];
+		[self interpretKeyEvents:@[event]];
 	}
 	else {
 		[super keyDown:event];

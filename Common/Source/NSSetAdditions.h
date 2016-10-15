@@ -9,6 +9,6 @@
 
 @interface NSSet(NSSetAdditions)
 
-+ (id) setWithUnionOfSetsInArray:(NSArray *)array;
++ (instancetype) setWithUnionOfSetsInArray:(NSArray *)array;
 
 @end

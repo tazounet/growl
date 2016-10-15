@@ -22,7 +22,7 @@
  * @brief Escape a string for passing to JavaScript scripts.
  */
 - (NSMutableString*)escapeForJavaScript {
-	NSRange range = NSMakeRange(0, [self length]);
+	NSRange range = NSMakeRange(0, self.length);
 	CFIndex delta;
 	//We need to escape a few things to get our string to the javascript without trouble
 	delta = [self replaceOccurrencesOfString:@"\\" withString:@"\\\\" options:0 range:range];
@@ -41,7 +41,7 @@
  * @brief Escape a string for HTML.
  */
 - (NSMutableString*)escapeForHTML {
-    NSRange range = NSMakeRange(0, [self length]);
+    NSRange range = NSMakeRange(0, self.length);
     CFIndex delta;
     
 	delta = [self replaceOccurrencesOfString:@"&" withString:@"&amp;" options:0 range:range];

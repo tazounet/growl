@@ -27,13 +27,12 @@
 
 @end
 
-enum {
+typedef NS_ENUM(NSInteger, GrowlCommunicationAttemptType) {
 	GrowlCommunicationAttemptTypeNone,
 	GrowlCommunicationAttemptTypeRegister,
 	GrowlCommunicationAttemptTypeNotify,
 	GrowlCommunicationAttemptTypeSubscribe, //as yet unused
 };
-typedef NSUInteger GrowlCommunicationAttemptType;
 
 @interface GrowlCommunicationAttempt : NSObject
 {
@@ -49,8 +48,10 @@ typedef NSUInteger GrowlCommunicationAttemptType;
 //To be overridden by subclasses. If your subclass can be any attempt type, return GrowlCommunicationAttemptTypeNone and initialize the attemptType variable in your -initWithDictionary:. GrowlCommunicationAttempt's implementation of +attemptType throws an exception.
 + (GrowlCommunicationAttemptType) attemptType;
 
+- (instancetype)init NS_UNAVAILABLE;
+
 //Designated initializer
-- (id) initWithDictionary:(NSDictionary *)dict;
+- (instancetype) initWithDictionary:(NSDictionary *)dict NS_DESIGNATED_INITIALIZER;
 
 @property(nonatomic, readonly) NSDictionary *dictionary;
 

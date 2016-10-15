@@ -28,22 +28,22 @@
 	return [[GrowlDispatchMutableDictionary alloc] initWithDispatchQueue:queue];
 }
 
--(id)init {
+-(instancetype)init {
 	if((self = [super init])){
 		self.dictionary = [NSMutableDictionary dictionary];
 	}
 	return self;
 }
 
--(id)initWithDispatchQueueName:(NSString*)queueName{
+-(instancetype)initWithDispatchQueueName:(NSString*)queueName{
 	if((self = [self init])){
-		self.dispatchQueue = dispatch_queue_create([queueName UTF8String], DISPATCH_QUEUE_CONCURRENT);
+		self.dispatchQueue = dispatch_queue_create(queueName.UTF8String, DISPATCH_QUEUE_CONCURRENT);
 	}
 	return self;
 }
 
 /* CALLER NEEDS TO SEND A RELEASE TO THE QUEUE */
--(id)initWithDispatchQueue:(dispatch_queue_t)queue {
+-(instancetype)initWithDispatchQueue:(dispatch_queue_t)queue {
 	if((self = [self init])){
 		self.dispatchQueue = queue;
 	}
@@ -53,14 +53,14 @@
 
 -(void)setObject:(id)anObject forKey:(NSString*)aKey {
 	dispatch_barrier_async(self.dispatchQueue, ^{
-		[self.dictionary setObject:anObject forKey:aKey];
+		(self.dictionary)[aKey] = anObject;
 	});
 }
 
 -(id)objectForKey:(NSString*)aKey {
 	__block id obj = nil;
 	dispatch_sync(self.dispatchQueue, ^{
-		obj = [self.dictionary objectForKey:aKey];
+		obj = (self.dictionary)[aKey];
 	});
 	return obj;
 }
@@ -68,7 +68,7 @@
 -(NSArray*)allValues {
 	__block NSArray *array = nil;
 	dispatch_sync(self.dispatchQueue, ^{
-		array = [self.dictionary allValues];
+		array = (self.dictionary).allValues;
 	});
 	return array;
 }
@@ -76,7 +76,7 @@
 -(NSUInteger)objectCount {
 	__block NSUInteger count = 0;
 	dispatch_sync(self.dispatchQueue, ^{
-		count = [[self.dictionary allValues] count];
+		count = (self.dictionary).allValues.count;
 	});
 	return count;
 }

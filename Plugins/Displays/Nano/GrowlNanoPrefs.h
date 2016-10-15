@@ -19,25 +19,25 @@
 #define GrowlNanoDurationPrefDefault		5.0
 
 #define Nano_SIZE_PREF			@"Size"
-typedef enum {
+typedef NS_ENUM(NSInteger, NanoSize) {
 	Nano_SIZE_NORMAL = 0,
 	Nano_SIZE_HUGE = 1
-} NanoSize;
+};
 
 #define Nano_EFFECT_PREF			@"Transition effect"
-typedef enum {
+typedef NS_ENUM(NSInteger, NanoEffectType) {
 	Nano_EFFECT_SLIDE = 0,
 	Nano_EFFECT_WIPE,
 	Nano_EFFECT_FADE
-} NanoEffectType;
+};
 
 #define Nano_POSITION_PREF			@"Position"
 #define Nano_POSITION_DEFAULT		Nano_POSITION_RIGHT
-typedef  enum {
+typedef NS_ENUM(NSInteger, NanoPosition) {
 	Nano_POSITION_LEFT,
 	Nano_POSITION_CENTER,
 	Nano_POSITION_RIGHT
-} NanoPosition;
+};
 
 #define GrowlNanoVeryLowBackgroundColor	@"Nano-Priority-VeryLow-Color"
 #define GrowlNanoModerateBackgroundColor	@"Nano-Priority-Moderate-Color"

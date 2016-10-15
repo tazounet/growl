@@ -12,9 +12,9 @@
 @implementation GrowlWebKitWindowTransition
 
 -(void)startAnimation {
-	if([self direction] == GrowlReverseTransition){
-		GrowlWebKitWindowView *webView = (GrowlWebKitWindowView*)[[self window] contentView];
-		[[webView windowScriptObject] callWebScriptMethod:@"animateOut" withArguments:nil];
+	if(self.direction == GrowlReverseTransition){
+		GrowlWebKitWindowView *webView = (GrowlWebKitWindowView*)self.window.contentView;
+		[webView.windowScriptObject callWebScriptMethod:@"animateOut" withArguments:nil];
 	}
 }
 

@@ -26,7 +26,7 @@
 @synthesize centerPosition;
 @synthesize rightPosition;
 
--(id)initWithBundle:(NSBundle *)bundle {
+-(instancetype)initWithBundle:(NSBundle *)bundle {
 	if((self = [super initWithBundle:bundle])){
 		self.positionLabel = NSLocalizedStringFromTableInBundle(@"Position:", @"Localizable", bundle, @"Nano screen position");
 		self.leftPosition = NSLocalizedStringFromTableInBundle(@"Left", @"Localizable", bundle, @"Nano screen position left");
@@ -42,7 +42,7 @@
 }
 
 - (void) mainViewDidLoad {
-	[slider_opacity setAltIncrementValue:5.0];
+	slider_opacity.altIncrementValue = 5.0;
 }
 
 - (NSSet*)bindingKeys {
@@ -79,7 +79,7 @@
 	return value;
 }
 - (void) setDuration:(CGFloat)value {
-	[self setConfigurationValue:[NSNumber numberWithFloat:value] forKey:Nano_DURATION_PREF];
+	[self setConfigurationValue:@(value) forKey:Nano_DURATION_PREF];
 }
 
 - (unsigned) effect {
@@ -107,7 +107,7 @@
 		case Nano_EFFECT_SLIDE:
 		case Nano_EFFECT_WIPE:
 		case Nano_EFFECT_FADE:
-			[self setConfigurationValue:[NSNumber numberWithUnsignedInt:newEffect] forKey:Nano_EFFECT_PREF];
+			[self setConfigurationValue:@(newEffect) forKey:Nano_EFFECT_PREF];
 	}
 }
 
@@ -119,7 +119,7 @@
 	return value;
 }
 - (void) setOpacity:(CGFloat)value {
-	[self setConfigurationValue:[NSNumber numberWithFloat:value] forKey:Nano_OPACITY_PREF];
+	[self setConfigurationValue:@(value) forKey:Nano_OPACITY_PREF];
 }
 
 - (int) size {
@@ -130,18 +130,18 @@
 	return value;
 }
 - (void) setSize:(int)value {
-	[self setConfigurationValue:[NSNumber numberWithInt:value] forKey:Nano_SIZE_PREF];
+	[self setConfigurationValue:@(value) forKey:Nano_SIZE_PREF];
 }
 
 #pragma mark Combo box support
 
 - (NSInteger) numberOfItemsInComboBox:(NSComboBox *)aComboBox {
-	return [[NSScreen screens] count];
+	return [NSScreen screens].count;
 }
 
 - (id) comboBox:(NSComboBox *)aComboBox objectValueForItemAtIndex:(NSInteger)idx {
 #ifdef __LP64__
-	return [NSNumber numberWithInteger:idx];
+	return @(idx);
 #else
 	return [NSNumber numberWithInt:idx];
 #endif
@@ -155,7 +155,7 @@
 	return value;
 }
 - (void) setScreen:(int)value {
-	[self setConfigurationValue:[NSNumber numberWithInt:value] forKey:Nano_SCREEN_PREF];
+	[self setConfigurationValue:@(value) forKey:Nano_SCREEN_PREF];
 }
 
 - (NanoPosition)position {
@@ -167,7 +167,7 @@
 }
 
 - (void)setPosition:(NanoPosition)position {
-	[self setConfigurationValue:[NSNumber numberWithUnsignedInteger:position] forKey:Nano_POSITION_PREF];
+	[self setConfigurationValue:@(position) forKey:Nano_POSITION_PREF];
 }
 
 - (NSColor *) textColorVeryLow {

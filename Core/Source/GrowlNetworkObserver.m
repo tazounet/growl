@@ -39,7 +39,7 @@ static void scCallback(SCDynamicStoreRef store, CFArrayRef changedKeys, void *in
    return _sharedObserver;
 }
 
--(id)init 
+-(instancetype)init 
 {
    if((self = [super init])) {
       self.primaryIP = nil;

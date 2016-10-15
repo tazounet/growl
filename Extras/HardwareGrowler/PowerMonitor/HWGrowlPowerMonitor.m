@@ -28,7 +28,8 @@
 
 @property (nonatomic, strong) NSString *typeString;
 
--(id)initWithPowerSourceDescription:(CFDictionaryRef)description;
+-(instancetype)init NS_UNAVAILABLE;
+-(instancetype)initWithPowerSourceDescription:(CFDictionaryRef)description NS_DESIGNATED_INITIALIZER;
 
 @end
 
@@ -38,7 +39,7 @@
 	return [[GrowlPowerSourceDescription alloc] initWithPowerSourceDescription:description];
 }
 
--(id)initWithPowerSourceDescription:(CFDictionaryRef)description {
+-(instancetype)initWithPowerSourceDescription:(CFDictionaryRef)description {
 	if((self = [super init])){
 		CFStringRef powerType = CFDictionaryGetValue(description, CFSTR(kIOPSTransportTypeKey));
 		if (CFStringCompare(powerType, CFSTR(kIOPSInternalType), 0) == kCFCompareEqualTo)
@@ -131,7 +132,7 @@
 	if(state || time || percentage){
 		description = [NSMutableString string];
 		
-		[description appendFormat:@"%@: ", [self typeString]];
+		[description appendFormat:@"%@: ", self.typeString];
 		if(state){
 			[description appendFormat:@"%@", state];
 			if(percentage)
@@ -181,7 +182,7 @@
 @synthesize refireTimer;
 @synthesize lastWarnState;
 
--(id)init {
+-(instancetype)init {
 	if((self = [super init])){
 		self.notificationRunLoopSource = IOPSNotificationCreateRunLoopSource(powerSourceChanged, (__bridge void *)(self));
 		
@@ -340,11 +341,11 @@
 				GrowlPowerSourceDescription *growlDescription = [GrowlPowerSourceDescription descriptionWithDescription:description];
 				[powerSourceDescriptions addObject:growlDescription];
 				
-				if([growlDescription charging] || [growlDescription finishingCharge])
+				if(growlDescription.charging || growlDescription.finishingCharge)
 					chargingOrFinishing = YES;
 				
-				if([growlDescription percentage] > percentage)
-					percentage = [growlDescription percentage];
+				if(growlDescription.percentage > percentage)
+					percentage = growlDescription.percentage;
 			}
 			CFRelease(powerSourcesList);
 		}
@@ -542,18 +543,18 @@ static void powerSourceChanged(void *context) {
 #pragma mark HWGrowlPluginNotifierProtocol
 
 -(NSArray*)noteNames {
-	return [NSArray arrayWithObjects:@"PowerChange", @"PowerWarning", nil];
+	return @[@"PowerChange", @"PowerWarning"];
 }
 -(NSDictionary*)localizedNames {
-	return [NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"Power Changed", @""), @"PowerChange",
-			  NSLocalizedString(@"Power Warning", @""), @"PowerWarning", nil];
+	return @{@"PowerChange": NSLocalizedString(@"Power Changed", @""),
+			  @"PowerWarning": NSLocalizedString(@"Power Warning", @"")};
 }
 -(NSDictionary*)noteDescriptions {
-	return [NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"Sent when the type or status of power changed", @""), @"PowerChange",
-			  NSLocalizedString(@"Sent when the battery is getting low", @""), @"PowerWarning", nil];
+	return @{@"PowerChange": NSLocalizedString(@"Sent when the type or status of power changed", @""),
+			  @"PowerWarning": NSLocalizedString(@"Sent when the battery is getting low", @"")};
 }
 -(NSArray*)defaultNotifications {
-	return [NSArray arrayWithObjects:@"PowerChange", @"PowerWarning", nil];
+	return @[@"PowerChange", @"PowerWarning"];
 }
 
 @end

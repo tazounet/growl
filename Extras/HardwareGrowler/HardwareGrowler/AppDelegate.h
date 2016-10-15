@@ -10,12 +10,12 @@
 
 @class GrowlOnSwitch, HWGrowlPluginController;
 
-typedef enum : NSInteger {
+typedef NS_ENUM(NSInteger, HWGrowlIconState) {
 	kShowIconInMenu = 0,
 	kShowIconInDock = 1,
 	kShowIconInBoth = 2,
 	kDontShowIcon = 3
-} HWGrowlIconState;
+};
 
 @interface AppDelegate : NSObject <NSApplicationDelegate, NSToolbarDelegate, NSTableViewDelegate, NSWindowDelegate> {
 	NSWindow *__weak _window;

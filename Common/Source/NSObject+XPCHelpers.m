@@ -20,11 +20,11 @@
     if (newType == XPC_TYPE_DICTIONARY) {
         nsValue = [NSMutableDictionary dictionaryWithCapacity:xpc_dictionary_get_count(object)];
         xpc_dictionary_apply(object, ^bool(const char *key, xpc_object_t obj){
-            NSString *nsKey = [NSString stringWithCString:key encoding:NSUTF8StringEncoding];
+            NSString *nsKey = @(key);
             id nsObj = [self xpcObjectToNSObject:obj];
             
             if (nsObj)
-                [nsValue setObject:nsObj forKey:nsKey];
+                nsValue[nsKey] = nsObj;
             
             return true;
         });
@@ -38,23 +38,23 @@
     }
     else if (newType == XPC_TYPE_STRING) {
         const char *string = xpc_string_get_string_ptr(object);
-        nsValue = [NSString stringWithUTF8String:string];
+        nsValue = @(string);
     }
     else if (newType == XPC_TYPE_BOOL) {
         BOOL boolValue = xpc_bool_get_value(object);
-        nsValue = [NSNumber numberWithBool:boolValue];
+        nsValue = @(boolValue);
     }
     else if (newType == XPC_TYPE_INT64) {
         int64_t intValue = xpc_int64_get_value(object);
-        nsValue = [NSNumber numberWithInteger:(NSInteger)intValue];
+        nsValue = @((NSInteger)intValue);
     }
     else if (newType == XPC_TYPE_UINT64) {
         uint64_t uintValue = xpc_uint64_get_value(object);
-        nsValue = [NSNumber numberWithUnsignedInteger:(NSUInteger)uintValue];
+        nsValue = @((NSUInteger)uintValue);
     }
     else if (newType == XPC_TYPE_DOUBLE) {
         double_t doubleValue = xpc_double_get_value(object);
-        nsValue = [NSNumber numberWithDouble:doubleValue];
+        nsValue = @(doubleValue);
     }
     else if (newType == XPC_TYPE_DATA) {
         const void *rawData = xpc_data_get_bytes_ptr(object);
@@ -77,12 +77,12 @@
             }
         }];
     }else if ([self isKindOfClass:[NSString class]]){
-        returnVal = xpc_string_create([(NSString*)self UTF8String]);
+        returnVal = xpc_string_create(((NSString*)self).UTF8String);
     }else if ([self isKindOfClass:[NSData class]]){
-        returnVal = xpc_data_create([(NSData*)self bytes], [(NSData*)self length]);
+        returnVal = xpc_data_create(((NSData*)self).bytes, ((NSData*)self).length);
     }else if ([self isKindOfClass:[NSImage class]]){
-        NSData *pngRep = [(NSImage*)self PNGRepresentation];
-        returnVal = xpc_data_create([pngRep bytes], [pngRep length]);
+        NSData *pngRep = ((NSImage*)self).PNGRepresentation;
+        returnVal = xpc_data_create(pngRep.bytes, pngRep.length);
     }else if ([self isKindOfClass:[NSArray class]]){
         returnVal = xpc_array_create(NULL, 0);
         [(NSArray*)self enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
@@ -97,13 +97,13 @@
         }else if(self == (NSNumber *)kCFBooleanFalse){
             returnVal = xpc_bool_create(false);
         }else{
-            const char* objCType = [(NSNumber*)self objCType];
+            const char* objCType = ((NSNumber*)self).objCType;
             if(strcmp(objCType, @encode(unsigned long)) == 0){
-                returnVal = xpc_uint64_create([(NSNumber*)self unsignedLongValue]);
+                returnVal = xpc_uint64_create(((NSNumber*)self).unsignedLongValue);
             }else if(strcmp(objCType, @encode(long)) == 0){
-                returnVal = xpc_int64_create([(NSNumber*)self longValue]);
+                returnVal = xpc_int64_create(((NSNumber*)self).longValue);
             }else{
-                returnVal = xpc_double_create([(NSNumber*)self doubleValue]);
+                returnVal = xpc_double_create(((NSNumber*)self).doubleValue);
             }
         }
     }

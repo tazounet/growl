@@ -16,7 +16,7 @@
 }
 
 - (void) mainViewDidLoad {
-	[slider_opacity setAltIncrementValue:0.05];
+	slider_opacity.altIncrementValue = 0.05;
 }
 
 -(NSSet*)bindingKeys {
@@ -35,25 +35,25 @@
 -(void)updateConfigurationValues {
 	// priority colour settings
 	NSColor *defaultColor = [NSColor colorWithCalibratedRed:0.69412 green:0.83147 blue:0.96078 alpha:1.0];
-	[color_veryLow setColor:[self loadColor:GrowlBubblesVeryLowColor defaultColor:defaultColor]];
-	[color_moderate setColor:[self loadColor:GrowlBubblesModerateColor defaultColor:defaultColor]];
-	[color_normal setColor:[self loadColor:GrowlBubblesNormalColor defaultColor:defaultColor]];
-	[color_high setColor:[self loadColor:GrowlBubblesHighColor defaultColor:defaultColor]];
-	[color_emergency setColor:[self loadColor:GrowlBubblesEmergencyColor defaultColor:defaultColor]];
+	color_veryLow.color = [self loadColor:GrowlBubblesVeryLowColor defaultColor:defaultColor];
+	color_moderate.color = [self loadColor:GrowlBubblesModerateColor defaultColor:defaultColor];
+	color_normal.color = [self loadColor:GrowlBubblesNormalColor defaultColor:defaultColor];
+	color_high.color = [self loadColor:GrowlBubblesHighColor defaultColor:defaultColor];
+	color_emergency.color = [self loadColor:GrowlBubblesEmergencyColor defaultColor:defaultColor];
 	
 	defaultColor = [[NSColor controlTextColor] colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
-	[text_veryLow setColor:[self loadColor:GrowlBubblesVeryLowTextColor defaultColor:defaultColor]];
-	[text_moderate setColor:[self loadColor:GrowlBubblesModerateTextColor defaultColor:defaultColor]];
-	[text_normal setColor:[self loadColor:GrowlBubblesNormalTextColor defaultColor:defaultColor]];
-	[text_high setColor:[self loadColor:GrowlBubblesHighTextColor defaultColor:defaultColor]];
-	[text_emergency setColor:[self loadColor:GrowlBubblesEmergencyTextColor defaultColor:defaultColor]];
+	text_veryLow.color = [self loadColor:GrowlBubblesVeryLowTextColor defaultColor:defaultColor];
+	text_moderate.color = [self loadColor:GrowlBubblesModerateTextColor defaultColor:defaultColor];
+	text_normal.color = [self loadColor:GrowlBubblesNormalTextColor defaultColor:defaultColor];
+	text_high.color = [self loadColor:GrowlBubblesHighTextColor defaultColor:defaultColor];
+	text_emergency.color = [self loadColor:GrowlBubblesEmergencyTextColor defaultColor:defaultColor];
 	
 	defaultColor = [NSColor colorWithCalibratedRed:0.93725 green:0.96863 blue:0.99216 alpha:0.95];
-	[top_veryLow setColor:[self loadColor:GrowlBubblesVeryLowTopColor defaultColor:defaultColor]];
-	[top_moderate setColor:[self loadColor:GrowlBubblesModerateTopColor defaultColor:defaultColor]];
-	[top_normal setColor:[self loadColor:GrowlBubblesNormalTopColor defaultColor:defaultColor]];
-	[top_high setColor:[self loadColor:GrowlBubblesHighTopColor defaultColor:defaultColor]];
-	[top_emergency setColor:[self loadColor:GrowlBubblesEmergencyTopColor defaultColor:defaultColor]];
+	top_veryLow.color = [self loadColor:GrowlBubblesVeryLowTopColor defaultColor:defaultColor];
+	top_moderate.color = [self loadColor:GrowlBubblesModerateTopColor defaultColor:defaultColor];
+	top_normal.color = [self loadColor:GrowlBubblesNormalTopColor defaultColor:defaultColor];
+	top_high.color = [self loadColor:GrowlBubblesHighTopColor defaultColor:defaultColor];
+	top_emergency.color = [self loadColor:GrowlBubblesEmergencyTopColor defaultColor:defaultColor];
 	
 	[super updateConfigurationValues];
 }
@@ -69,7 +69,7 @@
 }
 
 - (void) setLimit:(BOOL)value {
-	[self setConfigurationValue:[NSNumber numberWithBool:value] forKey:GrowlBubblesLimitPref];
+	[self setConfigurationValue:@(value) forKey:GrowlBubblesLimitPref];
 }
 
 #pragma mark -
@@ -83,7 +83,7 @@
 }
 
 - (void) setOpacity:(CGFloat)value {
-	[self setConfigurationValue:[NSNumber numberWithFloat:value] forKey:GrowlBubblesOpacity];
+	[self setConfigurationValue:@(value) forKey:GrowlBubblesOpacity];
 }
 
 #pragma mark -
@@ -97,7 +97,7 @@
 }
 
 - (void) setDuration:(CGFloat)value {
-	[self setConfigurationValue:[NSNumber numberWithFloat:value] forKey:GrowlBubblesDuration];
+	[self setConfigurationValue:@(value) forKey:GrowlBubblesDuration];
 }
 
 #pragma mark -
@@ -184,12 +184,12 @@
 #pragma mark -
 
 - (NSInteger) numberOfItemsInComboBox:(NSComboBox *)aComboBox {
-	return [[NSScreen screens] count];
+	return [NSScreen screens].count;
 }
 
 - (id) comboBox:(NSComboBox *)aComboBox objectValueForItemAtIndex:(NSInteger)idx {
 #ifdef __LP64__
-	return [NSNumber numberWithInteger:idx];
+	return @(idx);
 #else
 	return [NSNumber numberWithInt:idx];
 #endif
@@ -204,7 +204,7 @@
 }
 
 - (void) setScreen:(int)value {
-	[self setConfigurationValue:[NSNumber numberWithInt:value] forKey:GrowlBubblesScreen];
+	[self setConfigurationValue:@(value) forKey:GrowlBubblesScreen];
 }
 
 - (int) size {
@@ -216,6 +216,6 @@
 }
 
 - (void) setSize:(int)value {
-	[self setConfigurationValue:[NSNumber numberWithInt:value] forKey:GrowlBubblesSizePref];
+	[self setConfigurationValue:@(value) forKey:GrowlBubblesSizePref];
 }
 @end

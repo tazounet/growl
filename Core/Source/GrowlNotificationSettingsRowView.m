@@ -12,7 +12,7 @@
 
 @synthesize selectionLayer;
 
--(id)initWithFrame:(NSRect)frameRect {
+-(instancetype)initWithFrame:(NSRect)frameRect {
    if((self = [super initWithFrame:frameRect])){
    }
    return self;
@@ -25,26 +25,26 @@
 }
 
 -(NSGradient*)lightGradient{
-   return [[NSGradient alloc] initWithColors:[NSArray arrayWithObjects:[NSColor lightGrayColor],
-                                                                        [NSColor grayColor], nil]];
+   return [[NSGradient alloc] initWithColors:@[[NSColor lightGrayColor],
+                                               [NSColor grayColor]]];
 }
 
 -(NSGradient*)darkGradient{
-   return [[NSGradient alloc] initWithColors:[NSArray arrayWithObjects:[NSColor grayColor], 
-                                                                        [NSColor darkGrayColor], nil]];
+   return [[NSGradient alloc] initWithColors:@[[NSColor grayColor],
+                                               [NSColor darkGrayColor]]];
 }
 
 -(void)drawBackgroundInRect:(NSRect)dirtyRect
 {
-   if(![[self superview] isKindOfClass:[NSTableView class]])
+   if(![self.superview isKindOfClass:[NSTableView class]])
       return;
    
    [[NSColor colorWithDeviceWhite:.895f alpha:1.0] setFill];
-   [[NSBezierPath bezierPathWithRect:[self bounds]] fill];
+   [[NSBezierPath bezierPathWithRect:self.bounds] fill];
    NSArray *colors = [NSColor controlAlternatingRowBackgroundColors];
-   [[colors objectAtIndex:[(NSTableView*)[self superview] rowForView:self] % [colors count]] setFill];
+   [colors[[(NSTableView*)self.superview rowForView:self] % colors.count] setFill];
    [[NSColor gridColor] setStroke];
-   CGRect box = [self bounds];
+   CGRect box = self.bounds;
    NSBezierPath *path = [NSBezierPath bezierPathWithRect:CGRectMake(box.origin.x + 8.0f, box.origin.y, box.size.width - 31.0f, box.size.height)];
    [path fill];
 }

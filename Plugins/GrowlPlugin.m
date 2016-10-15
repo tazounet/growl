@@ -21,7 +21,7 @@
 @synthesize preferencePane;
 
 //designated initialiser.
-- (id) initWithName:(NSString *)name author:(NSString *)author version:(NSString *)version pathname:(NSString *)pathname {
+- (instancetype) initWithName:(NSString *)name author:(NSString *)author version:(NSString *)version pathname:(NSString *)pathname {
 	if ((self = [super init])) {
 		self.name = name;
 		self.author = author;
@@ -34,20 +34,20 @@
 /*use this initialiser for plug-ins in bundles. the name, author, version, and
  *	pathname will be obtained from the bundle.
  */
-- (id) initWithBundle:(NSBundle *)bundle {
-	NSDictionary *infoDict = [bundle infoDictionary];
-	self = [self initWithName:[infoDict objectForKey:(NSString *)kCFBundleNameKey]
-					   author:[infoDict objectForKey:@"GrowlPluginAuthor"]
-					  version:[infoDict objectForKey:(NSString *)kCFBundleVersionKey]
-					 pathname:[bundle bundlePath]];
+- (instancetype) initWithBundle:(NSBundle *)bundle {
+	NSDictionary *infoDict = bundle.infoDictionary;
+	self = [self initWithName:infoDict[(NSString *)kCFBundleNameKey]
+					   author:infoDict[@"GrowlPluginAuthor"]
+					  version:infoDict[(NSString *)kCFBundleVersionKey]
+					 pathname:bundle.bundlePath];
 	if (self) {
-		self.pluginDescription = [infoDict objectForKey:@"GrowlPluginDescription"];
+		self.pluginDescription = infoDict[@"GrowlPluginDescription"];
 		self.bundle = bundle;
 	}
 	return self;
 }
 
-- (id) init {
+- (instancetype) init {
 	return [self initWithBundle:[NSBundle bundleForClass:[self class]]];
 }
 

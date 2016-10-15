@@ -16,7 +16,8 @@
 @property (nonatomic, strong) GCDAsyncSocket *socket;
 @property (nonatomic, unsafe_unretained) id delegate;
 
-- (id)initWithSocket:(GCDAsyncSocket*)socket;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithSocket:(GCDAsyncSocket*)socket NS_DESIGNATED_INITIALIZER;
 
 - (void)disconnect;
 

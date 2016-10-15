@@ -13,7 +13,6 @@
 	NSString				*style;
 	NSString				*prefDomain;
 }
-- (id) initWithStyle:(NSString *)style;
 - (CGFloat) duration;
 - (void) setDuration:(CGFloat)value;
 - (CGFloat) opacity;
@@ -22,5 +21,6 @@
 - (void) setLimit:(BOOL)value;
 - (int) screen;
 - (void) setScreen:(int)value;
+- (instancetype) initWithStyle:(NSString *)style;
 
 @end

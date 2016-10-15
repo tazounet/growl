@@ -73,7 +73,7 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 
-CFTypeRef GrowlPreferencesController_objectForKey(CFTypeRef key);
+CFTypeRef GrowlPreferencesController_objectForKey(CFTypeRef key) CF_RETURNS_NOT_RETAINED;
 CFIndex   GrowlPreferencesController_integerForKey(CFTypeRef key);
 Boolean   GrowlPreferencesController_boolForKey(CFTypeRef key);
 unsigned short GrowlPreferencesController_unsignedShortForKey(CFTypeRef key);

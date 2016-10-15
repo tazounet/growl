@@ -32,7 +32,7 @@
    
    if (!image)
    {
-      NSData *imageData = [self ImageData];
+      NSData *imageData = self.ImageData;
       if (imageData != nil)
       {
          image = [[NSImage alloc] initWithData:imageData];
@@ -50,8 +50,8 @@
    
    if(!thumb)
    {
-      thumb = [[self Image] copyWithZone:nil];
-      [thumb setSize:NSMakeSize(32, 32)];
+      thumb = [self.Image copyWithZone:nil];
+      thumb.size = NSMakeSize(32, 32);
       [self setPrimitiveValue:thumb forKey:@"Thumbnail"];
    }
    return thumb;
@@ -62,7 +62,7 @@
    [self willChangeValueForKey:@"Image"];
    [self setPrimitiveValue:image forKey:@"Image"];
    [self didChangeValueForKey:@"Image"];
-   [self setValue:[image PNGRepresentation] forKey:@"ImageData"];
+   [self setValue:image.PNGRepresentation forKey:@"ImageData"];
 }
 
 @end

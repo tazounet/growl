@@ -11,9 +11,9 @@
 
 @implementation GrowlFlippingWindowTransition
 
-- (id) initWithWindow:(NSWindow *)inWindow {
+- (instancetype) initWithWindow:(NSWindow *)inWindow {
 	if ((self = [super initWithWindow:inWindow])) {
-		[[[self window] contentView] setWantsLayer:YES];
+		[self.window.contentView setWantsLayer:YES];
 		flipsX = NO;
 		flipsY = NO;
 	}
@@ -46,7 +46,7 @@
 		if(yScale <= 0.0f) yScale = .01f;
 		
 		CATransform3D flip = CATransform3DMakeScale(xScale, yScale, 1.0f);
-		[[[[self window] contentView] layer] setTransform:flip];
+		self.window.contentView.layer.transform = flip;
 	}
 }
 

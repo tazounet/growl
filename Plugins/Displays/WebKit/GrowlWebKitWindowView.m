@@ -22,15 +22,15 @@
 @implementation GrowlWebKitWindowView
 @synthesize styleBundle;
 
-- (id) initWithFrame:(NSRect)frameRect frameName:(NSString *)frameName groupName:(NSString *)groupName {
+- (instancetype) initWithFrame:(NSRect)frameRect frameName:(NSString *)frameName groupName:(NSString *)groupName {
 	if ((self = [super initWithFrame:frameRect frameName:frameName groupName:groupName])) {
-		[self setUIDelegate:self];
+		self.UIDelegate = self;
 		closeButtonRect = NSZeroRect;
 		// we need a minor delay to allow the window frame to be properly set before testing
 		[self performSelector:@selector(testInitialMouseLocation) 
 					  withObject:nil 
 					  afterDelay:0.2
-						  inModes:[NSArray arrayWithObjects:NSRunLoopCommonModes, NSEventTrackingRunLoopMode, nil]];
+						  inModes:@[NSRunLoopCommonModes, NSEventTrackingRunLoopMode]];
 	}
 	return self;
 }
@@ -43,7 +43,7 @@
 	if (realHitTest || ![self showsCloseBox])
 		return [super hitTest:aPoint];
 
-	if ([[self superview] mouse:aPoint inRect:[self frame]])
+	if ([self.superview mouse:aPoint inRect:self.frame])
 		return self;
 
 	return nil;
@@ -72,16 +72,16 @@
 #pragma mark -
 - (void) updateFocusState {
 	realHitTest = YES;
-	[[[[self mainFrame] frameView] documentView] _updateMouseoverWithFakeEvent];
+	[self.mainFrame.frameView.documentView _updateMouseoverWithFakeEvent];
 	realHitTest = NO;
 }
 
 - (void) sizeToFit {
-	NSRect rect = [[[[self mainFrame] frameView] documentView] frame];
+	NSRect rect = self.mainFrame.frameView.documentView.frame;
 
 	// resize the window so that it contains the tracking rect
-	NSWindow *window = 	[self window];
-	NSRect windowRect = [window frame];
+	NSWindow *window = 	self.window;
+	NSRect windowRect = window.frame;
 	windowRect.origin.y -= rect.size.height - windowRect.size.height;
 	windowRect.size = rect.size;
 	[window setFrame:windowRect display:YES animate:NO];
@@ -106,19 +106,19 @@
 }
 
 - (BOOL) showsCloseBox {
-	NSDictionary *bundleDict = [styleBundle infoDictionary];
-	if([bundleDict objectForKey:@"GrowlCloseButtonEnabled"])
-		return [[bundleDict objectForKey:@"GrowCloseButtonEnabled"] boolValue];
+	NSDictionary *bundleDict = styleBundle.infoDictionary;
+	if(bundleDict[@"GrowlCloseButtonEnabled"])
+		return [bundleDict[@"GrowCloseButtonEnabled"] boolValue];
 	return YES;
 }
 
 - (void) clickedCloseBox:(id)sender {
 	mouseOver = NO;
 	   
-	if ([[[self window] windowController] respondsToSelector:@selector(clickedCloseBox)])
-		[[[self window] windowController] performSelector:@selector(clickedCloseBox)];
+	if ([self.window.windowController respondsToSelector:@selector(clickedCloseBox)])
+		[self.window.windowController performSelector:@selector(clickedCloseBox)];
    
-   if (([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask) != 0) {
+   if ((NSApp.currentEvent.modifierFlags & NSEventModifierFlagOption) != 0) {
 		[[NSNotificationCenter defaultCenter] postNotificationName:GROWL_CLOSE_ALL_NOTIFICATIONS
                                                           object:nil];
 	}
@@ -126,31 +126,31 @@
 
 - (void) setCloseBoxVisible:(BOOL)flag {
 	if ([self showsCloseBox]) {
-		NSButton *gCloseButton = [GrowlNotificationView closeButtonForKey:[styleBundle bundleIdentifier]];
+		NSButton *gCloseButton = [GrowlNotificationView closeButtonForKey:styleBundle.bundleIdentifier];
 		if (flag) {
-			NSDictionary *bundleDict = [styleBundle infoDictionary];
-			CGFloat xOrig = [self bounds].origin.x;
-			CGFloat yOrig = [self bounds].size.height - [gCloseButton frame].size.height;
-			CGFloat width = [gCloseButton frame].size.width;
-			CGFloat height = [gCloseButton frame].size.height;
-			if([bundleDict objectForKey:@"GrowlCloseButtonXOrigin"])
-				xOrig = [[bundleDict objectForKey:@"GrowlCloseButtonXOrigin"] floatValue];
-			if([bundleDict objectForKey:@"GrowlCloseButtonYOrigin"])
-				yOrig = yOrig - [[bundleDict objectForKey:@"GrowlCloseButtonYOrigin"] floatValue];
-			if([bundleDict objectForKey:@"GrowlCloseButtonWidth"])
-				width = [[bundleDict objectForKey:@"GrowlCloseButtonWidth"] floatValue];
-			if([bundleDict objectForKey:@"GrowlCloseButtonHeight"])
-				height = [[bundleDict objectForKey:@"GrowlCloseButtonHeight"] floatValue];
+			NSDictionary *bundleDict = styleBundle.infoDictionary;
+			CGFloat xOrig = self.bounds.origin.x;
+			CGFloat yOrig = self.bounds.size.height - gCloseButton.frame.size.height;
+			CGFloat width = gCloseButton.frame.size.width;
+			CGFloat height = gCloseButton.frame.size.height;
+			if(bundleDict[@"GrowlCloseButtonXOrigin"])
+				xOrig = [bundleDict[@"GrowlCloseButtonXOrigin"] floatValue];
+			if(bundleDict[@"GrowlCloseButtonYOrigin"])
+				yOrig = yOrig - [bundleDict[@"GrowlCloseButtonYOrigin"] floatValue];
+			if(bundleDict[@"GrowlCloseButtonWidth"])
+				width = [bundleDict[@"GrowlCloseButtonWidth"] floatValue];
+			if(bundleDict[@"GrowlCloseButtonHeight"])
+				height = [bundleDict[@"GrowlCloseButtonHeight"] floatValue];
 			
-			[gCloseButton setFrame:NSMakeRect(xOrig, yOrig, width, height)];
-			[gCloseButton setTarget:self];
-			[gCloseButton setAction:@selector(clickedCloseBox:)];
-			[[self superview] addSubview:gCloseButton];
-			closeButtonRect = [gCloseButton frame];
+			gCloseButton.frame = NSMakeRect(xOrig, yOrig, width, height);
+			gCloseButton.target = self;
+			gCloseButton.action = @selector(clickedCloseBox:);
+			[self.superview addSubview:gCloseButton];
+			closeButtonRect = gCloseButton.frame;
 			
 		} else {
 			[gCloseButton removeFromSuperview];
-			[gCloseButton setFrame:NSMakeRect(0,0,30,30)]; // restore the default frame
+			gCloseButton.frame = NSMakeRect(0,0,30,30); // restore the default frame
 			closeButtonRect = NSZeroRect;
 		}
 	}else {
@@ -160,13 +160,13 @@
 		}else{
 			webScriptMethodName = @"hideCloseButton";
 		}
-		[[self windowScriptObject] callWebScriptMethod:webScriptMethodName withArguments:nil];
+		[self.windowScriptObject callWebScriptMethod:webScriptMethodName withArguments:nil];
 	}
 }
 
 - (void)testInitialMouseLocation
 {
-	if(NSPointInRect([NSEvent mouseLocation], [[self window] frame]))
+	if(NSPointInRect([NSEvent mouseLocation], self.window.frame))
 			[self mouseEntered:[[NSEvent alloc]init]];
 }
 
@@ -180,8 +180,8 @@
 	mouseOver = YES;
 	[self setNeedsDisplay:YES];
 	
-	if ([[[self window] windowController] respondsToSelector:@selector(mouseEnteredNotificationView:)])
-		[[[self window] windowController] performSelector:@selector(mouseEnteredNotificationView:)
+	if ([self.window.windowController respondsToSelector:@selector(mouseEnteredNotificationView:)])
+		[self.window.windowController performSelector:@selector(mouseEnteredNotificationView:)
 											   withObject:self];	
 }
 
@@ -193,12 +193,12 @@
 
 	// abuse the target object
 	if (closeOnMouseExit) {
-		if ([[[self window] windowController] respondsToSelector:@selector(stopDisplay)])
-			[[[self window] windowController] performSelector:@selector(stopDisplay)];
+		if ([self.window.windowController respondsToSelector:@selector(stopDisplay)])
+			[self.window.windowController performSelector:@selector(stopDisplay)];
 	}
 	
-	if ([[[self window] windowController] respondsToSelector:@selector(mouseExitedNotificationView:)])
-		[[[self window] windowController] performSelector:@selector(mouseExitedNotificationView:)
+	if ([self.window.windowController respondsToSelector:@selector(mouseExitedNotificationView:)])
+		[self.window.windowController performSelector:@selector(mouseExitedNotificationView:)
 											   withObject:self];
 }
 
@@ -213,8 +213,8 @@
 - (void) mouseDown:(NSEvent *)event {
 	mouseOver = NO;
 
-	if (NSPointInRect([event locationInWindow], closeButtonRect)) {
-		[[GrowlNotificationView closeButtonForKey:[styleBundle bundleIdentifier]] mouseDown:event];
+	if (NSPointInRect(event.locationInWindow, closeButtonRect)) {
+		[[GrowlNotificationView closeButtonForKey:styleBundle.bundleIdentifier] mouseDown:event];
 
 	} else {
 		if (target && action && [target respondsToSelector:action])

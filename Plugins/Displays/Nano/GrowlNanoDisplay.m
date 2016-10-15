@@ -14,7 +14,7 @@
 
 @implementation GrowlNanoDisplay
 
-- (id) init {
+- (instancetype) init {
 	if ((self = [super init])) {
 		windowControllerClass = NSClassFromString(@"GrowlNanoWindowController");
 		self.prefDomain = GrowlNanoPrefDomain;

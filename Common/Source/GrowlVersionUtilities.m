@@ -18,7 +18,7 @@ BOOL parseVersionString(NSString *string, struct Version *outVersion) {
 	unsigned myMajor = 0U, myMinor = 0U, myIncremental = 0U, myReleaseType = releaseType_release, myDevelopment = 0U;
 
 	CFIndex maxAllocation = getpagesize();
-	CFRange range = { 0, [string length] };
+	CFRange range = { 0, string.length };
 	Boolean canConvert = CFStringGetBytes((CFStringRef)string, range,
 											  kCFStringEncodingUTF8,
 											  /*lossByte*/ 0U,

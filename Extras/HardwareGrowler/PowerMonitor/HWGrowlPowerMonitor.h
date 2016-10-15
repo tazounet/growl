@@ -9,12 +9,12 @@
 #import <Foundation/Foundation.h>
 #import "HardwareGrowlPlugin.h"
 
-typedef enum {
+typedef NS_ENUM (NSInteger, HGPowerSource) {
 	HGUnknownPower = -1,
 	HGACPower = 0,
 	HGBatteryPower,
 	HGUPSPower
-} HGPowerSource;
+};
 
 @interface HWGrowlPowerMonitor : NSObject <HWGrowlPluginProtocol, HWGrowlPluginNotifierProtocol>
 

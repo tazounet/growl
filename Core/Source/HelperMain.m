@@ -14,7 +14,7 @@ int main(int argc, const char *argv[]) {
 	int status;
     @autoreleasepool {
         NSApplication *app = [GrowlApplication sharedApplication];
-        [app setDelegate:[GrowlApplicationController sharedController]];
+        app.delegate = [GrowlApplicationController sharedController];
         
         status = NSApplicationMain(argc, (const char **) argv);
     }

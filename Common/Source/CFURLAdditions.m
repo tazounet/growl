@@ -37,7 +37,7 @@ NSURL *fileURLWithDockDescription(NSDictionary *dict) {
 			CFURLPathStyle pathStyle = kCFURLPOSIXPathStyle;
 			
 			if (pathStyleNum)
-				pathStyle = [pathStyleNum intValue];
+				pathStyle = pathStyleNum.intValue;
 
 			char *filename;
          CFIndex size = CFStringGetMaximumSizeOfFileSystemRepresentation((CFStringRef)path);
@@ -74,7 +74,7 @@ NSDictionary *dockDescriptionWithURL(NSURL *theURL) {
 		if (path) {
 			[dict setValue:(__bridge NSString*)path forKey:_CFURLStringKey];
 			CFRelease(path);
-            [dict setValue:[NSNumber numberWithInt:kCFURLPOSIXPathStyle] forKey:_CFURLStringTypeKey];
+            [dict setValue:@(kCFURLPOSIXPathStyle) forKey:_CFURLStringTypeKey];
 		}
 
 		if (aliasData) {

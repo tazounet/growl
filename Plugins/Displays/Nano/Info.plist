@@ -25,7 +25,7 @@
 	<key>GrowlPluginAuthor</key>
 	<string>Rudy Richter</string>
 	<key>GrowlPluginDescription</key>
-	<string>Nano, we're evil like that</string>
+	<string>Nano, we&amp;apos;re evil like that</string>
 	<key>GrowlPluginsFrameworkVersion</key>
 	<string>1.0</string>
 	<key>NSPrincipalClass</key>

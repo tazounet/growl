@@ -40,7 +40,7 @@
    separatorRect.size.height = self.rowHeight;
    while (yStart < NSMaxY(boundsToDraw)) {
       separatorRect.origin.y = yStart;
-      [[NSColor grayColor] drawSwatchInRect:CGRectMake(separatorRect.origin.x + 5.0f, separatorRect.origin.y + [self rowHeight] - 1.0f, separatorRect.size.width - 28.0f, 1.0f)];
+      [[NSColor grayColor] drawSwatchInRect:CGRectMake(separatorRect.origin.x + 5.0f, separatorRect.origin.y + self.rowHeight - 1.0f, separatorRect.size.width - 28.0f, 1.0f)];
       [[NSColor grayColor] drawSwatchInRect:CGRectMake(separatorRect.origin.x + 5.0f, separatorRect.origin.y, 1.0f, separatorRect.size.height)];
       [[NSColor grayColor] drawSwatchInRect:CGRectMake(separatorRect.size.width - 21.0f, separatorRect.origin.y, 1.0f, separatorRect.size.height)];
       yStart += self.rowHeight;

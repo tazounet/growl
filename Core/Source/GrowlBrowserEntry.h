@@ -14,20 +14,20 @@
 	
 	NSString				*_name;
 	NSString          *_domain;
-   NSString				*_uuid;
+	NSString				*_uuid;
 	BOOL					_use;
 	BOOL					_active;
-   BOOL              _manualEntry;
+	BOOL              _manualEntry;
 	
 	NSString				*password;
-   GNTPKey           *_key;
+	GNTPKey           *_key;
 	BOOL					didPasswordLookup;
 	GNTPForwarder		*owner;
    
-   NSData            *_lastKnownAddress;
+	NSData            *_lastKnownAddress;
 }
-- (id) initWithDictionary:(NSDictionary *)dict;
-- (id) initWithComputerName:(NSString *)name;
+- (instancetype) initWithDictionary:(NSDictionary *)dict;
+- (instancetype) initWithComputerName:(NSString *)name;
 
 - (void)updateKey;
 - (NSString *) password;

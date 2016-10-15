@@ -27,7 +27,8 @@
 
 @property (nonatomic, unsafe_unretained) id<GNTPServerDelegate> delegate;
 
--(id)initWithInterface:(NSString*)interface;
+-(instancetype)init NS_UNAVAILABLE;
+-(instancetype)initWithInterface:(NSString*)interface NS_DESIGNATED_INITIALIZER;
 
 -(BOOL)startServer;
 -(void)stopServer;

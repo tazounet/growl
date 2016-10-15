@@ -18,11 +18,13 @@
 @synthesize mainImage;
 @synthesize alternateImage;
 @synthesize squelchImage;
-@synthesize mainLayer;
 @synthesize mouseDown;
 @synthesize darkModeOn;
+@synthesize isHighlighted;
 
-- (id)initWithFrame:(NSRect)frameRect
+static NSImageView *imageView;
+
+- (instancetype)initWithFrame:(NSRect)frameRect
 {
     self = [super initWithFrame:frameRect];
     if (self) {
@@ -30,26 +32,16 @@
         menuItem = nil;
         mainImage = nil;
         alternateImage = nil;
+        squelchImage = nil;
         mouseDown = NO;
-        
-        CALayer *rootLayer = [CALayer layer];
-        rootLayer.frame = frameRect;
-        rootLayer.delegate = self;
-        rootLayer.layoutManager = [CAConstraintLayoutManager layoutManager];
-        
-        self.mainLayer = [CALayer layer];
-        mainLayer.opacity = 1.0f;
-        
-        [mainLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintMidX relativeTo:@"superlayer" attribute:kCAConstraintMidX]];
-        [mainLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintMidY relativeTo:@"superlayer" attribute:kCAConstraintMidY]];
-         
-        [rootLayer addSublayer:mainLayer];
-        [self setWantsLayer:YES];
-        [self setLayer:rootLayer];
-        
-        [self addObserver:self forKeyPath:@"mode" options:NSKeyValueObservingOptionNew context:&self];
-        [self addObserver:self forKeyPath:@"mainImage" options:NSKeyValueObservingOptionNew context:&self];
-        [self addObserver:self forKeyPath:@"mouseDown" options:NSKeyValueObservingOptionNew context:&self];
+        mode = 0;
+
+        imageView = [[NSImageView alloc] initWithFrame:self.bounds];
+        imageView.wantsLayer = YES;
+        [self addSubview:imageView];
+
+        self.toolTip = @"Growl";
+
         [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(darkModeChanged:) name:@"AppleInterfaceThemeChangedNotification" object:nil];
         [self updateDarkMode];
     }
@@ -57,10 +49,16 @@
     return self;
 }
 
+- (void)setMenuItem:(GrowlMenu*)newMenuItem
+{
+    menuItem = newMenuItem;
+    [menuItem.menu setDelegate:self];
+}
+
 -(void)updateDarkMode
 {
     NSDictionary *dict = [[NSUserDefaults standardUserDefaults] persistentDomainForName:NSGlobalDomain];
-    id style = [dict objectForKey:@"AppleInterfaceStyle"];
+    id style = dict[@"AppleInterfaceStyle"];
     
     darkModeOn = (style && [style isKindOfClass:[NSString class]] && NSOrderedSame == [style caseInsensitiveCompare:@"dark"]);
 }
@@ -70,90 +68,45 @@
     [self updateDarkMode];
 
     if(darkModeOn) {
-        mainLayer.contents = (id)alternateImage;
+        [self setIcon:alternateImage];
     } else {
-        mainLayer.contents = (id)mainImage;
+        [self setIcon:mainImage];
     }
 }
 
--(void)dealloc
+- (void)drawRect:(NSRect)dirtyRect
 {
-    [self removeObserver:self forKeyPath:@"mode"];
-    [self removeObserver:self forKeyPath:@"mainImage"];
-    [self removeObserver:self forKeyPath:@"mouseDown"];
-}
+    [menuItem.statusItem drawStatusBarBackgroundInRect:dirtyRect withHighlight:self.isHighlighted];
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if([keyPath isEqualToString:@"mainImage"])
+    switch(mode)
     {
-        CGRect newBounds = CGRectZero;
-        newBounds.size = [mainImage size];
-        mainLayer.frame = newBounds;
-        self.mode = 0;
-        [self.layer setNeedsLayout];
-    }
-    else if ([keyPath isEqualToString:@"mouseDown"])
-    {
-        if(mouseDown)
-        {
-            [self.layer setNeedsDisplay];
-            self.mode = 1;
-        }
-        else
-        {
-            self.mode = previousMode;
-            [self.layer setNeedsDisplay];
-        }
-    } 
-    else if ([keyPath isEqualToString:@"mode"])
-    {
-        switch(mode)
-        {
-            case 1:
-                if(darkModeOn) {
-                    mainLayer.contents = (id)mainImage;
-                } else {
-                    mainLayer.contents = (id)alternateImage;
-                }
-                break;
-            case 2:
-                previousMode = self.mode;
-                mainLayer.contents = (id)squelchImage;
-                break;
-            case 0:
-            default:
-                previousMode = self.mode;
-                if(darkModeOn) {
-                    mainLayer.contents = (id)alternateImage;
-                } else {
-                    mainLayer.contents = (id)mainImage;
-                }
-                break;
-        }
+        case 1:
+            [self setIcon:alternateImage];
+            break;
+        case 2:
+            previousMode = self.mode;
+            [self setIcon:squelchImage];
+            break;
+        case 0:
+        default:
+            previousMode = self.mode;
+            if(darkModeOn) {
+                [self setIcon:alternateImage];
+            } else {
+                [self setIcon:mainImage];
+            }
+            break;
     }
 }
 
-- (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx
+- (void)setIcon:(NSImage *)icon
 {
-    NSGraphicsContext *previousContext = [NSGraphicsContext currentContext];
-    [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithGraphicsPort:ctx flipped:NO]];
-    [[menuItem statusItem] drawStatusBarBackgroundInRect:[self frame] withHighlight:mouseDown];
-    [NSGraphicsContext setCurrentContext:previousContext];
-}
-
--(void)mouseDown:(NSEvent *)theEvent
-{
-   self.mouseDown = YES;
-
-    [[menuItem statusItem] popUpStatusItemMenu:[menuItem menu]];
-
-    self.mouseDown = NO;
+    [imageView setImage:icon];
 }
 
 - (void)startAnimation
 {
-    if(![self.mainLayer animationForKey:@"pulseAnimation"])
+    if(![imageView.layer animationForKey:@"pulseAnimation"])
     {
         CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:@"opacity"];
         anim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
@@ -161,14 +114,40 @@
         anim.repeatCount = HUGE_VALF;
         anim.autoreverses = YES;
         anim.removedOnCompletion = NO;
-        anim.toValue = [NSNumber numberWithFloat:0.0f];
-        [mainLayer addAnimation:anim forKey:@"pulseAnimation"];    
+        anim.toValue = @0.0f;
+        [imageView.layer addAnimation:anim forKey:@"pulseAnimation"];
     }
 }
 
 - (void)stopAnimation
 {
-    [self.mainLayer removeAnimationForKey:@"pulseAnimation"];
+    [imageView.layer removeAnimationForKey:@"pulseAnimation"];
+}
+
+-(void)mouseDown:(NSEvent *)theEvent
+{
+    self.mouseDown = YES;
+    [menuItem.statusItem popUpStatusItemMenu:menuItem.menu];
+    self.mouseDown = NO;
+}
+
+-(void)menuWillOpen:(NSMenu *)menu {
+    self.mode = 1;
+    self.isHighlighted = YES;
+    self.needsDisplay = YES;
+}
+
+-(void)menuDidClose:(NSMenu *)menu {
+    self.mode = previousMode;
+    self.isHighlighted = NO;
+    self.needsDisplay = YES;
+}
+
+- (void)setHighlighted:(BOOL)newFlag
+{
+    if (isHighlighted == newFlag) return;
+    isHighlighted = newFlag;
+    self.needsDisplay = YES;
 }
 
 @end

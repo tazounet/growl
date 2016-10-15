@@ -36,7 +36,11 @@
 	NSTextContainer		*titleContainer;
 	NSRange				titleRange;
 }
-- (id) initWithFrame:(NSRect) frame configurationDict:(NSDictionary*)configDict;
+
+- (instancetype)initWithFrame:(NSRect)frameRect NS_UNAVAILABLE;
+- (instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
+
+- (instancetype) initWithFrame:(NSRect) frame configurationDict:(NSDictionary*)configDict NS_DESIGNATED_INITIALIZER;
 
 - (void) setPriority:(int)priority;
 - (void) setIcon:(NSImage *)icon;

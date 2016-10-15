@@ -25,7 +25,7 @@
 @synthesize leftJustification;
 @synthesize rightJustification;
 
--(id)initWithBundle:(NSBundle *)bundle {
+-(instancetype)initWithBundle:(NSBundle *)bundle {
 	if((self = [super initWithBundle:bundle])){
 		self.justificationLabel = NSLocalizedStringFromTableInBundle(@"Justification:", @"Localizable", bundle, @"MusicVideo justification pop up label");
 		self.leftJustification = NSLocalizedStringFromTableInBundle(@"Left", @"Localizable", bundle, @"MusicVideo left aligned");
@@ -40,7 +40,7 @@
 }
 
 - (void) mainViewDidLoad {
-	[slider_opacity setAltIncrementValue:5.0];
+	slider_opacity.altIncrementValue = 5.0;
 }
 
 - (NSSet*)bindingKeys {
@@ -94,7 +94,7 @@
 	return value;
 }
 - (void) setDuration:(CGFloat)value {
-	[self setConfigurationValue:[NSNumber numberWithFloat:value] forKey:MUSICVIDEO_DURATION_PREF];
+	[self setConfigurationValue:@(value) forKey:MUSICVIDEO_DURATION_PREF];
 }
 
 - (unsigned) effect {
@@ -117,7 +117,7 @@
 - (void) setEffect:(unsigned)newEffect {
 	switch (newEffect) {
 		default:
-			NSLog(@"(Music Video) Invalid effect number %u (slide is %u; wipe is %u)", newEffect, MUSICVIDEO_EFFECT_SLIDE, MUSICVIDEO_EFFECT_WIPE);
+			NSLog(@"(Music Video) Invalid effect number %u (slide is %ld; wipe is %ld)", newEffect, (long)MUSICVIDEO_EFFECT_SLIDE, (long)MUSICVIDEO_EFFECT_WIPE);
 			break;
 
 		case MUSICVIDEO_EFFECT_WIPE:
@@ -125,7 +125,7 @@
 			newEffect = MUSICVIDEO_EFFECT_SLIDE;
 		case MUSICVIDEO_EFFECT_SLIDE:
 		case MUSICVIDEO_EFFECT_FADING:
-			[self setConfigurationValue:[NSNumber numberWithUnsignedInt:newEffect] forKey:MUSICVIDEO_EFFECT_PREF];
+			[self setConfigurationValue:@(newEffect) forKey:MUSICVIDEO_EFFECT_PREF];
 	}
 }
 
@@ -137,7 +137,7 @@
 	return value;
 }
 - (void) setOpacity:(CGFloat)value {
-	[self setConfigurationValue:[NSNumber numberWithFloat:value] forKey:MUSICVIDEO_OPACITY_PREF];
+	[self setConfigurationValue:@(value) forKey:MUSICVIDEO_OPACITY_PREF];
 }
 
 - (int) size {
@@ -148,18 +148,18 @@
 	return value;
 }
 - (void) setSize:(int)value {
-	[self setConfigurationValue:[NSNumber numberWithInt:value] forKey:MUSICVIDEO_SIZE_PREF];
+	[self setConfigurationValue:@(value) forKey:MUSICVIDEO_SIZE_PREF];
 }
 
 #pragma mark Combo box support
 
 - (NSInteger) numberOfItemsInComboBox:(NSComboBox *)aComboBox {
-	return [[NSScreen screens] count];
+	return [NSScreen screens].count;
 }
 
 - (id) comboBox:(NSComboBox *)aComboBox objectValueForItemAtIndex:(NSInteger)idx {
 #ifdef __LP64__
-	return [NSNumber numberWithInteger:idx];
+	return @(idx);
 #else
 	return [NSNumber numberWithInt:idx];
 #endif
@@ -173,19 +173,19 @@
 	return value;
 }
 - (void) setScreen:(int)value {
-	[self setConfigurationValue:[NSNumber numberWithInt:value] forKey:MUSICVIDEO_SCREEN_PREF];
+	[self setConfigurationValue:@(value) forKey:MUSICVIDEO_SCREEN_PREF];
 }
 
 - (NSInteger)textAlignment {
-	NSTextAlignment align = NSLeftTextAlignment;
+	NSTextAlignment align = NSTextAlignmentLeft;
 	if([self.configuration valueForKey:MUSICVIDEO_TEXT_ALIGN_PREF])
 		align = [[self.configuration valueForKey:MUSICVIDEO_TEXT_ALIGN_PREF] integerValue];
 	NSInteger value;
 	switch (align) {
-		case NSLeftTextAlignment:
+		case NSTextAlignmentLeft:
 			value = 0;
 			break;
-		case NSRightTextAlignment:
+		case NSTextAlignmentRight:
 			value = 1;
 			break;
 		default:
@@ -199,16 +199,16 @@
 	NSTextAlignment value;
 	switch (align) {
 		case 0:
-			value = NSLeftTextAlignment;
+			value = NSTextAlignmentLeft;
 			break;
 		case 1:
-			value = NSRightTextAlignment;
+			value = NSTextAlignmentRight;
 			break;
 		default:
-			value = NSLeftTextAlignment;
+			value = NSTextAlignmentLeft;
 			break;
 	}
-	[self setConfigurationValue:[NSNumber numberWithUnsignedLong:value] forKey:MUSICVIDEO_TEXT_ALIGN_PREF];
+	[self setConfigurationValue:@(value) forKey:MUSICVIDEO_TEXT_ALIGN_PREF];
 }
 
 - (NSColor *) textColorVeryLow {

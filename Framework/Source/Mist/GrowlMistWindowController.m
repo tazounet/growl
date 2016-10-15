@@ -42,7 +42,7 @@
    
    NSRect mistRect = mistViewForSetup.frame;
    NSPanel *tempWindow = [[NSPanel alloc] initWithContentRect:mistRect
-                                                    styleMask:NSBorderlessWindowMask | NSNonactivatingPanelMask
+                                                    styleMask:NSWindowStyleMaskBorderless | NSWindowStyleMaskNonactivatingPanel
                                                       backing:NSBackingStoreBuffered
                                                         defer:YES];
    
@@ -52,13 +52,13 @@
       [tempWindow setBecomesKeyOnlyIfNeeded:YES];
       [tempWindow setHidesOnDeactivate:NO];
       [tempWindow setCanHide:NO];
-      [tempWindow setContentView:mistView];
+      tempWindow.contentView = mistView;
       [tempWindow setOpaque:NO];
-      [tempWindow setBackgroundColor:[NSColor clearColor]];
+      tempWindow.backgroundColor = [NSColor clearColor];
       [tempWindow setLevel:GrowlVisualDisplayWindowLevel];
       //We won't have this on 10.6, define it so we don't have issues on 10.6
 #define NSWindowCollectionBehaviorFullScreenAuxiliary 1 << 8
-      [tempWindow setCollectionBehavior:NSWindowCollectionBehaviorCanJoinAllSpaces|NSWindowCollectionBehaviorFullScreenAuxiliary];
+      tempWindow.collectionBehavior = NSWindowCollectionBehaviorCanJoinAllSpaces|NSWindowCollectionBehaviorFullScreenAuxiliary;
       [tempWindow setAcceptsMouseMovedEvents:YES];
       [tempWindow setOneShot:YES];
       self.uuid = theUUID;
@@ -100,40 +100,38 @@
 }
 
 - (void)fadeIn {
-   [[self window] setAlphaValue:0.0f];
-   [[self window] orderFront:nil];
+   self.window.alphaValue = 0.0f;
+   [self.window orderFront:nil];
    
-   NSDictionary *fadeIn = [NSDictionary dictionaryWithObjectsAndKeys:
-                           [self window], NSViewAnimationTargetKey,
-                           NSViewAnimationFadeInEffect, NSViewAnimationEffectKey,
-                           nil];
+   NSDictionary *fadeIn = @{NSViewAnimationTargetKey: self.window,
+                           NSViewAnimationEffectKey: NSViewAnimationFadeInEffect};
    
    NSArray *animations;
-   animations = [NSArray arrayWithObject:fadeIn];
+   animations = @[fadeIn];
    
-   [self setFadeAnimation:[[NSViewAnimation alloc]
-                            initWithViewAnimations:animations]];
+   self.fadeAnimation = [[NSViewAnimation alloc]
+                            initWithViewAnimations:animations];
    
-   [self.fadeAnimation setAnimationBlockingMode:NSAnimationNonblocking];
-   [self.fadeAnimation setDuration:0.3];
+   (self.fadeAnimation).animationBlockingMode = NSAnimationNonblocking;
+   (self.fadeAnimation).duration = 0.3;
    [self.fadeAnimation startAnimation];
    visible = YES;
 }
 
 - (void)animationDidEnd:(NSAnimation *)animation {
-   [[self window] orderOut:nil];
+   [self.window orderOut:nil];
    visible = NO;
    
    // Callback to our delegate, to let it know that we've finished.
    if (closed) {
       // We were closed via timeout or the close button
-      if ([[self delegate] respondsToSelector:@selector(mistNotificationDismissed:)])
-         [[self delegate] mistNotificationDismissed:self];
+      if ([self.delegate respondsToSelector:@selector(mistNotificationDismissed:)])
+         [self.delegate mistNotificationDismissed:self];
    }
    else {
       // We were clicked properly and so should use the callback
-      if ([[self delegate] respondsToSelector:@selector(mistNotificationClicked:)])
-         [[self delegate] mistNotificationClicked:self];
+      if ([self.delegate respondsToSelector:@selector(mistNotificationClicked:)])
+         [self.delegate mistNotificationClicked:self];
    }
 }
 
@@ -142,20 +140,18 @@
 }
 
 - (void)fadeOut {
-   NSDictionary *fadeOut = [NSDictionary dictionaryWithObjectsAndKeys:
-                            [self window], NSViewAnimationTargetKey,
-                            NSViewAnimationFadeOutEffect,
-                            NSViewAnimationEffectKey, nil];
+   NSDictionary *fadeOut = @{NSViewAnimationTargetKey: self.window,
+                            NSViewAnimationEffectKey: NSViewAnimationFadeOutEffect};
    
    NSArray *animations;
-   animations = [NSArray arrayWithObject:fadeOut];
+   animations = @[fadeOut];
    
-   [self setFadeAnimation:[[NSViewAnimation alloc]
-                            initWithViewAnimations:animations]];
+   self.fadeAnimation = [[NSViewAnimation alloc]
+                            initWithViewAnimations:animations];
    
-   [self.fadeAnimation setAnimationBlockingMode:NSAnimationNonblocking];
-   [self.fadeAnimation setDuration:0.3];
-   [self.fadeAnimation setDelegate:self];
+   (self.fadeAnimation).animationBlockingMode = NSAnimationNonblocking;
+   (self.fadeAnimation).duration = 0.3;
+   (self.fadeAnimation).delegate = self;
    [self.fadeAnimation startAnimation];
 }
 
@@ -187,8 +183,8 @@
 
 - (void)closeAllNotifications
 {
-   if([[self delegate] respondsToSelector:@selector(closeAllNotifications:)])
-      [[self delegate] closeAllNotifications:self];
+   if([self.delegate respondsToSelector:@selector(closeAllNotifications:)])
+      [self.delegate closeAllNotifications:self];
 }
 
 @end

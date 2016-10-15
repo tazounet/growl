@@ -62,14 +62,14 @@
 	return sharedController;
 }
 
--(id)init {
+-(instancetype)init {
 	if((self = [super init])){
 		self.pending = [NSMutableSet set];
 		self.allWindows = [NSMutableSet set];
 		self.displayedWindows = [NSMutableSet set];
 		self.windowQueue = [NSMutableArray array];
-		self.positionControllers = [NSMutableDictionary dictionaryWithCapacity:[[NSScreen screens] count]];
-		self.windowsByDisplayID = [NSMutableDictionary dictionaryWithCapacity:[[NSScreen screens] count]];
+		self.positionControllers = [NSMutableDictionary dictionaryWithCapacity:[NSScreen screens].count];
+		self.windowsByDisplayID = [NSMutableDictionary dictionaryWithCapacity:[NSScreen screens].count];
 		
 		self.queueKeysByDisplayID = [NSMutableDictionary dictionary];
 		self.queuingDisplayQueues = [NSMutableDictionary dictionary];
@@ -157,18 +157,18 @@
 	
 	/* Special case for laptops with dynamic graphics switching on
 	 */
-	if([screens count] == 1 && [screens count] == [[positionControllers allKeys] count]){
-		GrowlPositionController *current = [[positionControllers allValues] objectAtIndex:0];
-		NSScreen *new = [screens objectAtIndex:0];
-		if(CGRectEqualToRect([current screenFrame], [new visibleFrame]) && [current deviceID] != [new screenID]){
+	if(screens.count == 1 && screens.count == positionControllers.allKeys.count){
+		GrowlPositionController *current = positionControllers.allValues[0];
+		NSScreen *new = screens[0];
+		if(CGRectEqualToRect(current.screenFrame, new.visibleFrame) && current.deviceID != new.screenID){
 			//We have the same screen frame, the same screen count, but different ID's
 			//The cause we care about is automatic graphics switching, but the result is the same
 			//We want to preserve our current controllers for it, without making a new display
 
 			//NSLog(@"re labeling display id %@ to display id %@", currentID, newID);
-			NSString *currentID = [NSString stringWithFormat:@"%lu", [current deviceID]];
-			NSString *newID = [new screenIDString];
-			[current setDeviceID:[new screenID]];
+			NSString *currentID = [NSString stringWithFormat:@"%lu", current.deviceID];
+			NSString *newID = new.screenIDString;
+			current.deviceID = new.screenID;
 			[positionControllers setValue:current forKey:newID];
 			[positionControllers setValue:nil forKey:currentID];
 			
@@ -194,7 +194,7 @@
          [toRemove addObject:key];
    }];
    
-   if([toRemove count]) NSLog(@"Removing %lu positioning controller(s)", [toRemove count]);
+   if(toRemove.count) NSLog(@"Removing %lu positioning controller(s)", toRemove.count);
    [[self.positionControllers dictionaryWithValuesForKeys:toRemove] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
       NSMutableSet *displayed = [weakSelf.windowsByDisplayID valueForKey:key];
       [weakSelf.displayedWindows minusSet:displayed];
@@ -223,14 +223,14 @@
       if(!controller){
          [weakSelf addPositionControllersForScreen:obj];
       }else{
-         CGRect currentRect = [controller screenFrame];
+         CGRect currentRect = controller.screenFrame;
          if(!CGRectEqualToRect(newRect, currentRect))
          {
-            if([controller isFrameFree:[controller screenFrame]])
-               [controller setScreenFrame:newRect];
+            if([controller isFrameFree:controller.screenFrame])
+               controller.screenFrame = newRect;
             else{
                [controller setUpdateFrame:YES];
-               [controller setNewFrame:newRect];
+               controller.newFrame = newRect;
             }
          }
       }
@@ -238,12 +238,12 @@
 }
 
 -(void)addPositionControllersForScreen:(NSScreen*)screen {
-	GrowlPositionController *controller = [[GrowlPositionController alloc] initWithScreenFrame:[screen visibleFrame]];
-	NSUInteger screenID = [screen screenID];
-	NSString *screenIDKey = [screen screenIDString];
+	GrowlPositionController *controller = [[GrowlPositionController alloc] initWithScreenFrame:screen.visibleFrame];
+	NSUInteger screenID = screen.screenID;
+	NSString *screenIDKey = screen.screenIDString;
 	NSLog(@"add screen with id %@", screenIDKey);
 
-	[controller setDeviceID:screenID];
+	controller.deviceID = screenID;
 	[positionControllers setValue:controller forKey:screenIDKey];
 	
 	NSMutableSet *controllerSet = [NSMutableSet set];
@@ -255,14 +255,14 @@
 }
 
 -(GrowlPositionController*)positionControllerForScreen:(NSScreen*)screen {
-	return [self positionControllerForScreenID:[screen screenID]];
+	return [self positionControllerForScreenID:screen.screenID];
 }
 
 -(GrowlPositionController*)positionControllerForWindow:(GrowlDisplayWindowController*)window
 {
 	GrowlPositionController* result = nil;
 	@try {
-		result = [self positionControllerForScreen:[window screen]];
+		result = [self positionControllerForScreen:window.screen];
 	}
 	@catch (NSException *exception) {
 		NSLog(@"Caught Exception: %@ trying to get the position controller for window %@", exception, window);
@@ -275,20 +275,20 @@
 
 -(BOOL)displayWindow:(GrowlDisplayWindowController*)window
 {
-	if(![[window plugin] requiresPositioning]){
-		[window setOccupiedRect:[[window screen] frame]];
+	if(!(window.plugin).requiresPositioning){
+		window.occupiedRect = window.screen.frame;
 		return YES;
 	}else{
 		GrowlPositionController *controller = [self positionControllerForWindow:window];
-		NSDictionary *configDict = [[window notification] configurationDict];
+		NSDictionary *configDict = window.notification.configurationDict;
 		GrowlPositionOrigin	position = configDict ? [[configDict valueForKey:@"com.growl.positioncontroller.selectedposition"] intValue] : GrowlTopRightCorner;
 		
-		NSSize displaySize = [window requiredSize];		
+		NSSize displaySize = window.requiredSize;		
 		CGRect found = [controller canFindSpotForSize:displaySize
 											startingInPosition:position];
 		if(!CGRectEqualToRect(found, CGRectZero)){
 			[controller occupyRect:found];
-			[window setOccupiedRect:found];
+			window.occupiedRect = found;
 			return YES;
 		}
 	}
@@ -314,8 +314,8 @@
 {
 	[allWindows addObject:window];
 	BOOL display = YES;
-	if(![[window plugin] requiresPositioning]){
-		NSString *displayQueueKey = [window displayQueueKey];
+	if(!(window.plugin).requiresPositioning){
+		NSString *displayQueueKey = window.displayQueueKey;
 		if([queuingDisplayCurrentWindows valueForKey:displayQueueKey] || [queuingDisplayQueues valueForKey:displayQueueKey]){
 			display = NO;
 			NSMutableArray *queue = [queuingDisplayQueues valueForKey:displayQueueKey];
@@ -325,7 +325,7 @@
 			}
 			[queue addObject:window];
 		}
-		NSString *screenID = [[window screen] screenIDString];
+		NSString *screenID = window.screen.screenIDString;
 		NSMutableSet *keys = [queueKeysByDisplayID valueForKey:screenID];
 		if(!keys){
 			keys = [NSMutableSet set];
@@ -335,25 +335,25 @@
 	}
 	
 	if(display){
-		[window setOccupiedRect:[[window screen] frame]];
+		window.occupiedRect = window.screen.frame;
 		[window foundSpaceToStart];
 		[displayedWindows addObject:window];
-		NSMutableSet *controllerSet = [windowsByDisplayID valueForKey:[NSString stringWithFormat:@"%lu", [[window screen] screenID]]];
+		NSMutableSet *controllerSet = [windowsByDisplayID valueForKey:[NSString stringWithFormat:@"%lu", window.screen.screenID]];
 		if(controllerSet) [controllerSet addObject:window];
-		NSString *displayQueueKey = [window displayQueueKey];
+		NSString *displayQueueKey = window.displayQueueKey;
 		[queuingDisplayCurrentWindows setValue:window forKey:displayQueueKey];
 	}
 }
 
 -(void)displayWindow:(GrowlDisplayWindowController*)window reposition:(BOOL)reposition
 {
-	if(![[window plugin] requiresPositioning]){
+	if(!(window.plugin).requiresPositioning){
 		[self displayQueueWindow:window];
 	}else{
 		GrowlPositionController *controller = [self positionControllerForWindow:window];
 		[allWindows addObject:window];
 		if(reposition){
-			[self clearRect:[window occupiedRect] inPositionController:controller];
+			[self clearRect:window.occupiedRect inPositionController:controller];
 			if(![self displayWindow:window]){
 				NSLog(@"Couldnt find space for coalescing notification, adding to queue");
 				[window stopDisplay];
@@ -363,7 +363,7 @@
 		} else if([self displayWindow:window]){
 			[window foundSpaceToStart];
 			[displayedWindows addObject:window];
-			NSMutableSet *controllerSet = [windowsByDisplayID valueForKey:[NSString stringWithFormat:@"%lu", [controller deviceID]]];
+			NSMutableSet *controllerSet = [windowsByDisplayID valueForKey:[NSString stringWithFormat:@"%lu", controller.deviceID]];
 			if(controllerSet) [controllerSet addObject:window];
 		}else{
 			//NSLog(@"putting in queue");
@@ -375,15 +375,15 @@
 -(void)checkQueuedWindows
 {
 	__weak GrowlDisplayBridgeController *weakSelf = self;
-	if([windowQueue count]){
+	if(windowQueue.count){
 		dispatch_async(dispatch_get_main_queue(), ^{
 			__weak NSMutableArray *found = [NSMutableArray array];
 			[weakSelf.windowQueue enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 				if([weakSelf displayWindow:obj]){
 					[found addObject:obj];
 					[obj foundSpaceToStart];
-					[[weakSelf displayedWindows] addObject:obj];
-					NSMutableSet *controllerSet = [weakSelf.windowsByDisplayID valueForKey:[[obj screen] screenIDString]];
+					[weakSelf.displayedWindows addObject:obj];
+					NSMutableSet *controllerSet = [weakSelf.windowsByDisplayID valueForKey:[obj screen].screenIDString];
 					if(controllerSet) [controllerSet addObject:obj];
 				}
 			}];
@@ -394,17 +394,17 @@
 
 -(void)clearRect:(CGRect)rect inPositionController:(GrowlPositionController*)controller {
 	[controller vacateRect:rect];
-	if([controller updateFrame] && [controller isFrameFree:[controller screenFrame]]){
+	if(controller.updateFrame && [controller isFrameFree:controller.screenFrame]){
 		[controller setUpdateFrame:NO];
-		[controller setScreenFrame:[controller newFrame]];
+		controller.screenFrame = controller.newFrame;
 	}
 }
 
 -(void)takeDownDisplay:(GrowlDisplayWindowController*)window
 {
-	if([[window plugin] requiresPositioning]){
+	if((window.plugin).requiresPositioning){
 		GrowlPositionController *controller = [self positionControllerForWindow:window];
-		CGRect clearRect = [window occupiedRect];
+		CGRect clearRect = window.occupiedRect;
 		[self clearRect:clearRect inPositionController:controller];
 		
 		[[self class] cancelPreviousPerformRequestsWithTarget:self
@@ -413,23 +413,23 @@
 		[self performSelector:@selector(checkQueuedWindows) 
 					  withObject:nil 
 					  afterDelay:.2
-						  inModes:[NSArray arrayWithObjects:NSRunLoopCommonModes, NSEventTrackingRunLoopMode, nil]];
+						  inModes:@[NSRunLoopCommonModes, NSEventTrackingRunLoopMode]];
 	}else{
 		//Get our next window out for this windows display queue key if there is one
-		NSString *displayQueueKey = [window displayQueueKey];
+		NSString *displayQueueKey = window.displayQueueKey;
 		GrowlDisplayWindowController *current = [queuingDisplayCurrentWindows valueForKey:displayQueueKey];
 		if(current == window){
 			if([queuingDisplayQueues valueForKey:displayQueueKey])
 			{
 				NSMutableArray *displayQueue = [queuingDisplayQueues valueForKey:displayQueueKey];
-				GrowlDisplayWindowController *nextWindow = [displayQueue objectAtIndex:0U];
-				[nextWindow setOccupiedRect:[[nextWindow screen] frame]];
+				GrowlDisplayWindowController *nextWindow = displayQueue[0U];
+				nextWindow.occupiedRect = nextWindow.screen.frame;
 				[nextWindow foundSpaceToStart];
 				[displayedWindows addObject:nextWindow];
 				
 				[queuingDisplayCurrentWindows setValue:nextWindow forKey:displayQueueKey];
 				[displayQueue removeObjectAtIndex:0U];
-				if(![displayQueue count]){
+				if(!displayQueue.count){
 					//We dont have a queue, remove it so we track properly whether to enqueue more notes
 					[queuingDisplayQueues removeObjectForKey:displayQueueKey];
 				}
@@ -440,7 +440,7 @@
 			//NSLog(@"Error!, queue window %@ not the current window for queue key %@\nLikely a result of a removed screen", window, displayQueueKey);
 		}
  	}
-	NSMutableSet *controllerSet = [windowsByDisplayID valueForKey:[[window screen] screenIDString]];
+	NSMutableSet *controllerSet = [windowsByDisplayID valueForKey:window.screen.screenIDString];
 	if(controllerSet) [controllerSet removeObject:window];
 	[displayedWindows removeObject:window];
 	[allWindows removeObject:window];

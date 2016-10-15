@@ -38,16 +38,16 @@
 @synthesize fnFlag;
 @synthesize shiftFlag;
 
--(id)init {
+-(instancetype)init {
 	if((self = [super init])){
         
 		//Bleh, not happy with this really, but eh
 		NSDictionary *enabledDict = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"hwgkeyboardkeysenabled"];
 		if(!enabledDict){
 			//Our default keys are caps, with fn and shift being disabled by default
-			NSDictionary *defaultKeys = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], @"capslock",
-												  [NSNumber numberWithBool:NO], @"fnkey",
-												  [NSNumber numberWithBool:NO], @"shiftkey", nil];
+			NSDictionary *defaultKeys = @{@"capslock": @YES,
+												  @"fnkey": @NO,
+												  @"shiftkey": @NO};
 			[[NSUserDefaults standardUserDefaults] setObject:defaultKeys 
 																	forKey:@"hwgkeyboardkeysenabled"];
 			[[NSUserDefaults standardUserDefaults] synchronize];
@@ -78,9 +78,9 @@
 self.NAME ## Flag = NAME;
 		
 		NSUInteger flags = [NSEvent modifierFlags];
-		BOOL caps = flags & NSAlphaShiftKeyMask ? YES : NO;
-		BOOL fn = flags & NSFunctionKeyMask ? YES : NO;
-		BOOL shift = flags & NSShiftKeyMask ? YES : NO;
+		BOOL caps = flags & NSEventModifierFlagCapsLock ? YES : NO;
+		BOOL fn = flags & NSEventModifierFlagFunction ? YES : NO;
+		BOOL shift = flags & NSEventModifierFlagShift ? YES : NO;
 		
 		CHECK_FLAG(caps);
 		CHECK_FLAG(fn);
@@ -89,9 +89,9 @@ self.NAME ## Flag = NAME;
 		return event;
 	};
 	
-	[NSEvent addLocalMonitorForEventsMatchingMask:NSFlagsChangedMask 
+	[NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskFlagsChanged 
 													  handler:myHandler];
-	[NSEvent addGlobalMonitorForEventsMatchingMask:NSFlagsChangedMask 
+	[NSEvent addGlobalMonitorForEventsMatchingMask:NSEventMaskFlagsChanged 
 														handler: ^(NSEvent* event)
 	 {
 		 myHandler(event);
@@ -131,8 +131,8 @@ self.NAME ## Flag = NAME;
 	}
 	
 	//Check that we are enabled in the keyboard monitor's preferences
-	NSNumber *enabled = [[[NSUserDefaultsController sharedUserDefaultsController] values] valueForKeyPath:[NSString stringWithFormat:@"hwgkeyboardkeysenabled.%@", enabledKey]];
-	if(![enabled boolValue])
+	NSNumber *enabled = [[NSUserDefaultsController sharedUserDefaultsController].values valueForKeyPath:[NSString stringWithFormat:@"hwgkeyboardkeysenabled.%@", enabledKey]];
+	if(!enabled.boolValue)
 		return;
 
     @autoreleasepool
@@ -152,9 +152,9 @@ self.NAME ## Flag = NAME;
 -(void) initFlags
 {
 	NSUInteger flags = [NSEvent modifierFlags];
-	capsFlag = flags & NSAlphaShiftKeyMask ? YES : NO;
-	fnFlag = flags & NSFunctionKeyMask ? YES : NO;
-	shiftFlag = flags & NSShiftKeyMask ? YES : NO;
+	capsFlag = flags & NSEventModifierFlagCapsLock ? YES : NO;
+	fnFlag = flags & NSEventModifierFlagFunction ? YES : NO;
+	shiftFlag = flags & NSEventModifierFlagShift ? YES : NO;
 }
 
 #pragma mark HWGrowlPluginProtocol
@@ -191,26 +191,26 @@ self.NAME ## Flag = NAME;
 #pragma mark HWGrowlPluginNotifierProtocol
 
 -(NSArray*)noteNames {
-	return [NSArray arrayWithObjects:@"CapsLockOn", @"CapsLockOff", @"FNPressed", @"FNReleased", @"ShiftPressed", @"ShiftReleased", nil];
+	return @[@"CapsLockOn", @"CapsLockOff", @"FNPressed", @"FNReleased", @"ShiftPressed", @"ShiftReleased"];
 }
 -(NSDictionary*)localizedNames {
-	return [NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"Caps Lock On", @""), @"CapsLockOn",
-			  NSLocalizedString(@"Caps Lock Off", @""), @"CapsLockOff",
-			  NSLocalizedString(@"FN Key Pressed", @""), @"FNPressed",
-			  NSLocalizedString(@"FN Key Released", @""), @"FNReleased",
-			  NSLocalizedString(@"Shift Key Pressed", @""), @"ShiftPressed",
-			  NSLocalizedString(@"Shift Key Released", @""), @"ShiftReleased", nil];
+	return @{@"CapsLockOn": NSLocalizedString(@"Caps Lock On", @""),
+			  @"CapsLockOff": NSLocalizedString(@"Caps Lock Off", @""),
+			  @"FNPressed": NSLocalizedString(@"FN Key Pressed", @""),
+			  @"FNReleased": NSLocalizedString(@"FN Key Released", @""),
+			  @"ShiftPressed": NSLocalizedString(@"Shift Key Pressed", @""),
+			  @"ShiftReleased": NSLocalizedString(@"Shift Key Released", @"")};
 }
 -(NSDictionary*)noteDescriptions {
-	return [NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"Caps Lock On", @""), @"CapsLockOn",
-			  NSLocalizedString(@"Caps Lock Off", @""), @"CapsLockOff",
-			  NSLocalizedString(@"FN Key Pressed", @""), @"FNPressed",
-			  NSLocalizedString(@"FN Key Released", @""), @"FNReleased",
-			  NSLocalizedString(@"Shift Key Pressed", @""), @"ShiftPressed",
-			  NSLocalizedString(@"Shift Key Released", @""), @"ShiftReleased", nil];
+	return @{@"CapsLockOn": NSLocalizedString(@"Caps Lock On", @""),
+			  @"CapsLockOff": NSLocalizedString(@"Caps Lock Off", @""),
+			  @"FNPressed": NSLocalizedString(@"FN Key Pressed", @""),
+			  @"FNReleased": NSLocalizedString(@"FN Key Released", @""),
+			  @"ShiftPressed": NSLocalizedString(@"Shift Key Pressed", @""),
+			  @"ShiftReleased": NSLocalizedString(@"Shift Key Released", @"")};
 }
 -(NSArray*)defaultNotifications {
-	return [NSArray arrayWithObjects:@"CapsLockOn", @"CapsLockOff", @"FNPressed", @"FNReleased", @"ShiftPressed", @"ShiftReleased", nil];
+	return @[@"CapsLockOn", @"CapsLockOff", @"FNPressed", @"FNReleased", @"ShiftPressed", @"ShiftReleased"];
 }
 
 @end

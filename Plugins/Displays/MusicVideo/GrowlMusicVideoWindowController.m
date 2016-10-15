@@ -17,21 +17,21 @@
 
 @implementation GrowlMusicVideoWindowController
 
-- (id) initWithNotification:(GrowlNotification *)note plugin:(GrowlDisplayPlugin *)aPlugin {
-	NSDictionary *configDict = [note configurationDict];
+- (instancetype) initWithNotification:(GrowlNotification *)note plugin:(GrowlDisplayPlugin *)aPlugin {
+	NSDictionary *configDict = note.configurationDict;
 
 	screenNumber = 0U;
 	if([configDict valueForKey:MUSICVIDEO_SCREEN_PREF]){
 		screenNumber = [[configDict valueForKey:MUSICVIDEO_SCREEN_PREF] intValue];
 	}
 	NSArray *screens = [NSScreen screens];
-	NSUInteger screensCount = [screens count];
+	NSUInteger screensCount = screens.count;
 	if (screensCount) {
-		[self setScreen:((screensCount >= (screenNumber + 1)) ? [screens objectAtIndex:screenNumber] : [screens objectAtIndex:0])];
+		self.screen = ((screensCount >= (screenNumber + 1)) ? screens[screenNumber] : screens[0]);
 	}
 	
 	NSRect sizeRect;
-	NSRect screen = [[self screen] frame];
+	NSRect screen = self.screen.frame;
 	int sizePref = MUSICVIDEO_SIZE_NORMAL;
 	if([configDict valueForKey:MUSICVIDEO_SIZE_PREF]){
 		sizePref = [[configDict valueForKey:MUSICVIDEO_SIZE_PREF] intValue];
@@ -45,28 +45,28 @@
 	frameHeight = sizeRect.size.height;
 
 	NSPanel *panel = [[NSPanel alloc] initWithContentRect:sizeRect
-												styleMask:NSBorderlessWindowMask
+												styleMask:NSWindowStyleMaskBorderless
 												  backing:NSBackingStoreBuffered
 													defer:YES];
-	NSRect panelFrame = [panel frame];
+	NSRect panelFrame = panel.frame;
 	[panel setBecomesKeyOnlyIfNeeded:YES];
 	[panel setHidesOnDeactivate:NO];
-	[panel setBackgroundColor:[NSColor clearColor]];
+	panel.backgroundColor = [NSColor clearColor];
 	[panel setLevel:GrowlVisualDisplayWindowLevel];
 	[panel setIgnoresMouseEvents:YES];
-	[panel setCollectionBehavior:NSWindowCollectionBehaviorCanJoinAllSpaces];
+	panel.collectionBehavior = NSWindowCollectionBehaviorCanJoinAllSpaces;
 	[panel setOpaque:NO];
 	[panel setHasShadow:NO];
 	[panel setCanHide:NO];
 	[panel setOneShot:YES];
-	[panel setDelegate:self];
+	panel.delegate = self;
 
 	GrowlMusicVideoWindowView *view = [[GrowlMusicVideoWindowView alloc] initWithFrame:panelFrame];
 
-	[view setTarget:self];
-	[view setAction:@selector(notificationClicked:)]; // Not used for now
+	view.target = self;
+	view.action = @selector(notificationClicked:); // Not used for now
 
-	[panel setContentView:view]; // retains subview
+	panel.contentView = view; // retains subview
 
 	[panel setFrameTopLeftPoint:screen.origin];
 
@@ -80,7 +80,7 @@
 		self.displayDuration = duration;
 		
 		//The default duration for transitions is far too long for the music video effect.
-		[self setTransitionDuration:0.3];
+		self.transitionDuration = 0.3;
 
 		MusicVideoEffectType effect = MUSICVIDEO_EFFECT_SLIDE;
 		if([configDict valueForKey:MUSICVIDEO_EFFECT_PREF]){
@@ -136,16 +136,16 @@
 }
 
 -(CGPoint)idealOriginInRect:(CGRect)rect {
-	return [[self screen] frame].origin;
+	return self.screen.frame.origin;
 }
 
 -(void)positionInRect:(CGRect)rect {
 	[super positionInRect:rect];
-	[[self window] setFrameTopLeftPoint:[self screen].frame.origin];
+	[self.window setFrameTopLeftPoint:self.screen.frame.origin];
 }
 
 -(NSString*)displayQueueKey {
-	return [NSString stringWithFormat:@"musicvideo-%@", [[self screen] screenIDString]];
+	return [NSString stringWithFormat:@"musicvideo-%@", self.screen.screenIDString];
 }
 
 @end

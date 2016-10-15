@@ -20,7 +20,7 @@ BOOL Growl_GetPSNForProcessWithBundlePath(NSString *bundlePath, ProcessSerialNum
 }
 
 BOOL Growl_ProcessExistsWithBundleIdentifier(NSString *bundleID) {
-	return ([[NSRunningApplication runningApplicationsWithBundleIdentifier:bundleID] count] > 0);
+	return ([NSRunningApplication runningApplicationsWithBundleIdentifier:bundleID].count > 0);
 }
 
 BOOL Growl_HelperAppIsRunning(void) {
@@ -38,17 +38,19 @@ static BOOL Growl_GetPSNForProcessWithBundle(NSString *bundleIDArg, NSString *bu
 
 	//One potential failure case: If both a bundle path and a bundle ID are passed, and a process that matches by bundle ID but not by path comes before a match by path, this loop will return the match by bundle ID.
 	//We *should* return the match by path, but covering that corner case while still supporting other modes would make this much slower.
-	while (GetNextProcess(&PSN) == noErr) {
-		NSDictionary *infoDict = (NSDictionary*) CFBridgingRelease(ProcessInformationCopyDictionary(&PSN, kProcessDictionaryIncludeAllInformationMask));
-		if (infoDict) {
-			NSString *bundlePath = [infoDict objectForKey:@"BundlePath"];
-			NSString *bundleID = [infoDict objectForKey:(NSString *)kCFBundleIdentifierKey];
+    NSArray *apps = [NSWorkspace sharedWorkspace].runningApplications;
 
-			isRunning = bundlePath && theBundlePath && [bundlePath isEqualToString:theBundlePath];
-			if (!isRunning)
-				isRunning = bundleID && theBundleIdentifier && [bundleID isEqualToString:theBundleIdentifier];
-		}
+    for (NSRunningApplication *a in apps) {
+    
+        NSString *bundlePath = a.bundleURL.path;
+        NSString *bundleID = a.bundleIdentifier;
 
+        GetProcessForPID([a processIdentifier], &PSN);
+
+        isRunning = bundlePath && theBundlePath && [bundlePath isEqualToString:theBundlePath];
+        if (!isRunning)
+            isRunning = bundleID && theBundleIdentifier && [bundleID isEqualToString:theBundleIdentifier];
+		
 		if (isRunning)
 			break;
 	}

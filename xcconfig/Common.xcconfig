@@ -6,6 +6,9 @@
 //  Copyright 2011 The Growl Project. All rights reserved.
 //
 
+CODE_SIGN_IDENTITY = Mac Developer
+DEVELOPMENT_TEAM = XXXXXXXXXX
+
 //compiler settings
 GCC_VERSION = com.apple.compilers.llvm.clang.1_0
 //GCC_OPTIMIZATION_LEVEL = 0
@@ -42,8 +45,6 @@ GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES
 GCC_WARN_SHADOW = YES
 GCC_WARN_UNUSED_FUNCTION = YES
 GCC_WARN_UNUSED_LABEL = YES
-
-GCC_TREAT_WARNINGS_AS_ERRORS = YES
 
 //plist
 INFOPLIST_OTHER_PREPROCESSOR_FLAGS = -traditional -CC -I "$(TARGET_BUILD_DIR)/include"

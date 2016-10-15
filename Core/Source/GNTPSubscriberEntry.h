@@ -39,21 +39,22 @@
 
 @property (nonatomic, strong) GrowlGNTPSubscriptionAttempt *subscriptionAttempt;
 
--(id)initWithName:(NSString*)name
-    addressString:(NSString*)addrString
-           domain:(NSString*)aDomain
-          address:(NSData*)addrData
-             uuid:(NSString*)aUUID
-     subscriberID:(NSString*)subID
-           remote:(BOOL)isRemote
-           manual:(BOOL)isManual
-              use:(BOOL)shouldUse
-      initialTime:(NSDate*)date
-       timeToLive:(NSInteger)ttl
-             port:(NSInteger)port;
+-(instancetype)initWithName:(NSString*)name
+              addressString:(NSString*)addrString
+                     domain:(NSString*)aDomain
+                    address:(NSData*)addrData
+                       uuid:(NSString*)aUUID
+               subscriberID:(NSString*)subID
+                     remote:(BOOL)isRemote
+                     manual:(BOOL)isManual
+                        use:(BOOL)shouldUse
+                initialTime:(NSDate*)date
+                 timeToLive:(NSInteger)ttl
+                       port:(NSInteger)port NS_DESIGNATED_INITIALIZER;
 
--(id)initWithDictionary:(NSDictionary*)dict;
--(id)initWithPacket:(GNTPSubscribePacket*)packet;
+-(instancetype)init NS_UNAVAILABLE;
+-(instancetype)initWithDictionary:(NSDictionary*)dict;
+-(instancetype)initWithPacket:(GNTPSubscribePacket*)packet;
 
 -(void)updateRemoteWithPacket:(GNTPSubscribePacket*)packet;
 -(void)updateLocalWithPacket:(GrowlGNTPCommunicationAttempt*)packet error:(BOOL)wasError;

@@ -22,14 +22,14 @@
 #define GrowliCalHighBorderColor		@"iCal-Priority-High-Border-Color"
 #define GrowliCalEmergencyBorderColor	@"iCal-Priority-Emergency-Border-Color"*/
 
-typedef enum {
+typedef NS_ENUM(NSInteger, GrowliCalColorType) {
 	GrowliCalPurple = 0,
 	GrowliCalPink,
 	GrowliCalGreen,
 	GrowliCalBlue,
 	GrowliCalOrange,
 	GrowliCalRed
-} GrowliCalColorType;
+};
 
 #define GrowliCalColor			@"iCal-Color"
 

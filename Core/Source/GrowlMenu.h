@@ -20,10 +20,8 @@ enum {
 @interface GrowlMenu : NSObject <GrowlApplicationBridgeDelegate> {
 	int							pid;
 	GrowlPreferencesController	*preferences;
-	NSStatusItem				*statusItem;
-   NSMenu                  *menu;
    
-   BOOL                    keepPulsing;
+	BOOL                    keepPulsing;
 }
 
 - (void)toggleStatusMenu:(BOOL)show;

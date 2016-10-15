@@ -11,7 +11,7 @@ void GrowlGetSystemVersion(NSUInteger *outMajor, NSUInteger *outMinor, NSUIntege
 {
     if (NSAppKitVersionNumber >= NSAppKitVersionNumber10_10)
     {
-        NSOperatingSystemVersion version = [[NSProcessInfo processInfo] operatingSystemVersion];
+        NSOperatingSystemVersion version = [NSProcessInfo processInfo].operatingSystemVersion;
         if (outMajor) *outMajor = version.majorVersion;
         if (outMinor) *outMinor = version.minorVersion;
         if (outIncremental) *outIncremental = version.patchVersion;

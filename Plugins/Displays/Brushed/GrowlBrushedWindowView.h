@@ -33,7 +33,10 @@
 	NSRange				titleRange;
 }
 
-- (id) initWithFrame:(NSRect)frameRect configurationDict:(NSDictionary*)configDict;
+- (instancetype)initWithFrame:(NSRect)frameRect NS_UNAVAILABLE;
+- (instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
+
+- (instancetype) initWithFrame:(NSRect)frameRect configurationDict:(NSDictionary*)configDict NS_DESIGNATED_INITIALIZER;
 
 - (void) setIcon:(NSImage *)icon;
 - (void) setTitle:(NSString *)title;

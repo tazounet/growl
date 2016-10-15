@@ -71,7 +71,7 @@
 @synthesize usernameLabel;
 @synthesize passwordLabel;
 
--(id)initWithBundle:(NSBundle *)bundle {
+-(instancetype)initWithBundle:(NSBundle *)bundle {
 	if((self = [super initWithBundle:bundle])){
 		self.fromLabel = NSLocalizedStringFromTableInBundle(@"From:", @"Localizable", bundle, @"Title for from field");
 		self.toLabel = NSLocalizedStringFromTableInBundle(@"To:", @"Localizable", bundle, @"Title for to field");
@@ -152,7 +152,7 @@
 	return value;
 }
 -(void)setServerTlsMode:(NSInteger)value {
-	[self setConfigurationValue:[NSNumber numberWithInteger:value] forKey:SMTPServerTLSModeKey];
+	[self setConfigurationValue:@(value) forKey:SMTPServerTLSModeKey];
 }
 
 -(BOOL)serverAuthFlag {
@@ -162,7 +162,7 @@
 	return value;
 }
 -(void)setServerAuthFlag:(BOOL)value {
-	[self setConfigurationValue:[NSNumber numberWithBool:value] forKey:SMTPServerAuthFlagKey];
+	[self setConfigurationValue:@(value) forKey:SMTPServerAuthFlagKey];
 }
 
 -(NSString*)serverAuthUsername {
@@ -175,10 +175,10 @@
 }
 
 -(NSString*)serverAuthPassword {
-	return [GrowlKeychainUtilities passwordForServiceName:@"Growl-MailMe" accountName:[self configurationID]];
+	return [GrowlKeychainUtilities passwordForServiceName:@"Growl-MailMe" accountName:self.configurationID];
 }
 -(void)setServerAuthPassword:(NSString*)value {
-	[GrowlKeychainUtilities setPassword:value forService:@"Growl-MailMe" accountName:[self configurationID]];
+	[GrowlKeychainUtilities setPassword:value forService:@"Growl-MailMe" accountName:self.configurationID];
 }
 
 -(NSString*)messageFrom {

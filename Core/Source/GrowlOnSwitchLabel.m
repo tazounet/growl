@@ -12,11 +12,11 @@
 
 - (void)mouseUp:(NSEvent*)sender
 {
-	if(![self isEnabled])
+	if(!self.enabled)
 		return;
 	
-    if(CGRectContainsPoint([self frame], [self.superview convertPoint:[sender locationInWindow] fromView:nil]))
-        [self sendAction:[self action] to:[self target]];
+    if(CGRectContainsPoint(self.frame, [self.superview convertPoint:sender.locationInWindow fromView:nil]))
+        [self sendAction:self.action to:self.target];
 }
 
 @end

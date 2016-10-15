@@ -36,7 +36,7 @@
 @synthesize slideEffect;
 @synthesize fadeEffect;
 
--(id)init {
+-(instancetype)init {
    if((self = [super init])){
       NSBundle *frameworkBundle = [NSBundle bundleForClass:[self class]];
       

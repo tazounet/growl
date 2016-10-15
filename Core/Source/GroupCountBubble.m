@@ -10,7 +10,7 @@
 
 @implementation GroupCountBubble
 
-- (id)initWithFrame:(NSRect)frame
+- (instancetype)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
@@ -26,7 +26,7 @@
     NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:self.bounds xRadius:radius yRadius:radius];
     [[NSColor colorWithCalibratedWhite:.25 alpha:.5] setFill];
     [[NSColor colorWithCalibratedWhite:.15 alpha:.6] setStroke];
-    [path setLineWidth:.5];
+    path.lineWidth = .5;
     [path fill];
     [path stroke];
 }

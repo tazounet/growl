@@ -16,9 +16,9 @@
     NSArray *growlInstances = [NSRunningApplication runningApplicationsWithBundleIdentifier:@"com.Growl.GrowlHelperApp"];
     if(!growlInstances.count)
     {
-        NSURL* appURL = [[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"../../../../Contents/MacOS/Growl" isDirectory:NO] URLByResolvingSymlinksInPath];
+        NSURL* appURL = [[NSBundle mainBundle].bundleURL URLByAppendingPathComponent:@"../../../../Contents/MacOS/Growl" isDirectory:NO].URLByResolvingSymlinksInPath;
         NSLog(@"Launching Growl at URL: %@", appURL);
-        NSDictionary* conf = [NSDictionary dictionary];
+        NSDictionary* conf = @{};
         NSError* error = nil;
         
         [[NSWorkspace sharedWorkspace] launchApplicationAtURL:appURL options:NSWorkspaceLaunchDefault configuration:conf error:&error];

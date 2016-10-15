@@ -12,7 +12,7 @@
 
 @synthesize validUntilLabel;
 
--(id)initWithCoder:(NSCoder *)aDecoder {
+-(instancetype)initWithCoder:(NSCoder *)aDecoder {
    if((self = [super initWithCoder:aDecoder])){
       self.validUntilLabel = NSLocalizedString(@"Valid until:", @"Column title for how long a subscriber is valid for");
    }

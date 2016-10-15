@@ -30,18 +30,18 @@
 
 -(void)setWithNoteDictionary:(NSDictionary*)noteDict
 {
-    NSString *appName = [noteDict objectForKey:GROWL_APP_ID];
+    NSString *appName = noteDict[GROWL_APP_ID];
     NSString *host = [noteDict valueForKey:GROWL_NOTIFICATION_GNTP_SENT_BY];
     NSString *appHost;
     BOOL isLocalHost = NO;
     
     if ([host hasSuffix:@".local"]) {
-        host = [host substringToIndex:([host length] - [@".local" length])];
+        host = [host substringToIndex:(host.length - (@".local").length)];
     }
     if(!host){
         isLocalHost = YES;
     }else {
-        isLocalHost = [host isLocalHost];
+        isLocalHost = host.isLocalHost;
     }
     if(isLocalHost){
         appHost = appName;
@@ -50,47 +50,47 @@
     }
     
    self.AppID = appHost;
-   self.ApplicationName = [noteDict objectForKey:GROWL_APP_NAME];
-   self.Description = [noteDict objectForKey:GROWL_NOTIFICATION_DESCRIPTION];
-   self.Name = [noteDict objectForKey:GROWL_NOTIFICATION_NAME];
+   self.ApplicationName = noteDict[GROWL_APP_NAME];
+   self.Description = noteDict[GROWL_NOTIFICATION_DESCRIPTION];
+   self.Name = noteDict[GROWL_NOTIFICATION_NAME];
    self.Time = [NSDate date];
-   self.Title = [noteDict objectForKey:GROWL_NOTIFICATION_TITLE];
-   self.Priority = [noteDict objectForKey:GROWL_NOTIFICATION_PRIORITY];
+   self.Title = noteDict[GROWL_NOTIFICATION_TITLE];
+   self.Priority = noteDict[GROWL_NOTIFICATION_PRIORITY];
    
    /* Done so that when a notification lacks a regular identifier for coaelescing,
     * it is given a unique signature in the database so it isnt coalesced over
     */
-   if([noteDict objectForKey:GROWL_NOTIFICATION_IDENTIFIER])
-      self.Identifier = [noteDict objectForKey:GROWL_NOTIFICATION_IDENTIFIER];
+   if(noteDict[GROWL_NOTIFICATION_IDENTIFIER])
+      self.Identifier = noteDict[GROWL_NOTIFICATION_IDENTIFIER];
    else 
-      self.Identifier = [noteDict objectForKey:GROWL_NOTIFICATION_INTERNAL_ID];
+      self.Identifier = noteDict[GROWL_NOTIFICATION_INTERNAL_ID];
    
    //Check for the image;
    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Image"];
    
-   NSData *imageData = [noteDict objectForKey:GROWL_NOTIFICATION_ICON_DATA];
+   NSData *imageData = noteDict[GROWL_NOTIFICATION_ICON_DATA];
 	if(imageData && [imageData isKindOfClass:[NSImage class]])
-		imageData = [(NSImage*)imageData PNGRepresentation];
+		imageData = ((NSImage*)imageData).PNGRepresentation;
 
 	if(imageData && [imageData isKindOfClass:[NSData class]])
 	{
 		NSString *hash = [self hashForData:imageData];
 		
 		NSPredicate *predicate = [NSPredicate predicateWithFormat:@"Checksum == %@", hash];
-		[request setPredicate:predicate];
+		request.predicate = predicate;
 		
 		NSError *error = nil;
-		NSArray *cacheResult = [[self managedObjectContext] executeFetchRequest:request error:&error];
+		NSArray *cacheResult = [self.managedObjectContext executeFetchRequest:request error:&error];
 		if(error){
-			NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+			NSLog(@"Unresolved error %@, %@", error, error.userInfo);
 			return;
 		}
 		
-		if ([cacheResult count] > 0) {
-			self.Image = [cacheResult objectAtIndex:0];
+		if (cacheResult.count > 0) {
+			self.Image = cacheResult[0];
 		}else{
 			GrowlImageCache *newCache = [NSEntityDescription insertNewObjectForEntityForName:@"Image"
-																						 inManagedObjectContext:[self managedObjectContext]];
+																						 inManagedObjectContext:self.managedObjectContext];
 			[newCache setImage:imageData andHash:hash];
 			self.Image = newCache;
 		}
@@ -109,7 +109,7 @@
     unsigned char *digest = malloc(sizeof(unsigned char)*CC_MD5_DIGEST_LENGTH);
     if(digest)
     {
-        CC_MD5([data bytes], (unsigned int)[data length], digest);
+        CC_MD5(data.bytes, (unsigned int)data.length, digest);
         identifier = [NSString stringWithFormat: @"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
                            digest[0], digest[1], 
                            digest[2], digest[3],

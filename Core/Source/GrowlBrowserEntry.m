@@ -22,13 +22,13 @@
 @synthesize key = _key;
 @synthesize lastKnownAddress = _lastKnownAddress;
 
-- (id) init {
+- (instancetype) init {
 	
 	if ((self = [super init])) {
 		[self addObserver:self forKeyPath:@"use" options:NSKeyValueObservingOptionNew context:(__bridge void *)(self)];
 		[self addObserver:self forKeyPath:@"active" options:NSKeyValueObservingOptionNew context:(__bridge void *)(self)];
 		[self addObserver:self forKeyPath:@"computerName" options:NSKeyValueObservingOptionNew context:(__bridge void *)(self)];
-      [self setUuid:[[NSProcessInfo processInfo] globallyUniqueString]];
+      self.uuid = [NSProcessInfo processInfo].globallyUniqueString;
       didPasswordLookup = NO;
       
       self.lastKnownAddress = nil;
@@ -36,33 +36,33 @@
 	return self;
 }
 
-- (id) initWithDictionary:(NSDictionary *)dict {
+- (instancetype) initWithDictionary:(NSDictionary *)dict {
 	if ((self = [self init])) {
 		NSString *uuid = [dict valueForKey:@"uuid"];
 		if(!uuid)
-			uuid = [[NSProcessInfo processInfo] globallyUniqueString];        
-        [self setUuid:uuid];
-		[self setComputerName:[dict valueForKey:@"computer"]];
-		[self setUse:[[dict valueForKey:@"use"] boolValue]];
-		[self setActive:[[dict valueForKey:@"active"] boolValue]];
-      [self setManualEntry:[[dict valueForKey:@"manualEntry"] boolValue]];
+			uuid = [NSProcessInfo processInfo].globallyUniqueString;        
+        self.uuid = uuid;
+		self.computerName = [dict valueForKey:@"computer"];
+		self.use = [[dict valueForKey:@"use"] boolValue];
+		self.active = [[dict valueForKey:@"active"] boolValue];
+      self.manualEntry = [[dict valueForKey:@"manualEntry"] boolValue];
       if(_manualEntry)
          self.active = YES;
-      [self setDomain:[dict valueForKey:@"domain"]];
+      self.domain = [dict valueForKey:@"domain"];
       [self updateKey];
    }
 
 	return self;
 }
 
-- (id) initWithComputerName:(NSString *)name {
+- (instancetype) initWithComputerName:(NSString *)name {
 	if ((self = [self init])) {		
-        [self setUuid:[[NSProcessInfo processInfo] globallyUniqueString]];
-		[self setComputerName:name];
+        self.uuid = [NSProcessInfo processInfo].globallyUniqueString;
+		self.computerName = name;
 		[self setUse:NO];
 		[self setActive:YES];
       [self setManualEntry:NO];
-      [self setDomain:@"local."];
+      self.domain = @"local.";
       [self updateKey];
 	}
 
@@ -79,15 +79,15 @@
 }
 
 - (void)updateKey {
-   if(![self password] || [[self password] isEqualToString:@""])
+   if(!self.password || [self.password isEqualToString:@""])
       self.key = [[GNTPKey alloc] initWithPassword:@"" hashAlgorithm:GNTPNoHash encryptionAlgorithm:GNTPNone];
    else
-      self.key = [[GNTPKey alloc] initWithPassword:[self password] hashAlgorithm:GNTPSHA512 encryptionAlgorithm:GNTPNone];
+      self.key = [[GNTPKey alloc] initWithPassword:self.password hashAlgorithm:GNTPSHA512 encryptionAlgorithm:GNTPNone];
 }
 
 - (NSString *) password {
-	if (!didPasswordLookup && [self uuid]) {
-      password = [GrowlKeychainUtilities passwordForServiceName:GrowlOutgoingNetworkPassword accountName:[self uuid]];
+	if (!didPasswordLookup && self.uuid) {
+      password = [GrowlKeychainUtilities passwordForServiceName:GrowlOutgoingNetworkPassword accountName:self.uuid];
 		
 		didPasswordLookup = YES;
 	}
@@ -103,7 +103,7 @@
    }
    
    [self updateKey];
-   [GrowlKeychainUtilities setPassword:password forService:GrowlOutgoingNetworkPassword accountName:[self uuid]];
+   [GrowlKeychainUtilities setPassword:password forService:GrowlOutgoingNetworkPassword accountName:self.uuid];
 	
 	[owner writeForwardDestinations];
 }
@@ -130,7 +130,7 @@
    _active = active;
    //If we are a bonjour entry, nil out address data on inactivate/reactivate to ensure we check again
    //Same if we are a domain name based manual entry
-   if(!_manualEntry || [_name Growl_isLikelyDomainName])
+   if(!_manualEntry || _name.Growl_isLikelyDomainName)
       self.lastKnownAddress = nil;
 }
 
@@ -138,17 +138,17 @@
    _use = use;
    //If we are a bonjour entry, nil out address data on set of use to ensure we check again
    //Same if we are a domain name based manual entry
-   if(!_manualEntry || ![_name Growl_isLikelyIPAddress])
+   if(!_manualEntry || !_name.Growl_isLikelyIPAddress)
       self.lastKnownAddress = nil;
 }
 
 - (NSMutableDictionary *) properties {
-	return [NSMutableDictionary dictionaryWithObjectsAndKeys:[self uuid], @"uuid",
-                                                             [self computerName], @"computer", 
-                                                             [NSNumber numberWithBool:[self use]], @"use",
-                                                             [NSNumber numberWithBool:[self active]], @"active",
-                                                             [NSNumber numberWithBool:[self manualEntry]], @"manualEntry",
-                                                             [self domain], @"domain", nil];
+	return [NSMutableDictionary dictionaryWithObjectsAndKeys:self.uuid, @"uuid",
+                                                             self.computerName, @"computer", 
+                                                             @(self.use), @"use",
+                                                             @(self.active), @"active",
+                                                             @(self.manualEntry), @"manualEntry",
+                                                             self.domain, @"domain", nil];
 }
 
 -(BOOL)validateValue:(id *)ioValue forKey:(NSString *)inKey error:(NSError **)outError
@@ -157,13 +157,13 @@
         return [super validateValue:ioValue forKey:inKey error:outError];
     
     NSString *newString = (NSString*)*ioValue;
-    if(([newString Growl_isLikelyIPAddress] || [newString Growl_isLikelyDomainName]) && 
-       ![newString isLocalHost]){
+    if((newString.Growl_isLikelyIPAddress || newString.Growl_isLikelyDomainName) && 
+       !newString.isLocalHost){
         return YES;
     }
     
     NSString *description;
-    if([newString isLocalHost]){
+    if(newString.isLocalHost){
         NSLog(@"Error, don't enter localhost in any of its forms");
         description = NSLocalizedString(@"Please do not enter localhost, Growl does not support forwarding to itself.", @"Localhost in a forwarding destination is not allowed");
     }else{
@@ -171,8 +171,7 @@
         description = NSLocalizedString(@"Please enter a valid IPv4 or IPv6 address, or a valid domain name", @"A valid IP or domain is needed to forward to");
     }
     
-    NSDictionary *eDict = [NSDictionary dictionaryWithObject:description
-                                                      forKey:NSLocalizedDescriptionKey];
+    NSDictionary *eDict = @{NSLocalizedDescriptionKey: description};
     if(outError != NULL)
         *outError = [[NSError alloc] initWithDomain:@"GrowlNetworking" code:2 userInfo:eDict];
     return NO;

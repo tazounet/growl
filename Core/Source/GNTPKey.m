@@ -17,14 +17,14 @@ NSData *ComputeHash(NSData *data, GrowlGNTPHashingAlgorithm algorithm);
 NSString *HexEncode(NSData *data)
 {
     NSMutableString *hex = [NSMutableString string];
-	unsigned char *bytes = (unsigned char *)[data bytes];
+	unsigned char *bytes = (unsigned char *)data.bytes;
     char temp[3];
     NSUInteger i = 0;
 	
-    for (i = 0; i < [data length]; i++) {
+    for (i = 0; i < data.length; i++) {
         temp[0] = temp[1] = temp[2] = 0;
         (void)sprintf(temp, "%02x", bytes[i]);
-        [hex appendString:[NSString stringWithUTF8String:temp]];
+        [hex appendString:@(temp)];
     }
 	
     return hex;
@@ -34,10 +34,10 @@ NSMutableData *HexUnencode(NSString* string)
 {
 	NSMutableData *data = [NSMutableData data];
 	
-	for(NSUInteger i = 0; i < [string length]; i+=2)
+	for(NSUInteger i = 0; i < string.length; i+=2)
 	{
 		NSString *substring = [string substringWithRange:NSMakeRange(i, 2)];
-		char character = (char)(strtol([substring UTF8String], NULL, 16));
+		char character = (char)(strtol(substring.UTF8String, NULL, 16));
 		
 		[data appendBytes:&character length:sizeof(char)];
 	}
@@ -47,8 +47,8 @@ NSMutableData *HexUnencode(NSString* string)
 NSData *ComputeHash(NSData *data, GrowlGNTPHashingAlgorithm algorithm)
 {
 	NSData *result = nil;
-	NSUInteger length = [data length];
-	unsigned char *bytes = (unsigned char *)[data bytes];
+	NSUInteger length = data.length;
+	unsigned char *bytes = (unsigned char *)data.bytes;
 	static const CC_LONG Growl_CC_LONG_Maximum = ~(CC_LONG)0;
 	switch (algorithm)
 	{
@@ -128,13 +128,11 @@ NSData *ComputeHash(NSData *data, GrowlGNTPHashingAlgorithm algorithm)
 + (BOOL)isSupportedHashAlgorithm:(NSString*)algorithm
 {
 	BOOL result = NO;
-	NSArray *encryptionAlgorithms = [NSArray arrayWithObjects:
-									 GrowlGNTPNone, 
+	NSArray *encryptionAlgorithms = @[GrowlGNTPNone, 
 									 GrowlGNTPMD5, 
 									 GrowlGNTPSHA1, 
 									 GrowlGNTPSHA256, 
-									 GrowlGNTPSHA512, 
-									 nil];
+									 GrowlGNTPSHA512];
 	for(NSString *encryptionAlgorithm in encryptionAlgorithms)
 		if([encryptionAlgorithm caseInsensitiveCompare:algorithm] == NSOrderedSame)
 		{
@@ -147,12 +145,8 @@ NSData *ComputeHash(NSData *data, GrowlGNTPHashingAlgorithm algorithm)
 + (BOOL)isSupportedEncryptionAlgorithm:(NSString*)algorithm
 {
 	BOOL result = NO;
-	NSArray *encryptionAlgorithms = [NSArray arrayWithObjects:
-									 GrowlGNTPNone, 
-									 /*GrowlGNTPAES, 
-									 GrowlGNTPDES, 
-									 GrowlGNTP3DES,*/ 
-									 nil];
+
+	NSArray *encryptionAlgorithms = @[GrowlGNTPNone]; /* GrowlGNTPAES, GrowlGNTPDES, GrowlGNTP3DES,*/
 	for(NSString *encryptionAlgorithm in encryptionAlgorithms)
 		if([encryptionAlgorithm caseInsensitiveCompare:algorithm] == NSOrderedSame)
 		{
@@ -194,13 +188,22 @@ NSData *ComputeHash(NSData *data, GrowlGNTPHashingAlgorithm algorithm)
 	return result;	
 }
 
-- (id)initWithPassword:(NSString*)password hashAlgorithm:(GrowlGNTPHashingAlgorithm)hashAlgorithm encryptionAlgorithm:(GrowlGNTPEncryptionAlgorithm)encryptionAlgorithm
+- (instancetype)init
+{
+    self = [self initWithPassword:@""
+                    hashAlgorithm:GNTPNoHash
+              encryptionAlgorithm:GNTPNone];
+
+    return self;
+}
+
+- (instancetype)initWithPassword:(NSString*)password hashAlgorithm:(GrowlGNTPHashingAlgorithm)hashAlgorithm encryptionAlgorithm:(GrowlGNTPEncryptionAlgorithm)encryptionAlgorithm
 {
 	if((self = [super init]))
 	{
-		[self setPassword:password];
-		[self setHashAlgorithm:hashAlgorithm];
-		[self setEncryptionAlgorithm:encryptionAlgorithm];
+		self.password = password;
+		self.hashAlgorithm = hashAlgorithm;
+		self.encryptionAlgorithm = encryptionAlgorithm;
 	}
 	return self;
 }
@@ -223,26 +226,26 @@ NSData *ComputeHash(NSData *data, GrowlGNTPHashingAlgorithm algorithm)
 - (void)generateSalt
 {
 	NSData *salt = [GNTPKey generateSalt:16];
-	[self setSalt:salt];
+	self.salt = salt;
 }
 
 - (void)generateKey
 {
 	//NSMutableData *keyBasis = [NSMutableData dataWithData:[[self password] dataUsingEncoding:NSUTF8StringEncoding]];
-   NSMutableData *keyBasis = [[[self password] dataUsingEncoding:NSUTF8StringEncoding] mutableCopy];
-	[keyBasis appendData:[self salt]];
-	NSData *keyBytes = ComputeHash(keyBasis, [self hashAlgorithm]);
-	[self setEncryptionKey:keyBytes];
-	NSData *keyHashBytes = ComputeHash(keyBytes, [self hashAlgorithm]);
+   NSMutableData *keyBasis = [[self.password dataUsingEncoding:NSUTF8StringEncoding] mutableCopy];
+	[keyBasis appendData:self.salt];
+	NSData *keyBytes = ComputeHash(keyBasis, self.hashAlgorithm);
+	self.encryptionKey = keyBytes;
+	NSData *keyHashBytes = ComputeHash(keyBytes, self.hashAlgorithm);
 	
-	[self setKeyHash:keyHashBytes];
-	[self setIV:[self generateIV]];
+	self.keyHash = keyHashBytes;
+	self.IV = self.generateIV;
 }
 
 - (NSString*)hashAlgorithmString
 {
 	NSString *result = nil;
-	switch ([self hashAlgorithm])
+	switch (self.hashAlgorithm)
 	{
 		case GNTPMD5:
 			result = GrowlGNTPMD5;
@@ -267,7 +270,7 @@ NSData *ComputeHash(NSData *data, GrowlGNTPHashingAlgorithm algorithm)
 - (NSString*)encryptionAlgorithmString
 {
 	NSString *result = nil;
-	switch ([self encryptionAlgorithm])
+	switch (self.encryptionAlgorithm)
 	{
 		case GNTPAES:
 			result = GrowlGNTPAES;
@@ -294,7 +297,7 @@ NSData *ComputeHash(NSData *data, GrowlGNTPHashingAlgorithm algorithm)
 	NSUInteger ivSize = -1;
 	SEL algorithm = nil;
 	
-	switch([self encryptionAlgorithm])
+	switch(self.encryptionAlgorithm)
 	{
       case GNTPNone:
          result = bytes;
@@ -304,10 +307,10 @@ NSData *ComputeHash(NSData *data, GrowlGNTPHashingAlgorithm algorithm)
 			break;
 	}
 	
-	if([[self keyHash] length] > keySize)
+	if(self.keyHash.length > keySize)
 	{
-		if(![self IV] || [[self IV] length] < ivSize)
-			[self setIV:[self generateIV]];
+		if(!self.IV || self.IV.length < ivSize)
+			self.IV = self.generateIV;
 
 		result = [self performSelector:algorithm withObject:bytes];
 	}
@@ -322,7 +325,7 @@ NSData *ComputeHash(NSData *data, GrowlGNTPHashingAlgorithm algorithm)
 	NSUInteger ivSize = -1;
 	SEL algorithm = nil;
 	
-	switch([self encryptionAlgorithm])
+	switch(self.encryptionAlgorithm)
 	{
       case GNTPNone:
          result = bytes;
@@ -332,10 +335,10 @@ NSData *ComputeHash(NSData *data, GrowlGNTPHashingAlgorithm algorithm)
 			break;
 	}
 	
-	if([[self keyHash] length] > keySize)
+	if(self.keyHash.length > keySize)
 	{
-		if(![self IV] || [[self IV] length] < ivSize)
-			[self setIV:[self generateIV]];
+		if(!self.IV || self.IV.length < ivSize)
+			self.IV = self.generateIV;
 		
 		result = [self performSelector:algorithm withObject:bytes];
 		//NSLog(@"%@ %@ %@", [self keyHash], [self IV], [self salt], HexUnencode(HexEncode(result)));
@@ -350,7 +353,7 @@ NSData *ComputeHash(NSData *data, GrowlGNTPHashingAlgorithm algorithm)
 	const 
 	//EVP_CIPHER *cipher = nil;
 	NSInteger blockSize = 0;
-	switch ([self encryptionAlgorithm])
+	switch (self.encryptionAlgorithm)
 	{
 		case GNTPNone:
 		default:
@@ -377,20 +380,20 @@ NSData *ComputeHash(NSData *data, GrowlGNTPHashingAlgorithm algorithm)
 
 - (NSString*)key
 {
-    if([self hashAlgorithm] == GNTPNoHash)
+    if(self.hashAlgorithm == GNTPNoHash)
         return GrowlGNTPNone;
-	NSString *algorithm = [self hashAlgorithmString];
-	NSString *keyHash = HexEncode([self keyHash]);
-	NSString *salt = HexEncode([self salt]);
+	NSString *algorithm = self.hashAlgorithmString;
+	NSString *keyHash = HexEncode(self.keyHash);
+	NSString *salt = HexEncode(self.salt);
 	return [NSString stringWithFormat:@"%@:%@.%@", algorithm, keyHash, salt];
 }
 
 - (NSString*)encryption
 {
-	NSString *encryptionAlgorithm = [self encryptionAlgorithmString];
+	NSString *encryptionAlgorithm = self.encryptionAlgorithmString;
 	//if(![self IV])
 	//	[self setIV:[self generateIV]];
-	NSString *initializationValue = HexEncode([self IV]);
+	NSString *initializationValue = HexEncode(self.IV);
 	return [NSString stringWithFormat:@"%@%@", encryptionAlgorithm, ([encryptionAlgorithm isEqual:GrowlGNTPNone] ? @"" : [NSString stringWithFormat:@":%@", initializationValue])];
 }
 

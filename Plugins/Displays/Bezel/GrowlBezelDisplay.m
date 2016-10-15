@@ -12,7 +12,7 @@
 
 @implementation GrowlBezelDisplay
 
-- (id) init {
+- (instancetype) init {
 	if ((self = [super init])) {
 		windowControllerClass = NSClassFromString(@"GrowlBezelWindowController");
 		self.prefDomain = GrowlBezelPrefDomain;

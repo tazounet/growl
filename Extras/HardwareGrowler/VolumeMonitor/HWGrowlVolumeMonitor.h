@@ -22,9 +22,10 @@
 + (VolumeInfo *) volumeInfoForMountWithPath:(NSString *)aPath;
 + (VolumeInfo *) volumeInfoForUnmountWithPath:(NSString *)aPath;
 
-- (id) initForMountWithPath:(NSString *)aPath;
-- (id) initForUnmountWithPath:(NSString *)aPath;
-- (id) initWithPath:(NSString *)aPath;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype) initForMountWithPath:(NSString *)aPath;
+- (instancetype) initForUnmountWithPath:(NSString *)aPath;
+- (instancetype) initWithPath:(NSString *)aPath NS_DESIGNATED_INITIALIZER;
 
 @end
 

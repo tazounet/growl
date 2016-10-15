@@ -51,22 +51,22 @@ static const NSSize iconSize = { 1024.0f, 1024.0f };
 @implementation GrowlNotifyScriptCommand
 
 - (id) performDefaultImplementation {
-	NSDictionary *args = [self evaluatedArguments];
+	NSDictionary *args = self.evaluatedArguments;
 
 	//should validate params better!
-	NSString *title             = [args objectForKey:KEY_TITLE];
-	NSString *desc              = [args objectForKey:KEY_DESC];
-	NSNumber *sticky            = [args objectForKey:KEY_STICKY];
-	NSNumber *priority          = [args objectForKey:KEY_PRIORITY];
-	NSString *imageUrl          = [args objectForKey:KEY_IMAGE_URL];
-	NSString *iconOfFile        = [args objectForKey:KEY_ICON_FILE];
-	NSString *iconOfApplication = [args objectForKey:KEY_ICON_APP_NAME];
-	NSData   *imageData         = [args objectForKey:KEY_IMAGE];
-	NSData   *pictureData       = [args objectForKey:KEY_PICTURE];
-	NSString *appName           = [args objectForKey:KEY_APP_NAME];
-	NSString *notifName         = [args objectForKey:KEY_NOTIFICATION_NAME];
-	NSString *notifIdentifier   = [args objectForKey:KEY_NOTIFICATION_IDENTIFIER];
-   NSString *callbackTarget    = [args objectForKey:KEY_NOTIFICATION_CLICKBACK_TARGET];
+	NSString *title             = args[KEY_TITLE];
+	NSString *desc              = args[KEY_DESC];
+	NSNumber *sticky            = args[KEY_STICKY];
+	NSNumber *priority          = args[KEY_PRIORITY];
+	NSString *imageUrl          = args[KEY_IMAGE_URL];
+	NSString *iconOfFile        = args[KEY_ICON_FILE];
+	NSString *iconOfApplication = args[KEY_ICON_APP_NAME];
+	NSData   *imageData         = args[KEY_IMAGE];
+	NSData   *pictureData       = args[KEY_PICTURE];
+	NSString *appName           = args[KEY_APP_NAME];
+	NSString *notifName         = args[KEY_NOTIFICATION_NAME];
+	NSString *notifIdentifier   = args[KEY_NOTIFICATION_IDENTIFIER];
+	NSString *callbackTarget    = args[KEY_NOTIFICATION_CLICKBACK_TARGET];
 
 	if (!title || ![title isKindOfClass:[NSString class]]) title = @"";
 	if (!desc || ![desc isKindOfClass:[NSString class]]) desc = @"";
@@ -79,24 +79,19 @@ static const NSSize iconSize = { 1024.0f, 1024.0f };
 		nil];
 
 	if (priority)
-		[noteDict setObject:priority        forKey:GROWL_NOTIFICATION_PRIORITY];
+		noteDict[GROWL_NOTIFICATION_PRIORITY] = priority;
 
 	if (sticky)
-		[noteDict setObject:sticky          forKey:GROWL_NOTIFICATION_STICKY];
+		noteDict[GROWL_NOTIFICATION_STICKY] = sticky;
 
 	if (notifIdentifier)
-		[noteDict setObject:notifIdentifier forKey:GROWL_NOTIFICATION_IDENTIFIER];
+		noteDict[GROWL_NOTIFICATION_IDENTIFIER] = notifIdentifier;
    
    if (callbackTarget)
-      [noteDict setObject:callbackTarget forKey:GROWL_NOTIFICATION_CALLBACK_URL_TARGET];
+      noteDict[GROWL_NOTIFICATION_CALLBACK_URL_TARGET] = callbackTarget;
 
-	NSAppleEventDescriptor *addrDesc = [[self appleEvent] attributeDescriptorForKeyword:keyAddressAttr];
-	NSData *psnData = [[addrDesc coerceToDescriptorType:typeProcessSerialNumber] data];
-	if (psnData) {
-		pid_t pid;
-		GetProcessPID([psnData bytes], &pid);
-      [noteDict setObject:[NSNumber numberWithInteger:pid] forKey:GROWL_APP_PID];
-	}
+    int pid = [NSProcessInfo processInfo].processIdentifier;
+    noteDict[GROWL_APP_PID] = @(pid);
 
 	@try {
 		NSImage *icon = nil;
@@ -116,7 +111,7 @@ static const NSSize iconSize = { 1024.0f, 1024.0f };
 				//NSLog(@"That's a no go on that file's icon.");
 				return nil;
 			}
-			icon = [[NSWorkspace sharedWorkspace] iconForFile:[url path]];
+			icon = [[NSWorkspace sharedWorkspace] iconForFile:url.path];
 		} else if (iconOfApplication) {
 			//Command used the "icon of application" argument
 			icon = [[NSWorkspace sharedWorkspace] iconForApplication:iconOfApplication];
@@ -127,8 +122,8 @@ static const NSSize iconSize = { 1024.0f, 1024.0f };
 		}
 
 		if (icon) {
-			[icon setSize:iconSize];
-			[noteDict setObject:[icon PNGRepresentation] forKey:GROWL_NOTIFICATION_ICON_DATA];
+			icon.size = iconSize;
+			noteDict[GROWL_NOTIFICATION_ICON_DATA] = icon.PNGRepresentation;
 		}
 
 		[[GrowlApplicationController sharedController] dispatchNotificationWithDictionary:noteDict];
@@ -157,11 +152,12 @@ static const NSSize iconSize = { 1024.0f, 1024.0f };
 		//it was a file URL that was passed
 		url = [NSURL URLWithString: imageReference];
 		//Check that it's properly encoded
-		if (![url path]) {
+		if (!url.path) {
 			//Try encoding the path to fit URL specs
-			url = [NSURL URLWithString: [imageReference stringByAddingPercentEscapesUsingEncoding: NSISOLatin1StringEncoding]];
+            NSCharacterSet *set = [NSCharacterSet URLPathAllowedCharacterSet];
+			url = [NSURL URLWithString: [imageReference stringByAddingPercentEncodingWithAllowedCharacters:set]];
 			//Check it again
-			if (![url path]) {
+			if (!url.path) {
 				//This path is just no good.
 				[self setError:ERROR_ICON_OF_FILE_PATH_INVALID];
 				return nil;
@@ -169,7 +165,7 @@ static const NSSize iconSize = { 1024.0f, 1024.0f };
 		}
 	} else {
 		//it was an alias / path that was passed
-		url = [NSURL fileURLWithPath:[imageReference stringByExpandingTildeInPath]];
+		url = [NSURL fileURLWithPath:imageReference.stringByExpandingTildeInPath];
 		if (!url) {
 			[self setError:ERROR_ICON_OF_FILE_PATH_INVALID];
 			return nil;
@@ -177,7 +173,7 @@ static const NSSize iconSize = { 1024.0f, 1024.0f };
 	}
 
 	//Sanity check the URL
-	if (![url isFileURL]) {
+	if (!url.fileURL) {
 		//Bail - wrong protocol.
 		[self setError:ERROR_NOT_FILE_URL];
 		return nil;
@@ -187,7 +183,7 @@ static const NSSize iconSize = { 1024.0f, 1024.0f };
 		return nil;
 	}
 	//Check to see if the file actually exists.
-	if (![[NSFileManager defaultManager] fileExistsAtPath:[url path]]) {
+	if (![[NSFileManager defaultManager] fileExistsAtPath:url.path]) {
 		[self setError:ERROR_ICON_OF_FILE_PATH_FILE_MISSING];
 		return nil;
 	}
@@ -200,7 +196,7 @@ static const NSSize iconSize = { 1024.0f, 1024.0f };
 }
 
 - (void)setError:(int)errorCode failure:(id)failure {
-	[self setScriptErrorNumber:errorCode];
+	self.scriptErrorNumber = errorCode;
 	NSString *str;
 
 	switch (errorCode) {
@@ -227,7 +223,7 @@ static const NSSize iconSize = { 1024.0f, 1024.0f };
 	}
 
 	if (str)
-		[self setScriptErrorString:str];
+		self.scriptErrorString = str;
 }
 
 @end

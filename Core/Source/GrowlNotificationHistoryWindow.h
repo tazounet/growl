@@ -22,7 +22,11 @@
 
    NSMutableArray *rowHeights;
 }
--(id)initWithNotificationDatabase:(GrowlNotificationDatabase *)notificationDatabase;
+
+-(instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
+-(instancetype)initWithWindow:(NSWindow *)window NS_UNAVAILABLE;
+
+-(instancetype)initWithNotificationDatabase:(GrowlNotificationDatabase *)notificationDatabase;
 
 @property (nonatomic, weak) IBOutlet NSTableView *historyTable;
 @property (nonatomic, weak) IBOutlet NSTextField *countLabel;

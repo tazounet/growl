@@ -13,7 +13,7 @@
 @synthesize onLabel = _onLabel;
 @synthesize offLabel = _offLabel;
 
-- (id)initWithFrame:(NSRect)frameRect
+- (instancetype)initWithFrame:(NSRect)frameRect
 {
    if((self = [super initWithFrame:frameRect])){
       [self addObserver:self 
@@ -26,10 +26,10 @@
 
 - (void)awakeFromNib {
    NSString *offString = NSLocalizedString(@"OFF", @"If the string is too long, use O");
-   [self.offLabel setStringValue:offString];
+   (self.offLabel).stringValue = offString;
    
    NSString *onString = NSLocalizedString(@"ON", @"If the string is too long, use I");
-   [self.onLabel setStringValue:onString];
+   (self.onLabel).stringValue = onString;
    [super awakeFromNib];
 }
 
@@ -66,15 +66,15 @@
 }
 
 - (void)setHidden:(BOOL)flag {
-	[super setHidden:flag];
-	[self.onLabel setHidden:flag];
-	[self.offLabel setHidden:flag];
+	super.hidden = flag;
+	(self.onLabel).hidden = flag;
+	(self.offLabel).hidden = flag;
 }
 
 - (void)setEnabled:(BOOL)flag {
-	[super setEnabled:flag];
-	[self.onLabel setEnabled:flag];
-	[self.offLabel setEnabled:flag];
+	super.enabled = flag;
+	(self.onLabel).enabled = flag;
+	(self.offLabel).enabled = flag;
 }
 
 @end

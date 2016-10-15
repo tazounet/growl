@@ -79,7 +79,7 @@
 		[response appendFormat:@"%@: %@\r\n", GrowlGNTPNotificationCallbackContext, contextString];
 		[response appendString:@"\r\n\r\n"];
 		//NSLog(@"%@", response);
-		feedbackData = [NSData dataWithBytes:[response UTF8String] length:[response length]];
+		feedbackData = [NSData dataWithBytes:response.UTF8String length:response.length];
 	}
 	return feedbackData;
 }
@@ -117,13 +117,13 @@
 	
 	//We wont bother checking the context type we stored unless the context is not stored as a string
 	NSString *contextType = nil;
-	id context = [dict objectForKey:GROWL_NOTIFICATION_CLICK_CONTEXT];
+	id context = dict[GROWL_NOTIFICATION_CLICK_CONTEXT];
 	NSString *contextString = nil;
 	if(context){
 		if([context isKindOfClass:[NSString class]]){
 			contextString = context;
-			if([dict objectForKey:GROWL_NOTIFICATION_CLICK_CONTENT_TYPE])
-				contextType = [dict objectForKey:GROWL_NOTIFICATION_CLICK_CONTENT_TYPE];
+			if(dict[GROWL_NOTIFICATION_CLICK_CONTENT_TYPE])
+				contextType = dict[GROWL_NOTIFICATION_CLICK_CONTENT_TYPE];
 			else
 				contextType = @"String";
 		}else if([NSPropertyListSerialization propertyList:context isValidForFormat:NSPropertyListXMLFormat_v1_0]){
@@ -143,8 +143,8 @@
 			contextType = @"URL";
 		}
 		if(contextString && contextType){
-			[converted setObject:contextType forKey:GrowlGNTPNotificationCallbackContextType];
-			[converted setObject:contextString forKey:GrowlGNTPNotificationCallbackContext];
+			converted[GrowlGNTPNotificationCallbackContextType] = contextType;
+			converted[GrowlGNTPNotificationCallbackContext] = contextString;
 		}else{
 			NSLog(@"Context %@ was not converted to a string, and was not sent, check that it is an NSString, NSURL or is seriazable to XML PList with NSPropertyListSerialization", context);
 		}
@@ -168,12 +168,12 @@
 }
 
 -(BOOL)validate {
-	return [super validate];
+	return super.validate;
 }
 
 -(NSTimeInterval)requestedTimeAlive {
 	//determine what type of feedback we are expecting to send
-	NSTimeInterval result = [super requestedTimeAlive];
+	NSTimeInterval result = super.requestedTimeAlive;
 	//Crude
 	if(self.callbackString && ![self.gntpDictionary valueForKey:GrowlGNTPNotificationCallbackTarget])
 		result = (result < 15.0) ? 15.0 : result;
@@ -181,7 +181,7 @@
 }
 
 -(NSMutableDictionary*)convertedGrowlDict {
-	NSMutableDictionary *convertedDict = [super convertedGrowlDict];
+	NSMutableDictionary *convertedDict = super.convertedGrowlDict;
 	if(self.callbackString){
 		id convertedContext = nil;
 		if(self.callbackType){
@@ -199,14 +199,14 @@
 		
 		//We dont really know the type, or couldn't convert it, just the stuff the string back in
 		if(!convertedContext){
-			[convertedDict setObject:self.callbackString forKey:GROWL_NOTIFICATION_CLICK_CONTEXT];
+			convertedDict[GROWL_NOTIFICATION_CLICK_CONTEXT] = self.callbackString;
 		}else{
-			[convertedDict setObject:convertedContext forKey:GROWL_NOTIFICATION_CLICK_CONTEXT];
+			convertedDict[GROWL_NOTIFICATION_CLICK_CONTEXT] = convertedContext;
 		}
       if(self.callbackType)
-         [convertedDict setObject:self.callbackType forKey:GROWL_NOTIFICATION_CLICK_CONTENT_TYPE];
+         convertedDict[GROWL_NOTIFICATION_CLICK_CONTENT_TYPE] = self.callbackType;
       else
-         [convertedDict setObject:@"String" forKey:GROWL_NOTIFICATION_CLICK_CONTENT_TYPE];
+         convertedDict[GROWL_NOTIFICATION_CLICK_CONTENT_TYPE] = @"String";
 	}
    	
 	return convertedDict;

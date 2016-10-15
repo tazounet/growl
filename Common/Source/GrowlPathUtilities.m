@@ -22,15 +22,15 @@
 + (NSBundle *) bundleForProcessWithBundleIdentifier:(NSString *)identifier
 {
    NSArray *possibilities = [NSRunningApplication runningApplicationsWithBundleIdentifier:identifier];
-   if([possibilities count] > 0){
+   if(possibilities.count > 0){
       //NSLog(@"Found %lu applications for identifier %@", [possibilities count], identifier);
       NSRunningApplication *oldest = nil;
       for(NSRunningApplication *app in possibilities){
-         if(!oldest || [[oldest launchDate] compare:[app launchDate]] == NSOrderedDescending)
+         if(!oldest || [oldest.launchDate compare:app.launchDate] == NSOrderedDescending)
             oldest = app;
       }
       if(oldest)
-         return [NSBundle bundleWithURL:[oldest bundleURL]];
+         return [NSBundle bundleWithURL:oldest.bundleURL];
    }
    return nil;
 }
@@ -50,7 +50,7 @@
 			return searchPath;
 		else {
 			//flag is not NO: exclude non-writable directories.
-			NSMutableArray *result = [NSMutableArray arrayWithCapacity:[searchPath count]];
+			NSMutableArray *result = [NSMutableArray arrayWithCapacity:searchPath.count];
 			NSFileManager *mgr = [NSFileManager defaultManager];
 
 			for (NSString *dir in searchPath) {
@@ -92,7 +92,7 @@
 		BOOL isDir = NO;
 
 		NSArray *searchPath = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, domainMask, /*expandTilde*/ YES);
-		NSMutableArray *mSearchPath = [NSMutableArray arrayWithCapacity:[searchPath count]];
+		NSMutableArray *mSearchPath = [NSMutableArray arrayWithCapacity:searchPath.count];
 		for (__strong NSString *path in searchPath) {
 			path = [path stringByAppendingPathComponent:subpath];
 			if ([mgr fileExistsAtPath:path isDirectory:&isDir] && isDir)
@@ -110,15 +110,15 @@
 
 + (NSString *) growlSupportDirectory {
 	NSArray *searchPath = [self searchPathForDirectory:GrowlSupportDirectory inDomains:NSUserDomainMask mustBeWritable:YES];
-	if ([searchPath count])
-		return [searchPath objectAtIndex:0U];
+	if (searchPath.count)
+		return searchPath[0U];
 	else {
 		NSString *path = nil;
 
 		//if this doesn't return any writable directories, path will still be nil.
 		searchPath = [self searchPathForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask mustBeWritable:YES];
-		if ([searchPath count]) {
-			path = [[searchPath objectAtIndex:0U] stringByAppendingPathComponent:@"Application Support/Growl"];
+		if (searchPath.count) {
+			path = [searchPath[0U] stringByAppendingPathComponent:@"Application Support/Growl"];
 			//try to create it. if that doesn't work, don't return it. return nil instead.
 			if (![[NSFileManager defaultManager] createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil])
 				path = nil;
@@ -130,8 +130,8 @@
 
 + (NSString *) ticketsDirectory {
 	NSArray *searchPath = [self searchPathForDirectory:GrowlTicketsDirectory inDomains:NSUserDomainMask mustBeWritable:YES];
-	if ([searchPath count])
-		return [searchPath objectAtIndex:0U];
+	if (searchPath.count)
+		return searchPath[0U];
 	else {
 		NSString *path = nil;
 

@@ -25,7 +25,7 @@
 	BOOL success = NO;
     
 	//First look for a running GHA. It might not actually be within a Growl prefpane bundle.
-	NSString *growlHelperAppPath = [[GrowlPathUtilities runningHelperAppBundle] bundlePath];
+	NSString *growlHelperAppPath = [GrowlPathUtilities runningHelperAppBundle].bundlePath;
     
 	//Houston, we are go for launch.
 	if (growlHelperAppPath) {
@@ -49,27 +49,28 @@
 					CFUUIDRef uuid = CFUUIDCreate(kCFAllocatorDefault);
 					CFStringRef uuidString = CFUUIDCreateString(kCFAllocatorDefault, uuid);
 					CFRelease(uuid);
-					regDictFileName = [[NSString stringWithFormat:@"%@-%u-%@", [self.dictionary objectForKey:GROWL_APP_NAME], getpid(), (__bridge NSString *)uuidString] stringByAppendingPathExtension:GROWL_REG_DICT_EXTENSION];
+					regDictFileName = [[NSString stringWithFormat:@"%@-%u-%@", (self.dictionary)[GROWL_APP_NAME], getpid(), (__bridge NSString *)uuidString] stringByAppendingPathExtension:GROWL_REG_DICT_EXTENSION];
 					CFRelease(uuidString);
-					if ([regDictFileName length] > NAME_MAX)
-						regDictFileName = [[regDictFileName substringToIndex:(NAME_MAX - [GROWL_REG_DICT_EXTENSION length])] stringByAppendingPathExtension:GROWL_REG_DICT_EXTENSION];
+					if (regDictFileName.length > NAME_MAX)
+						regDictFileName = [[regDictFileName substringToIndex:(NAME_MAX - GROWL_REG_DICT_EXTENSION.length)] stringByAppendingPathExtension:GROWL_REG_DICT_EXTENSION];
                     
 					//make sure it's within pathname length constraints
 					regDictPath = [NSTemporaryDirectory() stringByAppendingPathComponent:regDictFileName];
-					if ([regDictPath length] > PATH_MAX)
-						regDictPath = [[regDictPath substringToIndex:(PATH_MAX - [GROWL_REG_DICT_EXTENSION length])] stringByAppendingPathExtension:GROWL_REG_DICT_EXTENSION];
+					if (regDictPath.length > PATH_MAX)
+						regDictPath = [[regDictPath substringToIndex:(PATH_MAX - GROWL_REG_DICT_EXTENSION.length)] stringByAppendingPathExtension:GROWL_REG_DICT_EXTENSION];
                     
 					//Write the registration dictionary out to the temporary directory
 					NSData *plistData;
-					NSString *errorString;
-					plistData = [NSPropertyListSerialization dataFromPropertyList:self.dictionary
-																		   format:NSPropertyListBinaryFormat_v1_0
-																 errorDescription:&errorString];
+					NSError *err;
+                    plistData = [NSPropertyListSerialization dataWithPropertyList:self.dictionary
+                                                                           format:NSPropertyListBinaryFormat_v1_0
+                                                                           options:0
+                                                                             error:&err];
 					if (plistData) {
 						if (![plistData writeToFile:regDictPath atomically:NO])
 							NSLog(@"GrowlApplicationBridge: Error writing registration dictionary at %@", regDictPath);
 					} else {
-						NSLog(@"GrowlApplicationBridge: Error writing registration dictionary at %@: %@", regDictPath, errorString);
+						NSLog(@"GrowlApplicationBridge: Error writing registration dictionary at %@: %@", regDictPath, err);
 						NSLog(@"GrowlApplicationBridge: Registration dictionary follows\n%@", self.dictionary);
 					}
                     
@@ -89,9 +90,9 @@
 					OSStatus err;
                     
 					if (passRegDict) {
-						NSString *regItemURLString = [regItemURL absoluteString];
+						NSString *regItemURLString = regItemURL.absoluteString;
 						NSData *regItemURLUTF8Data = [regItemURLString dataUsingEncoding:NSUTF8StringEncoding];
-						err = AEStreamWriteKeyDesc(stream, keyDirectObject, typeFileURL, [regItemURLUTF8Data bytes], [regItemURLUTF8Data length]);
+						err = AEStreamWriteKeyDesc(stream, keyDirectObject, typeFileURL, regItemURLUTF8Data.bytes, regItemURLUTF8Data.length);
 						if (err != noErr) {
 							NSLog(@"%@: Could not set direct object of open-document event to register this application with Growl because AEStreamWriteKeyDesc returned %li/%@", [self class], (long)err, [NSError errorWithDomain: NSOSStatusErrorDomain code: err userInfo: nil]);
 						}

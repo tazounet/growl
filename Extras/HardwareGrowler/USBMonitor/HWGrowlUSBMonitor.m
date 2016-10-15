@@ -39,7 +39,7 @@ static void usbDeviceRemoved(void *refCon, io_iterator_t iterator);
 	}
 }
 
--(id)init {
+-(instancetype)init {
 	if((self = [super init])){
 		self.notificationsArePrimed = NO;
 
@@ -128,7 +128,7 @@ static void usbDeviceRemoved(void *refCon, io_iterator_t iterator);
 	//	NSLog(@"USB Device Added Notification.");
 	io_object_t	thisObject;
 	while ((thisObject = IOIteratorNext(iterator))) {
-		if (self.notificationsArePrimed || [delegate onLaunchEnabled]) {
+		if (self.notificationsArePrimed || delegate.onLaunchEnabled) {
 			kern_return_t	nameResult;
 			io_name_t		deviceNameChars;
 			kern_return_t	idResult;
@@ -148,7 +148,7 @@ static void usbDeviceRemoved(void *refCon, io_iterator_t iterator);
 				continue;
 			}
 			
-			NSString *deviceName = [NSString stringWithCString:deviceNameChars encoding:NSASCIIStringEncoding];
+			NSString *deviceName = @(deviceNameChars);
 			if (deviceName) {
 				deviceName = [self deviceBusNameSwap:deviceName];
 				
@@ -189,7 +189,7 @@ static void usbDeviceAdded(void *refCon, io_iterator_t iterator) {
 			continue;
 		}
 		
-		NSString *deviceName = [NSString stringWithCString:deviceNameChars encoding:NSASCIIStringEncoding];
+		NSString *deviceName = @(deviceNameChars);
 		if (deviceName) {
 			deviceName = [self deviceBusNameSwap:deviceName];
 			
@@ -246,18 +246,18 @@ static void usbDeviceRemoved(void *refCon, io_iterator_t iterator) {
 #pragma mark HWGrowlPluginNotifierProtocol
 
 -(NSArray*)noteNames {
-	return [NSArray arrayWithObjects:@"USBConnected", @"USBDisconnected", nil];
+	return @[@"USBConnected", @"USBDisconnected"];
 }
 -(NSDictionary*)localizedNames {
-	return [NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"USB Connected", @""), @"USBConnected",
-			  NSLocalizedString(@"USB Disconnected", @""), @"USBDisconnected", nil];
+	return @{@"USBConnected": NSLocalizedString(@"USB Connected", @""),
+			  @"USBDisconnected": NSLocalizedString(@"USB Disconnected", @"")};
 }
 -(NSDictionary*)noteDescriptions {
-	return [NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"Sent when a USB Device is connected", @""), @"USBConnected",
-			  NSLocalizedString(@"Sent when a USB Device is disconnected", @""), @"USBDisconnected", nil];
+	return @{@"USBConnected": NSLocalizedString(@"Sent when a USB Device is connected", @""),
+			  @"USBDisconnected": NSLocalizedString(@"Sent when a USB Device is disconnected", @"")};
 }
 -(NSArray*)defaultNotifications {
-	return [NSArray arrayWithObjects:@"USBConnected", @"USBDisconnected", nil];
+	return @[@"USBConnected", @"USBDisconnected"];
 }
 
 @end

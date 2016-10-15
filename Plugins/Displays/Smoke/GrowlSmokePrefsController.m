@@ -17,7 +17,7 @@
 }
 
 - (void) mainViewDidLoad {
-	[slider_opacity setAltIncrementValue:0.05];
+	slider_opacity.altIncrementValue = 0.05;
 
 }
 
@@ -38,18 +38,18 @@
 -(void)updateConfigurationValues {
 	// priority colour settings
 	NSColor *defaultColor = [NSColor colorWithCalibratedWhite:0.1 alpha:1.0];
-	[color_veryLow setColor:[self loadColor:GrowlSmokeVeryLowColor defaultColor:defaultColor]];
-	[color_moderate setColor:[self loadColor:GrowlSmokeModerateColor defaultColor:defaultColor]];
-	[color_normal setColor:[self loadColor:GrowlSmokeNormalColor defaultColor:defaultColor]];
-	[color_high setColor:[self loadColor:GrowlSmokeHighColor defaultColor:defaultColor]];
-	[color_emergency setColor:[self loadColor:GrowlSmokeEmergencyColor defaultColor:defaultColor]];
+	color_veryLow.color = [self loadColor:GrowlSmokeVeryLowColor defaultColor:defaultColor];
+	color_moderate.color = [self loadColor:GrowlSmokeModerateColor defaultColor:defaultColor];
+	color_normal.color = [self loadColor:GrowlSmokeNormalColor defaultColor:defaultColor];
+	color_high.color = [self loadColor:GrowlSmokeHighColor defaultColor:defaultColor];
+	color_emergency.color = [self loadColor:GrowlSmokeEmergencyColor defaultColor:defaultColor];
 	
 	defaultColor = [NSColor whiteColor];
-	[text_veryLow setColor:[self loadColor:GrowlSmokeVeryLowTextColor defaultColor:defaultColor]];
-	[text_moderate setColor:[self loadColor:GrowlSmokeModerateTextColor defaultColor:defaultColor]];
-	[text_normal setColor:[self loadColor:GrowlSmokeNormalTextColor defaultColor:defaultColor]];
-	[text_high setColor:[self loadColor:GrowlSmokeHighTextColor defaultColor:defaultColor]];
-	[text_emergency setColor:[self loadColor:GrowlSmokeEmergencyTextColor defaultColor:defaultColor]];
+	text_veryLow.color = [self loadColor:GrowlSmokeVeryLowTextColor defaultColor:defaultColor];
+	text_moderate.color = [self loadColor:GrowlSmokeModerateTextColor defaultColor:defaultColor];
+	text_normal.color = [self loadColor:GrowlSmokeNormalTextColor defaultColor:defaultColor];
+	text_high.color = [self loadColor:GrowlSmokeHighTextColor defaultColor:defaultColor];
+	text_emergency.color = [self loadColor:GrowlSmokeEmergencyTextColor defaultColor:defaultColor];
 	
 	[super updateConfigurationValues];
 }
@@ -63,7 +63,7 @@
 }
 
 - (void) setOpacity:(CGFloat)value {
-	[self setConfigurationValue:[NSNumber numberWithFloat:value] forKey:GrowlSmokeAlphaPref];
+	[self setConfigurationValue:@(value) forKey:GrowlSmokeAlphaPref];
 }
 
 - (CGFloat) duration {
@@ -75,7 +75,7 @@
 }
 
 - (void) setDuration:(CGFloat)value {
-	[self setConfigurationValue:[NSNumber numberWithFloat:value] forKey:GrowlSmokeDurationPref];
+	[self setConfigurationValue:@(value) forKey:GrowlSmokeDurationPref];
 }
 
 - (IBAction) colorChanged:(id)sender {
@@ -137,7 +137,7 @@
 }
 
 - (void) setFloatingIcon:(BOOL)value {
-	[self setConfigurationValue:[NSNumber numberWithBool:value] forKey:GrowlSmokeFloatIconPref];
+	[self setConfigurationValue:@(value) forKey:GrowlSmokeFloatIconPref];
 }
 
 - (BOOL) isLimit {
@@ -149,16 +149,16 @@
 }
 
 - (void) setLimit:(BOOL)value {
-	[self setConfigurationValue:[NSNumber numberWithBool:value] forKey:GrowlSmokeLimitPref];
+	[self setConfigurationValue:@(value) forKey:GrowlSmokeLimitPref];
 }
 
 - (NSInteger) numberOfItemsInComboBox:(NSComboBox *)aComboBox {
-	return [[NSScreen screens] count];
+	return [NSScreen screens].count;
 }
 
 - (id) comboBox:(NSComboBox *)aComboBox objectValueForItemAtIndex:(NSInteger)idx {
 #ifdef __LP64__
-	return [NSNumber numberWithInteger:idx];
+	return @(idx);
 #else
 	return [NSNumber numberWithInt:idx];
 #endif
@@ -173,7 +173,7 @@
 }
 
 - (void) setScreen:(int)value {
-	[self setConfigurationValue:[NSNumber numberWithInt:value] forKey:GrowlSmokeScreenPref];
+	[self setConfigurationValue:@(value) forKey:GrowlSmokeScreenPref];
 }
 
 - (int) size {
@@ -185,7 +185,7 @@
 }
 
 - (void) setSize:(int)value {
-	[self setConfigurationValue:[NSNumber numberWithInt:value] forKey:GrowlSmokeSizePref];
+	[self setConfigurationValue:@(value) forKey:GrowlSmokeSizePref];
 }
 
 @end

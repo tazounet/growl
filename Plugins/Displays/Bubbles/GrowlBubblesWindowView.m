@@ -54,7 +54,7 @@ static void GrowlBubblesShadeInterpolate( void *info, const CGFloat *inData, CGF
 @synthesize lightColor;
 @synthesize textColor;
 
-- (id) initWithFrame:(NSRect) frame configurationDict:(NSDictionary*)configDict {
+- (instancetype) initWithFrame:(NSRect) frame configurationDict:(NSDictionary*)configDict {
 	if ((self = [super initWithFrame:frame])) {
 		titleFont = [NSFont boldSystemFontOfSize:TITLE_FONT_SIZE_PTS];
 		textFont = [NSFont messageFontOfSize:DESCR_FONT_SIZE_PTS];
@@ -84,11 +84,11 @@ static void GrowlBubblesShadeInterpolate( void *info, const CGFloat *inData, CGF
 
 
 - (void) drawRect:(NSRect) rect {
-	NSRect b = [self bounds];
+	NSRect b = self.bounds;
 	CGRect bounds = CGRectMake(b.origin.x, b.origin.y, b.size.width, b.size.height);
 	CGRect shape = CGRectInset(bounds, BORDER_WIDTH_PX*0.5, BORDER_WIDTH_PX*0.5);
 
-	CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+	CGContextRef context = (CGContextRef)[NSGraphicsContext currentContext].graphicsPort;
 
 	// Create a path with enough room to strike the border and remain inside our frame.
 	// Since the path is in the middle of the line, this means we must inset it by half the border width.
@@ -152,7 +152,7 @@ static void GrowlBubblesShadeInterpolate( void *info, const CGFloat *inData, CGF
 	drawRect.size.height = iconSize;
 
 	[icon drawScaledInRect:drawRect
-				 operation:NSCompositeSourceOver
+				 operation:NSCompositingOperationSourceOver
 				  fraction:1.0
                 neverFlipped:YES];
 
@@ -166,7 +166,7 @@ static void GrowlBubblesShadeInterpolate( void *info, const CGFloat *inData, CGF
 	if (haveText)
 		[textLayoutManager drawGlyphsForGlyphRange:textRange atPoint:drawRect.origin];
 
-	[[self window] invalidateShadow];
+	[self.window invalidateShadow];
 	[super drawRect:rect];
 }
 
@@ -208,12 +208,12 @@ static void GrowlBubblesShadeInterpolate( void *info, const CGFloat *inData, CGF
 
 
 	CGFloat backgroundAlpha = 95.0;
-	if([[self configurationDict] valueForKey:GrowlBubblesOpacity]){
-		backgroundAlpha = [[[self configurationDict] valueForKey:GrowlBubblesOpacity] floatValue];
+	if([self.configurationDict valueForKey:GrowlBubblesOpacity]){
+		backgroundAlpha = [[self.configurationDict valueForKey:GrowlBubblesOpacity] floatValue];
 	}
 	backgroundAlpha *= 0.01;
 	
-	NSData *data = [[self configurationDict] valueForKey:key];
+	NSData *data = [self.configurationDict valueForKey:key];
 	if (data && [data isKindOfClass:[NSData class]]) {
 		self.bgColor = [NSUnarchiver unarchiveObjectWithData:data];
 		self.bgColor = [bgColor colorWithAlphaComponent:backgroundAlpha];
@@ -225,7 +225,7 @@ static void GrowlBubblesShadeInterpolate( void *info, const CGFloat *inData, CGF
 	}
 	data = nil;
 	
-	data = [[self configurationDict] valueForKey:textKey];
+	data = [self.configurationDict valueForKey:textKey];
 	if (data && [data isKindOfClass:[NSData class]]) {
 		self.textColor = [NSUnarchiver unarchiveObjectWithData:data];
 	} else {
@@ -233,7 +233,7 @@ static void GrowlBubblesShadeInterpolate( void *info, const CGFloat *inData, CGF
 	}
 	data = nil;
 	
-	data = [[self configurationDict] valueForKey:topKey];
+	data = [self.configurationDict valueForKey:topKey];
 	if (data && [data isKindOfClass:[NSData class]]) {
 		self.lightColor = [NSUnarchiver unarchiveObjectWithData:data];
 		self.lightColor = [lightColor colorWithAlphaComponent:backgroundAlpha];
@@ -251,7 +251,7 @@ static void GrowlBubblesShadeInterpolate( void *info, const CGFloat *inData, CGF
 }
 
 - (void) setTitle:(NSString *) aTitle {
-	haveTitle = [aTitle length] != 0;
+	haveTitle = aTitle.length != 0;
 
 	if (!haveTitle) {
 		[self setNeedsDisplay:YES];
@@ -266,19 +266,17 @@ static void GrowlBubblesShadeInterpolate( void *info, const CGFloat *inData, CGF
 		titleContainer = [[NSTextContainer alloc] initWithContainerSize:containerSize];
 		[titleLayoutManager addTextContainer:titleContainer];	// retains textContainer
 		[titleStorage addLayoutManager:titleLayoutManager];	// retains layoutManager
-		[titleContainer setLineFragmentPadding:0.0];
+		titleContainer.lineFragmentPadding = 0.0;
 	}
 
 	NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-	[paragraphStyle setLineBreakMode:NSLineBreakByTruncatingTail];
-	NSDictionary *defaultAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:
-		titleFont,      NSFontAttributeName,
-		textColor,      NSForegroundColorAttributeName,
-		paragraphStyle, NSParagraphStyleAttributeName,
-		nil];
+	paragraphStyle.lineBreakMode = NSLineBreakByTruncatingTail;
+	NSDictionary *defaultAttributes = @{NSFontAttributeName: titleFont,
+		NSForegroundColorAttributeName: textColor,
+		NSParagraphStyleAttributeName: paragraphStyle};
 
-	[[titleStorage mutableString] setString:aTitle];
-	[titleStorage setAttributes:defaultAttributes range:NSMakeRange(0, [titleStorage length])];
+	[titleStorage.mutableString setString:aTitle];
+	[titleStorage setAttributes:defaultAttributes range:NSMakeRange(0, titleStorage.length)];
 
 
 	titleRange = [titleLayoutManager glyphRangeForTextContainer:titleContainer];	// force layout
@@ -288,7 +286,7 @@ static void GrowlBubblesShadeInterpolate( void *info, const CGFloat *inData, CGF
 }
 
 - (void) setText:(NSString *) aText {
-	haveText = [aText length] != 0;
+	haveText = aText.length != 0;
 
 	if (!haveText) {
 		[self setNeedsDisplay:YES];
@@ -298,8 +296,8 @@ static void GrowlBubblesShadeInterpolate( void *info, const CGFloat *inData, CGF
 	if (!textStorage) {
 		NSSize containerSize;
 		BOOL limitPref = YES;
-		if([[self configurationDict] valueForKey:GrowlBubblesLimitPref]){
-			limitPref = [[[self configurationDict] valueForKey:GrowlBubblesLimitPref] boolValue];
+		if([self.configurationDict valueForKey:GrowlBubblesLimitPref]){
+			limitPref = [[self.configurationDict valueForKey:GrowlBubblesLimitPref] boolValue];
 		}
 		containerSize.width = TEXT_AREA_WIDTH;
 		if (limitPref)
@@ -310,16 +308,14 @@ static void GrowlBubblesShadeInterpolate( void *info, const CGFloat *inData, CGF
   		textContainer = [[NSTextContainer alloc] initWithContainerSize:containerSize];
 		[textLayoutManager addTextContainer:textContainer];	// retains textContainer
 		[textStorage addLayoutManager:textLayoutManager];	// retains layoutManager
-		[textContainer setLineFragmentPadding:0.0];
+		textContainer.lineFragmentPadding = 0.0;
 	}
 
-	NSDictionary *defaultAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:
-		textFont,  NSFontAttributeName,
-		textColor, NSForegroundColorAttributeName,
-		nil];
+	NSDictionary *defaultAttributes = @{NSFontAttributeName: textFont,
+		NSForegroundColorAttributeName: textColor};
 
-	[[textStorage mutableString] setString:aText];
-	[textStorage setAttributes:defaultAttributes range:NSMakeRange(0, [textStorage length])];
+	[textStorage.mutableString setString:aText];
+	[textStorage setAttributes:defaultAttributes range:NSMakeRange(0, textStorage.length)];
 		
 
 	textRange = [textLayoutManager glyphRangeForTextContainer:textContainer];	// force layout
@@ -329,22 +325,22 @@ static void GrowlBubblesShadeInterpolate( void *info, const CGFloat *inData, CGF
 }
 
 - (void) sizeToFit {
-	CGFloat height = PANEL_VSPACE_PX + PANEL_VSPACE_PX + [self titleHeight] + [self descriptionHeight];
+	CGFloat height = PANEL_VSPACE_PX + PANEL_VSPACE_PX + self.titleHeight + self.descriptionHeight;
 	if (haveTitle && haveText)
 		height += TITLE_VSPACE_PX;
 	if (height < MIN_TEXT_HEIGHT)
 		height = MIN_TEXT_HEIGHT;
 
 	// resize the window so that it contains the tracking rect
-	NSWindow *window = [self window];
-	NSRect windowRect = [window frame];
+	NSWindow *window = self.window;
+	NSRect windowRect = window.frame;
 	windowRect.origin.y -= height - windowRect.size.height;
 	windowRect.size.height = height;
 	[window setFrame:windowRect display:YES animate:YES];
 
 	if (trackingRectTag)
 		[self removeTrackingRect:trackingRectTag];
-	trackingRectTag = [self addTrackingRect:[self frame] owner:self userData:NULL assumeInside:NO];
+	trackingRectTag = [self addTrackingRect:self.frame owner:self userData:NULL assumeInside:NO];
 }
 
 - (BOOL) isFlipped {
@@ -359,8 +355,8 @@ static void GrowlBubblesShadeInterpolate( void *info, const CGFloat *inData, CGF
 - (NSInteger) descriptionRowCount {
 	NSInteger rowCount = textHeight / lineHeight;
 	BOOL limitPref = YES;
-	if([[self configurationDict] valueForKey:GrowlBubblesLimitPref]){
-		limitPref = [[[self configurationDict] valueForKey:GrowlBubblesLimitPref] boolValue];
+	if([self.configurationDict valueForKey:GrowlBubblesLimitPref]){
+		limitPref = [[self.configurationDict valueForKey:GrowlBubblesLimitPref] boolValue];
 	}
 	if (limitPref)
 		return MIN(rowCount, MAX_TEXT_ROWS);

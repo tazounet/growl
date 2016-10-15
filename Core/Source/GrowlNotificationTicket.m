@@ -33,26 +33,26 @@
 }
 
 - (GrowlNotificationTicket *) initWithDictionary:(NSDictionary *)dict {
-	NSString *inName = [dict objectForKey:@"Name"];
+	NSString *inName = dict[@"Name"];
 
-	NSString *inHumanReadableName = [dict objectForKey:@"HumanReadableName"];
+	NSString *inHumanReadableName = dict[@"HumanReadableName"];
 
-	NSString *inNotificationDescription = [dict objectForKey:@"NotificationDescription"];
+	NSString *inNotificationDescription = dict[@"NotificationDescription"];
 
-	id value = [dict objectForKey:@"Priority"];
+	id value = dict[@"Priority"];
 	enum GrowlPriority inPriority = value ? [value intValue] : GrowlPriorityUnset;
 
-	BOOL inEnabled = [[dict objectForKey:@"Enabled"] boolValue];
+	BOOL inEnabled = [dict[@"Enabled"] boolValue];
 
-	int  inSticky  = [[dict objectForKey:@"Sticky"] intValue];
+	int  inSticky  = [dict[@"Sticky"] intValue];
 	inSticky = (inSticky >= 0 ? (inSticky > 0 ? NSOnState : NSOffState) : NSMixedState);
 
-	NSString *inDisplay = [dict objectForKey:@"Display"];
-	NSString *inSound = [dict objectForKey:@"Sound"];
+	NSString *inDisplay = dict[@"Display"];
+	NSString *inSound = dict[@"Sound"];
 
    BOOL logEnabled = YES;
    if([dict valueForKey:@"Logging"])
-       logEnabled = [[dict objectForKey:@"Logging"] boolValue];
+       logEnabled = [dict[@"Logging"] boolValue];
 
 	return [self initWithName:inName
 			humanReadableName:inHumanReadableName
@@ -114,7 +114,6 @@
 }
 
 - (void) dealloc {
-    
     [self removeObserver:self forKeyPath:@"name"];
     [self removeObserver:self forKeyPath:@"humanReadableName"];
     [self removeObserver:self forKeyPath:@"notificationDescription"];
@@ -124,16 +123,14 @@
     [self removeObserver:self forKeyPath:@"sticky"];
     [self removeObserver:self forKeyPath:@"displayPluginName"];
     [self removeObserver:self forKeyPath:@"sound"];
-    
-
 }
 
 #pragma mark -
 
 - (NSDictionary *) dictionaryRepresentation {
-	NSNumber    *enabledValue = [[NSNumber alloc] initWithBool:enabled];
-	NSNumber     *stickyValue = [[NSNumber alloc] initWithInt:sticky];
-   NSNumber    *loggingValue = [[NSNumber alloc] initWithBool:logNotification];
+	NSNumber    *enabledValue = @(enabled);
+	NSNumber     *stickyValue = @(sticky);
+   NSNumber    *loggingValue = @(logNotification);
 	NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObjectsAndKeys:
 		name,         @"Name",
 		enabledValue, @"Enabled",
@@ -141,25 +138,25 @@
       loggingValue, @"Logging",
 		nil];
 	if (priority != GrowlPriorityUnset)
-      [dict setObject:[NSNumber numberWithInteger:priority] forKey:@"Priority"];
+      dict[@"Priority"] = @(priority);
 	if (displayPluginName)
-      [dict setObject:displayPluginName forKey:@"Display"];
+      dict[@"Display"] = displayPluginName;
 	if (notificationDescription)
-      [dict setObject:notificationDescription forKey:@"NotificationDescription"];
+      dict[@"NotificationDescription"] = notificationDescription;
 	if (humanReadableName)
-      [dict setObject:humanReadableName forKey:@"HumanReadableName"];
+      dict[@"HumanReadableName"] = humanReadableName;
 	if (sound)
-      [dict setObject:sound forKey:@"Sound"];
+      dict[@"Sound"] = sound;
 
 	return dict;
 }
 
 - (NSString *) description {
-	return [NSString stringWithFormat:@"<%@ %p %@>", [self class], self, [[self dictionaryRepresentation] description]];
+	return [NSString stringWithFormat:@"<%@ %p %@>", [self class], self, [self dictionaryRepresentation].description];
 }
 
 - (BOOL) isEqualToNotification:(GrowlNotificationTicket *) other {
-	return [[self name] isEqualToString:[other name]];
+	return [self.name isEqualToString:other.name];
 }
 #define GENERIC_EQUALITY_METHOD(other) {                                                                      \
 	return ([other isKindOfClass:[GrowlNotificationTicket class]] && [self isEqualToNotification:other]); \
@@ -191,7 +188,7 @@
 }
 
 - (NSString *) humanReadableName {
-	return (humanReadableName ? humanReadableName : [self name]);
+	return (humanReadableName ? humanReadableName : self.name);
 }
 
 - (GrowlDisplayPlugin *) displayPlugin {
@@ -199,7 +196,7 @@
 }
 
 - (NSComparisonResult) humanReadableNameCompare:(GrowlNotificationTicket *)inTicket {
-	return [[self humanReadableName] caseInsensitiveCompare:[inTicket humanReadableName]];
+	return [self.humanReadableName caseInsensitiveCompare:inTicket.humanReadableName];
 }
 
 @end

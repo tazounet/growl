@@ -15,12 +15,12 @@ enum { cMissingValue                 = 'msng'};
 
 + (id)scriptingImageWithDescriptor:(NSAppleEventDescriptor *)descriptor
 {
-	if ( [descriptor descriptorType] == typeType && [descriptor typeCodeValue] == cMissingValue )
+	if ( descriptor.descriptorType == typeType && descriptor.typeCodeValue == cMissingValue )
 	{
 		return nil;
 	}
 	
-	if ( [descriptor descriptorType] != typeTIFF )
+	if ( descriptor.descriptorType != typeTIFF )
 	{
 		descriptor = [descriptor coerceToDescriptorType: typeTIFF];
 		if (descriptor == nil)
@@ -29,7 +29,7 @@ enum { cMissingValue                 = 'msng'};
 		}		
 	}
 	
-	return [descriptor data];
+	return descriptor.data;
 }
 
 - (id)scriptingImageDescriptor

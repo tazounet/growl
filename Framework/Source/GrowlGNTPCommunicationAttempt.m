@@ -50,7 +50,7 @@ enum {
 
 @synthesize key = _key;
 
--(id)initWithDictionary:(NSDictionary *)dict {
+-(instancetype)initWithDictionary:(NSDictionary *)dict {
 	if((self = [super initWithDictionary:dict])){
 		attemptSucceeded = NO;
 	}
@@ -100,7 +100,7 @@ enum {
 											 error:&errorReturned];
 	}else{
 		NSString *hostToUse = nil;
-		if(!self.host || [host isLocalHost])
+		if(!self.host || host.isLocalHost)
 			hostToUse = @"localhost";
 		else
 			hostToUse = host;
@@ -148,7 +148,7 @@ enum {
 										 encryptionAlgorithm:GNTPNone];
 	}
 	
-	NSData *outData = [self outgoingData];
+	NSData *outData = self.outgoingData;
 	if(outData){
 		[socket writeData:outData withTimeout:5.0 tag:-1];
 		[self readOneLineFromSocket:socket tag:GrowlGNTPCommAttemptReadPhaseFirstResponseLine];
@@ -167,26 +167,26 @@ enum {
       //NSLog(@"Exhausting packet");
    }else if (tag == GrowlGNTPCommAttemptReadPhaseFirstResponseLine) {
       NSArray *components = [readString componentsSeparatedByString:@" "];
-      if([components count] < 3){
+      if(components.count < 3){
          NSLog(@"Not enough components in initial header");
          [self couldNotParseResponseWithReason:@"Not enough components in initial header" responseString:readString];
          [socket disconnect];
          return;
       }
-      if (!([[components objectAtIndex:0] caseInsensitiveCompare:@"GNTP/1.0"] == NSOrderedSame)){
+      if (!([components[0] caseInsensitiveCompare:@"GNTP/1.0"] == NSOrderedSame)){
          NSLog(@"Response from Growl or other notification system was patent nonsense");
          [self couldNotParseResponseWithReason:@"Response from Growl or other notification system was patent nonsense" responseString:readString];
          [socket disconnect];
          return;
       }
 		
-		NSString *withoutGNTP = [readString substringFromIndex:[@"GNTP" length]];
+		NSString *withoutGNTP = [readString substringFromIndex:(@"GNTP").length];
 		components = [withoutGNTP componentsSeparatedByString:@" "];
 		GNTPKey *returnKey = [GNTPPacket keyForSecurityHeaders:components 
 																	errorCode:nil 
 																 description:nil];
 		if(returnKey){
-			NSString *responseType = [components objectAtIndex:1];
+			NSString *responseType = components[1];
 			if([GNTPPacket isAuthorizedPacketType:responseType
 													withKey:returnKey
 												 originKey:self.key
@@ -194,7 +194,7 @@ enum {
 												 errorCode:nil
 											  description:nil]){
 				BOOL closeConnection = NO;
-				BOOL decrypt = ([returnKey encryptionAlgorithm] != GNTPNone);
+				BOOL decrypt = (returnKey.encryptionAlgorithm != GNTPNone);
 				if ([responseType caseInsensitiveCompare:GrowlGNTPOKResponseType] == NSOrderedSame) {
 					//Need to read more data for subscription, result includes ttl for system
 					attemptSucceeded = YES;
@@ -209,7 +209,7 @@ enum {
 					}else{
 						[self succeeded];
 						
-						closeConnection = ![self expectsCallback];
+						closeConnection = !self.expectsCallback;
 						if(!closeConnection){
                      [self readRestOfPacket:socket];
 							[self readOneLineFromSocket:socket tag:GrowlGNTPCommAttemptReadPhaseFirstResponseLine];
@@ -252,15 +252,15 @@ enum {
 		}
       
 	} else if (tag == GrowlGNTPCommAttemptReadPhaseResponseHeaderLine) {
-		NSData *trimmed = [NSData dataWithBytes:[data bytes] length:[data length] - [[GCDAsyncSocket CRLFData] length]];
-		NSString *header = [trimmed length] > 0 ? [[NSString alloc] initWithData:trimmed encoding:NSUTF8StringEncoding] : @"";
+		NSData *trimmed = [NSData dataWithBytes:data.bytes length:data.length - [GCDAsyncSocket CRLFData].length];
+		NSString *header = trimmed.length > 0 ? [[NSString alloc] initWithData:trimmed encoding:NSUTF8StringEncoding] : @"";
 		
 		if([self parseHeader:header]){
 			[self readOneLineFromSocket:socket tag:GrowlGNTPCommAttemptReadPhaseResponseHeaderLine];
 		}
 	} else if (tag == GrowlGNTPCommAttemptReadPhaseEncrypted){
 		//Trim and decrypt
-		NSData *decrypted = [self.key decrypt:[NSData dataWithBytes:[data bytes] length:[data length] - [[GNTPUtilities doubleCRLF] length]]];
+		NSData *decrypted = [self.key decrypt:[NSData dataWithBytes:data.bytes length:data.length - [GNTPUtilities doubleCRLF].length]];
 		NSString *headersString = [[NSString alloc] initWithData:decrypted encoding:NSUTF8StringEncoding];
 		
 		NSArray *headerArray = [headersString componentsSeparatedByString:@"\r\n"];
@@ -279,7 +279,7 @@ enum {
 	if (headerKey && headerValue){
 		if(!callbackHeaderItems)
 			self.callbackHeaderItems = [NSMutableDictionary dictionary];
-		[callbackHeaderItems setObject:headerValue forKey:headerKey];
+		callbackHeaderItems[headerKey] = headerValue;
 		return YES;
 	}else{
 		//Empty line: End of headers.
@@ -319,7 +319,7 @@ enum {
 	}];
 	
 	if(code){
-		GrowlGNTPErrorCode errCode = (GrowlGNTPErrorCode)[code integerValue];
+		GrowlGNTPErrorCode errCode = (GrowlGNTPErrorCode)code.integerValue;
 		if(errCode == GrowlGNTPUserDisabledErrorCode)
 			[self wasNotDisplayed];
 		if((errCode == GrowlGNTPUnknownApplicationErrorCode || 
@@ -402,7 +402,7 @@ enum {
 	if (!attemptSucceeded) {
 		if (!socketError) {
 			NSString *reason = self.responseParseErrorString ? self.responseParseErrorString : @"Unknown error, possibly unable to connect";
-			NSDictionary *dict = [NSDictionary dictionaryWithObject:reason  forKey:NSLocalizedDescriptionKey];
+			NSDictionary *dict = @{NSLocalizedDescriptionKey: reason};
 			socketError = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileReadCorruptFileError userInfo:dict];
 		}
 		

@@ -71,7 +71,7 @@
 @synthesize helpMenuLabel;
 @synthesize appHelpLabel;
 
-- (id)init
+- (instancetype)init
 {
    if((self = [super init])){
       NSString *appName = @"Growl";
@@ -142,26 +142,26 @@
 
 - (BOOL)paused
 {
-    return [[GrowlPreferencesController sharedController] squelchMode];
+    return [GrowlPreferencesController sharedController].squelchMode;
 }
 
 - (BOOL)allowsIncomingNetwork
 {
-   return [[GrowlPreferencesController sharedController] isGrowlServerEnabled];
+   return [GrowlPreferencesController sharedController].isGrowlServerEnabled;
 }
 
 - (BOOL)forwardingEnabled {
-   return [[GrowlPreferencesController sharedController] isForwardingEnabled];
+   return [GrowlPreferencesController sharedController].isForwardingEnabled;
 }
 
 - (BOOL)subscriptionAllowed {
-   return [[GrowlPreferencesController sharedController] isSubscriptionAllowed];
+   return [GrowlPreferencesController sharedController].isSubscriptionAllowed;
 }
 
 - (IBAction)orderFrontStandardAboutPanel:(id)sender
 {
    [[GrowlApplicationController sharedController] showPreferences];
-   [[GrowlPreferencesController sharedController] setSelectedPreferenceTab:6];
+   [GrowlPreferencesController sharedController].selectedPreferenceTab = 6;
 }
 
 - (IBAction)openPreferences:(id)sender

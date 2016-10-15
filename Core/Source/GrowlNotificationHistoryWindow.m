@@ -47,14 +47,14 @@
 @synthesize windowTitle;
 @synthesize groupController;
 
--(id)initWithNotificationDatabase:(GrowlNotificationDatabase *)notificationDatabase
+-(instancetype)initWithNotificationDatabase:(GrowlNotificationDatabase *)notificationDatabase
 {
    if((self = [super initWithWindowNibName:@"AwayHistoryWindow" owner:self]))
    {
        self.notificationDatabase = notificationDatabase;
        
-       [self setWindowFrameAutosaveName:@"GrowlNotificationRollup"];
-       [[self window] setFrameAutosaveName:@"GrowlNotificationRollup"];
+       self.windowFrameAutosaveName = @"GrowlNotificationRollup";
+       [self.window setFrameAutosaveName:@"GrowlNotificationRollup"];
               
        rowHeights = [[NSMutableArray alloc] init];
       self.windowTitle = NSLocalizedString(@"Growl Notification Rollup", @"Window title for the Notification Rollup window");
@@ -64,7 +64,7 @@
 
 -(void)awakeFromNib {
     [super awakeFromNib];
-    [historyTable setDoubleAction:@selector(userDoubleClickedNote:)];
+    historyTable.doubleAction = @selector(userDoubleClickedNote:);
 }
 
 -(void)dealloc
@@ -102,12 +102,12 @@
         groupController = [[GroupedArrayController alloc] initWithEntityName:@"Notification" 
                                                          basePredicateString:@"showInRollup == 1" 
                                                                     groupKey:@"ApplicationName"
-                                                        managedObjectContext:[_notificationDatabase managedObjectContext]];
-        [groupController setDelegate:self];
+                                                        managedObjectContext:_notificationDatabase.managedObjectContext];
+        groupController.delegate = self;
         
         NSSortDescriptor *ascendingTime = [NSSortDescriptor sortDescriptorWithKey:@"Time" ascending:NO];
-        [[groupController countController] setSortDescriptors:[NSArray arrayWithObject:ascendingTime]];
-		 [groupController setTableView:historyTable];
+        groupController.countController.sortDescriptors = @[ascendingTime];
+		 groupController.tableView = historyTable;
     }
     
 
@@ -115,35 +115,35 @@
 
 -(void)updateCount
 {
-   NSUInteger numberOfNotifications = [[[groupController countController] arrangedObjects] count];
+   NSUInteger numberOfNotifications = [groupController.countController.arrangedObjects count];
    NSString* description = nil;
    
-   NSInteger menuState = [[GrowlPreferencesController sharedController] menuState];
+   NSInteger menuState = [GrowlPreferencesController sharedController].menuState;
    if(menuState == GrowlDockMenu || menuState == GrowlBothMenus){
-      NSDockTile *tile = [NSApp dockTile];
+      NSDockTile *tile = NSApp.dockTile;
       NSString *dockString = (numberOfNotifications > 0) ? [NSString stringWithFormat:@"%lu", numberOfNotifications] : nil;
-      [tile setBadgeLabel:dockString];
+      tile.badgeLabel = dockString;
    }
    
    if(menuState == GrowlStatusMenu || menuState == GrowlBothMenus){
       if(numberOfNotifications > 0)
-         [[[GrowlApplicationController sharedController] statusMenu] startPulse];
+         [[GrowlApplicationController sharedController].statusMenu startPulse];
       else
-         [[[GrowlApplicationController sharedController] statusMenu] stopPulse];
+         [[GrowlApplicationController sharedController].statusMenu stopPulse];
    }
    
    if(numberOfNotifications == 0){
       //Use perform close so that userReturnedAndClosedList is called, which will set us back to having notes while away
       description = NSLocalizedString(@"There are no new notifications", nil);
-      if([[GrowlPreferencesController sharedController] isRollupAutomatic])
-         [[self window] performClose:self];
+      if([GrowlPreferencesController sharedController].isRollupAutomatic)
+         [self.window performClose:self];
    }else if(numberOfNotifications == 1){
       description = [NSString stringWithFormat:NSLocalizedString(@"There was %lu notification while you were away", nil), numberOfNotifications];
    } else {
       description = [NSString stringWithFormat:NSLocalizedString(@"There were %lu notifications while you were away", nil), numberOfNotifications];   
    }
 
-    [countLabel setObjectValue:description];
+    countLabel.objectValue = description;
 }
 
 -(void)resetArray
@@ -155,7 +155,7 @@
 {
    NSInteger row = NSNotFound;
    if([sender isKindOfClass:[NSTableView class]]){
-       row = [historyTable clickedRow];
+       row = historyTable.clickedRow;
    }else if([sender isKindOfClass:[NSButton class]]){
        //We use bindings, so the showGroup is already toggled, just tell it to update the array
        [groupController updateArray];
@@ -164,7 +164,7 @@
    
    if(row != NSNotFound && row >= 0)
    {      
-      id obj = [[groupController arrangedObjects] objectAtIndex:row];
+      id obj = groupController.arrangedObjects[row];
       if([obj isKindOfClass:[GrowlHistoryNotification class]])
           [[GrowlApplicationController sharedController] growlNotificationDict:[obj valueForKey:@"GrowlDictionary"] 
                                                   didCloseViaNotificationClick:YES 
@@ -183,24 +183,24 @@
      */
     NSInteger row = [historyTable rowForView:sender];
     NSMutableIndexSet *rowsToDelete = [NSMutableIndexSet indexSet];
-    if(row == -1 || row > [historyTable numberOfRows]){
+    if(row == -1 || row > historyTable.numberOfRows){
         NSLog(@"no row for this delete event");
         return;
     }
    
     NSTableRowView *view = [historyTable rowViewAtRow:row makeIfNecessary:NO];
-    if(view && [view isKindOfClass:[GrowlNotificationRowView class]] && [(GrowlNotificationRowView*)view mouseInside] && 
-       ![[historyTable selectedRowIndexes] containsIndex:row]){
+    if(view && [view isKindOfClass:[GrowlNotificationRowView class]] && ((GrowlNotificationRowView*)view).mouseInside && 
+       ![historyTable.selectedRowIndexes containsIndex:row]){
         [rowsToDelete addIndex:row];
-    }else if([[historyTable selectedRowIndexes] containsIndex:row]){
-        [rowsToDelete addIndexes:[historyTable selectedRowIndexes]];
+    }else if([historyTable.selectedRowIndexes containsIndex:row]){
+        [rowsToDelete addIndexes:historyTable.selectedRowIndexes];
     }
-    if([rowsToDelete count] == 0)
+    if(rowsToDelete.count == 0)
         return;
     //NSLog(@"Rows to remove from the rollup: %@", rowsToDelete);
-    for(id obj in [[groupController arrangedObjects] objectsAtIndexes:rowsToDelete]){
+    for(id obj in [groupController.arrangedObjects objectsAtIndexes:rowsToDelete]){
         if([obj isKindOfClass:[GrowlHistoryNotification class]])
-            [obj setShowInRollup:[NSNumber numberWithBool:NO]];
+            [obj setShowInRollup:@NO];
     }
     [self.notificationDatabase saveDatabase:NO];
 }
@@ -212,12 +212,12 @@
         return;
     }
 
-    NSArrayController *appController = [[[groupController arrangedObjects] objectAtIndex:row] groupArray];
+    NSArrayController *appController = [groupController.arrangedObjects[row] groupArray];
     if(!appController)
         return;
-    [[appController arrangedObjects] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+    [appController.arrangedObjects enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         if([obj isKindOfClass:[GrowlHistoryNotification class]])
-            [obj setShowInRollup:[NSNumber numberWithBool:NO]];
+            [obj setShowInRollup:@NO];
     }];
     [self.notificationDatabase saveDatabase:NO];
 }
@@ -226,12 +226,12 @@
 
 -(void)updateRowHeights
 {
-    if([[groupController arrangedObjects] count] == 0)
+    if(groupController.arrangedObjects.count == 0)
         return;
     
     /* we got out of sync somehow, we will fix here */
     BOOL rebuilding = NO;
-    if([rowHeights count] != [[groupController arrangedObjects] count]){
+    if(rowHeights.count != groupController.arrangedObjects.count){
         NSLog(@"Row height array and group controller got out of sync, rebuilding row height array");
         rebuilding = YES;
         [rowHeights removeAllObjects];
@@ -239,23 +239,23 @@
     
     __weak GrowlNotificationHistoryWindow *blockSafeSelf = self;
     NSMutableIndexSet *modified = [NSMutableIndexSet indexSet];
-    [[groupController arrangedObjects] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+    [groupController.arrangedObjects enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         CGFloat newHeight = [blockSafeSelf heightForRow:idx];
         if(!rebuilding){
-            CGFloat oldHeight = [[rowHeights objectAtIndex:idx] floatValue];
+            CGFloat oldHeight = [rowHeights[idx] floatValue];
             
             if(newHeight > oldHeight || newHeight < oldHeight){
-                [rowHeights replaceObjectAtIndex:idx withObject:[NSNumber numberWithFloat:newHeight]];
+                rowHeights[idx] = @(newHeight);
                 [modified addIndex:idx];
             }
         }else{
-            [rowHeights insertObject:[NSNumber numberWithFloat:newHeight] atIndex:idx];
+            [rowHeights insertObject:@(newHeight) atIndex:idx];
             [modified addIndex:idx];
         }
     }];
     
     [NSAnimationContext beginGrouping];
-    [[NSAnimationContext currentContext] setDuration:.25];
+    [NSAnimationContext currentContext].duration = .25;
     [historyTable noteHeightOfRowsWithIndexesChanged:modified];
     [NSAnimationContext endGrouping];
 }
@@ -267,12 +267,12 @@
     if([self tableView:historyTable isGroupRow:row]){
         result = 34.0;
     }else{
-        id obj = [[groupController arrangedObjects] objectAtIndex:row];
+        id obj = groupController.arrangedObjects[row];
         if([obj isKindOfClass:[GrowlHistoryNotification class]]){
-            NSString *description = [[[groupController arrangedObjects] objectAtIndex:row] Description];
-            CGFloat width = [[self window] frame].size.width;
+            NSString *description = [groupController.arrangedObjects[row] Description];
+            CGFloat width = self.window.frame.size.width;
             result = [self heightForDescription:description forWidth:width];
-            if([[historyTable selectedRowIndexes] containsIndex:row]){
+            if([historyTable.selectedRowIndexes containsIndex:row]){
 /*              if (result > GROWL_ROW_MAX_HEIGHT)
                     result = GROWL_ROW_MAX_HEIGHT;*/
             }else{
@@ -289,10 +289,10 @@
     CGFloat padded = width - GROWL_DESCRIPTION_WIDTH_PAD;
     NSFont *font = [NSFont boldSystemFontOfSize:0];
     NSParagraphStyle *paragraph = [NSParagraphStyle defaultParagraphStyle];
-    NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, 
-                                                                          paragraph, NSParagraphStyleAttributeName, nil];
+    NSDictionary *attributes = @{NSFontAttributeName: font, 
+                                 NSParagraphStyleAttributeName: paragraph};
     NSRect bound = [description boundingRectWithSize:NSMakeSize(padded, 0) 
-                                             options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingTruncatesLastVisibleLine 
+                                             options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingTruncatesLastVisibleLine
                                           attributes:attributes];
     CGFloat result = bound.size.height + GROWL_DESCRIPTION_HEIGHT_PAD;
     return (result > GROWL_ROW_MINIMUM_HEIGHT) ? result : GROWL_ROW_MINIMUM_HEIGHT;
@@ -303,19 +303,19 @@
 
 - (BOOL)tableView:(NSTableView*)tableView isGroupRow:(NSInteger)row
 {
-	if([[groupController arrangedObjects] count] > (NSUInteger)row)
-		return [[[groupController arrangedObjects] objectAtIndex:row] isKindOfClass:[GroupController class]];
+	if(groupController.arrangedObjects.count > (NSUInteger)row)
+		return [groupController.arrangedObjects[row] isKindOfClass:[GroupController class]];
 	else
 		return NO;
 }
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
-    return [[groupController arrangedObjects] count];
+    return groupController.arrangedObjects.count;
 }
 
 - (id) tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
    if(aTableColumn == notificationColumn || [self tableView:aTableView isGroupRow:rowIndex]){
-      return [[groupController arrangedObjects] objectAtIndex:rowIndex];
+      return groupController.arrangedObjects[rowIndex];
    }
    return nil;
 }
@@ -323,29 +323,29 @@
 -(NSView*)tableView:(NSTableView*)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
     if(tableColumn == notificationColumn){
-        if([groupController grouped]){
+        if(groupController.grouped){
             GrowlNotificationCellView *cellView = [tableView makeViewWithIdentifier:@"GroupNoteCell" owner:self];
-            [[cellView deleteButton] setHidden:![[historyTable selectedRowIndexes] containsIndex:row]];
+            cellView.deleteButton.hidden = ![historyTable.selectedRowIndexes containsIndex:row];
             return cellView;
         }else{
             GrowlNotificationCellView *cellView = [tableView makeViewWithIdentifier:@"NotificationCellView" owner:self];
-            [[cellView deleteButton] setHidden:![[historyTable selectedRowIndexes] containsIndex:row]];
+            cellView.deleteButton.hidden = ![historyTable.selectedRowIndexes containsIndex:row];
             return cellView;
         }
     }else if([self tableView:tableView isGroupRow:row]){
         GrowlRollupGroupCellView *groupView = [tableView makeViewWithIdentifier:@"GroupCellView" owner:self];
-       
+
         NSString *appName = [[self tableView:tableView objectValueForTableColumn:tableColumn row:row] groupID];
-        NSData *iconData = [[[GrowlTicketDatabase sharedInstance] ticketForApplicationName:appName hostName:nil] iconData];
+        NSData *iconData = [[GrowlTicketDatabase sharedInstance] ticketForApplicationName:appName hostName:nil].iconData;
         NSImage *icon = [[NSImage alloc] initWithData:iconData];
         if(icon){
-            [[groupView imageView] setImage:icon];
+            groupView.imageView.image = icon;
         }else{
-            [[groupView imageView] setImage:[[NSWorkspace sharedWorkspace] iconForFileType:NSFileTypeForHFSTypeCode(kGenericApplicationIcon)]];
+            groupView.imageView.image = [[NSWorkspace sharedWorkspace] iconForFileType:NSFileTypeForHFSTypeCode(kGenericApplicationIcon)];
         }
         
-        [[groupView deleteButton] setState:NSOnState];
-        
+        groupView.deleteButton.state = NSOnState;
+
         return groupView;
     }
     return nil;
@@ -365,8 +365,8 @@
 /* We should have ALWAYS have a valid cached value, but just in case we don't, call the method that will give us the current, valid value*/
 - (CGFloat)tableView:(NSTableView *)tableView heightOfRow:(NSInteger)row
 {
-    if((NSUInteger)row < [rowHeights count] && [[rowHeights objectAtIndex:row] floatValue] > 0.0)
-        return [[rowHeights objectAtIndex:row] floatValue];
+    if((NSUInteger)row < rowHeights.count && [rowHeights[row] floatValue] > 0.0)
+        return [rowHeights[row] floatValue];
 
     return [self heightForRow:row];
 }
@@ -419,7 +419,7 @@
 {    
     __weak GrowlNotificationHistoryWindow *blockSafeSelf = self;
     [indexSet enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        NSNumber *height = [NSNumber numberWithFloat:[blockSafeSelf heightForRow:idx]];
+        NSNumber *height = @([blockSafeSelf heightForRow:idx]);
         [rowHeights insertObject:height atIndex:idx];
     }];
 }
@@ -429,7 +429,7 @@
 }
 -(void)groupedController:(GroupedArrayController*)groupedController moveIndex:(NSUInteger)start toIndex:(NSUInteger)end
 {
-    id temp = [rowHeights objectAtIndex:start];
+    id temp = rowHeights[start];
     [rowHeights removeObjectAtIndex:start];
     [rowHeights insertObject:temp atIndex:end];
 }

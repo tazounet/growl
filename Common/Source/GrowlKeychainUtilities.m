@@ -17,8 +17,8 @@
       return nil;
    
    char *password;
-   const char *serviceUTF8 = [service UTF8String];
-   const char *accountUTF8 = [account UTF8String];
+   const char *serviceUTF8 = service.UTF8String;
+   const char *accountUTF8 = account.UTF8String;
 	UInt32 passwordLength;
 	OSStatus status;
 	status = SecKeychainFindGenericPassword(NULL,
@@ -44,9 +44,9 @@
    if(service == nil || account == nil)
       return NO;
    
-   const char *passwordUTF8 = password ? [password UTF8String] : "";
-   const char *serviceUTF8 = [service UTF8String];
-   const char *accountUTF8 = [account UTF8String];
+   const char *passwordUTF8 = password ? password.UTF8String : "";
+   const char *serviceUTF8 = service.UTF8String;
+   const char *accountUTF8 = account.UTF8String;
 
 	size_t length = strlen(passwordUTF8);
 	OSStatus status;
@@ -93,8 +93,8 @@
    OSStatus status;
    BOOL result = NO;
 	SecKeychainItemRef itemRef = nil;
-   const char *serviceUTF8 = [service UTF8String];
-   const char *accountUTF8 = [account UTF8String];
+   const char *serviceUTF8 = service.UTF8String;
+   const char *accountUTF8 = account.UTF8String;
 	status = SecKeychainFindGenericPassword(NULL,
                                            (UInt32)strlen(serviceUTF8), serviceUTF8,
                                            (UInt32)strlen(accountUTF8), accountUTF8,

@@ -17,6 +17,7 @@
 @property (nonatomic, strong) NSArrayController *groupArray;
 @property (nonatomic) BOOL showGroup;
 
--(id)initWithGroupID:(NSString*)newID arrayController:(NSArrayController*)controller;
+-(instancetype)init NS_UNAVAILABLE;
+-(instancetype)initWithGroupID:(NSString*)newID arrayController:(NSArrayController*)controller NS_DESIGNATED_INITIALIZER;
 
 @end

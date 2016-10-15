@@ -12,7 +12,7 @@
 
 @implementation GrowlTicketController
 
-- (id) init {
+- (instancetype) init {
 	if ((self = [super init])) {
 		ticketsByApplicationName = [[NSMutableDictionary alloc] init];
 	}
@@ -33,12 +33,12 @@
 		filename = [srcDir stringByAppendingPathComponent:filename];
 		[mgr fileExistsAtPath:filename isDirectory:&isDir];
 
-		if ((!isDir) && [[filename pathExtension] isEqualToString:GROWL_PATHEXTENSION_TICKET]) {
+		if ((!isDir) && [filename.pathExtension isEqualToString:GROWL_PATHEXTENSION_TICKET]) {
 			GrowlApplicationTicket *newTicket = [[GrowlApplicationTicket alloc] initTicketFromPath:filename];
 			if (newTicket) {
-				NSString *applicationName = [newTicket appNameHostName];
+				NSString *applicationName = newTicket.appNameHostName;
 				if (!applicationName) {
-					NSLog(@"Invalid ticket (no application name inside): %@", [filename lastPathComponent]);
+					NSLog(@"Invalid ticket (no application name inside): %@", filename.lastPathComponent);
 				} else {
 					/* Growl used to generate a ticket for itself to display notifcations, but 
 				 	 * but this has been removed for 1.1, referencing ticket #547. Thus we have
@@ -53,8 +53,8 @@
 				 	 *	or if we're clobbering already-loaded tickets,
 				 	 *	set this ticket in the dictionary.
 				 	 */
-					if (clobber || ![ticketsByApplicationName objectForKey:applicationName])
-						[ticketsByApplicationName setObject:newTicket forKey:applicationName];
+					if (clobber || !ticketsByApplicationName[applicationName])
+						ticketsByApplicationName[applicationName] = newTicket;
 				}
 				
 			}
@@ -87,25 +87,24 @@
 #pragma mark Public methods
 
 - (NSArray *) allSavedTickets {
-	return [ticketsByApplicationName allValues];
+	return ticketsByApplicationName.allValues;
 }
 
 - (GrowlApplicationTicket *) ticketForApplicationName:(NSString *)appName hostName:(NSString*)hostName {
    NSString *appHost;
-   if(hostName && ![hostName isLocalHost])
+   if(hostName && !hostName.isLocalHost)
       appHost = [NSString stringWithFormat:@"%@ - %@", hostName, appName];
    else
       appHost = appName;
-	return [ticketsByApplicationName objectForKey:appHost];
+	return ticketsByApplicationName[appHost];
 }
 - (void) addTicket:(GrowlApplicationTicket *) newTicket {
-	NSString *appName = [newTicket appNameHostName];
+	NSString *appName = newTicket.appNameHostName;
 	if (!appName)
 		NSLog(@"GrowlTicketController: cannot add ticket because it has no application name (description follows)\n%@", newTicket);
 	else {
       [self willChangeValueForKey:@"allSavedTickets"];
-		[ticketsByApplicationName setObject:newTicket
-									 forKey:appName];
+		ticketsByApplicationName[appName] = newTicket;
       [self didChangeValueForKey:@"allSavedTickets"];
 		//XXX this here is pretty barftastic. what about tickets that already have a path? should we clobber the existing path? create a copy? leave it alone, as now? --boredzo
 		//if (![newTicket path])

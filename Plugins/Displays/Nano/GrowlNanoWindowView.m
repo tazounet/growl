@@ -35,7 +35,7 @@ void addRoundedBottomToPath(CGContextRef context, CGRect rect, CGFloat radius) {
 
 @implementation GrowlNanoWindowView
 
-- (id) initWithFrame:(NSRect)frame {
+- (instancetype) initWithFrame:(NSRect)frame {
 	if ((self = [super initWithFrame:frame])) {
 		cache = [[NSImage alloc] initWithSize:frame.size];
 		needsDisplay = YES;
@@ -53,14 +53,14 @@ void addRoundedBottomToPath(CGContextRef context, CGRect rect, CGFloat radius) {
 - (void) drawRect:(NSRect)rect {
 		
 	NSGraphicsContext *context = [NSGraphicsContext currentContext];
-	CGContextRef cgContext = [context graphicsPort];
-	NSRect bounds = [self bounds];
+	CGContextRef cgContext = context.graphicsPort;
+	NSRect bounds = self.bounds;
 
 	if (needsDisplay) {
 		// rects and sizes
 		int sizePref = 0;
-		if([[self configurationDict] valueForKey:Nano_SIZE_PREF]){
-			sizePref = [[[self configurationDict] valueForKey:Nano_SIZE_PREF] intValue];
+		if([self.configurationDict valueForKey:Nano_SIZE_PREF]){
+			sizePref = [[self.configurationDict valueForKey:Nano_SIZE_PREF] intValue];
 		}
 		NSRect titleRect, textRect;
 		NSRect iconRect;
@@ -105,13 +105,13 @@ void addRoundedBottomToPath(CGContextRef context, CGRect rect, CGFloat radius) {
 			[cache lockFocus];
 		}*/
 
-		NSRect c = [self bounds];
+		NSRect c = self.bounds;
 		CGRect b = CGRectMake(c.origin.x, c.origin.y, c.size.width, c.size.height);
 		addRoundedBottomToPath(cgContext, b, 10.0);
 
 		CGFloat opacityPref = Nano_DEFAULT_OPACITY;
-		if([[self configurationDict] valueForKey:Nano_OPACITY_PREF]){
-			opacityPref = [[[self configurationDict] valueForKey:Nano_OPACITY_PREF] floatValue];
+		if([self.configurationDict valueForKey:Nano_OPACITY_PREF]){
+			opacityPref = [[self.configurationDict valueForKey:Nano_OPACITY_PREF] floatValue];
 		}
 		CGFloat alpha = opacityPref * 0.01;
 		[[backgroundColor colorWithAlphaComponent:alpha] set];
@@ -121,7 +121,7 @@ void addRoundedBottomToPath(CGContextRef context, CGRect rect, CGFloat radius) {
 		[title drawInRect:titleRect withAttributes:titleAttributes];
 
 		[text drawInRect:textRect withAttributes:textAttributes];
-		[icon drawScaledInRect:iconRect operation:NSCompositeSourceOver fraction:1.0 neverFlipped:NO];
+		[icon drawScaledInRect:iconRect operation:NSCompositingOperationSourceOver fraction:1.0 neverFlipped:NO];
 
 		/*if (CGLayerCreateWithContext)
 			[NSGraphicsContext setCurrentContext:context];
@@ -138,8 +138,8 @@ void addRoundedBottomToPath(CGContextRef context, CGRect rect, CGFloat radius) {
 	// draw cache to screen
 	NSRect imageRect = rect;
 	int effect = Nano_EFFECT_SLIDE;
-	if([[self configurationDict] valueForKey:Nano_EFFECT_PREF]){
-		effect = [[[self configurationDict] valueForKey:Nano_EFFECT_PREF] intValue];
+	if([self.configurationDict valueForKey:Nano_EFFECT_PREF]){
+		effect = [[self.configurationDict valueForKey:Nano_EFFECT_PREF] intValue];
 	}
 	if (effect == Nano_EFFECT_SLIDE) {
 		if (CGLayerCreateWithContext)
@@ -163,23 +163,23 @@ void addRoundedBottomToPath(CGContextRef context, CGRect rect, CGFloat radius) {
 		cgRect.size.height = bounds.size.height;
 		CGContextDrawLayerInRect(cgContext, cgRect, layer);
 	} else {
-		[cache drawInRect:rect fromRect:imageRect operation:NSCompositeSourceOver fraction:1.0];
+		[cache drawInRect:rect fromRect:imageRect operation:NSCompositingOperationSourceOver fraction:1.0];
 	}
 }
 
 - (void) setIcon:(NSImage *)anIcon {
 	icon = anIcon;
-	[self setNeedsDisplay:(needsDisplay = YES)];
+	self.needsDisplay = (needsDisplay = YES);
 }
 
 - (void) setTitle:(NSString *)aTitle {
 	title = [aTitle copy];
-	[self setNeedsDisplay:(needsDisplay = YES)];
+	self.needsDisplay = (needsDisplay = YES);
 }
 
 - (void) setText:(NSString *)aText {
 	text = [aText copy];
-	[self setNeedsDisplay:(needsDisplay = YES)];
+	self.needsDisplay = (needsDisplay = YES);
 }
 
 - (void) setPriority:(int)priority {
@@ -211,13 +211,13 @@ void addRoundedBottomToPath(CGContextRef context, CGRect rect, CGFloat radius) {
 
 
 	CGFloat opacityPref = Nano_DEFAULT_OPACITY;
-	if([[self configurationDict] valueForKey:Nano_OPACITY_PREF]){
-		opacityPref = [[[self configurationDict] valueForKey:Nano_OPACITY_PREF] floatValue];
+	if([self.configurationDict valueForKey:Nano_OPACITY_PREF]){
+		opacityPref = [[self.configurationDict valueForKey:Nano_OPACITY_PREF] floatValue];
 	}
 	CGFloat alpha = opacityPref * 0.01;
 
 	Class NSDataClass = [NSData class];
-	NSData *data = [[self configurationDict] valueForKey:key];
+	NSData *data = [self.configurationDict valueForKey:key];
 
 	if (data && [data isKindOfClass:NSDataClass])
 		backgroundColor = [NSUnarchiver unarchiveObjectWithData:data];
@@ -226,7 +226,7 @@ void addRoundedBottomToPath(CGContextRef context, CGRect rect, CGFloat radius) {
 	backgroundColor = [backgroundColor colorWithAlphaComponent:alpha];
 
 	data = nil;
-	data = [[self configurationDict] valueForKey:textKey];
+	data = [self.configurationDict valueForKey:textKey];
 	if (data && [data isKindOfClass:NSDataClass])
 		textColor = [NSUnarchiver unarchiveObjectWithData:data];
 	else
@@ -235,8 +235,8 @@ void addRoundedBottomToPath(CGContextRef context, CGRect rect, CGFloat radius) {
 	CGFloat titleFontSize;
 	CGFloat textFontSize;
 	int sizePref = 0;
-	if([[self configurationDict] valueForKey:Nano_SIZE_PREF]){
-		sizePref = [[[self configurationDict] valueForKey:Nano_SIZE_PREF] intValue];
+	if([self.configurationDict valueForKey:Nano_SIZE_PREF]){
+		sizePref = [[self.configurationDict valueForKey:Nano_SIZE_PREF] intValue];
 	}
 
 	if (sizePref == Nano_SIZE_HUGE) {
@@ -250,28 +250,24 @@ void addRoundedBottomToPath(CGContextRef context, CGRect rect, CGFloat radius) {
 	NSShadow *textShadow = [[NSShadow alloc] init];
 
 	NSSize shadowSize = {0.0, -2.0};
-	[textShadow setShadowOffset:shadowSize];
-	[textShadow setShadowBlurRadius:3.0];
-	[textShadow setShadowColor:[NSColor blackColor]];
+	textShadow.shadowOffset = shadowSize;
+	textShadow.shadowBlurRadius = 3.0;
+	textShadow.shadowColor = [NSColor blackColor];
 
 	NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-	[paragraphStyle setAlignment:NSLeftTextAlignment];
-	[paragraphStyle setLineBreakMode:NSLineBreakByTruncatingTail];
-	titleAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:
-		textColor,                                   NSForegroundColorAttributeName,
-		paragraphStyle,                              NSParagraphStyleAttributeName,
-		[NSFont boldSystemFontOfSize:titleFontSize], NSFontAttributeName,
-		textShadow,                                  NSShadowAttributeName,
-		nil];
+	paragraphStyle.alignment = NSTextAlignmentLeft;
+	paragraphStyle.lineBreakMode = NSLineBreakByTruncatingTail;
+	titleAttributes = @{NSForegroundColorAttributeName: textColor,
+		NSParagraphStyleAttributeName: paragraphStyle,
+		NSFontAttributeName: [NSFont boldSystemFontOfSize:titleFontSize],
+		NSShadowAttributeName: textShadow};
 
 	paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-	[paragraphStyle setAlignment:NSLeftTextAlignment];
-	textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:
-		textColor,                               NSForegroundColorAttributeName,
-		paragraphStyle,                          NSParagraphStyleAttributeName,
-		[NSFont messageFontOfSize:textFontSize], NSFontAttributeName,
-		textShadow,                              NSShadowAttributeName,
-		nil];
+	paragraphStyle.alignment = NSTextAlignmentLeft;
+	textAttributes = @{NSForegroundColorAttributeName: textColor,
+		NSParagraphStyleAttributeName: paragraphStyle,
+		NSFontAttributeName: [NSFont messageFontOfSize:textFontSize],
+		NSShadowAttributeName: textShadow};
 }
 
 - (id) target {
@@ -295,7 +291,7 @@ void addRoundedBottomToPath(CGContextRef context, CGRect rect, CGFloat radius) {
 #pragma mark -
 
 - (BOOL) needsDisplay {
-	return needsDisplay && [super needsDisplay];
+	return needsDisplay && super.needsDisplay;
 }
 
 @end

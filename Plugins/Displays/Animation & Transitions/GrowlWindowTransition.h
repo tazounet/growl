@@ -26,8 +26,11 @@ typedef NSUInteger GrowlTransitionDirection;
 	BOOL						didAutoReverse;
 }
 
+- (instancetype)initWithDuration:(NSTimeInterval)duration animationCurve:(NSAnimationCurve)animationCurve NS_UNAVAILABLE;
+- (instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
+
 /* calls initWithWindow:direction: passing GrowlForwardTransition */
-- (id) initWithWindow:(NSWindow *)inWindow;
+- (instancetype) initWithWindow:(NSWindow *)inWindow;
 
 /*!
  * @method initWithWindow:
@@ -36,7 +39,7 @@ typedef NSUInteger GrowlTransitionDirection;
  * @param theDirection The initial direction for the transition
  * @result An initialized GrowlWindowTransition instance.
  */
-- (id) initWithWindow:(NSWindow *)inWindow direction:(GrowlTransitionDirection)theDirection;
+- (instancetype) initWithWindow:(NSWindow *)inWindow direction:(GrowlTransitionDirection)theDirection;
 
 /*!
 * @method autoReverses

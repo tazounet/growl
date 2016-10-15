@@ -23,10 +23,11 @@
 
 @interface GroupedArrayController : NSObject
 
-- (id)initWithEntityName:(NSString*)entity
-     basePredicateString:(NSString*)predicate
-                groupKey:(NSString*)key
-    managedObjectContext:(NSManagedObjectContext*)aContext;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithEntityName:(NSString*)entity
+               basePredicateString:(NSString*)predicate
+                          groupKey:(NSString*)key
+              managedObjectContext:(NSManagedObjectContext*)aContext NS_DESIGNATED_INITIALIZER;
 
 @property (nonatomic, unsafe_unretained) id<GroupedArrayControllerDelegate> delegate;
 @property (nonatomic, unsafe_unretained) NSManagedObjectContext *context;

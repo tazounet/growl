@@ -25,7 +25,7 @@ expansion, and origin selection.
  * @constant GrowlMiddleColumnPosition The middle oblong (column) of the screen.
  * @constant GrowlRightColumnPosition The right oblong (column) of the screen.
  */
-typedef enum {
+typedef NS_ENUM(NSInteger, GrowlPosition) {
 	GrowlTopLeftPosition,
 	GrowlTopMiddlePosition,
 	GrowlTopRightPosition,
@@ -41,9 +41,9 @@ typedef enum {
 	GrowlLeftColumnPosition,
 	GrowlMiddleColumnPosition,
 	GrowlRightColumnPosition
-} GrowlPosition;
+};
 
-enum GrowlExpansionDirection {
+typedef NS_ENUM(NSInteger, GrowlExpansionDirection) {
 	GrowlNoExpansionDirection,
 	GrowlDownExpansionDirection,
 	GrowlUpExpansionDirection,
@@ -51,10 +51,10 @@ enum GrowlExpansionDirection {
 	GrowlRightExpansionDirection
 };
 
-typedef enum  {
+typedef NS_ENUM(NSInteger, GrowlPositionOrigin) {
     GrowlNoOrigin,
     GrowlTopLeftCorner,
     GrowlBottomRightCorner,
     GrowlTopRightCorner,
     GrowlBottomLeftCorner
-} GrowlPositionOrigin;
+};

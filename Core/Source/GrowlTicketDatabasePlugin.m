@@ -19,11 +19,11 @@
 @dynamic pluginType;
 
 -(BOOL)canFindInstance {
-	return ([self pluginInstanceForConfiguration] != nil);
+	return (self.pluginInstanceForConfiguration != nil);
 }
 
 -(GrowlPlugin*)pluginInstanceForConfiguration {
-	NSDictionary *pluginDict = [[[GrowlPluginController sharedController] pluginsByBundleIdentifier] valueForKey:self.pluginID];
+	NSDictionary *pluginDict = [[GrowlPluginController sharedController].pluginsByBundleIdentifier valueForKey:self.pluginID];
 	NSString *displayName = [pluginDict valueForKey:GrowlPluginInfoKeyName];
 	GrowlPlugin *plugin = [[GrowlPluginController sharedController] pluginInstanceWithName:displayName];
 	return plugin;

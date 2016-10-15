@@ -29,52 +29,52 @@
 	NSMutableDictionary *converted = [super gntpDictFromGrowlDict:dict];
 	NSArray *allNotes = [dict valueForKey:GROWL_NOTIFICATIONS_ALL];
 	NSArray *defaultNotes = [dict valueForKey:GROWL_NOTIFICATIONS_DEFAULT];
-	BOOL useNumberDefaults = [defaultNotes count] > 0 ? [[defaultNotes objectAtIndex:0] isKindOfClass:[NSNumber class]] : NO; //If count is 0, doesn't really matter
+	BOOL useNumberDefaults = defaultNotes.count > 0 ? [defaultNotes[0] isKindOfClass:[NSNumber class]] : NO; //If count is 0, doesn't really matter
 	NSDictionary *noteIcons = [dict valueForKey:GROWL_NOTIFICATIONS_ICONS];
 	NSDictionary *humanReadableNames = [dict valueForKey:GROWL_NOTIFICATIONS_HUMAN_READABLE_NAMES];
 	NSDictionary *descriptions = [dict valueForKey:GROWL_NOTIFICATIONS_DESCRIPTIONS];
 	
-	NSMutableArray *convertedNotes = [NSMutableArray arrayWithCapacity:[allNotes count]];
+	NSMutableArray *convertedNotes = [NSMutableArray arrayWithCapacity:allNotes.count];
 	[allNotes enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 		NSMutableDictionary *noteDict = [NSMutableDictionary dictionary];
-		[noteDict setObject:obj forKey:GrowlGNTPNotificationName];
+		noteDict[GrowlGNTPNotificationName] = obj;
 		
-		id defaultObj = useNumberDefaults ? [NSNumber numberWithUnsignedInteger:idx] : obj;
+		id defaultObj = useNumberDefaults ? @(idx) : obj;
 		if([defaultNotes containsObject:defaultObj]){
-			[noteDict setObject:@"Yes" forKey:GrowlGNTPNotificationEnabled];
+			noteDict[GrowlGNTPNotificationEnabled] = @"Yes";
 		}else{
-			[noteDict setObject:@"No" forKey:GrowlGNTPNotificationEnabled];
+			noteDict[GrowlGNTPNotificationEnabled] = @"No";
 		}
 		
-		id iconObject = [noteIcons objectForKey:obj];
+		id iconObject = noteIcons[obj];
 		if(iconObject){
 			if([iconObject isKindOfClass:[NSImage class]])
 				iconObject = [iconObject PNGRepresentation];
 			//Add to the data blocks
 			NSString *dataIdentifier = [GNTPPacket identifierForBinaryData:iconObject];
-			NSMutableDictionary *dataDict = [converted objectForKey:@"GNTPDATABLOCKS"];
+			NSMutableDictionary *dataDict = converted[@"GNTPDATABLOCKS"];
 			if(!dataDict){
 				dataDict = [NSMutableDictionary dictionary];
-				[converted setObject:dataDict forKey:@"GNTPDATABLOCKS"];
+				converted[@"GNTPDATABLOCKS"] = dataDict;
 			}
-			[dataDict setObject:iconObject forKey:dataIdentifier];
-			[noteDict setObject:[NSString stringWithFormat:@"x-growl-resource://%@", dataIdentifier] forKey:GrowlGNTPNotificationIcon];
+			dataDict[dataIdentifier] = iconObject;
+			noteDict[GrowlGNTPNotificationIcon] = [NSString stringWithFormat:@"x-growl-resource://%@", dataIdentifier];
 		}
-		if([humanReadableNames objectForKey:obj])
-			[noteDict setObject:[humanReadableNames objectForKey:obj] forKey:GrowlGNTPNotificationDisplayName];
-		if([descriptions objectForKey:obj])
-			[noteDict setObject:[descriptions objectForKey:obj] forKey:@"X-Notification-Description"];
+		if(humanReadableNames[obj])
+			noteDict[GrowlGNTPNotificationDisplayName] = humanReadableNames[obj];
+		if(descriptions[obj])
+			noteDict[@"X-Notification-Description"] = descriptions[obj];
 		
 		[convertedNotes addObject:noteDict];
 	 }];
-	[converted setObject:[NSString stringWithFormat:@"%lu", [allNotes count]] forKey:GrowlGNTPNotificationCountHeader];
-	[converted setObject:convertedNotes	forKey:GROWL_NOTIFICATIONS_ALL];
+	converted[GrowlGNTPNotificationCountHeader] = [NSString stringWithFormat:@"%lu", allNotes.count];
+	converted[GROWL_NOTIFICATIONS_ALL] = convertedNotes;
 	return converted;
 }
 
 +(NSString*)headersForGNTPDictionary:(NSDictionary *)dict {
 	NSMutableString *headers = [[super headersForGNTPDictionary:dict] mutableCopy];
-	NSArray *allNotes = [dict objectForKey:GROWL_NOTIFICATIONS_ALL];
+	NSArray *allNotes = dict[GROWL_NOTIFICATIONS_ALL];
 	[allNotes enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 		//Seperate our the notes from each other
 		[headers appendString:@"\r\n"];
@@ -85,7 +85,7 @@
 	return [headers copy];
 }
 
--(id)init {
+-(instancetype)init {
 	if((self = [super init])){
 		_totalNotifications = 0;
 		_readNotifications = 0;
@@ -120,12 +120,12 @@
 												 [self.dataBlockIdentifiers addObject:dataBlockID];
 											 }
 										 }
-										 [dictionary setObject:headerValue forKey:headerKey];
+										 dictionary[headerKey] = headerValue;
 										 return NO;
 									 }];
 			//validate
 			if(![self validateNoteDictionary:dictionary]){
-				if([[dictionary allValues] count] > 0)
+				if(dictionary.allValues.count > 0)
 					NSLog(@"Unable to validate notification %@ in registration packet", dictionary);
 				else
 					NSLog(@"Empty note dict misread?");
@@ -136,7 +136,7 @@
 			self.readNotifications++;
 			
 			if(self.totalNotifications - self.readNotifications == 0) {
-				if([self.dataBlockIdentifiers count] > 0)
+				if((self.dataBlockIdentifiers).count > 0)
 					self.state = 1;
 				else{
 					self.state = 999;
@@ -151,7 +151,7 @@
 	if(self.totalNotifications == 0)
 		result = -1;
 	else
-		result = (self.totalNotifications - self.readNotifications) + [self.dataBlockIdentifiers count];
+		result = (self.totalNotifications - self.readNotifications) + (self.dataBlockIdentifiers).count;
 	
 	if(self.totalNotifications - self.readNotifications > 0) {
 		self.state = 101; //More notifications to read, read them, otherwise state is controlled by the call to super parseDataBlock
@@ -163,7 +163,7 @@
 -(void)parseHeaderKey:(NSString *)headerKey value:(NSString *)stringValue
 {
 	if([headerKey caseInsensitiveCompare:GrowlGNTPNotificationCountHeader] == NSOrderedSame){
-		self.totalNotifications = [stringValue integerValue];
+		self.totalNotifications = stringValue.integerValue;
 		if(self.totalNotifications == 0)
 			NSLog(@"Error parsing %@ as an integer for a number of notifications", stringValue);
 	}else{
@@ -174,10 +174,10 @@
 -(void)receivedResourceDataBlock:(NSData *)data forIdentifier:(NSString *)identifier {
 	[self.notificationDicts enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 		//check the icon, its the main thing that will need replacing
-		id icon = [obj objectForKey:GrowlGNTPNotificationIcon];
+		id icon = obj[GrowlGNTPNotificationIcon];
 		if([icon isKindOfClass:[NSString class]] && [icon rangeOfString:identifier].location != NSNotFound){
 			//Found an icon that matches the ID
-			[obj setObject:data forKey:identifier];
+			obj[identifier] = data;
 		}
 	}];
 	//pass it back up to super in case there are things that need replacing up there
@@ -185,12 +185,12 @@
 }
 
 -(BOOL)validate {
-	return [super validate] && self.totalNotifications == [self.notificationDicts count];
+	return super.validate && self.totalNotifications == (self.notificationDicts).count;
 }
 
 -(NSDictionary*)convertedGrowlDict {
-	NSMutableDictionary *convertedDict = [super convertedGrowlDict];
-	NSMutableArray *notificationNames = [NSMutableArray arrayWithCapacity:[self.notificationDicts count]];
+	NSMutableDictionary *convertedDict = super.convertedGrowlDict;
+	NSMutableArray *notificationNames = [NSMutableArray arrayWithCapacity:(self.notificationDicts).count];
 	NSMutableDictionary *displayNames = [NSMutableDictionary dictionary];
 	//2.0 framework should be upgraded to include descriptions
 	NSMutableDictionary *notificationDescriptions = [NSMutableDictionary dictionary];
@@ -198,22 +198,22 @@
 	//Should really upgrade 2.0 to support note icons during registration;
 	NSMutableDictionary *noteIcons = [NSMutableDictionary dictionary];
 	[self.notificationDicts enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-		NSString *notificationName = [obj objectForKey:GrowlGNTPNotificationName];
+		NSString *notificationName = obj[GrowlGNTPNotificationName];
 		if(notificationName){
 			[notificationNames addObject:notificationName];
 			
-			NSString *displayName = [obj objectForKey:GrowlGNTPNotificationDisplayName];
-			NSString *enabledString = [obj objectForKey:GrowlGNTPNotificationEnabled];
-			NSString *description = [obj objectForKey:@"X-Notification-Description"];
-			id icon = [obj objectForKey:GrowlGNTPNotificationIcon];
+			NSString *displayName = obj[GrowlGNTPNotificationDisplayName];
+			NSString *enabledString = obj[GrowlGNTPNotificationEnabled];
+			NSString *description = obj[@"X-Notification-Description"];
+			id icon = obj[GrowlGNTPNotificationIcon];
 			NSData *iconData = nil;
 			if(icon)
 				iconData = [GNTPPacket convertedDataForIconObject:icon];
 						
 			if(displayName)
-				[displayNames setObject:displayName forKey:notificationName];
+				displayNames[notificationName] = displayName;
 			if(description)
-				[notificationDescriptions setObject:description forKey:notificationName];
+				notificationDescriptions[notificationName] = description;
 			if(enabledString && 
 				([enabledString caseInsensitiveCompare:@"Yes"] == NSOrderedSame || 
 				[enabledString caseInsensitiveCompare:@"True"] == NSOrderedSame))
@@ -221,25 +221,25 @@
 				[enabledNotes addObject:notificationName];
 			}
 			if(iconData)
-				[noteIcons setObject:iconData forKey:notificationName];
+				noteIcons[notificationName] = iconData;
 		}else{
 			NSLog(@"Unable to process note without name!");
 		}
 	}];
 	
-   if(![convertedDict objectForKey:GROWL_APP_ICON_DATA]){
-      [convertedDict setObject:[[NSImage imageNamed:NSImageNameNetwork] TIFFRepresentation] forKey:GROWL_APP_ICON_DATA];
+   if(!convertedDict[GROWL_APP_ICON_DATA]){
+      convertedDict[GROWL_APP_ICON_DATA] = [NSImage imageNamed:NSImageNameNetwork].TIFFRepresentation;
    }
    
-	[convertedDict setObject:notificationNames forKey:GROWL_NOTIFICATIONS_ALL];
-	if([enabledNotes count] > 0)
-		[convertedDict setObject:enabledNotes forKey:GROWL_NOTIFICATIONS_DEFAULT];
-	if([[displayNames allValues] count] > 0)
-		[convertedDict setObject:displayNames forKey:GROWL_NOTIFICATIONS_HUMAN_READABLE_NAMES];
-	if([[notificationDescriptions allValues] count] > 0)
-		[convertedDict setObject:notificationDescriptions forKey:GROWL_NOTIFICATIONS_DESCRIPTIONS];
-	if([[noteIcons allValues] count] > 0)
-		[convertedDict setObject:noteIcons forKey:GROWL_NOTIFICATIONS_ICONS];
+	convertedDict[GROWL_NOTIFICATIONS_ALL] = notificationNames;
+	if(enabledNotes.count > 0)
+		convertedDict[GROWL_NOTIFICATIONS_DEFAULT] = enabledNotes;
+	if(displayNames.allValues.count > 0)
+		convertedDict[GROWL_NOTIFICATIONS_HUMAN_READABLE_NAMES] = displayNames;
+	if(notificationDescriptions.allValues.count > 0)
+		convertedDict[GROWL_NOTIFICATIONS_DESCRIPTIONS] = notificationDescriptions;
+	if(noteIcons.allValues.count > 0)
+		convertedDict[GROWL_NOTIFICATIONS_ICONS] = noteIcons;
 	return convertedDict;
 }
 

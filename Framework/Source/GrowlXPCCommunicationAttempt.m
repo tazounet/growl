@@ -23,7 +23,7 @@ static BOOL xpcInUse = NO;
 
 + (NSString*)XPCBundleID
 {
-	return [NSString stringWithFormat:@"%@.GNTPClientService", [[NSBundle mainBundle] bundleIdentifier]];
+	return [NSString stringWithFormat:@"%@.GNTPClientService", [NSBundle mainBundle].bundleIdentifier];
 }
 
 + (BOOL)canCreateConnection
@@ -34,7 +34,7 @@ static BOOL xpcInUse = NO;
 	if(searched) 
 		return found;
 	
-	NSString *appPath = [[NSBundle mainBundle] bundlePath];
+	NSString *appPath = [NSBundle mainBundle].bundlePath;
 	NSString *xpcSubPath = [NSString stringWithFormat:@"Contents/XPCServices/%@", [self XPCBundleID]];
 	NSString *xpcPath = [[appPath  stringByAppendingPathComponent:xpcSubPath] stringByAppendingPathExtension:@"xpc"];
 	
@@ -56,7 +56,7 @@ static BOOL xpcInUse = NO;
 	
 	if(xpcInUse){
 		xpcInUse = NO;
-		xpc_connection_t shutdownConnection = xpc_connection_create([[self XPCBundleID] UTF8String],
+		xpc_connection_t shutdownConnection = xpc_connection_create([self XPCBundleID].UTF8String,
 																						dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
 		
 		xpc_connection_set_event_handler(shutdownConnection, ^(xpc_object_t object) {
@@ -69,7 +69,7 @@ static BOOL xpcInUse = NO;
 		});
 		
 		xpc_connection_resume(shutdownConnection);
-		xpc_object_t message = [[NSDictionary dictionaryWithObject:@"shutdown" forKey:@"GrowlDictType"] newXPCObject];
+		xpc_object_t message = (@{@"GrowlDictType": @"shutdown"}).newXPCObject;
 		xpc_connection_send_message(shutdownConnection, message);
 	}else{
 		//NSLog(@"endpoint doesn't exist, xpc not running");
@@ -91,12 +91,12 @@ static BOOL xpcInUse = NO;
 
 - (void)begin
 {
-	if (![self establishConnection]) {
+	if (!self.establishConnection) {
 		[self failed];
 		return;
 	}
 	
-	if (![self sendMessageWithPurpose:[self purpose]])
+	if (![self sendMessageWithPurpose:self.purpose])
 		[self failed];
 }
 
@@ -109,7 +109,7 @@ static BOOL xpcInUse = NO;
 {
     GrowlXPCCommunicationAttempt *blockSafe = self;
 	//Third party developers will need to make sure to rename the bundle, executable, and info.plist stuff to tld.company.product.GNTPClientService 
-	connection = xpc_connection_create([[GrowlXPCCommunicationAttempt XPCBundleID] UTF8String], dispatch_get_main_queue());
+	connection = xpc_connection_create([GrowlXPCCommunicationAttempt XPCBundleID].UTF8String, dispatch_get_main_queue());
 	if (!connection)
 		return NO;
 	if(!xpcInUse)
@@ -123,7 +123,7 @@ static BOOL xpcInUse = NO;
 			if (object == XPC_ERROR_CONNECTION_INTERRUPTED) {
 				//NSLog(@"Interrupted connection to XPC service %@", blockSafe);
 			} else if (object == XPC_ERROR_CONNECTION_INVALID) {
-				NSString *errorDescription = [NSString stringWithUTF8String:xpc_dictionary_get_string(object, XPC_ERROR_KEY_DESCRIPTION)];
+				NSString *errorDescription = @(xpc_dictionary_get_string(object, XPC_ERROR_KEY_DESCRIPTION));
 				NSLog(@"Connection Invalid error for XPC service (%@)", errorDescription);
 				xpc_connection_cancel(blockSafe->connection);
 				blockSafe->connection = NULL;
@@ -163,7 +163,7 @@ static BOOL xpcInUse = NO;
 	}
 	
 	NSDictionary *dict = [NSObject xpcObjectToNSObject:reply];
-	NSString *responseAction = [dict objectForKey:@"GrowlActionType"];
+	NSString *responseAction = dict[@"GrowlActionType"];
 	
 	if([responseAction isEqualToString:@"reregister"]){
 		[self queueAndReregister];
@@ -172,8 +172,8 @@ static BOOL xpcInUse = NO;
 #define NOTE_CLICKED 1
 #define NOTE_CLOSED 2
       NSInteger feedbackType = NOTE_TIMEDOUT;
-      if([dict objectForKey:@"Feedback"]){
-         NSString *feedbackString = [dict objectForKey:@"Feedback"];
+      if(dict[@"Feedback"]){
+         NSString *feedbackString = dict[@"Feedback"];
          if([feedbackString isEqualToString:@"Clicked"]){
             feedbackType = NOTE_CLICKED;
          }else if([feedbackString isEqualToString:@"Timedout"]){
@@ -182,10 +182,10 @@ static BOOL xpcInUse = NO;
             feedbackType = NOTE_CLOSED;
          }
       }else{
-         BOOL clicked = [[dict objectForKey:@"Clicked"] boolValue];
+         BOOL clicked = [dict[@"Clicked"] boolValue];
          feedbackType = clicked ? NOTE_CLICKED : NOTE_TIMEDOUT;
       }
-      id context = [dict objectForKey:@"Context"];
+      id context = dict[@"Context"];
       switch (feedbackType) {
          case NOTE_CLICKED:
             if(delegate && [delegate respondsToSelector:@selector(notificationClicked:context:)])
@@ -209,11 +209,11 @@ static BOOL xpcInUse = NO;
       [self wasNotDisplayed];
    }else{
 		self.responseDict = dict;
-		BOOL success = [dict objectForKey:@"Success"] != nil ? [[dict objectForKey:@"Success"] boolValue] : NO;
+		BOOL success = dict[@"Success"] != nil ? [dict[@"Success"] boolValue] : NO;
 		if (success){
 			[self succeeded];
 		}else{
-			GrowlGNTPErrorCode reason = (GrowlGNTPErrorCode)[[dict objectForKey:@"Error-Code"] integerValue];
+			GrowlGNTPErrorCode reason = (GrowlGNTPErrorCode)[dict[@"Error-Code"] integerValue];
 			//NSString *description = [dict objectForKey:@"Error-Description"];
 			//NSLog(@"Failed with code %ld, \"%@\"", reason, description);
 			if([responseAction isEqualToString:@"notification"] && reason == GrowlGNTPUserDisabledErrorCode){
@@ -231,22 +231,22 @@ static BOOL xpcInUse = NO;
 		return NO;
 	
 	NSMutableDictionary *messageDict = [NSMutableDictionary dictionary];
-	[messageDict setObject:purpose forKey:@"GrowlDictType"];
-	[messageDict setObject:self.dictionary forKey:@"GrowlDict"];
+	messageDict[@"GrowlDictType"] = purpose;
+	messageDict[@"GrowlDict"] = self.dictionary;
 	if(self.sendingDetails){
 		//Get our host/address/password to send
-		NSString *host = [sendingDetails objectForKey:@"GNTPHost"];
-		NSString *password = [sendingDetails objectForKey:@"GNTPPassword"];
-		NSData *addressData = [sendingDetails objectForKey:@"GNTPAddressData"];
+		NSString *host = sendingDetails[@"GNTPHost"];
+		NSString *password = sendingDetails[@"GNTPPassword"];
+		NSData *addressData = sendingDetails[@"GNTPAddressData"];
 		if(host)
-			[messageDict setObject:host forKey:@"GNTPHost"];
+			messageDict[@"GNTPHost"] = host;
 		if(password)
-			[messageDict setObject:password forKey:@"GNTPPassword"];
+			messageDict[@"GNTPPassword"] = password;
 		if(addressData)
-			[messageDict setObject:addressData forKey:@"GNTPAddressData"];
+			messageDict[@"GNTPAddressData"] = addressData;
 	}
 	
-	xpc_object_t xpcMessage = [(NSObject*)messageDict newXPCObject];
+	xpc_object_t xpcMessage = ((NSObject*)messageDict).newXPCObject;
 	if(xpcMessage){
 		xpc_connection_send_message(connection, xpcMessage);
 	}else{

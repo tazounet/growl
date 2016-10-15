@@ -36,7 +36,7 @@
    return instance;
 }
 
--(id)init {
+-(instancetype)init {
    if((self = [super init])) {
    }
    return self;
@@ -54,10 +54,11 @@
 }
 
 -(void)launchFailed {
-   NSBeginCriticalAlertSheet(NSLocalizedString(@"Warning! Application preferences will not be saved", @"alert that Growl will be limited to in memory for tickets"),
-                             NSLocalizedString(@"Ok", @""),
-                             nil, nil, nil, nil, nil, NULL, NULL, 
-                             NSLocalizedString(@"An uncorrectable error occured in creating or opening the Growl Tickets Database.\nApplications may register, and you can adjust settings.\nHowever, no registrations or settings will be saved to the next session, and Growl may use more memory", @""));
+    NSAlert *alert = [[NSAlert alloc] init];
+    [alert setMessageText:NSLocalizedString(@"Warning! Application preferences will not be saved", @"alert that Growl will be limited to in memory for tickets")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Ok", nil)];
+    [alert setInformativeText:NSLocalizedString(@"An uncorrectable error occured in creating or opening the Growl Tickets Database.\nApplications may register, and you can adjust settings.\nHowever, no registrations or settings will be saved to the next session, and Growl may use more memory", @"")];
+    alert.alertStyle = NSAlertStyleCritical;
 }
 
 -(NSManagedObject*)managedObjectForEntity:(NSString*)entity predicate:(NSPredicate*)predicate {
@@ -68,21 +69,21 @@
       
       NSFetchRequest *objectCheck = [NSFetchRequest fetchRequestWithEntityName:entity];
 		if(predicate)
-			[objectCheck setPredicate:predicate];
+			objectCheck.predicate = predicate;
       NSArray *objectArray = [blockContext executeFetchRequest:objectCheck error:&objectErr];
       if(objectErr)
       {
-         NSLog(@"Unresolved error %@, %@", objectErr, [objectErr userInfo]);
+         NSLog(@"Unresolved error %@, %@", objectErr, objectErr.userInfo);
          return;
       }
 		
-      if([objectArray count] == 0) {
+      if(objectArray.count == 0) {
          //NSLog(@"Could not find %@ entry for predicate %@", entity, [predicate predicateFormat]);
       }else{
-			if ([objectArray count] > 1) {
+			if (objectArray.count > 1) {
 				//NSLog(@"Taking first %@ matching %@, %lu others", entity, [predicate predicateFormat], [objectArray count] - 1);
 			}
-			object = [objectArray objectAtIndex:0U];
+			object = objectArray[0U];
       }
    };
    
@@ -96,7 +97,7 @@
 
 /* Returns a GrowlTicketDatabaseHost for the given hostname, if it doesn't exist, it is created and inserted */
 -(GrowlTicketDatabaseHost*)hostWithName:(NSString*)hostname {
-	hostname = (!hostname || [hostname isLocalHost]) ? @"Localhost" : hostname;
+	hostname = (!hostname || hostname.isLocalHost) ? @"Localhost" : hostname;
    __block GrowlTicketDatabaseHost *host = (GrowlTicketDatabaseHost*)[self managedObjectForEntity:@"GrowlHostTicket"
 																													 predicate:[NSPredicate predicateWithFormat:@"name == %@", hostname]];
 	__weak NSManagedObjectContext *blockContext = self.managedObjectContext;
@@ -104,9 +105,9 @@
 		void (^hostBlock)(void) = ^{
 			host = [NSEntityDescription insertNewObjectForEntityForName:@"GrowlHostTicket"
 															 inManagedObjectContext:blockContext];
-			[host setName:hostname];
+			host.name = hostname;
 			if([hostname isEqualToString:@"Localhost"])
-				[host setLocalhost:[NSNumber numberWithBool:YES]];
+				host.localhost = @YES;
 		};
 		if([NSThread isMainThread])
 			hostBlock();
@@ -122,9 +123,9 @@
    NSString *pluginName = [noteDict valueForKey:GrowlPluginInfoKeyName];
    GrowlPlugin *plugin = [[GrowlPluginController sharedController] pluginInstanceWithName:pluginName];
    if(plugin){
-      newConfig = [self pluginConfigForBundleID:[[plugin bundle] bundleIdentifier]];
+      newConfig = [self pluginConfigForBundleID:plugin.bundle.bundleIdentifier];
       if(newConfig && !force){
-         NSLog(@"At least one configuration entry already exists for bundle id %@, returning the existing config", [[plugin bundle] bundleIdentifier]);
+         NSLog(@"At least one configuration entry already exists for bundle id %@, returning the existing config", plugin.bundle.bundleIdentifier);
          return newConfig;
       }else {
          newConfig = nil;
@@ -138,11 +139,11 @@
                                                    inManagedObjectContext:blockContext];
          newConfig.pluginType = type;
          newConfig.displayName = pluginName;
-         newConfig.pluginID = [[plugin bundle] bundleIdentifier];
-         newConfig.configID = [[NSProcessInfo processInfo] globallyUniqueString];
+         newConfig.pluginID = plugin.bundle.bundleIdentifier;
+         newConfig.configID = [NSProcessInfo processInfo].globallyUniqueString;
          
          if([plugin respondsToSelector:@selector(prefDomain)]){
-            NSString *prefsID = [plugin prefDomain];
+            NSString *prefsID = plugin.prefDomain;
             if(prefsID){
                NSDictionary *configDict = [[GrowlPreferencesController sharedController] objectForKey:prefsID];
                //NSLog(@"setting config dict for %@ with %@", pluginName, configDict);
@@ -168,10 +169,10 @@
    [managedObjectContext performBlockAndWait:^{
       /* Pull in default configurations for each existing plugin */
       NSArray *actions = [managedObjectContext executeFetchRequest:[NSFetchRequest fetchRequestWithEntityName:@"GrowlPlugin"] error:nil];
-      if(!actions || [actions count] == 0){
+      if(!actions || actions.count == 0){
          GrowlPluginController *pluginController = [GrowlPluginController sharedController];
          [pluginController performSelector:@selector(loadPlugins)];
-         NSArray *pluginArray = [[pluginController displayPlugins] copy];
+         NSArray *pluginArray = [pluginController.displayPlugins copy];
          NSString *defaultStyleName = [[GrowlPreferencesController sharedController] defaultDisplayPluginName];
          __block BOOL foundDefault = NO;
          __block NSString *firstDisplayUUID = nil;
@@ -179,18 +180,18 @@
          [pluginArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
             GrowlTicketDatabasePlugin *config = [weakSelf makeDefaultConfig:NO forPluginDict:obj];
             if(config){
-               if([[config pluginType] caseInsensitiveCompare:@"GrowlDisplay"] == NSOrderedSame &&
+               if([config.pluginType caseInsensitiveCompare:@"GrowlDisplay"] == NSOrderedSame &&
                   !firstDisplayUUID)
                {
-                  firstDisplayUUID = [config configID];
+                  firstDisplayUUID = config.configID;
                }
-               if([[config pluginType] caseInsensitiveCompare:@"GrowlDisplay"] == NSOrderedSame&&
-                  [[config displayName] caseInsensitiveCompare:defaultStyleName] == NSOrderedSame){
-                  [[GrowlPreferencesController sharedController] setDefaultDisplayPluginName:[config configID]];
+               if([config.pluginType caseInsensitiveCompare:@"GrowlDisplay"] == NSOrderedSame&&
+                  [config.displayName caseInsensitiveCompare:defaultStyleName] == NSOrderedSame){
+                  [[GrowlPreferencesController sharedController] setDefaultDisplayPluginName:config.configID];
                   foundDefault = YES;
                }
-               if([[config displayName] caseInsensitiveCompare:@"Smoke"] == NSOrderedSame){
-                  smokeUUID = [config configID];
+               if([config.displayName caseInsensitiveCompare:@"Smoke"] == NSOrderedSame){
+                  smokeUUID = config.configID;
                }
             }
          }];
@@ -206,15 +207,15 @@
       /* Pull in ticket for each existing app ticket */
       GrowlTicketController *controller = [[GrowlTicketController alloc] init];
       [controller loadAllSavedTickets];
-      [[controller allSavedTickets] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+      [controller.allSavedTickets enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
          if([[obj applicationName] caseInsensitiveCompare:@"Growl"] == NSOrderedSame)
             return;
          
          GrowlTicketDatabaseHost *host = [weakSelf hostWithName:[obj hostName]];
          
          GrowlTicketDatabaseApplication *app = [NSEntityDescription insertNewObjectForEntityForName:@"GrowlApplicationTicket"
-                                                                             inManagedObjectContext:[weakSelf managedObjectContext]];
-         [app setParent:host];
+                                                                             inManagedObjectContext:weakSelf.managedObjectContext];
+         app.parent = host;
          [app setWithApplicationTicket:obj];
          importedTickets = YES;
       }];
@@ -231,7 +232,7 @@
                                                      toPath:[ticketsPath stringByAppendingPathExtension:@"bak"]
                                                       error:&moveErr])
          {
-            NSLog(@"Error trying to rename Tickets directory to Tickets.bak\n %@ : %@", moveErr, [moveErr userInfo]);
+            NSLog(@"Error trying to rename Tickets directory to Tickets.bak\n %@ : %@", moveErr, moveErr.userInfo);
          }else{
             NSLog(@"Finished importing tickets, and moved Tickets directory to BackupTickets");
          }
@@ -240,14 +241,14 @@
          NSFetchRequest *test = [NSFetchRequest fetchRequestWithEntityName:@"GrowlApplicationTicket"];
          NSArray *testResult = [managedObjectContext executeFetchRequest:test error:nil];
          [testResult enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            NSLog(@"Imported: %@ on host %@ with %lu notifications", [obj name], [[obj parent] name], [[obj children] count]);
+            NSLog(@"Imported: %@ on host %@ with %lu notifications", [obj name], [obj parent].name, [obj children].count);
          }];
       }];
    }
 }
 
 -(BOOL)registerApplication:(NSDictionary*)regDict {
-	NSString *appName = [regDict objectForKey:GROWL_APP_NAME];
+	NSString *appName = regDict[GROWL_APP_NAME];
    if(!appName){
       NSLog(@"Cannot register without an application name!");
       return NO;
@@ -258,7 +259,7 @@
 		return NO;
 	}
 	
-   NSString *hostName = [regDict objectForKey:GROWL_NOTIFICATION_GNTP_SENT_BY];
+   NSString *hostName = regDict[GROWL_NOTIFICATION_GNTP_SENT_BY];
    
    
    void (^appBlock)(void) = nil;
@@ -269,8 +270,8 @@
          GrowlTicketDatabaseHost *host = [weakSelf hostWithName:hostName];
          
          app = [NSEntityDescription insertNewObjectForEntityForName:@"GrowlApplicationTicket"
-                                             inManagedObjectContext:[weakSelf managedObjectContext]];
-         [app setParent:host];
+                                             inManagedObjectContext:weakSelf.managedObjectContext];
+         app.parent = host;
          [app registerWithDictionary:regDict];
       };
    }else{
@@ -304,7 +305,7 @@
 	if([appName caseInsensitiveCompare:@"Growl"] == NSOrderedSame){
 		return nil;
 	}
-   NSString *resolvedHost = ((!hostName || [hostName isLocalHost]) ? @"Localhost" : hostName);
+   NSString *resolvedHost = ((!hostName || hostName.isLocalHost) ? @"Localhost" : hostName);
 	return (GrowlTicketDatabaseApplication*)[self managedObjectForEntity:@"GrowlApplicationTicket" 
 																				  predicate:[NSPredicate predicateWithFormat:@"name == %@ && parent.name == %@", appName, resolvedHost]];
 }
@@ -317,7 +318,7 @@
 		newCompound.pluginType = @"GrowlCompoundAction";
 		newCompound.displayName = @"NewCompoundAction";
 		newCompound.pluginID = @"com.Growl.compoundAction";
-		newCompound.configID = [[NSProcessInfo processInfo] globallyUniqueString];
+		newCompound.configID = [NSProcessInfo processInfo].globallyUniqueString;
 	};
 	
 	if([NSThread mainThread]){
@@ -335,10 +336,10 @@
 		return nil;
 	
 	__block GrowlTicketDatabaseDisplay* plugin = (GrowlTicketDatabaseDisplay*)[self pluginConfigForID:defaultDisplayID];
-	if(!plugin || ![plugin canFindInstance]) {
+	if(!plugin || !plugin.canFindInstance) {
 		//resolve to a smoke display config if possible
 		plugin = (GrowlTicketDatabaseDisplay*)[self pluginConfigForBundleID:@"com.Growl.Smoke"];
-		if(!plugin || ![plugin canFindInstance]){
+		if(!plugin || !plugin.canFindInstance){
 			__weak NSManagedObjectContext *blockContext = self.managedObjectContext;
 			void (^pluginBlock)(void) = ^{
 				NSError *pluginErr = nil;
@@ -347,11 +348,11 @@
 				NSArray *pluginArray = [blockContext executeFetchRequest:objectCheck error:&pluginErr];
 				if(pluginErr)
 				{
-					NSLog(@"Unresolved error %@, %@", pluginErr, [pluginErr userInfo]);
+					NSLog(@"Unresolved error %@, %@", pluginErr, pluginErr.userInfo);
 					return;
 				}
 				
-				if([pluginArray count] == 0) {
+				if(pluginArray.count == 0) {
 					NSLog(@"Could not find any display plugin configs!");
 				}else{
 					[pluginArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
@@ -379,12 +380,12 @@
 	[actionIDs enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 		GrowlTicketDatabasePlugin *plugin = [self pluginConfigForID:obj];
 		if(plugin && [plugin isKindOfClass:[GrowlTicketDatabaseCompoundAction class]]){
-			[resolvedSet unionSet:[(GrowlTicketDatabaseCompoundAction*)plugin resolvedActionConfigSet]];
+			[resolvedSet unionSet:((GrowlTicketDatabaseCompoundAction*)plugin).resolvedActionConfigSet];
 		}else if (plugin && [plugin isKindOfClass:[GrowlTicketDatabaseAction class]]) {
 			[resolvedSet addObject:plugin];
 		}
 	}];
-	if([resolvedSet count] > 0)
+	if(resolvedSet.count > 0)
 		return resolvedSet;
 	else
 		return nil;
@@ -406,9 +407,9 @@
 }
 
 -(void)deletePluginConfiguration:(GrowlTicketDatabasePlugin*)plugin {
-	id instance = [plugin pluginInstanceForConfiguration];
+	id instance = plugin.pluginInstanceForConfiguration;
 	if(instance && [instance conformsToProtocol:@protocol(GrowlConfigurationRemovalProtocol)])
-		[(id<GrowlConfigurationRemovalProtocol>)instance removeConfiguration:[plugin configuration] forID:[plugin configID]];
+		[(id<GrowlConfigurationRemovalProtocol>)instance removeConfiguration:plugin.configuration forID:plugin.configID];
 	[managedObjectContext deleteObject:plugin];
    [self saveDatabase:NO];
 }

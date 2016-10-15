@@ -51,7 +51,7 @@
    
 }
 
-- (id)initWithWindowNibName:(NSString *)windowNibName {
+- (instancetype)initWithWindowNibName:(NSString *)windowNibName {
    if((self = [super initWithWindowNibName:windowNibName])){
       self.settingsWindowTitle = NSLocalizedString(@"Preferences", @"Preferences window title");
    }
@@ -68,7 +68,7 @@
    [aboutItem setLabel:NSLocalizedString(@"About", @"About prefs tab title")];
 
     firstOpen = YES;
-    [self.window setCollectionBehavior:NSWindowCollectionBehaviorMoveToActiveSpace];
+    (self.window).collectionBehavior = NSWindowCollectionBehaviorMoveToActiveSpace;
     
     preferencesController = [GrowlPreferencesController sharedController];
     
@@ -113,7 +113,7 @@
 - (void)showWindowStep3
 {
     [[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateIgnoringOtherApps];
-    if(![self.window isVisible]) {
+    if(!(self.window).visible) {
         [self.window center];
         [self.window setFrameAutosaveName:@"HWGrowlerPrefsWindowFrame"];
         [self.window setFrameUsingName:@"HWGrowlerPrefsWindowFrame" force:YES];
@@ -131,7 +131,7 @@
     if([currentViewController respondsToSelector:@selector(viewDidUnload)])
         [currentViewController viewDidUnload];
     
-    if([preferencesController menuState] == GrowlNoMenu || [preferencesController menuState] == GrowlStatusMenu){
+    if(preferencesController.menuState == GrowlNoMenu || preferencesController.menuState == GrowlStatusMenu){
         dispatch_async(dispatch_get_main_queue(), ^{
             ProcessSerialNumber psn = { 0, kCurrentProcess };
             TransformProcessType(&psn, kProcessTransformToUIElementApplication);
@@ -154,9 +154,9 @@
  */
 - (void) reloadPreferences:(NSNotification *)notification {
 	@autoreleasepool{
-        id object = [notification object];
+        id object = notification.object;
         if(!object || [object isEqualToString:GrowlSelectedPrefPane])
-            [self setSelectedTab:[preferencesController selectedPreferenceTab]];
+            [self setSelectedTab:preferencesController.selectedPreferenceTab];
 	}
 }
 
@@ -180,7 +180,7 @@
 
 -(void)setSelectedTab:(NSUInteger)tab
 {
-   [toolbar setSelectedItemIdentifier:[NSString stringWithFormat:@"%lu", tab]];
+   toolbar.selectedItemIdentifier = [NSString stringWithFormat:@"%lu", tab];
       
    Class newClass;
     
@@ -229,37 +229,37 @@
       [prefViewControllers setValue:nextController forKey:nibName];
    }
    
-   NSWindow *aWindow = [self window];
-   NSRect newFrameRect = [aWindow frameRectForContentRect:[[nextController view] frame]];
-   NSRect oldFrameRect = [aWindow frame];
+   NSWindow *aWindow = self.window;
+   NSRect newFrameRect = [aWindow frameRectForContentRect:nextController.view.frame];
+   NSRect oldFrameRect = aWindow.frame;
    
    NSSize newSize = newFrameRect.size;
    NSSize oldSize = oldFrameRect.size;
-   NSSize minSize = [[self window] minSize];
+   NSSize minSize = self.window.minSize;
 
    if(minSize.width > newSize.width)
       newSize.width = minSize.width;
    
-   NSRect frame = [aWindow frame];
+   NSRect frame = aWindow.frame;
    frame.size = newSize;
    frame.origin.y -= (newSize.height - oldSize.height);
     frame.origin.x -= (newSize.width - oldSize.width)/2.0f;
    [oldController viewWillUnload];
-   [aWindow setContentView:[[NSView alloc] initWithFrame:NSZeroRect]];
+   aWindow.contentView = [[NSView alloc] initWithFrame:NSZeroRect];
    [oldController viewDidUnload];
     
    self.currentViewController = nextController;
    [aWindow setFrame:frame display:YES animate:YES];
    
    [nextController viewWillLoad];
-   [aWindow setContentView:[nextController view]];
-   [aWindow makeFirstResponder:[nextController view]];
+   aWindow.contentView = nextController.view;
+   [aWindow makeFirstResponder:nextController.view];
    [nextController viewDidLoad];
 }
 
 -(IBAction)selectedTabChanged:(id)sender
 {
-    [preferencesController setSelectedPreferenceTab:[[sender itemIdentifier] integerValue]];
+    preferencesController.selectedPreferenceTab = [sender itemIdentifier].integerValue;
 }
 
 -(BOOL)validateToolbarItem:(NSToolbarItem *)theItem
@@ -269,17 +269,17 @@
 
 -(NSArray*)toolbarSelectableItemIdentifiers:(NSToolbar*)aToolbar
 {
-    return [NSArray arrayWithObjects:@"0", @"1", @"2", @"3", @"4", @"5", @"6", nil];
+    return @[@"0", @"1", @"2", @"3", @"4", @"5", @"6"];
 }
 
 - (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar *)toolbar
 {
-   return [NSArray arrayWithObjects:NSToolbarFlexibleSpaceItemIdentifier, @"0", @"1", @"2", @"3", @"4", @"5", @"6", nil];
+   return @[NSToolbarFlexibleSpaceItemIdentifier, @"0", @"1", @"2", @"3", @"4", @"5", @"6"];
 }
 
 - (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar*)aToolbar 
 {
-   return [NSArray arrayWithObjects:NSToolbarFlexibleSpaceItemIdentifier, @"0", @"1", @"2", @"3", @"4", @"5", @"6", NSToolbarFlexibleSpaceItemIdentifier, nil];
+   return @[NSToolbarFlexibleSpaceItemIdentifier, @"0", @"1", @"2", @"3", @"4", @"5", @"6", NSToolbarFlexibleSpaceItemIdentifier];
 }
 
 -(void)releaseTab:(GrowlPrefsViewController *)tab

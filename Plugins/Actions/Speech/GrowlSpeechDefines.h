@@ -38,9 +38,9 @@
 #define GrowlSpeechUseVolumeDefault NO
 #define GrowlSpeechVolumeDefault 100
 
-typedef enum {
+typedef NS_ENUM(NSInteger, SpeechHotKey) {
 	SpeechPauseHotKey,
 	SpeechSkipHotKey,
 	SpeechClickHotKey
-} SpeechHotKey;
+};
 

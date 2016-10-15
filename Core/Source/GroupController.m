@@ -16,8 +16,8 @@
 @synthesize groupArray;
 @synthesize showGroup;
 
-- (id)initWithGroupID:(NSString*)newID
-      arrayController:(NSArrayController*)controller
+- (instancetype)initWithGroupID:(NSString*)newID
+                arrayController:(NSArrayController*)controller
 {
     self = [super init];
     if (self) {

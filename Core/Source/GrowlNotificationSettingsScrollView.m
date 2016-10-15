@@ -14,14 +14,14 @@
 @synthesize gradient;
 @synthesize angle;
 
--(id)initWithFrame:(NSRect)frameRect {
+-(instancetype)initWithFrame:(NSRect)frameRect {
    if((self = [super initWithFrame:frameRect])){
    }
    return self;
 }
 
 -(void)drawRect:(NSRect)dirtyRect {
-   [gradient drawInRect:[self bounds] angle:angle];
+   [gradient drawInRect:self.bounds angle:angle];
 }
 
 @end
@@ -31,7 +31,7 @@
 @synthesize bottom;
 
 -(void)awakeFromNib {
-   [self setScrollerStyle:NSScrollerStyleOverlay];
+   self.scrollerStyle = NSScrollerStyleOverlay;
 }
 
 
@@ -39,17 +39,17 @@
    [super tile];
    static NSGradient *_gradient;
    if(!top){
-      _gradient = [[NSGradient alloc] initWithColors:[NSArray arrayWithObjects:[NSColor blackColor],
-                                                                               [[NSColor blackColor] colorWithAlphaComponent:.25],
-                                                                               [[NSColor blackColor] colorWithAlphaComponent:0.0], nil]];
+      _gradient = [[NSGradient alloc] initWithColors:@[[NSColor blackColor],
+                                                       [[NSColor blackColor] colorWithAlphaComponent:.25],
+                                                       [[NSColor blackColor] colorWithAlphaComponent:0.0]]];
       top = [[GrowlNotificationTableFadeView alloc] initWithFrame:CGRectMake(8.0f, 0.0f, self.contentView.frame.size.width - 31.0f, FADE_HEIGHT)];
-      [top setAngle:[top isFlipped] ? 90.0f : -90.0f];
-      [top setGradient:_gradient];
+      top.angle = top.flipped ? 90.0f : -90.0f;
+      top.gradient = _gradient;
    }
    if(!bottom){
       bottom = [[GrowlNotificationTableFadeView alloc] initWithFrame:CGRectMake(8.0f, self.contentView.frame.size.height - FADE_HEIGHT, self.contentView.frame.size.width - 31.0f, FADE_HEIGHT)];
-      [bottom setAngle:[bottom isFlipped] ? -90.0f : 90.0f];
-      [bottom setGradient:_gradient];
+      bottom.angle = bottom.flipped ? -90.0f : 90.0f;
+      bottom.gradient = _gradient;
    }
    
    [top removeFromSuperviewWithoutNeedingDisplay];
@@ -57,10 +57,10 @@
    //[self addSubview:top positioned:NSWindowAbove relativeTo:[self contentView]];
    //[self addSubview:bottom positioned:NSWindowAbove relativeTo:[self contentView]];
    
-   [[self verticalScroller] setScrollerStyle:NSScrollerStyleOverlay];
-   CGPoint origin = [[self verticalScroller] frame].origin;
+   self.verticalScroller.scrollerStyle = NSScrollerStyleOverlay;
+   CGPoint origin = self.verticalScroller.frame.origin;
    origin.x -= 24.0f;
-   [[self verticalScroller] setFrameOrigin:origin];
+   [self.verticalScroller setFrameOrigin:origin];
 }
 
 @end

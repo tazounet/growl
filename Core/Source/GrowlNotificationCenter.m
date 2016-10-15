@@ -9,7 +9,7 @@
 #import "GrowlNotificationCenter.h"
 
 @implementation GrowlNotificationCenter
-- (id) init {
+- (instancetype) init {
 	if ((self = [super init])) {
 		observers = [[NSMutableArray alloc] init];
 	}

@@ -21,8 +21,8 @@
 #define MIN_DISPLAY_TIME 3.0
 #define GrowlBezelPadding 10.0
 
-- (id) initWithNotification:(GrowlNotification *)note plugin:(GrowlDisplayPlugin *)aPlugin {
-	NSDictionary *configDict = [note configurationDict];
+- (instancetype) initWithNotification:(GrowlNotification *)note plugin:(GrowlDisplayPlugin *)aPlugin {
+	NSDictionary *configDict = note.configurationDict;
 	int sizePref = 0;
 	screenNumber = 0U;
 	shrinkEnabled = BEZEL_SHRINK_DEFAULT;
@@ -38,9 +38,9 @@
 		screenNumber = [[configDict valueForKey:BEZEL_SCREEN_PREF] unsignedIntValue];
 	}
 	NSArray *screens = [NSScreen screens];
-	NSUInteger screensCount = [screens count];
+	NSUInteger screensCount = screens.count;
 	if (screensCount) {
-		[self setScreen:((screensCount >= (screenNumber + 1)) ? [screens objectAtIndex:screenNumber] : [screens objectAtIndex:0])];
+		self.screen = ((screensCount >= (screenNumber + 1)) ? screens[screenNumber] : screens[0]);
 	}
 
 	if([configDict valueForKey:BEZEL_SIZE_PREF]){
@@ -66,30 +66,30 @@
 	}
    
 	NSPanel *panel = [[NSPanel alloc] initWithContentRect:sizeRect
-												styleMask:NSBorderlessWindowMask
+												styleMask:NSWindowStyleMaskBorderless
 												  backing:NSBackingStoreBuffered
 													defer:YES];
-	NSRect panelFrame = [panel frame];
+	NSRect panelFrame = panel.frame;
 	[panel setBecomesKeyOnlyIfNeeded:YES];
 	[panel setHidesOnDeactivate:NO];
-	[panel setBackgroundColor:[NSColor clearColor]];
+	panel.backgroundColor = [NSColor clearColor];
 	[panel setLevel:GrowlVisualDisplayWindowLevel];
 	[panel setIgnoresMouseEvents:YES];
-	[panel setCollectionBehavior:NSWindowCollectionBehaviorCanJoinAllSpaces];
+	panel.collectionBehavior = NSWindowCollectionBehaviorCanJoinAllSpaces;
 	[panel setOpaque:NO];
 	[panel setHasShadow:NO];
 	[panel setCanHide:NO];
 	[panel setOneShot:YES];
-	[panel setAlphaValue:0.0];
-	[panel setDelegate:self];
+	panel.alphaValue = 0.0;
+	panel.delegate = self;
 
 	GrowlBezelWindowView *view = [[GrowlBezelWindowView alloc] initWithFrame:panelFrame];
-	[view setTarget:self];
-	[view setAction:@selector(notificationClicked:)];
-	[panel setContentView:view];
+	view.target = self;
+	view.action = @selector(notificationClicked:);
+	panel.contentView = view;
 
-	panelFrame = [[panel contentView] frame];
-   panelFrame.origin = [self idealOriginInRect:[[self screen] frame]];
+	panelFrame = panel.contentView.frame;
+   panelFrame.origin = [self idealOriginInRect:self.screen.frame];
 	[panel setFrame:panelFrame display:NO];
 
 	// call super so everything else is set up...
@@ -132,15 +132,15 @@
 
 - (CGPoint) idealOriginInRect:(CGRect)rect {
 	BOOL shiftTopDown = NO;
-	if([self screen] == [NSScreen mainScreen] && [NSMenu menuBarVisible])
+	if(self.screen == [NSScreen mainScreen] && [NSMenu menuBarVisible])
 		shiftTopDown = YES;
 	
-	CGRect viewFrame = [[self window] frame];
+	CGRect viewFrame = self.window.frame;
 	
 	CGPoint result;
 	int positionPref = BEZEL_POSITION_DEFAULT;
-	if([[self configurationDict] valueForKey:BEZEL_POSITION_PREF]){
-		positionPref = [[[self configurationDict] valueForKey:BEZEL_POSITION_PREF] intValue];
+	if([self.configurationDict valueForKey:BEZEL_POSITION_PREF]){
+		positionPref = [[self.configurationDict valueForKey:BEZEL_POSITION_PREF] intValue];
 	}
 	switch (positionPref) {
 		default:
@@ -152,7 +152,7 @@
 			result.x = NSMaxX(rect) - NSWidth(viewFrame) - GrowlBezelPadding;
 			result.y = NSMaxY(rect) - GrowlBezelPadding - NSHeight(viewFrame);
 			if(shiftTopDown) 
-				result.y -= [[NSApp mainMenu] menuBarHeight];
+				result.y -= NSApp.mainMenu.menuBarHeight;
 			break;
 		case BEZEL_POSITION_BOTTOMRIGHT:
 			result.x = NSMaxX(rect) - NSWidth(viewFrame) - GrowlBezelPadding;
@@ -166,7 +166,7 @@
 			result.x = rect.origin.x + GrowlBezelPadding;
 			result.y = NSMaxY(rect) - GrowlBezelPadding - NSHeight(viewFrame);
 			if(shiftTopDown)
-				result.y -= [[NSApp mainMenu] menuBarHeight];
+				result.y -= NSApp.mainMenu.menuBarHeight;
 			break;
 	}
 	return result;
@@ -178,11 +178,11 @@
 
 - (NSString*)displayQueueKey {
 	int positionPref = BEZEL_POSITION_DEFAULT;
-	if([[self configurationDict] valueForKey:BEZEL_POSITION_PREF]){
-		positionPref = [[[self configurationDict] valueForKey:BEZEL_POSITION_PREF] intValue];
+	if([self.configurationDict valueForKey:BEZEL_POSITION_PREF]){
+		positionPref = [[self.configurationDict valueForKey:BEZEL_POSITION_PREF] intValue];
 	}
 	
-	NSString *key = [NSString stringWithFormat:@"bezel-%@-%d", [[self screen] screenIDString], positionPref];
+	NSString *key = [NSString stringWithFormat:@"bezel-%@-%d", self.screen.screenIDString, positionPref];
 	return key;
 }
 

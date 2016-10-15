@@ -42,7 +42,7 @@ enum {
     kNumberOfMethods
 };
 
-typedef enum {
+typedef NS_ENUM (NSInteger, muxState) {
     muxDisableFeature    = 0, // set only
     muxEnableFeature    = 1, // set only
     
@@ -67,9 +67,9 @@ typedef enum {
     muxGraphicsCard        = 7, // get: returns active graphics card
     muxUnknown2            = 8, // get: sometimes 0xffffffff, TODO: figure out what that means
     
-} muxState;
+};
 
-typedef enum {
+typedef NS_ENUM (NSInteger, muxFeature) {
     Policy,
     Auto_PowerDown_GPU,
     Dynamic_Switching,
@@ -83,7 +83,7 @@ typedef enum {
     Display_Capture_Switch,
     No_GL_HDA_busy_idle_registration,
     muxFeaturesCount
-} muxFeature;
+};
 
 #pragma mark - Static C methods
 

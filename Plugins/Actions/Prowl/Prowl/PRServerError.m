@@ -5,7 +5,7 @@ NSString *const PRServerErrorDomain = @"PRServerErrorDomain";
 
 @implementation PRServerError
 
-+ (id)serverErrorWithStatusCode:(NSInteger)statusCode
++ (instancetype)serverErrorWithStatusCode:(NSInteger)statusCode
 {
 	return [[self alloc] initWithDomain:PRServerErrorDomain
 									code:statusCode

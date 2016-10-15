@@ -17,8 +17,7 @@
 	[self unlockFocus];
 
 	NSData *data = [bitmap representationUsingType:NSPNGFileType
-                                        properties:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat:2.0],
-                                                    NSImageCompressionFactor, nil]];
+                                        properties:@{NSImageCompressionFactor: @2.0f}];
 
 	return data;
 }
@@ -27,7 +26,7 @@
 {
     // -[NSWindow convertScreenToBase:] is deprecated, so we have to work with an NSRect
     NSRect screenRect = (NSRect){.origin = point, .size = NSMakeSize(0.0f, 0.0f)};
-    NSPoint windowPoint = [[self window] convertRectFromScreen:screenRect].origin;
+    NSPoint windowPoint = [self.window convertRectFromScreen:screenRect].origin;
     return [self convertPoint:windowPoint fromView:nil];
 }
 
@@ -36,7 +35,7 @@
     // -[NSWindow convertBaseToScreen:] is deprecated, so we have to work with an NSRect
     NSPoint windowPoint = [self convertPoint:point toView:nil];
     NSRect windowRect = (NSRect){.origin = windowPoint, .size = NSMakeSize(0.0f, 0.0f)};
-    return [[self window] convertRectToScreen:windowRect].origin;
+    return [self.window convertRectToScreen:windowRect].origin;
 }
 
 @end

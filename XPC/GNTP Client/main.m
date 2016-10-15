@@ -42,9 +42,9 @@ static void GNTP_peer_event_handler(xpc_connection_t peer, xpc_object_t event)
 		// Here we unpack our dictionary.
 		NSDictionary *dict = [NSObject xpcObjectToNSObject:event];
 		NSString *purpose = [dict valueForKey:@"GrowlDictType"];
-		NSDictionary *growlDict = [dict objectForKey:@"GrowlDict"];
+		NSDictionary *growlDict = dict[@"GrowlDict"];
 		
-		NSData *address = [dict objectForKey:@"GNTPAddressData"];
+		NSData *address = dict[@"GNTPAddressData"];
 		NSString *host = [dict valueForKey :@"GNTPHost"];
 		NSString *pass = [dict valueForKey:@"GNTPPassword"];
 		

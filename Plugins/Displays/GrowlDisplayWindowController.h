@@ -18,12 +18,12 @@
 
 @class GrowlWindowTransition, GrowlDisplayPlugin, GrowlNotification, GrowlNotificationView;
 
-typedef enum {
+typedef NS_ENUM(NSInteger, GrowlDisplayStatus) {
 	GrowlDisplayUnknownStatus = 0,
 	GrowlDisplayTransitioningInStatus,
 	GrowlDisplayOnScreenStatus,
 	GrowlDisplayTransitioningOutStatus
-} GrowlDisplayStatus;
+};
 
 @interface GrowlDisplayWindowController : NSWindowController <NSWindowDelegate, NSAnimationDelegate> {
 	GrowlDisplayPlugin   *__weak plugin;
@@ -56,9 +56,12 @@ typedef enum {
 	BOOL ignoreAnimation;
 }
 
-- (id) initWithWindowNibName:(NSString *)windowNibName plugin:(GrowlDisplayPlugin *)aPlugin;
-- (id) initWithNotification:(GrowlNotification*)note plugin:(GrowlDisplayPlugin *)aPlugin;
-- (id) initWithWindow:(NSWindow *)window andPlugin:(GrowlDisplayPlugin*)aPlugin;
+- (instancetype)initWithWindow:(NSWindow *)window NS_UNAVAILABLE;
+- (instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
+
+- (instancetype) initWithWindowNibName:(NSString *)windowNibName plugin:(GrowlDisplayPlugin *)aPlugin;
+- (instancetype) initWithNotification:(GrowlNotification*)note plugin:(GrowlDisplayPlugin *)aPlugin;
+- (instancetype) initWithWindow:(NSWindow *)window andPlugin:(GrowlDisplayPlugin*)aPlugin NS_DESIGNATED_INITIALIZER;
 
 + (void) registerInstance:(id)instance withIdentifier:(NSString *)ident;
 + (void) unregisterInstanceWithIdentifier:(NSString *)ident;

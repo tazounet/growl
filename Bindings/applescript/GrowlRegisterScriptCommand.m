@@ -24,13 +24,13 @@ static const NSSize iconSize = { 1024.0f, 1024.0f };
 @implementation GrowlRegisterScriptCommand
 
 - (id) performDefaultImplementation {
-	NSDictionary *args = [self evaluatedArguments];
+	NSDictionary *args = self.evaluatedArguments;
 
 	//XXX - should validate params better!
-	NSString *appName				= [args objectForKey:KEY_APP_NAME];
-	NSArray *allNotifications		= [args objectForKey:KEY_NOTIFICATIONS_ALL];
-	NSArray *defaultNotifications	= [args objectForKey:KEY_NOTIFICATIONS_DEFAULT];
-	NSString *iconOfApplication		= [args objectForKey:KEY_ICON_APP_NAME];
+	NSString *appName				= args[KEY_APP_NAME];
+	NSArray *allNotifications		= args[KEY_NOTIFICATIONS_ALL];
+	NSArray *defaultNotifications	= args[KEY_NOTIFICATIONS_DEFAULT];
+	NSString *iconOfApplication		= args[KEY_ICON_APP_NAME];
 
 	//translate AppleScript (1-based) indices to C (0-based) indices.
 	NSMutableArray *temp = [[NSMutableArray alloc] initWithArray:defaultNotifications];
@@ -40,21 +40,21 @@ static const NSSize iconSize = { 1024.0f, 1024.0f };
 	for (unsigned i = 0U; (num = [defaultEnum nextObject]); ++i) {
 		if ([num isKindOfClass:NSNumberClass]) {
 			//it's an index.
-			long value = [num longValue];
+			long value = num.longValue;
 			if (value < 0) {
 				/*negative indices are from the end.
 				 *-1 is the last; -2 is second-to-last; etc.
 				 */
-				value = [allNotifications count] + value;
+				value = allNotifications.count + value;
 			} else if (value > 0) {
 				--value;
 			} else {
-				[self setScriptErrorNumber:errAEIllegalIndex];
-				[self setScriptErrorString:@"Can't get item 0 of notifications."];
+				self.scriptErrorNumber = errAEIllegalIndex;
+				self.scriptErrorString = @"Can't get item 0 of notifications.";
 				return nil;
 			}
-			num = [[NSNumber alloc] initWithUnsignedLong:value];
-			[temp replaceObjectAtIndex:i withObject:num];
+			num = @(value);
+			temp[i] = num;
 		}
 		++i;
 	}
@@ -70,8 +70,8 @@ static const NSSize iconSize = { 1024.0f, 1024.0f };
 		if (iconOfApplication) {
 			NSImage *icon = [[NSWorkspace sharedWorkspace] iconForApplication:iconOfApplication];
 			if (icon) {
-				[icon setSize:iconSize];
-				[registerDict setObject:[icon PNGRepresentation] forKey:GROWL_APP_ICON_DATA];
+				icon.size = iconSize;
+				registerDict[GROWL_APP_ICON_DATA] = icon.PNGRepresentation;
 			}
 		}
 
@@ -90,7 +90,7 @@ static const NSSize iconSize = { 1024.0f, 1024.0f };
 }
 
 - (void) setError:(int)errorCode failure:(id)failure {
-	[self setScriptErrorNumber:errorCode];
+	self.scriptErrorNumber = errorCode;
 	NSString *str;
 
 	switch (errorCode) {
@@ -102,7 +102,7 @@ static const NSSize iconSize = { 1024.0f, 1024.0f };
 	}
 
 	if (str)
-		[self setScriptErrorString:str];
+		self.scriptErrorString = str;
 }
 
 @end

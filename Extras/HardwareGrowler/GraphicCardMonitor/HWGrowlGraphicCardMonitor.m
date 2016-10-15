@@ -73,8 +73,8 @@
 
         for (NSDictionary *dict in processes)
         {
-            NSString *taskName = [dict objectForKey:kTaskItemName];
-            NSString *pid = [dict objectForKey:kTaskItemPID];
+            NSString *taskName = dict[kTaskItemName];
+            NSString *pid = dict[kTaskItemPID];
             NSString *taskTitle = [NSString stringWithString:taskName];
             
             if (![pid isEqualToString:@""])
@@ -127,21 +127,21 @@
 #pragma mark HWGrowlPluginNotifierProtocol
 
 -(NSArray*)noteNames {
-	return [NSArray arrayWithObjects:@"OnIntegratedGraphicCard", @"OnDiscreteGraphicCard", nil];
+	return @[@"OnIntegratedGraphicCard", @"OnDiscreteGraphicCard"];
 }
 
 -(NSDictionary*)localizedNames {
-	return [NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"On integrated graphic card", @""), @"OnIntegratedGraphicCard",
-            NSLocalizedString(@"On discrete graphic card", @""), @"OnDiscreteGraphicCard",nil];
+	return @{@"OnIntegratedGraphicCard": NSLocalizedString(@"On integrated graphic card", @""),
+            @"OnDiscreteGraphicCard": NSLocalizedString(@"On discrete graphic card", @"")};
 }
 
 -(NSDictionary*)noteDescriptions {
-	return [NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"Sent when the graphic card change to integrated", @""), @"OnIntegratedGraphicCard",
-            NSLocalizedString(@"Sent when the graphic card change to discrete", @""), @"OnDiscreteGraphicCard",nil];
+	return @{@"OnIntegratedGraphicCard": NSLocalizedString(@"Sent when the graphic card change to integrated", @""),
+            @"OnDiscreteGraphicCard": NSLocalizedString(@"Sent when the graphic card change to discrete", @"")};
 }
 
 -(NSArray*)defaultNotifications {
-	return [NSArray arrayWithObjects:@"OnIntegratedGraphicCard", @"OnDiscreteGraphicCard", nil];
+	return @[@"OnIntegratedGraphicCard", @"OnDiscreteGraphicCard"];
 }
 
 @end

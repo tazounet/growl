@@ -20,17 +20,17 @@
 //static const double gAdditionalLinesDisplayTime = 0.5;
 //static const double gMaxDisplayTime = 10.0;
 
-- (id) initWithNotification:(GrowlNotification*)note plugin:(GrowlDisplayPlugin *)aPlugin {
-	NSDictionary *configDict = [note configurationDict];
+- (instancetype) initWithNotification:(GrowlNotification*)note plugin:(GrowlDisplayPlugin *)aPlugin {
+	NSDictionary *configDict = note.configurationDict;
 	
 	screenNumber = 0U;
 	if([configDict valueForKey:GrowlSmokeScreenPref]){
 		screenNumber = [[configDict valueForKey:GrowlSmokeScreenPref] unsignedIntValue];
 	}
 	NSArray *screens = [NSScreen screens];
-	NSUInteger screensCount = [screens count];
+	NSUInteger screensCount = screens.count;
 	if (screensCount) {
-		[self setScreen:((screensCount >= (screenNumber + 1)) ? [screens objectAtIndex:screenNumber] : [screens objectAtIndex:0])];
+		self.screen = ((screensCount >= (screenNumber + 1)) ? screens[screenNumber] : screens[0]);
 	}
 
 	NSTimeInterval duration = GrowlSmokeDurationPrefDefault;
@@ -40,25 +40,25 @@
 	self.displayDuration = duration;
 
 	NSPanel *panel = [[NSPanel alloc] initWithContentRect:NSMakeRect(0.0, 0.0, GrowlSmokeNotificationWidth, 65.0)
-												styleMask:NSBorderlessWindowMask | NSNonactivatingPanelMask
+												styleMask:NSWindowStyleMaskBorderless | NSWindowStyleMaskNonactivatingPanel
 												  backing:NSBackingStoreBuffered
 													defer:YES];
-	NSRect panelFrame = [panel frame];
+	NSRect panelFrame = panel.frame;
 	[panel setBecomesKeyOnlyIfNeeded:YES];
 	[panel setHidesOnDeactivate:NO];
-	[panel setBackgroundColor:[NSColor clearColor]];
+	panel.backgroundColor = [NSColor clearColor];
 	[panel setLevel:GrowlVisualDisplayWindowLevel];
-	[panel setCollectionBehavior:NSWindowCollectionBehaviorCanJoinAllSpaces];
-	[panel setAlphaValue:0.0];
+	panel.collectionBehavior = NSWindowCollectionBehaviorCanJoinAllSpaces;
+	panel.alphaValue = 0.0;
 	[panel setOpaque:NO];
 	[panel setHasShadow:YES];
 	[panel setCanHide:NO];
 	[panel setOneShot:YES];
 
 	GrowlSmokeWindowView *view = [[GrowlSmokeWindowView alloc] initWithFrame:panelFrame configurationDict:configDict];
-	[view setTarget:self];
-	[view setAction:@selector(notificationClicked:)];
-	[panel setContentView:view];
+	view.target = self;
+	view.action = @selector(notificationClicked:);
+	panel.contentView = view;
 
 	// call super so everything else is set up...
 	if ((self = [super initWithWindow:panel andPlugin:aPlugin])) {

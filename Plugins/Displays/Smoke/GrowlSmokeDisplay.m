@@ -15,7 +15,7 @@
 
 @implementation GrowlSmokeDisplay
 
-- (id) init {
+- (instancetype) init {
 	if ((self = [super init])) {
 		windowControllerClass = NSClassFromString(@"GrowlSmokeWindowController");
 		self.prefDomain = GrowlSmokePrefDomain;

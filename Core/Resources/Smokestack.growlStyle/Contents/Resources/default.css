@@ -1,0 +1,71 @@
+@font-face {
+  font-family: "DIN-Medium";
+  src: url(pie/icing.ttf) format("truetype");
+  /* Now don't you eat this pie. */
+}
+body {
+	padding:0; margin:0;
+	font-family: "Helvetica Neue";
+	position: relative;
+	text-align: right;
+	width: 320px;
+	word-wrap: break-word;
+}
+#verylow, #moderate, #normal, #high, #emergency {
+	width: 178px;
+	text-align: left;
+	/* I'm so glad Safari 3 has these crazy new CSS properies. */
+	/* What a time saver! */
+	border-width: 65px 40px 27px 28px;
+	-webkit-border-image: url(images/bg.png) 65 40 27 28;
+}
+#glow {
+	position: absolute;
+	top: 0;
+	z-index: -1;
+	width: 178px;
+	text-align: left;
+	border-width: 65px 40px 27px 28px;
+}
+#icon {
+	position: absolute;
+	top: 14px; right: 10px;
+	z-index: 30;
+	width: 80px;
+	height: 86px;
+	text-align:  center;
+	background: url(images/makeshift-shadow.png) no-repeat center -5px;
+}
+#icon img {
+	width: 50px;
+	height: 50px;
+}
+#title {
+	font: bold 10.5pt "HelveticaNeue-Bold";
+	color: rgba(255, 255, 255, 0.75);
+	line-height: 11pt;
+	text-shadow: 0px 2px 3px rgba(0, 0, 0, 0.7);  /* (red, green, blue, transparency) */
+	margin-top: -45px;
+}
+#text-verylow, #text-moderate, #text-normal, #text-high, #text-emergency {
+	font: normal 8pt "DIN-Medium", "DINMedium", "DIN Medium", "DINPro-Medium", "HelveticaNeue-Bold";
+	text-transform: uppercase;
+	line-height: 9pt;
+	/* opacity: 0.6; /* This opacity will disable sub-pixel antialiasing */
+					 /* for this div. Do not use. */
+	margin-top: 8px;
+	padding-bottom: 5px;
+}
+
+/* Customize text's color, if you like, here: */
+#text-verylow, #text-moderate, #text-normal, #text-high {
+	color: rgba(151, 213, 253, 0.7); 
+	/* (red, green, blue, transparency) */
+	/* See the second tab in a Mac OS X Colors palette */
+}
+#text-emergency {
+	color: rgba(216, 58, 48, 0.7);
+}
+#text-verylow {
+	color: rgba(177, 177, 177, 0.7); 
+}

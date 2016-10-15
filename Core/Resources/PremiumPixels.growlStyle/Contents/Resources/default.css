@@ -1,0 +1,59 @@
+body {
+	margin: 0;
+	padding: 0;
+	font: 12px/20px "Helvetica Neue", Helvetica, Arial, sans-serif;
+	color: #f2f2f2;
+}
+
+#background {
+	background-image: url(images/notify_bg.png);
+	background-position: top right;
+	background-repeat: no-repeat;
+	width: 225px;
+	height: 80px;
+	padding: 0 0 0 75px;
+	overflow: hidden;
+}
+
+#icon {
+	position: absolute;
+	float: left;
+	top: 2px;
+	left: 0;
+	width: 49px;
+	height: 49px;
+}
+
+#icon img {
+	width: 49px;
+	height: 49px;
+}
+
+#title,
+#text {
+	margin: 0 0 0 80px;
+}
+
+#title {
+	display: block;
+	font-size: 13px;
+	height: 20px;
+	overflow: hidden;
+	margin: 0 0 0 80px;
+	padding: 10px 15px 3px 0;
+	text-shadow: 0 -1px 0 rgba(0,0,0,1);
+} 
+
+#text {
+	font-size: 12px;
+	color: #bdbdbd;
+	text-shadow: 0 -1px 0 rgba(0,0,0,1);
+	padding: 0 15px 15px 0;
+	line-height: 16px;
+	height: 20px;
+	overflow: hidden;
+}
+
+#emergency #text {
+	color: red;
+}

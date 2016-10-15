@@ -1,0 +1,85 @@
+html{
+	height:77px;
+}
+body
+{
+	color: rgb(255,255,255);
+	text-shadow: 0px 0px 0px;
+	border: 0;
+	width:330px;
+	height: 70px;
+	margin: 0;
+	padding: 8px 0 0;
+}
+
+#top, #bottom {
+	background: url("images/background_top.png") no-repeat top left;
+	height: 11px;
+}
+#content {
+	background: url("images/background_bottom.png") no-repeat top left;
+	height:60px;
+
+}
+
+/*body:hover {
+	background-image: url("images/background_top_hover.png");
+
+	color: rgba(0, 0, 0, 1.0);
+}
+
+body:hover div#text {
+	background-image: url("images/background_bottom_hover.png");
+}*/
+
+div
+{
+	font-family: "Lucida Grande", Lucida, Verdana, sans-serif;
+	line-height: 14px;
+	color: #fffeff;
+}
+
+div#icon
+{
+	position: absolute;
+	top: 20px;
+	left: 13px;
+
+	width: 60px;
+	height: 60px;
+	z-index:2;
+}
+
+div#icon img
+{
+	width: 45px;
+	height: 45px;
+}
+
+
+div#title, div#text
+{
+	width: 240px;
+	overflow: hidden;
+	background: transparent;
+	float: right;
+	clear: both;
+	margin-right: 10px;
+}
+
+div#title
+{
+	font-weight: regular;
+	font-size: 13px;
+	overflow: hidden;
+
+}
+
+div#text {
+	margin-top: 5px;
+	font-size: 12px;
+	overflow: hidden;
+	z-index: -1;
+	font-size: 18;
+	height: 29px;
+}

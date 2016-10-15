@@ -1,0 +1,105 @@
+body {
+	color: darkblue;
+	
+	min-height: 81px;
+	
+	font: 14px "Lucida Grande", sans-serif;
+	position: relative;
+	margin-top: 0;
+	margin-left: 0;
+	margin-right: 0;
+}
+
+#background {
+	background-color:#D0D0D0;
+}
+
+#title {
+	font-size: 11px;
+	color: #2a2a2a;
+	position: absolute;
+	z-index: 3;
+	text-align: center;
+	text-transform: capitalize;
+	top: 9px;
+	left: 0;
+	width: 339px;
+	overflow: auto;
+	font-weight: bold;
+	right: 15px;
+	text-shadow:#ffffff 0px 1px 0px;
+}
+
+#icon {
+	float: left;
+	top: 7px;
+	left: 9px;
+	width: 55px;
+	height: 100%;
+	position: absolute;
+	margin-left: 10px;
+	margin-top: 20px;
+	margin-right: 10px;
+	z-index: 2;
+	
+}
+
+#icon img {
+	width: 55px;
+	height: 55px;
+	z-index: 2;
+	background-color: rgba(255,255,255,0);
+}
+
+#text {
+	font-size: 11px;
+	color: #4e4d4d;
+	width: 200px;
+	position: relative;
+	z-index: 2;
+	overflow: hidden;
+	text-shadow:#fff 0px 1px 0px;
+	text-align: left;
+	left: 14px;
+	top: 0;
+	padding: 29px 5px 0 80px;
+}
+
+#emergency #text {
+	color: red;
+}
+
+#top {
+	background-image: url(images/top.png);
+	width: 349px;
+	height: 29px;
+	position: absolute;
+	top: 0;
+}
+
+#middle {
+	
+	position:absolute;
+	width: 349px;
+	height:100%;
+	overflow:hidden;
+	z-index: -1;
+}
+#middle img {
+	position:relative;
+	width: 349px;
+	height:100%;
+	z-index: -2;
+	top: 0;
+	padding-top: 29px;
+}
+
+#bottom {
+	background-image: url(images/bottom.png);
+	width: 349px;
+	height: 25px;
+	position: absolute;
+	z-index: 1;
+	bottom: 0;
+	margin-bottom: -25px;
+}

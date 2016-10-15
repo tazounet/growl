@@ -1,0 +1,174 @@
+/* GlassFruit is licensed under the Creative Commons Attribution-Noncommercial-Share Alike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/ or send a letter to Creative Commons, 171 Second Street, Suite 300, San Francisco, California, 94105, USA. */
+
+body { word-wrap: break-word; }
+
+.notification { 
+	border: 1px solid rgba(15,15,15,0.4); 
+	border-radius: 5px;
+	background: #131313;
+	color: #fff;
+	font: 12px/1.5 "Lucida Sans","Lucida Grande", Lucida, sans;
+	padding: 8px;
+	box-shadow: 
+		0px 1px 9px rgba(0,0,0,0.8), 
+		inset 0 1px 0 rgba(255,255,255,0.2), 
+		inset 0 -1px 0 rgba(255,255,255,0.1), 
+		inset 1px 0 0 rgba(255,255,255,0.1),
+		inset -1px 0 0 rgba(255,255,255,0.1);
+	position: relative;
+	-webkit-transition: all 0.2s linear;
+	-webkit-animation: popItIn .3s ease-in-out 0s;
+}
+
+/*pseudo elements*/
+:before,
+:after {
+	content: "";
+	width: 100%;
+	height: 100%;
+	left: 0;
+	top: 0;
+}
+	
+	/*logo*/
+	.notification:after {
+		position: absolute;
+		width: 4px;
+		height: 4px;
+		border-radius: 50%;
+		background-color: #999;
+		background-image: -webkit-linear-gradient(top, rgba(0,0,0,.2) 10%, rgba(0,0,0,.7) 55%,rgba(0,0,0,.3) 100%);
+		left: 49%;
+		top: auto;
+		bottom: 3px;
+	}
+	
+	#emergency.notification:after {
+		background-color: red;
+	}
+
+/* glossy shine */
+.gloss {
+	position: absolute;
+	width: 105%;
+	height: 100%;
+	left: -9px;
+	top: -9px;
+	z-index: 4;
+	border-radius: 5px;
+	background: -webkit-linear-gradient(25deg, rgba(255,255,255,0) 0%,rgba(255,255,255,0) 59%,rgba(255,255,255,0.2) 59%, rgba(255,255,255,0) 100%) no-repeat;
+	-webkit-mask-image: -webkit-linear-gradient(top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.1) 75%, rgba(0,0,0,0) 90%, rgba(0,0,0,0) 100%);
+	-webkit-animation: fuckYeahGloss .5s ease-in-out 0s;
+}
+
+/*display area*/
+.notification > div {
+	background-color: #666;
+	background-image: -webkit-linear-gradient(top, rgba(0,0,0,0.6) 0%,rgba(0,0,0,0) 100%);
+	padding: 6px;
+	border: 1px solid #000;
+	box-shadow: 
+		inset 0 1px 0 rgba(255,255,255,0.01),
+		inset 0 -1px 3px rgba(255,255,255,0.1),
+		inset 1px 0 2px rgba(255,255,255,0.05), 
+		inset -1px 0 2px rgba(255,255,255,0.05);
+	position: relative;
+	-webkit-transition: all 0.2s linear;
+}
+	
+	/*display bottom glow*/
+	.notification > div:before {
+		position: absolute;
+		background: -webkit-radial-gradient(bottom, ellipse cover, rgba(0, 142, 189, .1) 0%, rgba(125,185,232,.15) 50%, rgba(125,185,232,0) 100%);
+	}
+	
+	#emergency.notification > div:before {
+		background: -webkit-radial-gradient(bottom, ellipse cover, rgba(135, 0, 0, .45) 0%, rgba(135, 0, 0, .2) 50%, rgba(135, 0, 0, 0) 100%);
+	}
+
+.notification:hover {
+	box-shadow: 
+		0px 1px 15px rgba(0,0,0,0.9), 
+		inset 0 1px 0 rgba(255,255,255,0.25), 
+		inset 0 -1px 0 rgba(255,255,255,0.15), 
+		inset 1px 0 0 rgba(255,255,255,0.15),
+		inset -1px 0 0 rgba(255,255,255,0.15);
+}
+
+.notification:hover > div {
+	background-color: #777;
+}
+
+.icon {
+	float: left;
+	margin: 0 10px 0 0;
+	display: block;
+	text-align: center;
+	line-height: 36px;
+	width: 36px;
+	height: 36px;
+	overflow: hidden;
+	background-repeat: no-repeat;
+	background-position: center center;
+	background: none !important;
+	border-radius: 4px;
+}
+.icon img{
+	max-width: 36px;
+	min-width: 36px;
+	max-height: 36px;
+	min-height: 36px;
+	vertical-align: middle;
+	margin: 0;
+	padding: 0;
+	float: left;
+}
+
+.title,
+.message,
+.icon {
+	position: relative;
+	z-index: 5;
+}
+
+.title {
+	font-size: 13px;
+	margin: 0 0 2px 0;
+	padding: 0 0 0 48px;
+	color: #fff;
+	text-shadow: 0 1px 0 #000;
+	-webkit-transition: all 0.2s linear;
+	position: relative;
+	-webkit-mask-image: -webkit-linear-gradient(top, rgba(0,0,0,1) 30%,rgba(0,0,0,.6) 65%,rgba(0,0,0,1) 100%);
+	background-clip: text;
+}
+
+.message {
+	padding: 0 0 0 48px;
+	margin: 0;
+	color: #000;
+	text-shadow: 0 1px 0 rgba(255,255,255,0.1);
+}
+
+
+/* Animations */
+
+@-webkit-keyframes popItIn {
+  0% {
+	top: -100px;
+	opacity: 0;
+  }
+  100% { 
+   	top: 0;
+   	opacity: 1;
+  }
+}
+
+@-webkit-keyframes fuckYeahGloss {
+	0% { 
+		background-position: 0 -100px;
+	}
+	100% { 
+		background-position: 0 0;
+	}
+}

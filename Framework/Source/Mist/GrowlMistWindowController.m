@@ -26,12 +26,12 @@
 @synthesize delegate;
 @synthesize selected;
 
-- (id)initWithNotificationTitle:(NSString *)title
-                           text:(NSString *)text
-                          image:(NSImage *)image
-                         sticky:(BOOL)isSticky
-                           uuid:(id)theUUID
-                       delegate:(id)aDelegate
+- (instancetype)initWithNotificationTitle:(NSString *)title
+                                     text:(NSString *)text
+                                    image:(NSImage *)image
+                                   sticky:(BOOL)isSticky
+                                     uuid:(id)theUUID
+                                 delegate:(id)aDelegate
 {
    GrowlMistView *mistViewForSetup = [[GrowlMistView alloc] initWithFrame:NSZeroRect];
    mistViewForSetup.notificationTitle = title;

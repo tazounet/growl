@@ -1,0 +1,103 @@
+body {word-wrap: break-word; }
+
+.notification { 
+	border: 1px solid rgba(255,255,255,1);	
+  	border-top-color: rgba(255,255,255,1);
+  	border-bottom-color: rgba(255,255,255,1);
+	color: rgba(20,20,20,1);
+	text-shadow: 0px 1px 0px rgba(255,255,255,0.7);
+	font: 12px "Helvetica","Helvetica Neue", Arial, sans;
+	background:-webkit-gradient(linear, left top, left bottom, from(rgba(130,130,130,0.75)), to(rgba(255,255,255,1)), color-stop(0.2, rgba(130,130,130,0.75)) );
+	-webkit-box-shadow: 0px 1px 4px rgba(0,0,0,1);
+	-webkit-border-radius: 5px; 
+	width: 240px;
+	-webkit-animation-name: banner;
+	-webkit-animation-duration: .5s;
+	-webkit-animation-iteration-count: 1;
+	-webkit-animation-timing-function: ease-in;
+	-webkit-font-smoothing: antialiased;
+}
+
+.title{
+	color: rgba(255,255,255,1);	
+	font-size: 17px;
+	margin: 0 0 2px 0;
+	padding: 0 0 0 48px;
+	-webkit-transition: all 0.2s linear;
+}
+
+.text{
+	color: rgba(255,255,255,1);	
+	font-size: 17px;
+	margin: 0 0 2px 0;
+	padding: 0 0 0 48px;
+	-webkit-transition: all 0.2s linear;
+}
+
+.notification>div>div{
+	background: -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0.8)), to(rgba(255,255,255,0.0)), color-stop(0.49, rgba(255,255,255,0.2)), color-stop(0.5, rgba(255,255,255,0)) );	
+	padding: 8px 10px;
+	-webkit-border-radius: 3px;
+	overflow: hidden;
+}
+.icon{
+	float: left;
+	margin: 0 10px 0 0;
+	display: block;
+	text-align: center;
+	line-height: 32px;
+	width: 32px;
+	height: 32px;
+	overflow: hidden;
+	background-repeat: no-repeat;
+	background-position: center center;
+	background: none !important;
+	-webkit-border-radius:4px;
+	-webkit-animation-name: fade;
+	-webkit-animation-duration: .70s;
+	-webkit-animation-iteration-count: 1;
+	-webkit-animation-timing-function: ease-in;
+}
+.icon img{
+	max-width: 32px;
+	max-height: 32px;	
+	vertical-align: middle;
+	margin: 0;
+	padding: 0;
+	float: left;
+	
+}
+.message{
+	margin: 0;
+}
+
+@-webkit-keyframes banner {
+    from {
+        -webkit-transform: rotateX(90deg) translateY(-40px) perspective(300);
+        opacity: 0;
+    }
+
+    60% {
+        -webkit-transform: rotateX(-10deg) translateY(5px) perspective(400);
+        opacity: 1;
+    }
+    
+    to {
+        -webkit-transform: rotateX(0deg) translateY(0px) perspective(400);
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes fade {
+    from {
+        opacity: 0;
+    }
+    
+    30% {
+        opacity: 0;
+    }
+    
+    to {
+        opacity: 1;
+    }
+}

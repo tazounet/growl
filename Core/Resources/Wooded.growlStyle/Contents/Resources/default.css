@@ -1,0 +1,95 @@
+ body {
+    margin: 0px 0px 0px 0px;
+    min-height: 60px;
+}
+
+.each {
+    width: 193px;
+    height: 50px;
+    padding: 9px 12px 0 67px;
+    position: relative;
+    overflow: hidden;
+    -webkit-animation-duration: 0.35s;
+    -webkit-animation-delay: 0s;
+    -webkit-animation-timing-function: ease;
+    -webkit-animation-iteration-count: 1;
+    -webkit-animation-name: flip;
+}
+
+@-webkit-keyframes flip {
+	from   { -webkit-transform: rotateX(-180deg) scale(0.2); }
+	to { -webkit-transform: rotateX(-360deg) scale(1); }
+}
+
+#base {
+    width: 272px;
+    height: 59px;
+    background: url(images/base.png) repeat-y;
+    position: absolute;
+    top: 0; left: 0;
+    overflow: hidden;
+    z-index: 0;
+}
+
+#icon {
+	-webkit-animation: icon .8s ease;
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    top: 12px; left: 16px;
+    z-index: 1;
+}
+
+@-webkit-keyframes icon {
+	0% { -webkit-transform: scale(0) rotateZ(-200deg); opacity: 0; }
+	100% { -webkit-transform: scale(1) rotateZ(0deg); opacity: 1; }
+}
+
+#icon img {
+	-webkit-animation: icon .8s ease;
+    width: 32px;
+    height: 32px;
+    display: block;
+}
+
+@-webkit-keyframes title {
+	0% { right: -10px; opacity: 0; }
+	50% { right: -10px; opacity: 0; }
+	100% { right: 0; opacity: 1; }
+}
+
+#title {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    height: 16px;
+    font-weight: bold;
+    color: #1c0f04;
+    -webkit-font-smoothing: antialiased;
+    text-shadow: 0 1px 0 rgba(235,212,189,1);
+    margin: 2px 0 1px 0;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    -webkit-animation: title .6s ease-out;
+}
+
+@-webkit-keyframes text {
+	0% { right: -10px; opacity: 0; }
+	60% { right: -10px; opacity: 0; }
+	100% { right: 0; opacity: .75; }
+}
+
+#text {
+	font-family: "Georgia", Times New Roman, Serif;
+    font-size: 14px;
+    height: 16px;
+    color: #795d42;
+    -webkit-font-smoothing: antialiased;
+    font-style: italic;
+    text-shadow: 0 1px 0 rgba(235,212,189,1);
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    -webkit-animation: text 1s ease-out;
+}
+

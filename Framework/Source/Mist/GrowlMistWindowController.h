@@ -38,12 +38,15 @@
 @property (nonatomic,readonly) NSString *uuid;
 @property (nonatomic,strong) id delegate;
 
-- (id)initWithNotificationTitle:(NSString *)title
-                           text:(NSString *)text
-                          image:(NSImage *)image
-                         sticky:(BOOL)isSticky
-                           uuid:(NSString*)uuid
-                       delegate:(id)delegate;
+- (instancetype)initWithNotificationTitle:(NSString *)title
+                                     text:(NSString *)text
+                                    image:(NSImage *)image
+                                   sticky:(BOOL)isSticky
+                                     uuid:(NSString*)uuid
+                                 delegate:(id)delegate NS_DESIGNATED_INITIALIZER;
+
+- (instancetype)initWithWindow:(NSWindow *)window NS_UNAVAILABLE;
+- (instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
 
 - (void)fadeIn;
 - (void)fadeOut;

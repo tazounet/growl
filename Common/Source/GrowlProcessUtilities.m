@@ -45,7 +45,7 @@ static BOOL Growl_GetPSNForProcessWithBundle(NSString *bundleIDArg, NSString *bu
         NSString *bundlePath = a.bundleURL.path;
         NSString *bundleID = a.bundleIdentifier;
 
-        GetProcessForPID([a processIdentifier], &PSN);
+        GetProcessForPID(a.processIdentifier, &PSN);
 
         isRunning = bundlePath && theBundlePath && [bundlePath isEqualToString:theBundlePath];
         if (!isRunning)

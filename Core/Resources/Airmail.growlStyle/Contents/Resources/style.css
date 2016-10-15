@@ -1,0 +1,85 @@
+html, body, p {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	width: 314px;
+}
+
+#wrapper {
+	margin: 7px 5px 7px 5px;
+	background: transparent url(images/airmail.png) top left no-repeat;
+	-webkit-box-sizing: border-box;
+	width: 300px;
+	height: 136px;
+	padding: 0px 0px 0px 15px;
+	-webkit-animation-duration: 0.4s;
+	-webkit-transition: all 0.15s ease-in-out;
+	position: relative;
+	-webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+	-moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+}
+
+#wrapper:hover { 	
+	-webkit-transform: scale(1.03);
+	-webkit-transition: all 0.15s ease-in-out;
+ }
+
+
+@-webkit-keyframes 'pop' {
+      from {
+	-webkit-transform: translate3d( 20px, 0px, 0px ); 
+	       }
+ 
+      to {
+	 -webkit-transform: translate3d( 0px, 0px, 0 );  
+         } 
+}
+
+#title, #text, #alert, #icon {
+	position: relative; 
+}
+
+#alert {
+	width: 265px;
+	height: 140px;
+	overflow: hidden;
+}
+
+#title, #text {
+	text-align: left;
+
+}
+
+#title {
+	color: black;
+	font: bold 15px "Noteworthy", "Helvetica", sans-serif;
+	line-height: 18px;
+	margin: 14px 0 0 0;
+	width: 200px;
+	height: 38px;
+	overflow: hidden;
+
+}
+
+#text {
+	color: black;
+	font: normal 15px "Noteworthy", "Helvetica", sans-serif;
+	position: absolute; 
+	top: 66px;
+	line-height: 18px;
+	height: 57px;
+	overflow: hidden;
+
+}
+
+#icon {
+	max-height: 38px;
+	max-width: 38px;
+	left: 235px; 
+	top: 19px;
+	opacity: 30;
+	position: absolute;
+}

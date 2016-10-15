@@ -1,0 +1,38 @@
+/* SkyJohn iOS5 Flip. */
+
+body, html {text-rendering: optimizeLegibility;font-family: Helvetica;}
+body:hover {-webkit-transition: all 1s ease;opacity: 1 !important;}
+@-webkit-keyframes notification{
+	0%   { opacity: 1;   -webkit-transform: translateZ( 0px ) rotateX(  90deg );}
+    15% { opacity: 1;   -webkit-transform: translateZ( 0px ) rotateX(  0deg );}
+	85% { opacity: 1;   -webkit-transform: translateZ( 0px ) rotateX(  0deg );}
+	100%   { opacity: 1;   -webkit-transform: translateZ( 0px ) rotateX(  -90deg );}
+	}	
+.container {width: 460px;height: 70px;position: relative;-webkit-perspective: 1024px;top:-15px;}
+#cube {width: 100%;height: 100%;position: absolute;-webkit-transform-style: preserve-3d;-webkit-animation: notification 5.75s ease;}
+#cube figure {display: block;position: absolute;
+}
+#cube .front{width: 400px;height: 40px;border-radius: 6px;background-color: #000000;-webkit-box-shadow: 0px 3px 3px rgba(0,0,0,0.1);}
+#cube .back {width: 400px;height: 40px;border-radius: 6px;background-color: #000000;opacity: 0.1}
+#cube .bottom {width: 400px;height: 40px;border-radius: 6px;background-color: #000000;opacity: 0.1}
+#cube .right {width: 40px;height: 40px;left: 230px;border-radius: 8px;background-color: #000000;opacity: 0.1}
+#cube .left {width: 40px;height: 40px;right: 210px;border-radius: 6px;background-color: #000000;opacity: 0.1}
+#cube .top {width: 400px;height: 40px;border-radius: 6px;background-color: #000000;opacity: 0.1}
+#cube .front{ -webkit-transform: rotateY(   0deg ) translateZ(  20px ); }
+#cube .back{ -webkit-transform: rotateY(   180deg ) translateZ(  20px ); }
+#cube .bottom{ -webkit-transform: rotateX( -90deg ) translateZ( 20px ); }
+#cube .right{ -webkit-transform: rotateY(  90deg ) translateZ( 150px ); }
+#cube .left{ -webkit-transform: rotateY( -90deg ) translateZ( 150px ); }
+#cube .top{ -webkit-transform: rotateX( 90deg ) translateZ( 20px ); }
+
+.divider {position: absolute;top: 0px;left: 0px;bottom: 0px;height: 40px;width: 36px;
+	border-right: 1px solid rgba(255,255,255,0.1);
+	-webkit-box-shadow: inset -1px 0px 0px rgba(100,100,100,0.75);
+	-webkit-animation: other 1s ease;}
+img {background: -webkit-linear-gradient(top, rgba(173,216,230,1) 0%,rgba(100,149,237,1) 100%);
+	position: absolute;display: block;height: 24px;width: 24px;top: 8px;left: 6px;border-radius: 5px;
+	-webkit-animation: icon 0.75s ease;}
+h1,p {margin: 0; padding-right:0px;clear: both;white-space: nowrap;text-overflow: ellipsis;overflow: hidden;}
+#textcon{width:350px;overflow:hidden;max-height:32px;margin-top:4px;margin-left:41px;margin-right:10px;margin-bottom:10px;}
+h1 {color: #FFFFFF;line-height: 17px;font-size: 11pt;-webkit-font-smoothing: subpixel-antialiased; }
+p {line-height: 17px;-webkit-animation: other 1s ease;font-family: Helvetica;font-size: 9pt;color: #FFFFFF;-webkit-font-smoothing: subpixel-antialiased; }

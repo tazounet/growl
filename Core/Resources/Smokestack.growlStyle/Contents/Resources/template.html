@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Growl notification</title>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<base href="%baseurl%" />
+		<!-- See offical Macthemes post for updates -->
+		<link rel="stylesheet" href="default.css" type="text/css" />
+		<!-- External javascript doesn't work with Growl. -->
+		<script type="text/javascript" lang="javascript">
+			/* Animator test script */
+			function animatorTest() {
+				// If priority is set to high
+				if (document.getElementById('high')) {
+					animate(); // Animate
+				}
+				// If priority is set to emergency
+				else if (document.getElementById('emergency')) {
+					animateRed(); // Full power!
+				}
+				else {
+					// Do nothing.
+				}
+			}
+
+			/* animator.js - Copyright 2004 Aaron Isotton <aaron@isotton.com>.
+			 *
+			 * Version: 		1.03
+			 * Release date: 	2004-10-24
+			 * 
+			 * Use under the conditions of the GNU GPL.
+			 * 
+			 * New Versions & Documentation at:
+			 *   http://www.isotton.com/scripts/animator/
+			 */
+			
+			var animators = new Array();
+			
+			function animator_loop(index) {
+				a = animators[index];
+				if (!a.image) return;
+				a.image.style.WebkitBorderImage = a.images[a.current].style.WebkitBorderImage;
+				a.current = (a.current + 1) % a.images.length;
+				setTimeout('animator_loop(' + index + ');', a.interval);
+			}
+			
+			function Animator(imageid) {
+				if (document.getElementById)
+				this.image = document.getElementById(imageid);
+				else if (document.all)
+				this.image = document.all[imageid];
+				this.images = new Array();
+				this.interval = 5000;
+				this.prefix = '';
+				this.current = 0;
+				this.index = animators.length;
+				animators[this.index] = this;
+			
+				this.add = function(url) {
+				var l = this.images.length;
+				this.images.length++;
+				this.images[l] = new Image();
+				this.images[l].style.WebkitBorderImage = "url(" + this.prefix + url + ") 65 40 27 28";
+				}
+			
+				this.run = function() {
+				animator_loop(this.index);
+				}
+			}
+			function animate() {
+				animator = new Animator("glow");
+				animator.interval = 80;
+				animator.add("images/glowblue-0.png");
+				animator.add("images/glowblue-1.png");
+				animator.add("images/glowblue-2.png");
+				animator.add("images/glowblue-3.png");
+				animator.add("images/glowblue-4.png");
+				animator.add("images/glowblue-5.png");
+				animator.add("images/glowblue-5.png");
+				animator.add("images/glowblue-4.png");
+				animator.add("images/glowblue-4.png");
+				animator.add("images/glowblue-3.png");
+				animator.add("images/glowblue-3.png");
+				animator.add("images/glowblue-2.png");
+				animator.add("images/glowblue-2.png");
+				animator.add("images/glowblue-1.png");
+				animator.add("images/glowblue-1.png");
+				animator.add("images/glowblue-0.png");
+				animator.run();
+			}
+			function animateRed() {
+				animator = new Animator("glow");
+				animator.interval = 80;
+				animator.add("images/glowred-0.png");
+				animator.add("images/glowred-1.png");
+				animator.add("images/glowred-2.png");
+				animator.add("images/glowred-3.png");
+				animator.add("images/glowred-4.png");
+				animator.add("images/glowred-5.png");
+				animator.add("images/glowred-5.png");
+				animator.add("images/glowred-4.png");
+				animator.add("images/glowred-4.png");
+				animator.add("images/glowred-3.png");
+				animator.add("images/glowred-3.png");
+				animator.add("images/glowred-2.png");
+				animator.add("images/glowred-2.png");
+				animator.add("images/glowred-1.png");
+				animator.add("images/glowred-1.png");
+				animator.add("images/glowred-0.png");
+				animator.run();
+			}		
+		</script>
+	</head>
+	<body onload="animatorTest();">
+		<div id="icon"><img src="growlimage://%image%" alt="Icon"></div>
+		<div id="%priority%">
+			<div id="title">%title%</div>
+			<div id="text-%priority%">%text%</div>
+		</div>
+		<div id="glow">
+			<div id="title" style="visibility:hidden;">%title%</div>
+			<div id="text-normal" style="visibility:hidden;">%text%</div>
+		</div>
+	</body>
+</html>

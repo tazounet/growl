@@ -19,7 +19,7 @@
 	NSString		*applicationNameForGrowl;
 	NSData			*applicationIconDataForGrowl;
 }
-- (id) initWithAllNotifications:(NSArray *)allNotifications defaultNotifications:(NSArray *)defaultNotifications;
+- (instancetype) initWithAllNotifications:(NSArray *)allNotifications defaultNotifications:(NSArray *)defaultNotifications;
 
 @property (strong) NSString *applicationNameForGrowl;
 @property (strong) NSData *applicationIconDataForGrowl;

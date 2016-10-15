@@ -875,7 +875,7 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
 		
 		NSInteger result = [alert runModal];
 		[[GrowlPreferencesController sharedController] setHasShownWarningForRules:YES];
-		if(result == NSModalResponseOK){
+		if(result == NSAlertFirstButtonReturn){
 			allow = YES;
 		}else{
 			[[GrowlPreferencesController sharedController] setAllowsRules:NO];
@@ -1183,7 +1183,7 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
         [alert setShowsSuppressionButton:YES];
         
         NSInteger result = [alert runModal];
-        if(result == NSModalResponseOK)
+        if(result == NSAlertFirstButtonReturn)
         {
             [[NSUserDefaults standardUserDefaults] setBool:alert.suppressionButton.state forKey:@"HideQuitWarning"];
             [NSApp terminate:self];
@@ -1493,7 +1493,7 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
         [alert setInformativeText:[NSString stringWithFormat:@"Please download a new version to keep using %@.", [[NSProcessInfo processInfo] processName]]];
         [alert addButtonWithTitle:@"Quit"];
 
-        if ([alert runModal] == NSModalResponseOK)
+        if ([alert runModal] == NSAlertFirstButtonReturn)
         {
             [NSApp terminate:self];
         }
@@ -1513,7 +1513,7 @@ static struct Version version = { 0U, 0U, 0U, releaseType_vcs, 0U, };
             [alert setInformativeText:NSLocalizedString(@"We've detected that the Mac App Store left you with a corrupt install.  Please follow the instructions the button takes you to in order to remedy the situation.", @"corrupt install alert")];
             [alert addButtonWithTitle:NSLocalizedString(@"Read Instructions and Quit", @"button for reading the instructions for fixing your install")];
 
-            if ([alert runModal] == NSModalResponseOK)
+            if ([alert runModal] == NSAlertFirstButtonReturn)
             {
                 [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"http://growl.info/growlinstallcorrupt"]];
                 [NSApp terminate:self];

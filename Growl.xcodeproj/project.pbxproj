@@ -103,6 +103,31 @@
 		745352B109313ABD0000B26A /* GrowlWebKitDisplayPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 743EDE12092740F5002A9670 /* GrowlWebKitDisplayPlugin.m */; };
 		745352D509313B3B0000B26A /* PreferencePanes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83282746073A6C110044A959 /* PreferencePanes.framework */; };
 		772266C31B1B72030024E99E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 772266C21B1B72020024E99E /* Cocoa.framework */; };
+		773C82261DB2590600549434 /* Airmail.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 773C82011DB2590500549434 /* Airmail.growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		773C82271DB2590700549434 /* Bulk.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 773C82021DB2590500549434 /* Bulk.growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		773C82281DB2590700549434 /* Chione.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 773C82041DB2590500549434 /* Chione.growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		773C82291DB2590700549434 /* Chromic.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 773C82051DB2590500549434 /* Chromic.growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		773C822A1DB2590700549434 /* Cloud.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 773C82061DB2590500549434 /* Cloud.growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		773C822B1DB2590700549434 /* Evening Left.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 773C82091DB2590500549434 /* Evening Left.growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		773C822C1DB2590700549434 /* Evening Right.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 773C820A1DB2590500549434 /* Evening Right.growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		773C822D1DB2590700549434 /* GlassFruit.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 773C820C1DB2590500549434 /* GlassFruit.growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		773C822E1DB2590700549434 /* iOS 5 Notification Black.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 773C820D1DB2590500549434 /* iOS 5 Notification Black.growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		773C822F1DB2590700549434 /* iOS 5 Notification White.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 773C820E1DB2590500549434 /* iOS 5 Notification White.growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		773C82301DB2590700549434 /* Linen (left).growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 773C82101DB2590600549434 /* Linen (left).growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		773C82311DB2590700549434 /* Linen.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 773C82111DB2590600549434 /* Linen.growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		773C82321DB2590700549434 /* M.4 SE.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 773C82121DB2590600549434 /* M.4 SE.growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		773C82331DB2590700549434 /* M.4.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 773C82131DB2590600549434 /* M.4.growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		773C82341DB2590700549434 /* Morning Left.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 773C82141DB2590600549434 /* Morning Left.growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		773C82351DB2590700549434 /* Morning Right.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 773C82151DB2590600549434 /* Morning Right.growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		773C82361DB2590700549434 /* Poseidon.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 773C82191DB2590600549434 /* Poseidon.growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		773C82371DB2590700549434 /* PremiumPixels.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 773C821A1DB2590600549434 /* PremiumPixels.growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		773C82381DB2590700549434 /* Smokestack.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 773C821D1DB2590600549434 /* Smokestack.growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		773C82391DB2590700549434 /* SnowBezel_bl.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 773C821E1DB2590600549434 /* SnowBezel_bl.growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		773C823A1DB2590700549434 /* SnowBezel.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 773C821F1DB2590600549434 /* SnowBezel.growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		773C823B1DB2590700549434 /* SOLID-NoAnime.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 773C82201DB2590600549434 /* SOLID-NoAnime.growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		773C823C1DB2590700549434 /* SOLID.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 773C82211DB2590600549434 /* SOLID.growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		773C823D1DB2590700549434 /* SquareOne.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 773C82221DB2590600549434 /* SquareOne.growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		773C823E1DB2590700549434 /* Wooded.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 773C82251DB2590600549434 /* Wooded.growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8321E9AC0C0B7635008C441B /* NotifyOSX.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 8321E9A10C0B760C008C441B /* NotifyOSX.growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8321E9AD0C0B7635008C441B /* NotifyOS9.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 8321E98D0C0B75F3008C441B /* NotifyOS9.growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		835A0ACF142A86AA00B89123 /* Raaarr.growlStyle in Copy Growl Styles */ = {isa = PBXBuildFile; fileRef = 835A0ACD142A85E100B89123 /* Raaarr.growlStyle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -821,25 +846,50 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				8363F463098A1B5C000AAC48 /* AboveTheNight.growlStyle in Copy Growl Styles */,
+				773C82261DB2590600549434 /* Airmail.growlStyle in Copy Growl Styles */,
+				773C82271DB2590700549434 /* Bulk.growlStyle in Copy Growl Styles */,
+				95D8C62A083D552B003601C3 /* Candybars.growlStyle in Copy Growl Styles */,
+				773C82281DB2590700549434 /* Chione.growlStyle in Copy Growl Styles */,
+				773C82291DB2590700549434 /* Chromic.growlStyle in Copy Growl Styles */,
+				773C822A1DB2590700549434 /* Cloud.growlStyle in Copy Growl Styles */,
+				95D8C62B083D552B003601C3 /* Crystal.growlStyle in Copy Growl Styles */,
+				83EFC981148095BA004D13CF /* Darkroom.growlStyle in Copy Growl Styles */,
+				773C822B1DB2590700549434 /* Evening Left.growlStyle in Copy Growl Styles */,
+				773C822C1DB2590700549434 /* Evening Right.growlStyle in Copy Growl Styles */,
+				93E0537C1415AE4300FC4F76 /* Garageband.growlStyle in Copy Growl Styles */,
+				773C822D1DB2590700549434 /* GlassFruit.growlStyle in Copy Growl Styles */,
+				773C822E1DB2590700549434 /* iOS 5 Notification Black.growlStyle in Copy Growl Styles */,
+				773C822F1DB2590700549434 /* iOS 5 Notification White.growlStyle in Copy Growl Styles */,
 				BC89B5F91651AA3500155298 /* LCD.growlStyle in Copy Growl Styles */,
+				773C82301DB2590700549434 /* Linen (left).growlStyle in Copy Growl Styles */,
+				773C82311DB2590700549434 /* Linen.growlStyle in Copy Growl Styles */,
+				773C82321DB2590700549434 /* M.4 SE.growlStyle in Copy Growl Styles */,
+				773C82331DB2590700549434 /* M.4.growlStyle in Copy Growl Styles */,
+				773C82341DB2590700549434 /* Morning Left.growlStyle in Copy Growl Styles */,
+				773C82351DB2590700549434 /* Morning Right.growlStyle in Copy Growl Styles */,
+				8321E9AD0C0B7635008C441B /* NotifyOS9.growlStyle in Copy Growl Styles */,
+				8321E9AC0C0B7635008C441B /* NotifyOSX.growlStyle in Copy Growl Styles */,
+				955497B5081125BD0062E27B /* Plain.growlStyle in Copy Growl Styles */,
+				773C82361DB2590700549434 /* Poseidon.growlStyle in Copy Growl Styles */,
+				773C82371DB2590700549434 /* PremiumPixels.growlStyle in Copy Growl Styles */,
+				C4169BF10C2CE4A900D07B91 /* Pseudo-Coda.growlStyle in Copy Growl Styles */,
+				835A0ACF142A86AA00B89123 /* Raaarr.growlStyle in Copy Growl Styles */,
+				773C82381DB2590700549434 /* Smokestack.growlStyle in Copy Growl Styles */,
+				773C82391DB2590700549434 /* SnowBezel_bl.growlStyle in Copy Growl Styles */,
+				773C823A1DB2590700549434 /* SnowBezel.growlStyle in Copy Growl Styles */,
+				773C823B1DB2590700549434 /* SOLID-NoAnime.growlStyle in Copy Growl Styles */,
+				773C823C1DB2590700549434 /* SOLID.growlStyle in Copy Growl Styles */,
+				773C823D1DB2590700549434 /* SquareOne.growlStyle in Copy Growl Styles */,
+				9326592A140DD21C0037AA2C /* Starwl.growlStyle in Copy Growl Styles */,
+				83EFC982148095BA004D13CF /* Whiteboard.growlStyle in Copy Growl Styles */,
+				773C823E1DB2590700549434 /* Wooded.growlStyle in Copy Growl Styles */,
 				BCA3774C162446BE003ABCD2 /* ScriptAction.growlView in Copy Growl Styles */,
 				BCCB23E115372D310064FD1D /* MailMe.growlView in Copy Growl Styles */,
 				113EA428152BEEC20070C235 /* Prowl.growlView in Copy Growl Styles */,
 				BC19A19B15198DE700A0CA64 /* Boxcar.growlView in Copy Growl Styles */,
 				BCAD79F31512675C0052EB51 /* SoundAction.growlView in Copy Growl Styles */,
-				83EFC981148095BA004D13CF /* Darkroom.growlStyle in Copy Growl Styles */,
-				83EFC982148095BA004D13CF /* Whiteboard.growlStyle in Copy Growl Styles */,
-				93E0537C1415AE4300FC4F76 /* Garageband.growlStyle in Copy Growl Styles */,
-				C4169BF10C2CE4A900D07B91 /* Pseudo-Coda.growlStyle in Copy Growl Styles */,
-				8321E9AC0C0B7635008C441B /* NotifyOSX.growlStyle in Copy Growl Styles */,
-				8321E9AD0C0B7635008C441B /* NotifyOS9.growlStyle in Copy Growl Styles */,
-				8363F463098A1B5C000AAC48 /* AboveTheNight.growlStyle in Copy Growl Styles */,
-				835A0ACF142A86AA00B89123 /* Raaarr.growlStyle in Copy Growl Styles */,
 				93BC4057095DEDFF0002B365 /* Nano.growlView in Copy Growl Styles */,
-				95D8C62A083D552B003601C3 /* Candybars.growlStyle in Copy Growl Styles */,
-				9326592A140DD21C0037AA2C /* Starwl.growlStyle in Copy Growl Styles */,
-				95D8C62B083D552B003601C3 /* Crystal.growlStyle in Copy Growl Styles */,
-				955497B5081125BD0062E27B /* Plain.growlStyle in Copy Growl Styles */,
 				BCC7F9CA1503D931005FFE04 /* Bubbles.growlView in Copy Growl Styles */,
 				BCC7F9CB1503D931005FFE04 /* Smoke.growlView in Copy Growl Styles */,
 				3433458D0790E3D600C84B15 /* Bezel.growlView in Copy Growl Styles */,
@@ -1029,6 +1079,44 @@
 		7625018B146DD60600B9F12F /* GrowlWebKitImageProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GrowlWebKitImageProtocol.h; path = Plugins/Displays/WebKit/GrowlWebKitImageProtocol.h; sourceTree = "<group>"; };
 		7625018C146DD60600B9F12F /* GrowlWebKitImageProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GrowlWebKitImageProtocol.m; path = Plugins/Displays/WebKit/GrowlWebKitImageProtocol.m; sourceTree = "<group>"; };
 		772266C21B1B72020024E99E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		773C82001DB2590500549434 /* AboveTheNight.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = AboveTheNight.growlStyle; path = Core/Resources/AboveTheNight.growlStyle; sourceTree = "<group>"; };
+		773C82011DB2590500549434 /* Airmail.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Airmail.growlStyle; path = Core/Resources/Airmail.growlStyle; sourceTree = "<group>"; };
+		773C82021DB2590500549434 /* Bulk.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Bulk.growlStyle; path = Core/Resources/Bulk.growlStyle; sourceTree = "<group>"; };
+		773C82031DB2590500549434 /* Candybars.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Candybars.growlStyle; path = Core/Resources/Candybars.growlStyle; sourceTree = "<group>"; };
+		773C82041DB2590500549434 /* Chione.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Chione.growlStyle; path = Core/Resources/Chione.growlStyle; sourceTree = "<group>"; };
+		773C82051DB2590500549434 /* Chromic.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Chromic.growlStyle; path = Core/Resources/Chromic.growlStyle; sourceTree = "<group>"; };
+		773C82061DB2590500549434 /* Cloud.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Cloud.growlStyle; path = Core/Resources/Cloud.growlStyle; sourceTree = "<group>"; };
+		773C82071DB2590500549434 /* Crystal.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Crystal.growlStyle; path = Core/Resources/Crystal.growlStyle; sourceTree = "<group>"; };
+		773C82081DB2590500549434 /* Darkroom.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Darkroom.growlStyle; path = Core/Resources/Darkroom.growlStyle; sourceTree = "<group>"; };
+		773C82091DB2590500549434 /* Evening Left.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "Evening Left.growlStyle"; path = "Core/Resources/Evening Left.growlStyle"; sourceTree = "<group>"; };
+		773C820A1DB2590500549434 /* Evening Right.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "Evening Right.growlStyle"; path = "Core/Resources/Evening Right.growlStyle"; sourceTree = "<group>"; };
+		773C820B1DB2590500549434 /* Garageband.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Garageband.growlStyle; path = Core/Resources/Garageband.growlStyle; sourceTree = "<group>"; };
+		773C820C1DB2590500549434 /* GlassFruit.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = GlassFruit.growlStyle; path = Core/Resources/GlassFruit.growlStyle; sourceTree = "<group>"; };
+		773C820D1DB2590500549434 /* iOS 5 Notification Black.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "iOS 5 Notification Black.growlStyle"; path = "Core/Resources/iOS 5 Notification Black.growlStyle"; sourceTree = "<group>"; };
+		773C820E1DB2590500549434 /* iOS 5 Notification White.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "iOS 5 Notification White.growlStyle"; path = "Core/Resources/iOS 5 Notification White.growlStyle"; sourceTree = "<group>"; };
+		773C820F1DB2590600549434 /* LCD.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LCD.growlStyle; path = Core/Resources/LCD.growlStyle; sourceTree = "<group>"; };
+		773C82101DB2590600549434 /* Linen (left).growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "Linen (left).growlStyle"; path = "Core/Resources/Linen (left).growlStyle"; sourceTree = "<group>"; };
+		773C82111DB2590600549434 /* Linen.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Linen.growlStyle; path = Core/Resources/Linen.growlStyle; sourceTree = "<group>"; };
+		773C82121DB2590600549434 /* M.4 SE.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "M.4 SE.growlStyle"; path = "Core/Resources/M.4 SE.growlStyle"; sourceTree = "<group>"; };
+		773C82131DB2590600549434 /* M.4.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = M.4.growlStyle; path = Core/Resources/M.4.growlStyle; sourceTree = "<group>"; };
+		773C82141DB2590600549434 /* Morning Left.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "Morning Left.growlStyle"; path = "Core/Resources/Morning Left.growlStyle"; sourceTree = "<group>"; };
+		773C82151DB2590600549434 /* Morning Right.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "Morning Right.growlStyle"; path = "Core/Resources/Morning Right.growlStyle"; sourceTree = "<group>"; };
+		773C82161DB2590600549434 /* NotifyOS9.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = NotifyOS9.growlStyle; path = Core/Resources/NotifyOS9.growlStyle; sourceTree = "<group>"; };
+		773C82171DB2590600549434 /* NotifyOSX.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = NotifyOSX.growlStyle; path = Core/Resources/NotifyOSX.growlStyle; sourceTree = "<group>"; };
+		773C82181DB2590600549434 /* Plain.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Plain.growlStyle; path = Core/Resources/Plain.growlStyle; sourceTree = "<group>"; };
+		773C82191DB2590600549434 /* Poseidon.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Poseidon.growlStyle; path = Core/Resources/Poseidon.growlStyle; sourceTree = "<group>"; };
+		773C821A1DB2590600549434 /* PremiumPixels.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = PremiumPixels.growlStyle; path = Core/Resources/PremiumPixels.growlStyle; sourceTree = "<group>"; };
+		773C821B1DB2590600549434 /* Pseudo-Coda.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "Pseudo-Coda.growlStyle"; path = "Core/Resources/Pseudo-Coda.growlStyle"; sourceTree = "<group>"; };
+		773C821C1DB2590600549434 /* Raaarr.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Raaarr.growlStyle; path = Core/Resources/Raaarr.growlStyle; sourceTree = "<group>"; };
+		773C821D1DB2590600549434 /* Smokestack.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Smokestack.growlStyle; path = Core/Resources/Smokestack.growlStyle; sourceTree = "<group>"; };
+		773C821E1DB2590600549434 /* SnowBezel_bl.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = SnowBezel_bl.growlStyle; path = Core/Resources/SnowBezel_bl.growlStyle; sourceTree = "<group>"; };
+		773C821F1DB2590600549434 /* SnowBezel.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = SnowBezel.growlStyle; path = Core/Resources/SnowBezel.growlStyle; sourceTree = "<group>"; };
+		773C82201DB2590600549434 /* SOLID-NoAnime.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "SOLID-NoAnime.growlStyle"; path = "Core/Resources/SOLID-NoAnime.growlStyle"; sourceTree = "<group>"; };
+		773C82211DB2590600549434 /* SOLID.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = SOLID.growlStyle; path = Core/Resources/SOLID.growlStyle; sourceTree = "<group>"; };
+		773C82221DB2590600549434 /* SquareOne.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = SquareOne.growlStyle; path = Core/Resources/SquareOne.growlStyle; sourceTree = "<group>"; };
+		773C82231DB2590600549434 /* Starwl.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Starwl.growlStyle; path = Core/Resources/Starwl.growlStyle; sourceTree = "<group>"; };
+		773C82241DB2590600549434 /* Whiteboard.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Whiteboard.growlStyle; path = Core/Resources/Whiteboard.growlStyle; sourceTree = "<group>"; };
+		773C82251DB2590600549434 /* Wooded.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Wooded.growlStyle; path = Core/Resources/Wooded.growlStyle; sourceTree = "<group>"; };
 		8321E98D0C0B75F3008C441B /* NotifyOS9.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = folder; name = NotifyOS9.growlStyle; path = Core/Resources/NotifyOS9.growlStyle; sourceTree = "<group>"; };
 		8321E9A10C0B760C008C441B /* NotifyOSX.growlStyle */ = {isa = PBXFileReference; lastKnownFileType = folder; name = NotifyOSX.growlStyle; path = Core/Resources/NotifyOSX.growlStyle; sourceTree = "<group>"; };
 		83282741073A6BD70044A959 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
@@ -2589,6 +2677,44 @@
 		93A60E0513C4101600514EF8 /* styles */ = {
 			isa = PBXGroup;
 			children = (
+				773C82001DB2590500549434 /* AboveTheNight.growlStyle */,
+				773C82011DB2590500549434 /* Airmail.growlStyle */,
+				773C82021DB2590500549434 /* Bulk.growlStyle */,
+				773C82031DB2590500549434 /* Candybars.growlStyle */,
+				773C82041DB2590500549434 /* Chione.growlStyle */,
+				773C82051DB2590500549434 /* Chromic.growlStyle */,
+				773C82061DB2590500549434 /* Cloud.growlStyle */,
+				773C82071DB2590500549434 /* Crystal.growlStyle */,
+				773C82081DB2590500549434 /* Darkroom.growlStyle */,
+				773C82091DB2590500549434 /* Evening Left.growlStyle */,
+				773C820A1DB2590500549434 /* Evening Right.growlStyle */,
+				773C820B1DB2590500549434 /* Garageband.growlStyle */,
+				773C820C1DB2590500549434 /* GlassFruit.growlStyle */,
+				773C820D1DB2590500549434 /* iOS 5 Notification Black.growlStyle */,
+				773C820E1DB2590500549434 /* iOS 5 Notification White.growlStyle */,
+				773C820F1DB2590600549434 /* LCD.growlStyle */,
+				773C82101DB2590600549434 /* Linen (left).growlStyle */,
+				773C82111DB2590600549434 /* Linen.growlStyle */,
+				773C82121DB2590600549434 /* M.4 SE.growlStyle */,
+				773C82131DB2590600549434 /* M.4.growlStyle */,
+				773C82141DB2590600549434 /* Morning Left.growlStyle */,
+				773C82151DB2590600549434 /* Morning Right.growlStyle */,
+				773C82161DB2590600549434 /* NotifyOS9.growlStyle */,
+				773C82171DB2590600549434 /* NotifyOSX.growlStyle */,
+				773C82181DB2590600549434 /* Plain.growlStyle */,
+				773C82191DB2590600549434 /* Poseidon.growlStyle */,
+				773C821A1DB2590600549434 /* PremiumPixels.growlStyle */,
+				773C821B1DB2590600549434 /* Pseudo-Coda.growlStyle */,
+				773C821C1DB2590600549434 /* Raaarr.growlStyle */,
+				773C821D1DB2590600549434 /* Smokestack.growlStyle */,
+				773C821E1DB2590600549434 /* SnowBezel_bl.growlStyle */,
+				773C821F1DB2590600549434 /* SnowBezel.growlStyle */,
+				773C82201DB2590600549434 /* SOLID-NoAnime.growlStyle */,
+				773C82211DB2590600549434 /* SOLID.growlStyle */,
+				773C82221DB2590600549434 /* SquareOne.growlStyle */,
+				773C82231DB2590600549434 /* Starwl.growlStyle */,
+				773C82241DB2590600549434 /* Whiteboard.growlStyle */,
+				773C82251DB2590600549434 /* Wooded.growlStyle */,
 				83EFC97F1480958B004D13CF /* Darkroom.growlStyle */,
 				83EFC9801480958B004D13CF /* Whiteboard.growlStyle */,
 				835A0ACD142A85E100B89123 /* Raaarr.growlStyle */,

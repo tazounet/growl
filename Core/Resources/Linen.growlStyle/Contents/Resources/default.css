@@ -1,0 +1,83 @@
+body, html {
+	text-rendering: optimizeLegibility;
+	font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+}
+
+body:hover {
+	-webkit-transition: all 0.3s ease;
+	opacity: 1 !important;
+}
+
+@-webkit-keyframes notification-wrapper {
+	0%   {-webkit-transform: translate3d( 250px, 0, 0 ); }
+	100% {-webkit-transform: translate3d( 0, 0, 0 ); }
+}
+
+.wrapper {
+	width: 250px;
+	overflow: hidden;
+	position: absolute;
+	top: 10px;
+	right: 0px;
+	padding-bottom: 1px;
+}
+
+.notification {
+	-webkit-transition: all 0.5s ease;
+	-webkit-animation: notification-wrapper 0.7s ease;
+	-webkit-box-sizing: border-box;
+	border-top-left-radius: 4px;
+	border-bottom-left-radius: 4px;
+	background-image: url('linen.png');
+	position: relative;
+	float: left;
+	width:250px;
+}
+
+.border {
+	border-top-left-radius: 4px;
+	border-bottom-left-radius: 4px;
+	border: 1px solid #000;
+	-webkit-box-shadow: inset 0px 3px 10px rgba(0,0,0,0.4), 0px 1px 0px rgba(255,255,255,0.3);
+	padding: 10px 5px 10px 55px;
+	-webkit-box-sizing: border-box;
+	min-height: 52px;
+	clear: both;
+	overflow: hidden;
+}
+
+img {
+	position: absolute;
+	display: block;
+	height: 34px;
+	width: 34px;
+	top: 10px;
+	left: 10px;
+	border-radius: 3px;
+	-webkit-animation: icon 0.8s ease;
+}
+
+h1,p {
+	color: #FFF;
+	line-height: 15px;
+	margin: 0; padding: 0;
+	clear: both;
+	overflow: hidden;
+	text-shadow: 0px 1px 0px rgba(0,0,0,0.8);
+	-webkit-font-smoothing: subpixel-antialiased;
+}
+
+h1 {
+	font-size: 8pt;
+	margin: 0 0 2px 0;
+	overflow: visible;
+}
+
+p {
+	font-family: Lucida Grande, sans-serif;
+	font-size: 7pt;
+	color: #999;
+	overflow: visible;
+}

@@ -1,0 +1,125 @@
+@-webkit-keyframes wallwalk {
+	0%   {
+		-webkit-transform: rotate3d(0, 0, 0, -20deg) translate3d(100%,-60px,0);
+	}
+	
+	20%  {
+		-webkit-transform: rotate3d(0, 0, 0, -20deg) translate3d(80%,-20px,0);
+	}
+	
+	30%  {
+		-webkit-transform: rotate3d(0, 0, 0, -10deg) translate3d(70%,10px,0);
+	}
+	
+	35%  {
+		-webkit-transform: rotate3d(0, 0, 0, -5deg) translate3d(60%,-10px,0);
+	}
+	
+	40%  {
+		-webkit-transform: rotate3d(0, 0, 0, -5deg) translate3d(40%,-10px,0);
+	}
+	
+	45%  {
+		-webkit-transform: rotate3d(0, 0, 0, 5deg) translate3d(0,10px,0);
+	}
+
+	50%  {
+		-webkit-transform: rotate3d(0, 0, 0, 5deg) translate3d(-40px,5px,0);
+	}
+	
+	53%  {
+		-webkit-transform: rotate3d(0, 0, 0, 0deg) translate3d(0,0,0);
+	}
+	
+	55%  {
+		-webkit-transform: rotate3d(0, 0, 0, -5deg) translate3d(20px,0,0);
+	}
+	
+	60%  {
+		-webkit-transform: rotate3d(0, 0, 0, 5deg) translate3d(20px,0,0);
+	}
+	
+	70%  {
+		-webkit-transform: rotate3d(0, 0, 0, 0deg) translate3d(10px,0,0);
+	}
+	
+	75%  {
+		-webkit-transform: translate3d(0,0,0);
+	}
+	
+	80%  {
+		-webkit-transform: translate3d(-5px,0,0);
+	}
+	
+	85%  {
+		-webkit-transform: translate3d(0,0,0);
+	}
+	
+	90%  {
+		-webkit-transform: translate3d(5px,0,0);
+	}
+	
+	95%  {
+		-webkit-transform: translate3d(-1px,0,0);
+	}
+	
+	100%  {
+		-webkit-transform: translate3d(0,0,0);
+	}
+}
+
+body, html {
+	font: 12px "Helvetica Neue", Helvetica;
+	-webkit-font-smoothing: subpixel-antialiased;
+	color: rgba(255,255,255,0.9);
+	margin: 0;
+	padding: 0;
+	min-width: 383px;
+	min-height: 35px;
+	overflow: hidden;
+}
+
+.notification {
+	overflow: hidden;
+	-webkit-animation: wallwalk 0.5s;
+	box-sizing: border-box;
+	background: #40495b url(texture.png) repeat-x 50% 50%;
+	position: relative;
+	box-shadow: 
+		inset 0 1px 0 rgba(255,255,255,0.05),
+		inset 0 0 0 1px rgba(255,255,255,0.1),
+		0 2px 3px rgba(0,0,0,0.2);
+	border: 1px solid rgba(0,0,0,0.1);
+	border-top: 0;
+	padding: 5px 26px 5px 26px;
+	min-height: 28px;
+	clear: both;
+	max-width: 380px;
+	float: right;
+	margin: 0 0 3px 3px;
+	border-radius: 0 0 0 5px;
+}
+
+img {
+	position: absolute;
+	display: block;
+	height: 16px;
+	width: 16px;
+	top: 5px;
+	left: 5px;
+	border-radius: 3px;
+}
+
+p {
+	margin: 0;
+	padding: 0;
+	text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+	line-height: 16px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+strong {
+	font-weight: 900;
+}

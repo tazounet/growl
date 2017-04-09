@@ -238,6 +238,7 @@
 
          // iTunes style icon: private API (not supported if Mac App Store...)
          [appleNotification setValue:icon forKey:@"_identityImage"];
+         [appleNotification setValue:@NO forKey:@"_identityImageHasBorder"];
       }
 
       if (dict[GROWL_NOTIFICATION_BUTTONTITLE_ACTION]) {

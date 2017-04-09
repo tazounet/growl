@@ -57,7 +57,19 @@
 
     // Get icon
     NSData *iconData = nil;
-    NSString *imageName = (gpu == GSGPUTypeIntegrated ? @"GraphicCard" : @"GraphicCard"); // TODO
+    NSString *imageName = nil;
+    if ([description containsString:@"Intel"])
+    {
+        imageName = @"Graphic-Card-intel";
+    }
+    else if ([description containsString:@"AMD"])
+    {
+        imageName = @"Graphic-Card-AMD";
+    }
+    else if ([description containsString:@"NVIDIA"])
+    {
+        imageName = @"Graphic-Card-NVIDIA";
+    }
     NSString *imagePath = [[NSBundle mainBundle] pathForResource:imageName ofType:@"tif"];
     iconData = [NSData dataWithContentsOfFile:imagePath];
 
